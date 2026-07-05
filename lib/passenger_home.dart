@@ -15,6 +15,11 @@ import 'select_destination_screen.dart';
 import 'order_confirmation_screen.dart';
 import 'driver_registration_screen.dart';
 import 'login_screen.dart';
+import 'notifications_screen.dart';
+import 'security_screen.dart';
+import 'settings_screen.dart';
+import 'help_screen.dart';
+import 'support_screen.dart';
 
 // ====== ألوان البراند ======
 class TayarColors {
@@ -1450,14 +1455,66 @@ class TayarDrawer extends StatelessWidget {
                   _DrawerItem(
                     icon: Icons.notifications_none,
                     label: 'الإشعارات',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
                   ),
-                  _DrawerItem(icon: Icons.shield_outlined, label: 'الأمان'),
+                  _DrawerItem(
+                    icon: Icons.shield_outlined,
+                    label: 'الأمان',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SecurityScreen(),
+                        ),
+                      );
+                    },
+                  ),
                   _DrawerItem(
                     icon: Icons.settings_outlined,
                     label: 'الإعدادات',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SettingsScreen(),
+                        ),
+                      );
+                    },
                   ),
-                  _DrawerItem(icon: Icons.info_outline, label: 'مساعدة'),
-                  _DrawerItem(icon: Icons.support_agent, label: 'الدعم'),
+                  _DrawerItem(
+                    icon: Icons.info_outline,
+                    label: 'مساعدة',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HelpScreen()),
+                      );
+                    },
+                  ),
+                  _DrawerItem(
+                    icon: Icons.support_agent,
+                    label: 'الدعم',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SupportScreen(),
+                        ),
+                      );
+                    },
+                  ),
                   const Divider(color: Colors.white24, height: 24),
                   _DrawerItem(
                     icon: Icons.logout,

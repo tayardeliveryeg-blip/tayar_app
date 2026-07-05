@@ -13,6 +13,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'passenger_home.dart';
 import 'login_screen.dart';
 import 'main.dart';
+import 'notifications_screen.dart';
+import 'security_screen.dart';
+import 'settings_screen.dart';
+import 'help_screen.dart';
+import 'support_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 class DriverHomeScreen extends StatefulWidget {
@@ -943,17 +948,66 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   _DriverDrawerItem(
                     icon: Icons.notifications_none,
                     label: 'الإشعارات',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
                   ),
                   _DriverDrawerItem(
                     icon: Icons.shield_outlined,
                     label: 'الأمان',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SecurityScreen(),
+                        ),
+                      );
+                    },
                   ),
                   _DriverDrawerItem(
                     icon: Icons.settings_outlined,
                     label: 'الإعدادات',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SettingsScreen(),
+                        ),
+                      );
+                    },
                   ),
-                  _DriverDrawerItem(icon: Icons.info_outline, label: 'مساعدة'),
-                  _DriverDrawerItem(icon: Icons.support_agent, label: 'الدعم'),
+                  _DriverDrawerItem(
+                    icon: Icons.info_outline,
+                    label: 'مساعدة',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HelpScreen()),
+                      );
+                    },
+                  ),
+                  _DriverDrawerItem(
+                    icon: Icons.support_agent,
+                    label: 'الدعم',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SupportScreen(),
+                        ),
+                      );
+                    },
+                  ),
                   const Divider(color: Colors.white24, height: 24),
                   _DriverDrawerItem(
                     icon: Icons.logout,
