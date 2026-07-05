@@ -126,5 +126,60 @@
   "saveFailedError": "Couldn't save, try again",
   "profileUpdatedSuccess": "Profile updated successfully",
   "changePhotoLabel": "Change Photo",
-  "photoTooLargeError": "The photo is too large, please choose a smaller one"
+  "photoTooLargeError": "The photo is too large, please choose a smaller one",
+
+  "locatingAddress": "Locating you...",
+  "addressUnknown": "Unknown location",
+  "addressFetchFailed": "Couldn't determine the address",
+  "paymentMethodWallet": "E-Wallet",
+  "paymentMethodInstapay": "InstaPay",
+  "choosePaymentMethodTitle": "Choose payment method",
+  "fromLabel": "From",
+  "chooseDestinationHint": "Choose where you want to go",
+  "serviceRideMe": "Ride Me",
+  "serviceDeliverOrders": "Deliver My Orders",
+  "paymentMethodLabel": "Payment Method",
+  "confirmButton": "Confirm",
+  "durationMinLabel": "{duration} min",
+  "@durationMinLabel": {
+    "placeholders": {
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+  "defaultUserName": "Mohamed",
+  "driverModeButton": "Driver Mode",
+  "orderHistoryLabel": "Order History",
+
+  "driverRegistrationTitle": "Driver Registration",
+  "closeButton": "Close",
+  "submitApplicationSuccessTitle": "Your application was submitted!",
+  "submitApplicationSuccessBody": "We'll review your data within 24 hours, and let you know as soon as your driver account is approved.",
+  "submitFailedError": "Couldn't submit the application, try again",
+  "applicationUnderReviewBanner": "Your application is currently under review, we'll notify you once there's a response.",
+  "registrationIntroText": "Upload your personal information and vehicle details. We'll review all data within 24 hours",
+  "sectionPersonalInfo": "Personal Information",
+  "sectionDrivingLicense": "Driving License",
+  "sectionPersonalDocuments": "Personal Documents",
+  "sectionBikeInfo": "Motorcycle Information",
+  "applicationUnderReviewButton": "Application Under Review",
+  "continueButton": "Continue",
+  "sectionCompleteLabel": "Information completed",
+  "sectionIncompleteLabel": "Please fill in the required information",
+  "optionalLabel": "Optional",
+  "personalPhotoLabel": "Personal Photo",
+  "licensePhotoUploadRequired": "Please upload the license photo and enter the expiry date",
+  "licenseExpiryHint": "Expiry Date",
+  "criminalRecordUploadRequired": "Please upload the criminal record document and enter the ID number",
+  "criminalRecordFrontLabel": "Criminal Record Document",
+  "criminalRecordBackLabel": "Back Side of the Criminal Record Document",
+  "idNumberHint": "ID Number",
+  "bikeInfoRequiredError": "Please complete the basic motorcycle information",
+  "bikePhotoLabel": "Motorcycle Photo",
+  "bikeLicensePhotoLabel": "Motorcycle License",
+  "bikeBrandHint": "Motorcycle Brand",
+  "bikeModelHint": "Motorcycle Model",
+  "bikeColorHint": "Motorcycle Color",
+  "bikeYearHint": "Manufacturing Year"
 }

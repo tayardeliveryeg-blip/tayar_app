@@ -126,5 +126,60 @@
   "saveFailedError": "تعذر الحفظ، حاول تاني",
   "profileUpdatedSuccess": "تم تحديث البروفايل بنجاح",
   "changePhotoLabel": "تغيير الصورة",
-  "photoTooLargeError": "الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر"
+  "photoTooLargeError": "الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر",
+
+  "locatingAddress": "جاري تحديد الموقع...",
+  "addressUnknown": "موقع غير معروف",
+  "addressFetchFailed": "تعذر تحديد العنوان",
+  "paymentMethodWallet": "محفظة إلكترونية",
+  "paymentMethodInstapay": "إنستاباي",
+  "choosePaymentMethodTitle": "اختار طريقة الدفع",
+  "fromLabel": "من أين",
+  "chooseDestinationHint": "اختار الواجهة اللي عايز تروحها",
+  "serviceRideMe": "وصلني",
+  "serviceDeliverOrders": "وصل طلباتي",
+  "paymentMethodLabel": "طريقة الدفع",
+  "confirmButton": "تأكيد",
+  "durationMinLabel": "{duration} دقيقة",
+  "@durationMinLabel": {
+    "placeholders": {
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+  "defaultUserName": "محمد",
+  "driverModeButton": "وضع الطيار",
+  "orderHistoryLabel": "سجل الطلبات",
+
+  "driverRegistrationTitle": "تسجيل الطيار",
+  "closeButton": "إغلاق",
+  "submitApplicationSuccessTitle": "تم إرسال طلبك!",
+  "submitApplicationSuccessBody": "سنراجع بياناتك خلال 24 ساعة، وهنبلغك أول ما يتم قبول حسابك كطيار.",
+  "submitFailedError": "تعذر إرسال الطلب، حاول تاني",
+  "applicationUnderReviewBanner": "طلبك قيد المراجعة حاليًا، هنبلغك أول ما يتم الرد.",
+  "registrationIntroText": "قم بتحميل بياناتك الشخصية وبيانات مركبتك. سنراجع جميع البيانات خلال 24 ساعة",
+  "sectionPersonalInfo": "المعلومات الشخصية",
+  "sectionDrivingLicense": "رخصة القيادة",
+  "sectionPersonalDocuments": "المستندات الشخصية",
+  "sectionBikeInfo": "معلومات الموتوسيكل",
+  "applicationUnderReviewButton": "طلبك قيد المراجعة",
+  "continueButton": "متابعة",
+  "sectionCompleteLabel": "تم استكمال البيانات",
+  "sectionIncompleteLabel": "قم بتعبئة المعلومات المطلوبة",
+  "optionalLabel": "اختياري",
+  "personalPhotoLabel": "صورة شخصية",
+  "licensePhotoUploadRequired": "من فضلك ارفع صورة الرخصة وأدخل تاريخ الانتهاء",
+  "licenseExpiryHint": "تاريخ انتهاء الصلاحية",
+  "criminalRecordUploadRequired": "من فضلك ارفع صحيفة الحالة الجنائية وأدخل رقم الهوية",
+  "criminalRecordFrontLabel": "صحيفة الحالة الجنائية",
+  "criminalRecordBackLabel": "الجانب الخلفي لصحيفة الحالة الجنائية",
+  "idNumberHint": "رقم الهوية",
+  "bikeInfoRequiredError": "من فضلك أكمل بيانات الموتوسيكل الأساسية",
+  "bikePhotoLabel": "صورة الموتوسيكل",
+  "bikeLicensePhotoLabel": "رخصة الموتوسيكل",
+  "bikeBrandHint": "العلامة التجارية للموتوسيكل",
+  "bikeModelHint": "طراز الموتوسيكل",
+  "bikeColorHint": "لون الموتوسيكل",
+  "bikeYearHint": "سنة الانتاج"
 }

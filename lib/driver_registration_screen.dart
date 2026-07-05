@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'passenger_home.dart' show TayarColors;
 import 'driver_home_screen.dart';
+import 'l10n/generated/app_localizations.dart';
 
 // ====================================================
 // ====== الشاشة الرئيسية: قائمة أقسام تسجيل الطيار ======
@@ -68,23 +69,24 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
       }, SetOptions(merge: true));
 
       if (!mounted) return;
+      final loc = AppLocalizations.of(context)!;
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(
           backgroundColor: TayarColors.cardDark,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Column(
+          title: Column(
             children: [
-              Icon(Icons.hourglass_top, color: TayarColors.primary, size: 56),
-              SizedBox(height: 12),
-              Text('تم إرسال طلبك!', style: TextStyle(color: Colors.white)),
+              const Icon(Icons.hourglass_top, color: TayarColors.primary, size: 56),
+              const SizedBox(height: 12),
+              Text(loc.submitApplicationSuccessTitle, style: const TextStyle(color: Colors.white)),
             ],
           ),
-          content: const Text(
-            'سنراجع بياناتك خلال 24 ساعة، وهنبلغك أول ما يتم قبول حسابك كطيار.',
+          content: Text(
+            loc.submitApplicationSuccessBody,
             textAlign: TextAlign.center,
-            style: TextStyle(color: TayarColors.textGrey),
+            style: const TextStyle(color: TayarColors.textGrey),
           ),
           actions: [
             Center(
@@ -93,7 +95,7 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                   Navigator.of(context).pop(); // يقفل الـ dialog
                   Navigator.of(context).pop(); // يرجع لشاشة الراكب
                 },
-                child: const Text('تمام', style: TextStyle(color: TayarColors.primary)),
+                child: Text(loc.ok, style: const TextStyle(color: TayarColors.primary)),
               ),
             ),
           ],
@@ -103,7 +105,7 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
       debugPrint('❌ خطأ في إرسال طلب التسجيل: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذر إرسال الطلب، حاول تاني')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.submitFailedError)),
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -127,11 +129,11 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
       appBar: AppBar(
         backgroundColor: TayarColors.background,
         elevation: 0,
-        title: const Text('تسجيل الطيار', style: TextStyle(color: Colors.white)),
+        title: Text(AppLocalizations.of(context)!.driverRegistrationTitle, style: const TextStyle(color: Colors.white)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إغلاق', style: TextStyle(color: TayarColors.textGrey)),
+            child: Text(AppLocalizations.of(context)!.closeButton, style: const TextStyle(color: TayarColors.textGrey)),
           ),
         ],
       ),
@@ -151,38 +153,38 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
                       ),
-                      child: const Text(
-                        'طلبك قيد المراجعة حاليًا، هنبلغك أول ما يتم الرد.',
-                        style: TextStyle(color: Colors.white),
+                      child: Text(
+                        AppLocalizations.of(context)!.applicationUnderReviewBanner,
+                        style: const TextStyle(color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     )
                   else
-                    const Text(
-                      'قم بتحميل بياناتك الشخصية وبيانات مركبتك. سنراجع جميع البيانات خلال 24 ساعة',
-                      style: TextStyle(color: TayarColors.textGrey, fontSize: 14),
+                    Text(
+                      AppLocalizations.of(context)!.registrationIntroText,
+                      style: const TextStyle(color: TayarColors.textGrey, fontSize: 14),
                     ),
                   const SizedBox(height: 20),
                   Expanded(
                     child: ListView(
                       children: [
                         _SectionTile(
-                          title: 'المعلومات الشخصية',
+                          title: AppLocalizations.of(context)!.sectionPersonalInfo,
                           isComplete: _isSectionComplete('personalInfo'),
                           onTap: () => _openSection(const PersonalInfoScreen()),
                         ),
                         _SectionTile(
-                          title: 'رخصة القيادة',
+                          title: AppLocalizations.of(context)!.sectionDrivingLicense,
                           isComplete: _isSectionComplete('drivingLicense'),
                           onTap: () => _openSection(const DrivingLicenseScreen()),
                         ),
                         _SectionTile(
-                          title: 'المستندات الشخصية',
+                          title: AppLocalizations.of(context)!.sectionPersonalDocuments,
                           isComplete: _isSectionComplete('personalDocuments'),
                           onTap: () => _openSection(const PersonalDocumentsScreen()),
                         ),
                         _SectionTile(
-                          title: 'معلومات الموتوسيكل',
+                          title: AppLocalizations.of(context)!.sectionBikeInfo,
                           isComplete: _isSectionComplete('bikeInfo'),
                           onTap: () => _openSection(const BikeInfoScreen()),
                         ),
@@ -207,7 +209,9 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                             )
                           : Text(
-                              status == 'pending_review' ? 'طلبك قيد المراجعة' : 'متابعة',
+                              status == 'pending_review'
+                                  ? AppLocalizations.of(context)!.applicationUnderReviewButton
+                                  : AppLocalizations.of(context)!.continueButton,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 17,
@@ -237,7 +241,9 @@ class _SectionTile extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(vertical: 4),
       title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16)),
       subtitle: Text(
-        isComplete ? 'تم استكمال البيانات' : 'قم بتعبئة المعلومات المطلوبة',
+        isComplete
+            ? AppLocalizations.of(context)!.sectionCompleteLabel
+            : AppLocalizations.of(context)!.sectionIncompleteLabel,
         style: TextStyle(
           color: isComplete ? TayarColors.primary : TayarColors.textGrey,
           fontSize: 13,
@@ -335,7 +341,7 @@ class _PhotoUploadTile extends StatelessWidget {
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Text('اختياري', style: TextStyle(color: Colors.white, fontSize: 10)),
+                    child: Text(AppLocalizations.of(context)!.optionalLabel, style: const TextStyle(color: Colors.white, fontSize: 10)),
                   ),
                 ),
             ],
@@ -390,7 +396,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     if (uid == null) return;
     if (_firstNameController.text.trim().isEmpty || _lastNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('من فضلك أدخل الاسم كاملًا')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.fullNameRequiredError)),
       );
       return;
     }
@@ -411,7 +417,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       debugPrint('❌ خطأ في حفظ المعلومات الشخصية: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذر الحفظ، حاول تاني')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -421,20 +427,20 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return _SectionScaffold(
-      title: 'المعلومات الشخصية',
+      title: AppLocalizations.of(context)!.sectionPersonalInfo,
       isSaving: _isSaving,
       onSave: _save,
       children: [
         Center(
-          child: _PhotoUploadTile(label: 'صورة شخصية', imageBytes: _photoBytes, onTap: _pickPhoto),
+          child: _PhotoUploadTile(label: AppLocalizations.of(context)!.personalPhotoLabel, imageBytes: _photoBytes, onTap: _pickPhoto),
         ),
         const SizedBox(height: 24),
-        _FormTextField(controller: _firstNameController, hint: 'الاسم'),
-        _FormTextField(controller: _lastNameController, hint: 'الاسم الاخير'),
+        _FormTextField(controller: _firstNameController, hint: AppLocalizations.of(context)!.firstNameHint),
+        _FormTextField(controller: _lastNameController, hint: AppLocalizations.of(context)!.lastNameHint),
         GestureDetector(
           onTap: _pickDate,
           child: AbsorbPointer(
-            child: _FormTextField(controller: _birthDateController, hint: 'تاريخ الميلاد'),
+            child: _FormTextField(controller: _birthDateController, hint: AppLocalizations.of(context)!.birthDateHint),
           ),
         ),
       ],
@@ -482,7 +488,7 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
     if (uid == null) return;
     if (_licensePhoto == null || _expiryController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('من فضلك ارفع صورة الرخصة وأدخل تاريخ الانتهاء')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.licensePhotoUploadRequired)),
       );
       return;
     }
@@ -501,7 +507,7 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
       debugPrint('❌ خطأ في حفظ رخصة القيادة: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذر الحفظ، حاول تاني')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -511,18 +517,18 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
   @override
   Widget build(BuildContext context) {
     return _SectionScaffold(
-      title: 'رخصة القيادة',
+      title: AppLocalizations.of(context)!.sectionDrivingLicense,
       isSaving: _isSaving,
       onSave: _save,
       children: [
         Center(
-          child: _PhotoUploadTile(label: 'رخصة القيادة', imageBytes: _licensePhoto, onTap: _pickPhoto),
+          child: _PhotoUploadTile(label: AppLocalizations.of(context)!.sectionDrivingLicense, imageBytes: _licensePhoto, onTap: _pickPhoto),
         ),
         const SizedBox(height: 24),
         GestureDetector(
           onTap: _pickDate,
           child: AbsorbPointer(
-            child: _FormTextField(controller: _expiryController, hint: 'تاريخ انتهاء الصلاحية'),
+            child: _FormTextField(controller: _expiryController, hint: AppLocalizations.of(context)!.licenseExpiryHint),
           ),
         ),
       ],
@@ -565,7 +571,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
     if (uid == null) return;
     if (_criminalRecordFront == null || _idNumberController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('من فضلك ارفع صحيفة الحالة الجنائية وأدخل رقم الهوية')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.criminalRecordUploadRequired)),
       );
       return;
     }
@@ -585,7 +591,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
       debugPrint('❌ خطأ في حفظ المستندات الشخصية: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذر الحفظ، حاول تاني')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -595,7 +601,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     return _SectionScaffold(
-      title: 'المستندات الشخصية',
+      title: AppLocalizations.of(context)!.sectionPersonalDocuments,
       isSaving: _isSaving,
       onSave: _save,
       children: [
@@ -603,12 +609,12 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _PhotoUploadTile(
-              label: 'صحيفة الحالة الجنائية',
+              label: AppLocalizations.of(context)!.criminalRecordFrontLabel,
               imageBytes: _criminalRecordFront,
               onTap: () => _pickPhoto(true),
             ),
             _PhotoUploadTile(
-              label: 'الجانب الخلفي لصحيفة الحالة الجنائية',
+              label: AppLocalizations.of(context)!.criminalRecordBackLabel,
               imageBytes: _criminalRecordBack,
               optional: true,
               onTap: () => _pickPhoto(false),
@@ -618,7 +624,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
         const SizedBox(height: 24),
         _FormTextField(
           controller: _idNumberController,
-          hint: 'رقم الهوية',
+          hint: AppLocalizations.of(context)!.idNumberHint,
           keyboardType: TextInputType.number,
         ),
       ],
@@ -665,7 +671,7 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
     if (uid == null) return;
     if (_bikePhoto == null || _brandController.text.trim().isEmpty || _plateController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('من فضلك أكمل بيانات الموتوسيكل الأساسية')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.bikeInfoRequiredError)),
       );
       return;
     }
@@ -689,7 +695,7 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
       debugPrint('❌ خطأ في حفظ معلومات الموتوسيكل: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذر الحفظ، حاول تاني')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -699,25 +705,25 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return _SectionScaffold(
-      title: 'معلومات الموتوسيكل',
+      title: AppLocalizations.of(context)!.sectionBikeInfo,
       isSaving: _isSaving,
       onSave: _save,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _PhotoUploadTile(label: 'صورة الموتوسيكل', imageBytes: _bikePhoto, onTap: () => _pickPhoto(true)),
-            _PhotoUploadTile(label: 'رخصة الموتوسيكل', imageBytes: _licensePhoto, onTap: () => _pickPhoto(false)),
+            _PhotoUploadTile(label: AppLocalizations.of(context)!.bikePhotoLabel, imageBytes: _bikePhoto, onTap: () => _pickPhoto(true)),
+            _PhotoUploadTile(label: AppLocalizations.of(context)!.bikeLicensePhotoLabel, imageBytes: _licensePhoto, onTap: () => _pickPhoto(false)),
           ],
         ),
         const SizedBox(height: 24),
-        _FormTextField(controller: _brandController, hint: 'العلامة التجارية للموتوسيكل'),
-        _FormTextField(controller: _modelController, hint: 'طراز الموتوسيكل'),
-        _FormTextField(controller: _colorController, hint: 'لون الموتوسيكل'),
-        _FormTextField(controller: _plateController, hint: 'رقم اللوحة'),
+        _FormTextField(controller: _brandController, hint: AppLocalizations.of(context)!.bikeBrandHint),
+        _FormTextField(controller: _modelController, hint: AppLocalizations.of(context)!.bikeModelHint),
+        _FormTextField(controller: _colorController, hint: AppLocalizations.of(context)!.bikeColorHint),
+        _FormTextField(controller: _plateController, hint: AppLocalizations.of(context)!.bikePlateLabel),
         _FormTextField(
           controller: _yearController,
-          hint: 'سنة الانتاج',
+          hint: AppLocalizations.of(context)!.bikeYearHint,
           keyboardType: TextInputType.number,
         ),
       ],
@@ -756,7 +762,7 @@ class _SectionScaffold extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إغلاق', style: TextStyle(color: TayarColors.textGrey)),
+            child: Text(AppLocalizations.of(context)!.closeButton, style: const TextStyle(color: TayarColors.textGrey)),
           ),
         ],
       ),
@@ -780,9 +786,9 @@ class _SectionScaffold extends StatelessWidget {
                         height: 22,
                         child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                       )
-                    : const Text(
-                        'حفظ',
-                        style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
+                    : Text(
+                        AppLocalizations.of(context)!.saveButton,
+                        style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
                       ),
               ),
             ),

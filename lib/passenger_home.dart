@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'select_destination_screen.dart';
 import 'order_confirmation_screen.dart';
@@ -20,6 +21,20 @@ import 'security_screen.dart';
 import 'settings_screen.dart';
 import 'help_screen.dart';
 import 'support_screen.dart';
+
+// ====== القيمة الداخلية لطريقة الدفع بتفضل ثابتة (عربي) عشان التوافق مع
+// Firestore وشاشة الطيار، والترجمة بتحصل بس وقت العرض عن طريق الدالة دي ======
+String paymentMethodDisplay(BuildContext context, String value) {
+  final loc = AppLocalizations.of(context)!;
+  switch (value) {
+    case 'محفظة إلكترونية':
+      return loc.paymentMethodWallet;
+    case 'إنستاباي':
+      return loc.paymentMethodInstapay;
+    default:
+      return loc.paymentMethodCash;
+  }
+}
 
 // ====== ألوان البراند ======
 class TayarColors {
@@ -48,7 +63,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     30.7,
     31.7,
   ); // الموقع المختار حاليًا (نص الخريطة)
-  String _currentAddress = 'جاري تحديد الموقع...';
+  String? _currentAddress;
+
+  // ====== بترجع عنوان النقطة الحالية، أو نص "جاري التحديد" مترجم لو لسه مفيش عنوان ======
+  String _addressDisplay(BuildContext context) =>
+      _currentAddress ?? AppLocalizations.of(context)!.locatingAddress;
   Timer? _debounce;
 
   LatLng? _destinationLocation;
@@ -240,7 +259,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
     setState(() {
       _selectedLocation = _pinRealLocation(event.camera);
-      _currentAddress = 'جاري تحديد العنوان...';
+      _currentAddress = null;
     });
 
     // نلغي أي طلب سابق لسه مستني، ونستنى نص ثانية بعد ما المستخدم يبطل يسحب
@@ -341,14 +360,16 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
         setState(() {
           _currentAddress = displayName.isNotEmpty
               ? displayName
-              : 'موقع غير معروف';
+              : (mounted ? AppLocalizations.of(context)!.addressUnknown : null);
         });
       }
     } catch (e) {
       debugPrint('❌ خطأ في جلب اسم العنوان: $e');
-      setState(() {
-        _currentAddress = 'تعذر تحديد العنوان';
-      });
+      if (mounted) {
+        setState(() {
+          _currentAddress = AppLocalizations.of(context)!.addressFetchFailed;
+        });
+      }
     }
   }
 
@@ -467,13 +488,14 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   // ====== فتح شاشة اختيار طريقة الدفع (كاش / محفظة إلكترونية / إنستاباي) ======
   Future<void> _showPaymentMethodSheet() async {
+    final loc = AppLocalizations.of(context)!;
     final options = <Map<String, dynamic>>[
-      {'label': 'كاش', 'icon': Icons.payments_outlined},
+      {'value': 'كاش', 'icon': Icons.payments_outlined},
       {
-        'label': 'محفظة إلكترونية',
+        'value': 'محفظة إلكترونية',
         'icon': Icons.account_balance_wallet_outlined,
       },
-      {'label': 'إنستاباي', 'icon': Icons.bolt_outlined},
+      {'value': 'إنستاباي', 'icon': Icons.bolt_outlined},
     ];
 
     final selected = await showModalBottomSheet<String>(
@@ -485,7 +507,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           topRight: Radius.circular(24),
         ),
       ),
-      builder: (context) => SafeArea(
+      builder: (sheetContext) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
@@ -500,13 +522,13 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 ),
               ),
               const SizedBox(height: 16),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    'اختار طريقة الدفع',
-                    style: TextStyle(
+                    loc.choosePaymentMethodTitle,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -516,10 +538,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
               const SizedBox(height: 8),
               ...options.map((option) {
-                final label = option['label'] as String;
-                final isSelected = label == _paymentMethod;
+                final value = option['value'] as String;
+                final label = paymentMethodDisplay(sheetContext, value);
+                final isSelected = value == _paymentMethod;
                 return ListTile(
-                  onTap: () => Navigator.pop(context, label),
+                  onTap: () => Navigator.pop(sheetContext, value),
                   leading: Icon(
                     option['icon'] as IconData,
                     color: isSelected
@@ -561,7 +584,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       context,
       MaterialPageRoute(
         builder: (_) => OrderConfirmationScreen(
-          pickupAddress: _currentAddress,
+          pickupAddress: _addressDisplay(context),
           pickupLocation: _currentLocation,
           destinationAddress: _destinationAddress ?? '',
           destinationLocation: _destinationLocation!,
@@ -794,15 +817,15 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text(
-                                  'من أين',
-                                  style: TextStyle(
+                                Text(
+                                  AppLocalizations.of(context)!.fromLabel,
+                                  style: const TextStyle(
                                     color: TayarColors.textGrey,
                                     fontSize: 13,
                                   ),
                                 ),
                                 Text(
-                                  _currentAddress,
+                                  _addressDisplay(context),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 15,
@@ -1021,7 +1044,8 @@ class TayarBottomSheet extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        destinationAddress ?? 'اختار الواجهة اللي عايز تروحها',
+                        destinationAddress ??
+                            AppLocalizations.of(context)!.chooseDestinationHint,
                         style: TextStyle(
                           color: destinationAddress != null
                               ? Colors.white
@@ -1058,7 +1082,7 @@ class TayarBottomSheet extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ServiceCard(
-                      title: 'وصلني',
+                      title: AppLocalizations.of(context)!.serviceRideMe,
                       icon: Icons.two_wheeler,
                       onTap: () {
                         // TODO: نفّذ منطق طلب وصلني
@@ -1068,7 +1092,7 @@ class TayarBottomSheet extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: ServiceCard(
-                      title: 'وصل طلباتي',
+                      title: AppLocalizations.of(context)!.serviceDeliverOrders,
                       icon: Icons.inventory_2_outlined,
                       onTap: () {
                         // TODO: نفّذ منطق طلب وصل طلباتي
@@ -1104,7 +1128,7 @@ class _TripSummaryCard extends StatelessWidget {
     required this.onConfirm,
   });
 
-  // ====== أيقونة طريقة الدفع الحالية ======
+  // ====== أيقونة طريقة الدفع الحالية (بتقارن على القيمة الداخلية الثابتة، مش النص المترجم) ======
   IconData get _paymentIcon {
     switch (paymentMethod) {
       case 'محفظة إلكترونية':
@@ -1132,12 +1156,21 @@ class _TripSummaryCard extends StatelessWidget {
             children: [
               _TripStat(
                 icon: Icons.route,
-                label: '${distanceKm.toStringAsFixed(1)} كم',
+                label: AppLocalizations.of(
+                  context,
+                )!.distanceKmLabel(distanceKm.toStringAsFixed(1)),
               ),
-              _TripStat(icon: Icons.access_time, label: '$durationMin دقيقة'),
+              _TripStat(
+                icon: Icons.access_time,
+                label: AppLocalizations.of(
+                  context,
+                )!.durationMinLabel(durationMin),
+              ),
               _TripStat(
                 icon: Icons.payments_outlined,
-                label: '${fare.toStringAsFixed(0)} جنيه',
+                label: AppLocalizations.of(
+                  context,
+                )!.currencyEGP(fare.toStringAsFixed(0)),
                 highlight: true,
               ),
             ],
@@ -1157,13 +1190,16 @@ class _TripSummaryCard extends StatelessWidget {
                 children: [
                   Icon(_paymentIcon, color: TayarColors.primary, size: 20),
                   const SizedBox(width: 10),
-                  const Text(
-                    'طريقة الدفع',
-                    style: TextStyle(color: TayarColors.textGrey, fontSize: 14),
+                  Text(
+                    AppLocalizations.of(context)!.paymentMethodLabel,
+                    style: const TextStyle(
+                      color: TayarColors.textGrey,
+                      fontSize: 14,
+                    ),
                   ),
                   const Spacer(),
                   Text(
-                    paymentMethod,
+                    paymentMethodDisplay(context, paymentMethod),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -1194,9 +1230,9 @@ class _TripSummaryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'إلغاء',
-                    style: TextStyle(color: TayarColors.textGrey),
+                  child: Text(
+                    AppLocalizations.of(context)!.cancel,
+                    style: const TextStyle(color: TayarColors.textGrey),
                   ),
                 ),
               ),
@@ -1212,9 +1248,9 @@ class _TripSummaryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'تأكيد',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.confirmButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -1320,32 +1356,30 @@ class TayarDrawer extends StatelessWidget {
 
   // ====== تأكيد تسجيل الخروج قبل تنفيذه فعليًا ======
   Future<void> _confirmLogout(BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: TayarColors.cardDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'تسجيل الخروج',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: const Text(
-          'متأكد إنك عايز تسجل خروج من حسابك؟',
-          style: TextStyle(color: TayarColors.textGrey),
+        title: Text(loc.logout, style: const TextStyle(color: Colors.white)),
+        content: Text(
+          loc.confirmLogoutMessage,
+          style: const TextStyle(color: TayarColors.textGrey),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'إلغاء',
-              style: TextStyle(color: TayarColors.textGrey),
+            child: Text(
+              loc.cancel,
+              style: const TextStyle(color: TayarColors.textGrey),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'تسجيل الخروج',
-              style: TextStyle(color: Colors.redAccent),
+            child: Text(
+              loc.logout,
+              style: const TextStyle(color: Colors.redAccent),
             ),
           ),
         ],
@@ -1399,9 +1433,9 @@ class TayarDrawer extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'محمد',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.defaultUserName,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -1444,17 +1478,20 @@ class TayarDrawer extends StatelessWidget {
                 children: [
                   _DrawerItem(
                     icon: Icons.two_wheeler,
-                    label: 'وصلني',
+                    label: AppLocalizations.of(context)!.serviceRideMe,
                     selected: true,
                   ),
-                  _DrawerItem(icon: Icons.history, label: 'سجل الطلبات'),
+                  _DrawerItem(
+                    icon: Icons.history,
+                    label: AppLocalizations.of(context)!.orderHistoryLabel,
+                  ),
                   _DrawerItem(
                     icon: Icons.local_shipping_outlined,
-                    label: 'وصل طلباتي',
+                    label: AppLocalizations.of(context)!.serviceDeliverOrders,
                   ),
                   _DrawerItem(
                     icon: Icons.notifications_none,
-                    label: 'الإشعارات',
+                    label: AppLocalizations.of(context)!.navNotifications,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -1467,7 +1504,7 @@ class TayarDrawer extends StatelessWidget {
                   ),
                   _DrawerItem(
                     icon: Icons.shield_outlined,
-                    label: 'الأمان',
+                    label: AppLocalizations.of(context)!.navSecurity,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -1480,7 +1517,7 @@ class TayarDrawer extends StatelessWidget {
                   ),
                   _DrawerItem(
                     icon: Icons.settings_outlined,
-                    label: 'الإعدادات',
+                    label: AppLocalizations.of(context)!.navSettings,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -1493,7 +1530,7 @@ class TayarDrawer extends StatelessWidget {
                   ),
                   _DrawerItem(
                     icon: Icons.info_outline,
-                    label: 'مساعدة',
+                    label: AppLocalizations.of(context)!.navHelp,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -1504,7 +1541,7 @@ class TayarDrawer extends StatelessWidget {
                   ),
                   _DrawerItem(
                     icon: Icons.support_agent,
-                    label: 'الدعم',
+                    label: AppLocalizations.of(context)!.navSupport,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -1518,7 +1555,7 @@ class TayarDrawer extends StatelessWidget {
                   const Divider(color: Colors.white24, height: 24),
                   _DrawerItem(
                     icon: Icons.logout,
-                    label: 'تسجيل الخروج',
+                    label: AppLocalizations.of(context)!.logout,
                     isDestructive: true,
                     onTap: () => _confirmLogout(context),
                   ),
@@ -1547,9 +1584,9 @@ class TayarDrawer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  child: const Text(
-                    'وضع الطيار',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.driverModeButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
