@@ -18,6 +18,7 @@ import 'security_screen.dart';
 import 'settings_screen.dart';
 import 'help_screen.dart';
 import 'support_screen.dart';
+import 'driver_profile_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 class DriverHomeScreen extends StatefulWidget {
@@ -83,27 +84,27 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       builder: (_) => AlertDialog(
         backgroundColor: TayarColors.cardDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'تسجيل الخروج',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.logout,
+          style: const TextStyle(color: Colors.white),
         ),
-        content: const Text(
-          'متأكد إنك عايز تسجل خروج من حسابك؟',
-          style: TextStyle(color: TayarColors.textGrey),
+        content: Text(
+          AppLocalizations.of(context)!.confirmLogoutMessage,
+          style: const TextStyle(color: TayarColors.textGrey),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'إلغاء',
-              style: TextStyle(color: TayarColors.textGrey),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: TayarColors.textGrey),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'تسجيل الخروج',
-              style: TextStyle(color: Colors.redAccent),
+            child: Text(
+              AppLocalizations.of(context)!.logout,
+              style: const TextStyle(color: Colors.redAccent),
             ),
           ),
         ],
@@ -619,7 +620,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           // ====== زرار تبديل اللغة (عربي / إنجليزي) ======
           IconButton(
             icon: const Icon(Icons.language, color: Colors.white),
-            tooltip: 'العربية / English',
+            tooltip: AppLocalizations.of(context)!.languageToggleTooltip,
             onPressed: () {
               final isArabic =
                   Localizations.localeOf(context).languageCode == 'ar';
@@ -903,7 +904,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const _DriverProfileScreen(),
+                          builder: (_) => const DriverProfileScreen(),
                         ),
                       );
                     },
@@ -947,7 +948,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   const Divider(color: Colors.white24, height: 24),
                   _DriverDrawerItem(
                     icon: Icons.notifications_none,
-                    label: 'الإشعارات',
+                    label: AppLocalizations.of(context)!.navNotifications,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -960,7 +961,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   ),
                   _DriverDrawerItem(
                     icon: Icons.shield_outlined,
-                    label: 'الأمان',
+                    label: AppLocalizations.of(context)!.navSecurity,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -973,7 +974,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   ),
                   _DriverDrawerItem(
                     icon: Icons.settings_outlined,
-                    label: 'الإعدادات',
+                    label: AppLocalizations.of(context)!.navSettings,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -986,7 +987,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   ),
                   _DriverDrawerItem(
                     icon: Icons.info_outline,
-                    label: 'مساعدة',
+                    label: AppLocalizations.of(context)!.navHelp,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -997,7 +998,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   ),
                   _DriverDrawerItem(
                     icon: Icons.support_agent,
-                    label: 'الدعم',
+                    label: AppLocalizations.of(context)!.navSupport,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -1011,7 +1012,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   const Divider(color: Colors.white24, height: 24),
                   _DriverDrawerItem(
                     icon: Icons.logout,
-                    label: 'تسجيل الخروج',
+                    label: AppLocalizations.of(context)!.logout,
                     isDestructive: true,
                     onTap: () => _confirmLogout(context),
                   ),
@@ -1043,9 +1044,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  child: const Text(
-                    'رجوع لوضع الركاب',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.backToPassengerModeButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -1874,135 +1875,6 @@ class _IncomeSummaryCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ====== شاشة بروفايل الطيار (بيانات القراءة فقط من مستند drivers) ======
-class _DriverProfileScreen extends StatelessWidget {
-  const _DriverProfileScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-
-    return Scaffold(
-      backgroundColor: TayarColors.background,
-      appBar: AppBar(
-        backgroundColor: TayarColors.background,
-        elevation: 0,
-        title: Text(
-          AppLocalizations.of(context)!.navProfile,
-          style: const TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: uid == null
-          ? const SizedBox.shrink()
-          : FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-              future: FirebaseFirestore.instance
-                  .collection('drivers')
-                  .doc(uid)
-                  .get(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: TayarColors.primary,
-                    ),
-                  );
-                }
-                final data = snapshot.data!.data() ?? {};
-                final personalInfo =
-                    (data['personalInfo'] as Map<String, dynamic>?) ?? {};
-                final bikeInfo =
-                    (data['bikeInfo'] as Map<String, dynamic>?) ?? {};
-
-                final fullName =
-                    '${personalInfo['firstName'] ?? ''} ${personalInfo['lastName'] ?? ''}'
-                        .trim();
-
-                return ListView(
-                  padding: const EdgeInsets.all(20),
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [
-                          const CircleAvatar(
-                            radius: 40,
-                            backgroundColor: TayarColors.primary,
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 44,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            fullName.isEmpty
-                                ? AppLocalizations.of(
-                                    context,
-                                  )!.defaultDriverName
-                                : fullName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      AppLocalizations.of(context)!.motorcycleInfoTitle,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    _ProfileInfoRow(
-                      label: AppLocalizations.of(context)!.bikeModelLabel,
-                      value: (bikeInfo['model'] ?? '-').toString(),
-                    ),
-                    _ProfileInfoRow(
-                      label: AppLocalizations.of(context)!.bikeColorLabel,
-                      value: (bikeInfo['color'] ?? '-').toString(),
-                    ),
-                    _ProfileInfoRow(
-                      label: AppLocalizations.of(context)!.bikePlateLabel,
-                      value: (bikeInfo['plateNumber'] ?? '-').toString(),
-                    ),
-                    _ProfileInfoRow(
-                      label: AppLocalizations.of(context)!.bikeYearLabel,
-                      value: (bikeInfo['year'] ?? '-').toString(),
-                    ),
-                  ],
-                );
-              },
-            ),
-    );
-  }
-}
-
-class _ProfileInfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  const _ProfileInfoRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: TayarColors.textGrey)),
-          Text(value, style: const TextStyle(color: Colors.white)),
         ],
       ),
     );

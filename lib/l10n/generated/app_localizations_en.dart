@@ -178,4 +178,99 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get alreadyOfferedOnOrder =>
       'You\'ve already made an offer on this order';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirmLogoutMessage =>
+      'Are you sure you want to log out of your account?';
+
+  @override
+  String get languageToggleTooltip => 'العربية / English';
+
+  @override
+  String get navNotifications => 'Notifications';
+
+  @override
+  String get navSecurity => 'Security';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get navHelp => 'Help';
+
+  @override
+  String get navSupport => 'Support';
+
+  @override
+  String get backToPassengerModeButton => 'Back to Passenger Mode';
+
+  @override
+  String get appLanguageLabel => 'App Language';
+
+  @override
+  String get enablePushNotifications => 'Enable App Notifications';
+
+  @override
+  String get pushNotificationsDescription =>
+      'Notifications for orders, offers, and important updates';
+
+  @override
+  String get termsAndConditions => 'Terms and Conditions';
+
+  @override
+  String get termsAndConditionsBody =>
+      'By using the Tayar app, you agree to its terms of use, that the service is provided directly between the passenger and the driver, and that the company only provides the connection platform.';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyBody =>
+      'We protect your data and only use your location while a trip is actually in progress, and we never share your data with any third party without your consent.';
+
+  @override
+  String get appVersionLabel => 'App Version';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get firstNameHint => 'First Name';
+
+  @override
+  String get lastNameHint => 'Last Name';
+
+  @override
+  String get birthDateHint => 'Date of Birth';
+
+  @override
+  String get phoneNumberLabel => 'Mobile Number';
+
+  @override
+  String get addressLabel => 'Address';
+
+  @override
+  String get saveButton => 'Save';
+
+  @override
+  String get fullNameRequiredError => 'Please enter your full name';
+
+  @override
+  String get saveFailedError => 'Couldn\'t save, try again';
+
+  @override
+  String get profileUpdatedSuccess => 'Profile updated successfully';
+
+  @override
+  String get changePhotoLabel => 'Change Photo';
+
+  @override
+  String get photoTooLargeError =>
+      'The photo is too large, please choose a smaller one';
 }

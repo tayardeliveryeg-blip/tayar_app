@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'main.dart';
 import 'passenger_home.dart';
 
@@ -64,9 +65,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'تمام',
-              style: TextStyle(color: TayarColors.primary),
+            child: Text(
+              AppLocalizations.of(context)!.ok,
+              style: const TextStyle(color: TayarColors.primary),
             ),
           ),
         ],
@@ -84,7 +85,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: TayarColors.background,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('الإعدادات', style: TextStyle(color: Colors.white)),
+        title: Text(
+          AppLocalizations.of(context)!.navSettings,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       body: _loading
           ? const Center(
@@ -100,9 +104,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icons.language,
                         color: TayarColors.primary,
                       ),
-                      title: const Text(
-                        'لغة التطبيق',
-                        style: TextStyle(color: Colors.white),
+                      title: Text(
+                        AppLocalizations.of(context)!.appLanguageLabel,
+                        style: const TextStyle(color: Colors.white),
                       ),
                       subtitle: Text(
                         isArabic ? 'العربية' : 'English',
@@ -132,13 +136,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icons.notifications_active_outlined,
                         color: TayarColors.primary,
                       ),
-                      title: const Text(
-                        'تفعيل إشعارات التطبيق',
-                        style: TextStyle(color: Colors.white),
+                      title: Text(
+                        AppLocalizations.of(context)!.enablePushNotifications,
+                        style: const TextStyle(color: Colors.white),
                       ),
-                      subtitle: const Text(
-                        'إشعارات الطلبات والعروض والتحديثات المهمة',
-                        style: TextStyle(color: TayarColors.textGrey),
+                      subtitle: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.pushNotificationsDescription,
+                        style: const TextStyle(color: TayarColors.textGrey),
                       ),
                     ),
                   ],
@@ -151,19 +157,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icons.description_outlined,
                         color: TayarColors.primary,
                       ),
-                      title: const Text(
-                        'الشروط والأحكام',
-                        style: TextStyle(color: Colors.white),
+                      title: Text(
+                        AppLocalizations.of(context)!.termsAndConditions,
+                        style: const TextStyle(color: Colors.white),
                       ),
                       trailing: const Icon(
                         Icons.chevron_left,
                         color: TayarColors.textGrey,
                       ),
                       onTap: () => _showTextDialog(
-                        'الشروط والأحكام',
-                        'باستخدامك تطبيق طيار أنت موافق على شروط الاستخدام '
-                            'الخاصة بيه، وإن الخدمة مقدَّمة بين الراكب والطيار '
-                            'مباشرة، وإن الشركة بتوفر منصة الربط فقط.',
+                        AppLocalizations.of(context)!.termsAndConditions,
+                        AppLocalizations.of(context)!.termsAndConditionsBody,
                       ),
                     ),
                     const Divider(color: Colors.white12, height: 1),
@@ -172,19 +176,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icons.privacy_tip_outlined,
                         color: TayarColors.primary,
                       ),
-                      title: const Text(
-                        'سياسة الخصوصية',
-                        style: TextStyle(color: Colors.white),
+                      title: Text(
+                        AppLocalizations.of(context)!.privacyPolicy,
+                        style: const TextStyle(color: Colors.white),
                       ),
                       trailing: const Icon(
                         Icons.chevron_left,
                         color: TayarColors.textGrey,
                       ),
                       onTap: () => _showTextDialog(
-                        'سياسة الخصوصية',
-                        'بنحافظ على بياناتك ومنستخدمش موقعك إلا وقت وجود '
-                            'رحلة فعلية، ومبنشاركش بياناتك مع أي طرف تالت '
-                            'من غير موافقتك.',
+                        AppLocalizations.of(context)!.privacyPolicy,
+                        AppLocalizations.of(context)!.privacyPolicyBody,
                       ),
                     ),
                   ],
@@ -192,16 +194,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 16),
                 _SettingsSection(
                   children: [
-                    const ListTile(
-                      leading: Icon(
+                    ListTile(
+                      leading: const Icon(
                         Icons.info_outline,
                         color: TayarColors.primary,
                       ),
                       title: Text(
-                        'إصدار التطبيق',
-                        style: TextStyle(color: Colors.white),
+                        AppLocalizations.of(context)!.appVersionLabel,
+                        style: const TextStyle(color: Colors.white),
                       ),
-                      trailing: Text(
+                      trailing: const Text(
                         '1.0.0',
                         style: TextStyle(color: TayarColors.textGrey),
                       ),

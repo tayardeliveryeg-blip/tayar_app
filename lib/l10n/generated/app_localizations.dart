@@ -409,6 +409,186 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'قدّمت عرض بالفعل على الطلب ده'**
   String get alreadyOfferedOnOrder;
+
+  /// No description provided for @logout.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الخروج'**
+  String get logout;
+
+  /// No description provided for @cancel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء'**
+  String get cancel;
+
+  /// No description provided for @confirmLogoutMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأكد إنك عايز تسجل خروج من حسابك؟'**
+  String get confirmLogoutMessage;
+
+  /// No description provided for @languageToggleTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'العربية / English'**
+  String get languageToggleTooltip;
+
+  /// No description provided for @navNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإشعارات'**
+  String get navNotifications;
+
+  /// No description provided for @navSecurity.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأمان'**
+  String get navSecurity;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإعدادات'**
+  String get navSettings;
+
+  /// No description provided for @navHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساعدة'**
+  String get navHelp;
+
+  /// No description provided for @navSupport.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعم'**
+  String get navSupport;
+
+  /// No description provided for @backToPassengerModeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'رجوع لوضع الركاب'**
+  String get backToPassengerModeButton;
+
+  /// No description provided for @appLanguageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لغة التطبيق'**
+  String get appLanguageLabel;
+
+  /// No description provided for @enablePushNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل إشعارات التطبيق'**
+  String get enablePushNotifications;
+
+  /// No description provided for @pushNotificationsDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'إشعارات الطلبات والعروض والتحديثات المهمة'**
+  String get pushNotificationsDescription;
+
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشروط والأحكام'**
+  String get termsAndConditions;
+
+  /// No description provided for @termsAndConditionsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'باستخدامك تطبيق طيار أنت موافق على شروط الاستخدام الخاصة بيه، وإن الخدمة مقدَّمة بين الراكب والطيار مباشرة، وإن الشركة بتوفر منصة الربط فقط.'**
+  String get termsAndConditionsBody;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In ar, this message translates to:
+  /// **'سياسة الخصوصية'**
+  String get privacyPolicy;
+
+  /// No description provided for @privacyPolicyBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنحافظ على بياناتك ومنستخدمش موقعك إلا وقت وجود رحلة فعلية، ومبنشاركش بياناتك مع أي طرف تالت من غير موافقتك.'**
+  String get privacyPolicyBody;
+
+  /// No description provided for @appVersionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إصدار التطبيق'**
+  String get appVersionLabel;
+
+  /// No description provided for @ok.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمام'**
+  String get ok;
+
+  /// No description provided for @firstNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم'**
+  String get firstNameHint;
+
+  /// No description provided for @lastNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم الاخير'**
+  String get lastNameHint;
+
+  /// No description provided for @birthDateHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الميلاد'**
+  String get birthDateHint;
+
+  /// No description provided for @phoneNumberLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الموبايل'**
+  String get phoneNumberLabel;
+
+  /// No description provided for @addressLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان'**
+  String get addressLabel;
+
+  /// No description provided for @saveButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ'**
+  String get saveButton;
+
+  /// No description provided for @fullNameRequiredError.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك أدخل الاسم كاملًا'**
+  String get fullNameRequiredError;
+
+  /// No description provided for @saveFailedError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر الحفظ، حاول تاني'**
+  String get saveFailedError;
+
+  /// No description provided for @profileUpdatedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديث البروفايل بنجاح'**
+  String get profileUpdatedSuccess;
+
+  /// No description provided for @changePhotoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير الصورة'**
+  String get changePhotoLabel;
+
+  /// No description provided for @photoTooLargeError.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر'**
+  String get photoTooLargeError;
 }
 
 class _AppLocalizationsDelegate

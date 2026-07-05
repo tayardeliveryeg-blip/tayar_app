@@ -1021,7 +1021,7 @@ class TayarBottomSheet extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        destinationAddress ?? 'عايز تروح فين؟',
+                        destinationAddress ?? 'اختار الواجهة اللي عايز تروحها',
                         style: TextStyle(
                           color: destinationAddress != null
                               ? Colors.white
@@ -1058,20 +1058,20 @@ class TayarBottomSheet extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ServiceCard(
-                      title: 'توصيل ركاب',
+                      title: 'وصلني',
                       icon: Icons.two_wheeler,
                       onTap: () {
-                        // TODO: نفّذ منطق طلب توصيل ركاب
+                        // TODO: نفّذ منطق طلب وصلني
                       },
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: ServiceCard(
-                      title: 'توصيل طرود',
+                      title: 'وصل طلباتي',
                       icon: Icons.inventory_2_outlined,
                       onTap: () {
-                        // TODO: نفّذ منطق طلب توصيل طرد
+                        // TODO: نفّذ منطق طلب وصل طلباتي
                       },
                     ),
                   ),
@@ -1444,13 +1444,13 @@ class TayarDrawer extends StatelessWidget {
                 children: [
                   _DrawerItem(
                     icon: Icons.two_wheeler,
-                    label: 'المدينة',
+                    label: 'وصلني',
                     selected: true,
                   ),
                   _DrawerItem(icon: Icons.history, label: 'سجل الطلبات'),
                   _DrawerItem(
                     icon: Icons.local_shipping_outlined,
-                    label: 'توصيل الطرود',
+                    label: 'وصل طلباتي',
                   ),
                   _DrawerItem(
                     icon: Icons.notifications_none,

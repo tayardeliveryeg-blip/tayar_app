@@ -173,4 +173,98 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get alreadyOfferedOnOrder => 'قدّمت عرض بالفعل على الطلب ده';
+
+  @override
+  String get logout => 'تسجيل الخروج';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get confirmLogoutMessage => 'متأكد إنك عايز تسجل خروج من حسابك؟';
+
+  @override
+  String get languageToggleTooltip => 'العربية / English';
+
+  @override
+  String get navNotifications => 'الإشعارات';
+
+  @override
+  String get navSecurity => 'الأمان';
+
+  @override
+  String get navSettings => 'الإعدادات';
+
+  @override
+  String get navHelp => 'مساعدة';
+
+  @override
+  String get navSupport => 'الدعم';
+
+  @override
+  String get backToPassengerModeButton => 'رجوع لوضع الركاب';
+
+  @override
+  String get appLanguageLabel => 'لغة التطبيق';
+
+  @override
+  String get enablePushNotifications => 'تفعيل إشعارات التطبيق';
+
+  @override
+  String get pushNotificationsDescription =>
+      'إشعارات الطلبات والعروض والتحديثات المهمة';
+
+  @override
+  String get termsAndConditions => 'الشروط والأحكام';
+
+  @override
+  String get termsAndConditionsBody =>
+      'باستخدامك تطبيق طيار أنت موافق على شروط الاستخدام الخاصة بيه، وإن الخدمة مقدَّمة بين الراكب والطيار مباشرة، وإن الشركة بتوفر منصة الربط فقط.';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get privacyPolicyBody =>
+      'بنحافظ على بياناتك ومنستخدمش موقعك إلا وقت وجود رحلة فعلية، ومبنشاركش بياناتك مع أي طرف تالت من غير موافقتك.';
+
+  @override
+  String get appVersionLabel => 'إصدار التطبيق';
+
+  @override
+  String get ok => 'تمام';
+
+  @override
+  String get firstNameHint => 'الاسم';
+
+  @override
+  String get lastNameHint => 'الاسم الاخير';
+
+  @override
+  String get birthDateHint => 'تاريخ الميلاد';
+
+  @override
+  String get phoneNumberLabel => 'رقم الموبايل';
+
+  @override
+  String get addressLabel => 'العنوان';
+
+  @override
+  String get saveButton => 'حفظ';
+
+  @override
+  String get fullNameRequiredError => 'من فضلك أدخل الاسم كاملًا';
+
+  @override
+  String get saveFailedError => 'تعذر الحفظ، حاول تاني';
+
+  @override
+  String get profileUpdatedSuccess => 'تم تحديث البروفايل بنجاح';
+
+  @override
+  String get changePhotoLabel => 'تغيير الصورة';
+
+  @override
+  String get photoTooLargeError =>
+      'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر';
 }
