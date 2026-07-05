@@ -1,0 +1,315 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
+
+import 'passenger_home.dart' show TayarColors;
+import 'select_destination_screen.dart' show PlaceResult;
+
+/// ====== شاشة اختيار الوجهة من الخريطة ======
+/// خريطة كاملة الشاشة فيها دبوس ثابت في النص، المستخدم بيحرك الخريطة لحد
+/// ما الدبوس يوصل للمكان اللي عايزه، وبعدين يدوس "تم" فترجع الشاشة دي
+/// PlaceResult زي بالظبط نتيجة البحث العادية.
+class PickOnMapScreen extends StatefulWidget {
+  // نقطة البداية اللي الخريطة تتمركز عليها لما الشاشة تفتح (مثلاً نقطة
+  // الانطلاق الحالية)، ولو مفيش هنستخدم مركز مدينة العاشر من رمضان.
+  final LatLng? initialLocation;
+
+  const PickOnMapScreen({super.key, this.initialLocation});
+
+  @override
+  State<PickOnMapScreen> createState() => _PickOnMapScreenState();
+}
+
+class _PickOnMapScreenState extends State<PickOnMapScreen> {
+  final MapController _mapController = MapController();
+  Timer? _debounce;
+
+  static const LatLng _defaultCenter = LatLng(30.296, 31.742);
+
+  late LatLng _selectedLocation = widget.initialLocation ?? _defaultCenter;
+
+  String _addressTitle = 'جاري تحديد العنوان...';
+  String _addressSubtitle = '';
+  bool _isLoadingAddress = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getAddressFromCoordinates(
+      _selectedLocation.latitude,
+      _selectedLocation.longitude,
+    );
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  // ====== بترجع الإحداثية الحقيقية اللي فعليًا تحت الدبوس في نص الشاشة ======
+  LatLng _pinRealLocation(MapCamera camera) {
+    final size = camera.nonRotatedSize;
+    final pinPoint = math.Point<double>(size.x / 2, size.y / 2);
+    return camera.pointToLatLng(pinPoint);
+  }
+
+  void _onMapEvent(MapEvent event) {
+    if (event.source != MapEventSource.onDrag &&
+        event.source != MapEventSource.flingAnimationController) {
+      return;
+    }
+
+    setState(() {
+      _selectedLocation = _pinRealLocation(event.camera);
+      _isLoadingAddress = true;
+      _addressTitle = 'جاري تحديد العنوان...';
+      _addressSubtitle = '';
+    });
+
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 600), () {
+      _getAddressFromCoordinates(
+        _selectedLocation.latitude,
+        _selectedLocation.longitude,
+      );
+    });
+  }
+
+  Future<void> _getAddressFromCoordinates(double lat, double lng) async {
+    try {
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lng&accept-language=ar',
+      );
+      final response = await http.get(
+        url,
+        headers: {'User-Agent': 'com.tayar.app'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final address = data['address'];
+        final road = (address?['road'] ?? address?['neighbourhood'] ?? '')
+            .toString();
+        final suburb = (address?['suburb'] ?? address?['city'] ?? '')
+            .toString();
+
+        if (!mounted) return;
+        setState(() {
+          _addressTitle = road.isNotEmpty ? road : 'موقع مخصص';
+          _addressSubtitle = suburb;
+          _isLoadingAddress = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ خطأ في جلب اسم العنوان: $e');
+      if (!mounted) return;
+      setState(() {
+        _addressTitle = 'تعذر تحديد العنوان';
+        _addressSubtitle = '';
+        _isLoadingAddress = false;
+      });
+    }
+  }
+
+  void _confirmSelection() {
+    Navigator.pop(
+      context,
+      PlaceResult(
+        title: _addressTitle,
+        subtitle: _addressSubtitle,
+        location: _selectedLocation,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: TayarColors.background,
+      body: Stack(
+        children: [
+          // ====== الخريطة ======
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: _selectedLocation,
+              initialZoom: 16,
+              onMapEvent: _onMapEvent,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+              ),
+            ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.tayar.app',
+              ),
+            ],
+          ),
+
+          // ====== الدبوس الثابت في نص الشاشة ======
+          // نفس تقنية الـ FractionalTranslation المستخدمة في passenger_home
+          // عشان طرف الدبوس (النقطة السفلية) يفضل بالظبط عند نقطة المركز
+          // اللي بتحسبها _pinRealLocation، مهما اتغير طول العنوان.
+          Center(
+            child: FractionalTranslation(
+              translation: const Offset(0, -0.5),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: TayarColors.background,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          color: TayarColors.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 220),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _addressTitle,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              if (_addressSubtitle.isNotEmpty)
+                                Text(
+                                  _addressSubtitle,
+                                  style: const TextStyle(
+                                    color: TayarColors.textGrey,
+                                    fontSize: 12,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.25),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.flag,
+                      color: TayarColors.primary,
+                      size: 26,
+                    ),
+                  ),
+                  Container(width: 2, height: 14, color: Colors.white54),
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ====== زرار الرجوع ======
+          Positioned(
+            top: 50,
+            right: 16,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: TayarColors.background.withValues(alpha: 0.9),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.arrow_forward, color: Colors.white),
+              ),
+            ),
+          ),
+
+          // ====== زرار "تم" تحت ======
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 24,
+            child: SafeArea(
+              top: false,
+              child: ElevatedButton(
+                onPressed: _isLoadingAddress ? null : _confirmSelection,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TayarColors.primary,
+                  disabledBackgroundColor: TayarColors.primary.withValues(
+                    alpha: 0.5,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: const Text(
+                  'تم',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

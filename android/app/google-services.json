@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "354477388400",
+    "project_id": "b10-app-1e682",
+    "storage_bucket": "b10-app-1e682.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354477388400:android:811a99f009bde19dc23ab5",
+        "android_client_info": {
+          "package_name": "com.example.tayay_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7CW-3rCVG5lIesTWU_envKbZkNd5zyBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

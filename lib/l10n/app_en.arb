@@ -1,0 +1,97 @@
+{
+  "appName": "Tayar - Arrived in a flash",
+  "clientOrderPriority": "Your order reaches the nearest drivers, the lowest price takes priority.",
+  "driverNoOrders": "No available orders right now.. stay ready!",
+  "driverNoRatings": "No ratings from passengers yet.. keep it up",
+  "tabRequests": "Requests",
+  "tabIncome": "Income",
+  "tabRatings": "Ratings",
+  "tabWallet": "Wallet",
+  "errorLoadingOrders": "An error occurred while loading orders",
+  "defaultDriverName": "Driver",
+  "statusAvailable": "Available Now",
+  "statusUnavailable": "Unavailable",
+
+  "permissionLocationRequired": "You need to allow location access first to go available",
+  "offerSentWaitingPassenger": "Your offer was sent, waiting for the passenger's response",
+  "offerSendFailed": "Couldn't send the offer, try again",
+  "arrivedAtDestination": "🎉 You've arrived at the destination",
+  "endTrip": "End Trip",
+  "startTrip": "Start Trip",
+  "driverToggleOnline": "Available",
+  "driverToggleOffline": "Unavailable",
+  "mustSignInFirst": "You need to sign in first",
+  "paymentMethodCash": "Cash",
+
+  "navProfile": "Profile",
+  "navIncome": "Income",
+  "navRatings": "Ratings",
+  "navWallet": "Wallet",
+
+  "distanceDurationLabel": "{distance} km • {duration} min",
+  "@distanceDurationLabel": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+
+  "currencyEGP": "{amount} EGP",
+  "@currencyEGP": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+
+  "distanceKmLabel": "{distance} km",
+  "@distanceKmLabel": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+
+  "offerSentAlreadyLabel": "Your offer was sent, waiting for the passenger",
+  "offerCustomButton": "Offer a different price",
+  "acceptProposedPrice": "Accept the proposed price",
+  "setYourPriceLabel": "Set the price you're offering",
+  "submitOfferButton": "Send Offer",
+
+  "tripInProgressLabel": "Trip in progress now",
+  "tripAcceptedWaitingLabel": "Trip accepted - waiting to start",
+
+  "todayIncome": "Today's Income",
+  "totalIncome": "Total Income",
+  "completedTripsCount": "Completed Trips Count",
+
+  "ratingCountLabel": "From {count} ratings",
+  "@ratingCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "availableBalance": "Your Available Balance",
+  "totalEarningsBeforeCommission": "Total Earnings (Before Commission)",
+  "companyCommission": "Company Commission (10%)",
+
+  "motorcycleInfoTitle": "Motorcycle Info",
+  "bikeModelLabel": "Model",
+  "bikeColorLabel": "Color",
+  "bikePlateLabel": "Plate Number",
+  "bikeYearLabel": "Model (Year of Manufacture)",
+
+  "orderDetailsTitle": "Order Details",
+  "locationUnavailableForOrder": "Location unavailable for this order",
+  "offerAtMyPriceButton": "Offer My Price",
+  "alreadyOfferedOnOrder": "You've already made an offer on this order"
+}

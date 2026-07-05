@@ -1,0 +1,97 @@
+{
+  "appName": "طيار - وصلك في لحظة",
+  "clientOrderPriority": "طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية",
+  "driverNoOrders": "مفيش طلبات متاحة دلوقتي.. خليك مستعد!",
+  "driverNoRatings": "لسه مفيش تقييمات من الركاب.. شد حيلك",
+  "tabRequests": "طلباتي",
+  "tabIncome": "دخلي",
+  "tabRatings": "تقييماتي",
+  "tabWallet": "محفظتي",
+  "errorLoadingOrders": "حصل خطأ في تحميل الطلبات",
+  "defaultDriverName": "طيار",
+  "statusAvailable": "متاح دلوقتي",
+  "statusUnavailable": "غير متاح",
+
+  "permissionLocationRequired": "محتاج تسمح بصلاحية الموقع الأول عشان تبقى متاح",
+  "offerSentWaitingPassenger": "تم إرسال عرضك، بننتظر رد الراكب",
+  "offerSendFailed": "تعذر إرسال العرض، حاول تاني",
+  "arrivedAtDestination": "🎉 وصلت لوجهة الرحلة",
+  "endTrip": "إنهاء الرحلة",
+  "startTrip": "بدء الرحلة",
+  "driverToggleOnline": "متاح",
+  "driverToggleOffline": "غير متاح",
+  "mustSignInFirst": "لازم تسجل دخول الأول",
+  "paymentMethodCash": "كاش",
+
+  "navProfile": "البروفايل",
+  "navIncome": "الدخل",
+  "navRatings": "التقييم",
+  "navWallet": "المحفظة",
+
+  "distanceDurationLabel": "{distance} كم • {duration} دقيقة",
+  "@distanceDurationLabel": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+
+  "currencyEGP": "{amount} جنيه",
+  "@currencyEGP": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+
+  "distanceKmLabel": "{distance} كم",
+  "@distanceKmLabel": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+
+  "offerSentAlreadyLabel": "تم إرسال عرضك، في انتظار الراكب",
+  "offerCustomButton": "عرض سعر مختلف",
+  "acceptProposedPrice": "قبول بالسعر المقترح",
+  "setYourPriceLabel": "حدد السعر اللي تقدمه",
+  "submitOfferButton": "إرسال العرض",
+
+  "tripInProgressLabel": "الرحلة جارية الآن",
+  "tripAcceptedWaitingLabel": "رحلة مقبولة - في انتظار البدء",
+
+  "todayIncome": "دخل اليوم",
+  "totalIncome": "إجمالي الدخل",
+  "completedTripsCount": "عدد الرحلات المكتملة",
+
+  "ratingCountLabel": "من {count} تقييم",
+  "@ratingCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "availableBalance": "رصيدك المتاح",
+  "totalEarningsBeforeCommission": "إجمالي الأرباح (قبل العمولة)",
+  "companyCommission": "عمولة الشركة (10%)",
+
+  "motorcycleInfoTitle": "بيانات الموتوسيكل",
+  "bikeModelLabel": "الموديل",
+  "bikeColorLabel": "اللون",
+  "bikePlateLabel": "رقم اللوحة",
+  "bikeYearLabel": "الموديل (سنة الصنع)",
+
+  "orderDetailsTitle": "تفاصيل الطلب",
+  "locationUnavailableForOrder": "الموقع غير متاح لهذا الطلب",
+  "offerAtMyPriceButton": "تقديم بسعري",
+  "alreadyOfferedOnOrder": "قدّمت عرض بالفعل على الطلب ده"
+}
