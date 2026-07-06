@@ -656,6 +656,102 @@ abstract class AppLocalizations {
   /// **'وصل طلباتي'**
   String get serviceDeliverOrders;
 
+  /// No description provided for @deliveryOrderTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'توصيل طلب'**
+  String get deliveryOrderTitle;
+
+  /// No description provided for @pickupLocationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكان الاستلام'**
+  String get pickupLocationLabel;
+
+  /// No description provided for @deliveryLocationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكان التسليم'**
+  String get deliveryLocationLabel;
+
+  /// No description provided for @tapToSelectLocationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط لاختيار الموقع'**
+  String get tapToSelectLocationLabel;
+
+  /// No description provided for @pickupAddressDetailsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل مكان الاستلام'**
+  String get pickupAddressDetailsLabel;
+
+  /// No description provided for @pickupAddressDetailsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: الدور التاني، جنب الصيدلية'**
+  String get pickupAddressDetailsHint;
+
+  /// No description provided for @deliveryAddressDetailsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل مكان التسليم'**
+  String get deliveryAddressDetailsLabel;
+
+  /// No description provided for @deliveryAddressDetailsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: الدور التاني، جنب الصيدلية'**
+  String get deliveryAddressDetailsHint;
+
+  /// No description provided for @senderPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم موبايل المُرسل'**
+  String get senderPhoneLabel;
+
+  /// No description provided for @receiverPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم موبايل المُستلم'**
+  String get receiverPhoneLabel;
+
+  /// No description provided for @phoneNumberHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'01xxxxxxxxx'**
+  String get phoneNumberHint;
+
+  /// No description provided for @saveOrderButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ الطلب'**
+  String get saveOrderButton;
+
+  /// No description provided for @fillAllFieldsError.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك اختار المواقع واملأ كل البيانات المطلوبة'**
+  String get fillAllFieldsError;
+
+  /// No description provided for @estimatedFareLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر المقترح'**
+  String get estimatedFareLabel;
+
+  /// No description provided for @selectPickupLocationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار مكان الاستلام'**
+  String get selectPickupLocationTitle;
+
+  /// No description provided for @selectDeliveryLocationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار مكان التسليم'**
+  String get selectDeliveryLocationTitle;
+
   /// No description provided for @paymentMethodLabel.
   ///
   /// In ar, this message translates to:
