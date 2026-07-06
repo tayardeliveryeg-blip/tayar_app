@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'select_destination_screen.dart';
 import 'order_confirmation_screen.dart';
@@ -45,6 +46,26 @@ class TayarColors {
   static const Color cardDark = Color(0xFF2A2826);
   static const Color textWhite = Colors.white;
   static const Color textGrey = Color(0xFFB0B0B0);
+}
+
+// ====== روابط طيار الرسمية على السوشيال ميديا ======
+class TayarSocialLinks {
+  static const String facebook = 'https://www.facebook.com/tayardelivery/';
+  static const String instagram = 'https://www.instagram.com/gotayar/';
+  static const String whatsapp = 'https://wa.me/201142263460';
+}
+
+// ====== فتح رابط خارجي (سوشيال ميديا/واتساب) في تطبيق خارجي ======
+Future<void> launchSocialUrl(BuildContext context, String url) async {
+  final ok = await launchUrl(
+    Uri.parse(url),
+    mode: LaunchMode.externalApplication,
+  );
+  if (!ok && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.failedToOpenAppError)),
+    );
+  }
 }
 
 class PassengerHomeScreen extends StatefulWidget {
@@ -1627,16 +1648,24 @@ class TayarDrawer extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  _SocialIcon(icon: Icons.facebook),
-                  SizedBox(width: 20),
+                children: [
                   _SocialIcon(
-                    icon: Icons.camera_alt_outlined,
-                  ), // إنستجرام placeholder
-                  SizedBox(width: 20),
+                    icon: Icons.facebook,
+                    onTap: () =>
+                        launchSocialUrl(context, TayarSocialLinks.facebook),
+                  ),
+                  const SizedBox(width: 20),
                   _SocialIcon(
-                    icon: Icons.chat_bubble_outline,
-                  ), // واتساب placeholder
+                    icon: Icons.camera_alt_outlined, // إنستجرام
+                    onTap: () =>
+                        launchSocialUrl(context, TayarSocialLinks.instagram),
+                  ),
+                  const SizedBox(width: 20),
+                  _SocialIcon(
+                    icon: Icons.chat_bubble_outline, // واتساب
+                    onTap: () =>
+                        launchSocialUrl(context, TayarSocialLinks.whatsapp),
+                  ),
                 ],
               ),
             ),
@@ -1700,18 +1729,22 @@ class _DrawerItem extends StatelessWidget {
 
 class _SocialIcon extends StatelessWidget {
   final IconData icon;
-  const _SocialIcon({required this.icon});
+  final VoidCallback? onTap;
+  const _SocialIcon({required this.icon, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white54),
-        shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white54),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: Colors.white, size: 20),
       ),
-      child: Icon(icon, color: Colors.white, size: 20),
     );
   }
 }

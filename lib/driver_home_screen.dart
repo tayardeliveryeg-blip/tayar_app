@@ -1079,16 +1079,24 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               padding: const EdgeInsets.only(bottom: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  _DriverSocialIcon(icon: Icons.facebook),
-                  SizedBox(width: 20),
+                children: [
                   _DriverSocialIcon(
-                    icon: Icons.camera_alt_outlined,
-                  ), // إنستجرام placeholder
-                  SizedBox(width: 20),
+                    icon: Icons.facebook,
+                    onTap: () =>
+                        launchSocialUrl(context, TayarSocialLinks.facebook),
+                  ),
+                  const SizedBox(width: 20),
                   _DriverSocialIcon(
-                    icon: Icons.chat_bubble_outline,
-                  ), // واتساب placeholder
+                    icon: Icons.camera_alt_outlined, // إنستجرام
+                    onTap: () =>
+                        launchSocialUrl(context, TayarSocialLinks.instagram),
+                  ),
+                  const SizedBox(width: 20),
+                  _DriverSocialIcon(
+                    icon: Icons.chat_bubble_outline, // واتساب
+                    onTap: () =>
+                        launchSocialUrl(context, TayarSocialLinks.whatsapp),
+                  ),
                 ],
               ),
             ),
@@ -1604,18 +1612,22 @@ class _DriverDrawerItem extends StatelessWidget {
 // ====== أيقونة سوشيال ميديا دايرية في أسفل القايمة الجانبية ======
 class _DriverSocialIcon extends StatelessWidget {
   final IconData icon;
-  const _DriverSocialIcon({required this.icon});
+  final VoidCallback? onTap;
+  const _DriverSocialIcon({required this.icon, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white54),
-        shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white54),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: Colors.white, size: 20),
       ),
-      child: Icon(icon, color: Colors.white, size: 20),
     );
   }
 }
