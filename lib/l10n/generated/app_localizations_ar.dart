@@ -899,4 +899,36 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get waitingDriverShareLocationLabel =>
       'في انتظار بدء الطيار مشاركة موقعه...';
+
+  @override
+  String get noOrdersYetTitle => 'مفيش طلبات لسه';
+
+  @override
+  String get noOrdersYetSubtitle => 'طلباتك اللي هتعملها هتظهر هنا';
+
+  @override
+  String get orderStatusSearchingLabel => 'بيدور على سائق';
+
+  @override
+  String get orderStatusAcceptedLabel => 'مقبول';
+
+  @override
+  String get orderStatusInProgressLabel => 'جاري التنفيذ';
+
+  @override
+  String get orderStatusCompletedLabel => 'مكتمل';
+
+  @override
+  String get orderStatusCancelledLabel => 'ملغي';
+
+  @override
+  String get rideOrderTypeLabel => 'رحلة';
+
+  @override
+  String get deliveryOrderTypeLabel => 'توصيل';
+
+  @override
+  String fareAmountEgpLabel(String amount) {
+    return '$amount جنيه';
+  }
 }

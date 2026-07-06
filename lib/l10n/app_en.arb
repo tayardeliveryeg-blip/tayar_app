@@ -447,5 +447,23 @@
   "tripStartedOnWayToDestinationLabel": "Trip started - on the way to the destination",
   "updatingLabel": "Updating...",
   "arrivedWaitingDriverToEndTripLabel": "You've arrived at your destination! Waiting for the driver to end the trip",
-  "waitingDriverShareLocationLabel": "Waiting for the driver to start sharing their location..."
+  "waitingDriverShareLocationLabel": "Waiting for the driver to start sharing their location...",
+
+  "noOrdersYetTitle": "No orders yet",
+  "noOrdersYetSubtitle": "Your orders will show up here",
+  "orderStatusSearchingLabel": "Searching for a driver",
+  "orderStatusAcceptedLabel": "Accepted",
+  "orderStatusInProgressLabel": "In progress",
+  "orderStatusCompletedLabel": "Completed",
+  "orderStatusCancelledLabel": "Cancelled",
+  "rideOrderTypeLabel": "Ride",
+  "deliveryOrderTypeLabel": "Delivery",
+  "fareAmountEgpLabel": "{amount} EGP",
+  "@fareAmountEgpLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }

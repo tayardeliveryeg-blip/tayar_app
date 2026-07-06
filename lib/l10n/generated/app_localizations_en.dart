@@ -919,4 +919,36 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get waitingDriverShareLocationLabel =>
       'Waiting for the driver to start sharing their location...';
+
+  @override
+  String get noOrdersYetTitle => 'No orders yet';
+
+  @override
+  String get noOrdersYetSubtitle => 'Your orders will show up here';
+
+  @override
+  String get orderStatusSearchingLabel => 'Searching for a driver';
+
+  @override
+  String get orderStatusAcceptedLabel => 'Accepted';
+
+  @override
+  String get orderStatusInProgressLabel => 'In progress';
+
+  @override
+  String get orderStatusCompletedLabel => 'Completed';
+
+  @override
+  String get orderStatusCancelledLabel => 'Cancelled';
+
+  @override
+  String get rideOrderTypeLabel => 'Ride';
+
+  @override
+  String get deliveryOrderTypeLabel => 'Delivery';
+
+  @override
+  String fareAmountEgpLabel(String amount) {
+    return '$amount EGP';
+  }
 }

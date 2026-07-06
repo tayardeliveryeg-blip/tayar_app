@@ -18,6 +18,7 @@ import 'create_delivery_order_screen.dart';
 import 'driver_registration_screen.dart';
 import 'login_screen.dart';
 import 'notifications_screen.dart';
+import 'order_history_screen.dart';
 import 'security_screen.dart';
 import 'settings_screen.dart';
 import 'help_screen.dart';
@@ -1500,6 +1501,15 @@ class TayarDrawer extends StatelessWidget {
                   _DrawerItem(
                     icon: Icons.history,
                     label: AppLocalizations.of(context)!.orderHistoryLabel,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const OrderHistoryScreen(),
+                        ),
+                      );
+                    },
                   ),
                   _DrawerItem(
                     icon: Icons.delivery_dining,

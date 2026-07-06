@@ -1741,6 +1741,66 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'في انتظار بدء الطيار مشاركة موقعه...'**
   String get waitingDriverShareLocationLabel;
+
+  /// No description provided for @noOrdersYetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش طلبات لسه'**
+  String get noOrdersYetTitle;
+
+  /// No description provided for @noOrdersYetSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلباتك اللي هتعملها هتظهر هنا'**
+  String get noOrdersYetSubtitle;
+
+  /// No description provided for @orderStatusSearchingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيدور على سائق'**
+  String get orderStatusSearchingLabel;
+
+  /// No description provided for @orderStatusAcceptedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقبول'**
+  String get orderStatusAcceptedLabel;
+
+  /// No description provided for @orderStatusInProgressLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري التنفيذ'**
+  String get orderStatusInProgressLabel;
+
+  /// No description provided for @orderStatusCompletedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتمل'**
+  String get orderStatusCompletedLabel;
+
+  /// No description provided for @orderStatusCancelledLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملغي'**
+  String get orderStatusCancelledLabel;
+
+  /// No description provided for @rideOrderTypeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رحلة'**
+  String get rideOrderTypeLabel;
+
+  /// No description provided for @deliveryOrderTypeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'توصيل'**
+  String get deliveryOrderTypeLabel;
+
+  /// No description provided for @fareAmountEgpLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} جنيه'**
+  String fareAmountEgpLabel(String amount);
 }
 
 class _AppLocalizationsDelegate

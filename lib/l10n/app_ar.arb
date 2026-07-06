@@ -447,5 +447,23 @@
   "tripStartedOnWayToDestinationLabel": "الرحلة بدأت - في الطريق للوجهة",
   "updatingLabel": "جاري التحديث...",
   "arrivedWaitingDriverToEndTripLabel": "وصلتوا لوجهتكم! في انتظار الطيار ينهي الرحلة",
-  "waitingDriverShareLocationLabel": "في انتظار بدء الطيار مشاركة موقعه..."
+  "waitingDriverShareLocationLabel": "في انتظار بدء الطيار مشاركة موقعه...",
+
+  "noOrdersYetTitle": "مفيش طلبات لسه",
+  "noOrdersYetSubtitle": "طلباتك اللي هتعملها هتظهر هنا",
+  "orderStatusSearchingLabel": "بيدور على سائق",
+  "orderStatusAcceptedLabel": "مقبول",
+  "orderStatusInProgressLabel": "جاري التنفيذ",
+  "orderStatusCompletedLabel": "مكتمل",
+  "orderStatusCancelledLabel": "ملغي",
+  "rideOrderTypeLabel": "رحلة",
+  "deliveryOrderTypeLabel": "توصيل",
+  "fareAmountEgpLabel": "{amount} جنيه",
+  "@fareAmountEgpLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }
