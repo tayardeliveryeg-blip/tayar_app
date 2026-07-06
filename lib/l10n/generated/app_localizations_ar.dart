@@ -818,6 +818,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whereDoYouWantToGoTitle => 'عايز تروح فين؟';
 
   @override
+  String get selectDropoffLocationTitle => 'اختار مكان التسليم';
+
+  @override
   String get searchPlaceHint => 'اكتب اسم الشارع أو المكان...';
 
   @override

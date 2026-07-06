@@ -44,7 +44,12 @@ class SelectDestinationScreen extends StatefulWidget {
   // من الخريطة" عشان المستخدم يبدأ من حوالين نفسه بدل مركز المدينة الثابت.
   final LatLng? initialLocation;
 
-  const SelectDestinationScreen({super.key, this.initialLocation});
+  // عنوان مخصص للشاشة (اختياري) - لو فاضي بيستخدم النص الافتراضي
+  // "عايز تروح فين؟"، ولو محدد (زي حالة اختيار مكان تسليم طلب توصيل)
+  // بيظهر بدله.
+  final String? title;
+
+  const SelectDestinationScreen({super.key, this.initialLocation, this.title});
 
   @override
   State<SelectDestinationScreen> createState() =>
@@ -314,7 +319,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          loc.whereDoYouWantToGoTitle,
+          widget.title ?? loc.whereDoYouWantToGoTitle,
           style: const TextStyle(color: Colors.white),
         ),
       ),

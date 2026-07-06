@@ -100,6 +100,7 @@ class _CreateDeliveryOrderScreenState
       MaterialPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _dropoffLocation ?? _pickupLocation,
+          title: AppLocalizations.of(context)!.selectDropoffLocationTitle,
         ),
       ),
     );

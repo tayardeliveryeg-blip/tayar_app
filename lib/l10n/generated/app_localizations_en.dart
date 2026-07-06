@@ -837,6 +837,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whereDoYouWantToGoTitle => 'Where do you want to go?';
 
   @override
+  String get selectDropoffLocationTitle => 'Select delivery location';
+
+  @override
   String get searchPlaceHint => 'Type a street or place name...';
 
   @override
