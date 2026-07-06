@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'لسه مفيش تقييمات من الركاب.. شد حيلك'**
   String get driverNoRatings;
 
+  /// No description provided for @newDriverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيار جديد'**
+  String get newDriverLabel;
+
   /// No description provided for @tabRequests.
   ///
   /// In ar, this message translates to:

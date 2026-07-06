@@ -1156,8 +1156,8 @@ class _OfferCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (rating != null) ...[
-                  const SizedBox(height: 2),
+                const SizedBox(height: 2),
+                if (rating != null)
                   Row(
                     children: [
                       const Icon(
@@ -1174,8 +1174,16 @@ class _OfferCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                  )
+                else
+                  Text(
+                    AppLocalizations.of(context)!.newDriverLabel,
+                    style: const TextStyle(
+                      color: TayarColors.textGrey,
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
-                ],
               ],
             ),
           ),
@@ -1334,8 +1342,8 @@ class _OfferNotificationSheet extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          if (rating != null) ...[
-                            const SizedBox(height: 4),
+                          const SizedBox(height: 4),
+                          if (rating != null)
                             Row(
                               children: [
                                 const Icon(
@@ -1352,8 +1360,16 @@ class _OfferNotificationSheet extends StatelessWidget {
                                   ),
                                 ),
                               ],
+                            )
+                          else
+                            Text(
+                              AppLocalizations.of(context)!.newDriverLabel,
+                              style: const TextStyle(
+                                color: TayarColors.textGrey,
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
-                          ],
                         ],
                       ),
                     ),

@@ -1093,7 +1093,7 @@ class TayarBottomSheet extends StatelessWidget {
                   Expanded(
                     child: ServiceCard(
                       title: AppLocalizations.of(context)!.serviceDeliverOrders,
-                      icon: Icons.inventory_2_outlined,
+                      icon: Icons.delivery_dining,
                       onTap: () {
                         // TODO: نفّذ منطق طلب وصل طلباتي
                       },
@@ -1486,7 +1486,7 @@ class TayarDrawer extends StatelessWidget {
                     label: AppLocalizations.of(context)!.orderHistoryLabel,
                   ),
                   _DrawerItem(
-                    icon: Icons.local_shipping_outlined,
+                    icon: Icons.delivery_dining,
                     label: AppLocalizations.of(context)!.serviceDeliverOrders,
                   ),
                   _DrawerItem(

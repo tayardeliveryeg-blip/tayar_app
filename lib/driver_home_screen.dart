@@ -441,18 +441,47 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     }
   }
 
+  // ====== جلب متوسط تقييم السائق من الكاش الجاهز ======
+  // بدل ما نجيب كل الطلبات المكتملة ونحسب المتوسط كل مرة (استعلام تقيل ومكلّف)،
+  // بنقرا مستند drivers/{uid} بس اللي فيه ratingSum و ratingCount جاهزين
+  // ومتحدّثين أول ما يوصل تقييم جديد (شوف transaction في شاشة تقييم الرحلة)
+  // بيرجع null لو السائق لسه معندوش أي تقييمات (سائق جديد)
+  Future<double?> _getDriverAverageRating(String driverId) async {
+    try {
+      await ensureDriverRatingCacheExists(driverId);
+      final doc = await FirebaseFirestore.instance
+          .collection('drivers')
+          .doc(driverId)
+          .get();
+      final data = doc.data();
+      final count = (data?['ratingCount'] as num?)?.toInt() ?? 0;
+      if (count <= 0) return null;
+      final sum = (data?['ratingSum'] as num?)?.toDouble() ?? 0.0;
+      return sum / count;
+    } catch (e) {
+      debugPrint('⚠️ تعذر جلب متوسط تقييم السائق: $e');
+      return null;
+    }
+  }
+
   // ====== إرسال عرض سعر على طلب معين ======
   Future<void> _submitOffer(String orderId, double price) async {
     final user = _currentUser;
     if (user == null) return;
 
+    // ====== ناخد النص الافتراضي قبل أي await، عشان منستخدمش context
+    // بعد فجوة async من غير ما نتأكد إن الشاشة لسه mounted ======
+    final defaultDriverName = AppLocalizations.of(context)!.defaultDriverName;
+
     try {
+      final averageRating = await _getDriverAverageRating(user.uid);
+
       await _ordersRef.doc(orderId).collection('offers').add({
         'driverId': user.uid,
-        'driverName':
-            user.displayName ?? AppLocalizations.of(context)!.defaultDriverName,
-        'driverRating':
-            4.8, // TODO: هيتحدث لاحقًا من بيانات تقييم الطيار الحقيقية
+        'driverName': user.displayName ?? defaultDriverName,
+        // لو السائق لسه معندوش تقييمات، بنبعت null بدل رقم وهمي؛
+        // شاشة الراكب لازم تتعامل مع null كـ "سائق جديد" بدل ما تعرض نجوم فاضية
+        'driverRating': averageRating,
         'price': price,
         'createdAt': FieldValue.serverTimestamp(),
       });
@@ -1661,18 +1690,66 @@ class _DriverIncomeTab extends StatelessWidget {
   }
 }
 
+// ====== يتأكد إن مستند drivers/{uid} فيه ratingSum/ratingCount جاهزين ======
+// لو السائق قديم من قبل إضافة الكاش ده (أو مفيش كاش لأي سبب)، بيحسبها مرة واحدة
+// من كل الطلبات المكتملة القديمة ويخزنها، عشان أي قراءة بعد كده تبقى رخيصة
+// (مستند واحد بدل مسح كل الطلبات في كل مرة). لو الكاش موجود بالفعل، منعملش حاجة.
+// top-level (مش جوه كلاس) عشان يتنادى من أي مكان في الملف: شاشة الطيار وتبويب التقييم.
+Future<void> ensureDriverRatingCacheExists(String driverId) async {
+  final driverRef = FirebaseFirestore.instance
+      .collection('drivers')
+      .doc(driverId);
+  try {
+    final doc = await driverRef.get();
+    if (doc.data()?['ratingCount'] != null) return; // متحسبة بالفعل
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('orders')
+        .where('driverId', isEqualTo: driverId)
+        .where('status', isEqualTo: 'completed')
+        .get();
+
+    final ratings = <double>[];
+    for (final d in snapshot.docs) {
+      final r = (d.data()['rating'] as num?)?.toDouble();
+      if (r != null) ratings.add(r);
+    }
+    final sum = ratings.fold<double>(0, (a, b) => a + b);
+
+    await driverRef.set({
+      'ratingSum': sum,
+      'ratingCount': ratings.length,
+    }, SetOptions(merge: true));
+  } catch (e) {
+    debugPrint('⚠️ تعذر تجهيز كاش تقييم السائق: $e');
+  }
+}
+
 // ====== تبويب "تقييمي": متوسط تقييمات الركاب ======
-class _DriverRatingTab extends StatelessWidget {
+// بيقرا من كاش drivers/{uid} (ratingSum/ratingCount) بدل ما يمسح كل الطلبات
+// المكتملة في كل مرة الشاشة تتفتح. أول مرة (initState) بنتأكد إن الكاش
+// موجود أصلًا (بيتحسب تلقائي لو مفيش) وبعد كده الـ stream بيتحدث لحظيًا.
+class _DriverRatingTab extends StatefulWidget {
   final String driverId;
   const _DriverRatingTab({required this.driverId});
 
   @override
+  State<_DriverRatingTab> createState() => _DriverRatingTabState();
+}
+
+class _DriverRatingTabState extends State<_DriverRatingTab> {
+  @override
+  void initState() {
+    super.initState();
+    ensureDriverRatingCacheExists(widget.driverId);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
-          .collection('orders')
-          .where('driverId', isEqualTo: driverId)
-          .where('status', isEqualTo: 'completed')
+          .collection('drivers')
+          .doc(widget.driverId)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -1681,13 +1758,10 @@ class _DriverRatingTab extends StatelessWidget {
           );
         }
 
-        final ratings = <double>[];
-        for (final doc in snapshot.data!.docs) {
-          final r = (doc.data()['rating'] as num?)?.toDouble();
-          if (r != null) ratings.add(r);
-        }
+        final data = snapshot.data!.data();
+        final count = (data?['ratingCount'] as num?)?.toInt() ?? 0;
 
-        if (ratings.isEmpty) {
+        if (count <= 0) {
           return Center(
             child: Text(
               AppLocalizations.of(context)!.driverNoRatings,
@@ -1696,7 +1770,8 @@ class _DriverRatingTab extends StatelessWidget {
           );
         }
 
-        final avg = ratings.reduce((a, b) => a + b) / ratings.length;
+        final sum = (data?['ratingSum'] as num?)?.toDouble() ?? 0.0;
+        final avg = sum / count;
 
         return Center(
           child: Column(
@@ -1724,7 +1799,7 @@ class _DriverRatingTab extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                AppLocalizations.of(context)!.ratingCountLabel(ratings.length),
+                AppLocalizations.of(context)!.ratingCountLabel(count),
                 style: const TextStyle(
                   color: TayarColors.textGrey,
                   fontSize: 14,

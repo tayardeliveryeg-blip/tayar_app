@@ -22,6 +22,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverNoRatings => 'لسه مفيش تقييمات من الركاب.. شد حيلك';
 
   @override
+  String get newDriverLabel => 'طيار جديد';
+
+  @override
   String get tabRequests => 'طلباتي';
 
   @override

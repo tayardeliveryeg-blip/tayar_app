@@ -50,22 +50,32 @@ class _RateTripScreenState extends State<RateTripScreen> {
     try {
       final firestore = FirebaseFirestore.instance;
       final comment = _commentController.text.trim();
+      final orderRef = firestore.collection('orders').doc(widget.orderId);
+      final driverRef = firestore.collection('drivers').doc(widget.driverId);
 
-      // ====== حفظ التقييم على الرحلة نفسها ======
-      await firestore.collection('orders').doc(widget.orderId).update({
-        'rating': _stars,
-        'ratingComment': comment.isEmpty ? null : comment,
-        'ratedAt': FieldValue.serverTimestamp(),
+      // ====== transaction واحدة: نتأكد إن الطلب ده لسه ما اتقيّمش قبل كده
+      // قبل ما نزوّد عداد الطيار، عشان لو الشاشة اتفتحت مرتين لأي سبب
+      // (bug مستقبلي، ضغط مزدوج نادر، إلخ) منضخّمش متوسط تقييمه غلط ======
+      await firestore.runTransaction((tx) async {
+        final orderSnap = await tx.get(orderRef);
+        final alreadyRated = orderSnap.data()?['rating'] != null;
+
+        tx.update(orderRef, {
+          'rating': _stars,
+          'ratingComment': comment.isEmpty ? null : comment,
+          'ratedAt': FieldValue.serverTimestamp(),
+        });
+
+        // ====== تحديث إجمالي تقييمات الطيار (مجموع النجوم + عدد التقييمات) ======
+        // متوسط تقييم الطيار في أي وقت = ratingSum / ratingCount
+        // منزودش العداد لو الطلب ده اتقيّم قبل كده أصلًا
+        if (!alreadyRated && widget.driverId.isNotEmpty) {
+          tx.set(driverRef, {
+            'ratingSum': FieldValue.increment(_stars),
+            'ratingCount': FieldValue.increment(1),
+          }, SetOptions(merge: true));
+        }
       });
-
-      // ====== تحديث إجمالي تقييمات الطيار (مجموع النجوم + عدد التقييمات) ======
-      // متوسط تقييم الطيار في أي وقت = ratingSum / ratingCount
-      if (widget.driverId.isNotEmpty) {
-        await firestore.collection('drivers').doc(widget.driverId).set({
-          'ratingSum': FieldValue.increment(_stars),
-          'ratingCount': FieldValue.increment(1),
-        }, SetOptions(merge: true));
-      }
 
       if (!mounted) return;
       _finish(showThanks: true);

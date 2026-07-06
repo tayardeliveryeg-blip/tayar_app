@@ -3,6 +3,7 @@
   "clientOrderPriority": "Your request goes to the nearest drivers; the best price gets priority",
   "driverNoOrders": "No orders available right now.. stay ready!",
   "driverNoRatings": "No ratings from passengers yet.. keep it up",
+  "newDriverLabel": "New driver",
   "tabRequests": "Requests",
   "tabIncome": "Income",
   "tabRatings": "Ratings",

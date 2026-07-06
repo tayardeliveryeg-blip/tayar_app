@@ -3,6 +3,7 @@
   "clientOrderPriority": "طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية",
   "driverNoOrders": "مفيش طلبات متاحة دلوقتي.. خليك مستعد!",
   "driverNoRatings": "لسه مفيش تقييمات من الركاب.. شد حيلك",
+  "newDriverLabel": "طيار جديد",
   "tabRequests": "طلباتي",
   "tabIncome": "دخلي",
   "tabRatings": "تقييماتي",

@@ -22,6 +22,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverNoRatings => 'No ratings from passengers yet.. keep it up';
 
   @override
+  String get newDriverLabel => 'New driver';
+
+  @override
   String get tabRequests => 'Requests';
 
   @override
