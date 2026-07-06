@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 import 'login_screen.dart';
 import 'passenger_home.dart';
 import 'driver_home_screen.dart';
+import 'splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,7 +66,7 @@ class _TayarAppState extends State<TayarApp> {
       locale: _locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const AuthGate(),
+      home: const SplashScreen(),
     );
   }
 }
