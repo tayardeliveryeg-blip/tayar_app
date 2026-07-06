@@ -19,10 +19,20 @@ class TayarApp extends StatefulWidget {
   const TayarApp({super.key});
 
   // ====== بيدور على أقرب TayarApp في الشجرة عشان أي شاشة تقدر تغيّر اللغة ======
-  // الاستخدام من أي مكان: TayarApp.setLocale(context, const Locale('en'));
-  static void setLocale(BuildContext context, Locale locale) {
+  // الاستخدام من أي مكان:
+  //   TayarApp.setLocale(context, const Locale('en'));  // تغيير يدوي لإنجليزي
+  //   TayarApp.setLocale(context, const Locale('ar'));  // تغيير يدوي لعربي
+  //   TayarApp.setLocale(context, null);                // رجوع لاستخدام لغة الجهاز
+  static void setLocale(BuildContext context, Locale? locale) {
     final state = context.findAncestorStateOfType<_TayarAppState>();
     state?._setLocale(locale);
+  }
+
+  // ====== بترجع اللغة المختارة يدويًا حاليًا، أو null لو التطبيق شغال
+  // على لغة الجهاز تلقائيًا (مفيدة لعرض الاختيار الصح في شاشة الإعدادات) ======
+  static Locale? getManualLocale(BuildContext context) {
+    final state = context.findAncestorStateOfType<_TayarAppState>();
+    return state?._locale;
   }
 
   @override
@@ -30,8 +40,9 @@ class TayarApp extends StatefulWidget {
 }
 
 class _TayarAppState extends State<TayarApp> {
-  // ====== اللغة الحالية، بتتحمّل من الجهاز أول ما التطبيق يفتح ======
-  Locale _locale = const Locale('ar');
+  // ====== اللغة المختارة يدويًا من المستخدم. لو null، معناها التطبيق
+  // بيتبع لغة الجهاز تلقائيًا (السلوك الافتراضي) ======
+  Locale? _locale;
 
   @override
   void initState() {
@@ -42,16 +53,22 @@ class _TayarAppState extends State<TayarApp> {
   Future<void> _loadSavedLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final savedCode = prefs.getString('languageCode');
+    // ====== لو مفيش قيمة محفوظة، سيبنا _locale = null عشان يستخدم لغة الجهاز ======
     if (savedCode != null && mounted) {
       setState(() => _locale = Locale(savedCode));
     }
   }
 
-  // ====== بتغيّر اللغة فورًا وتحفظ الاختيار عشان يفضل ثابت بعد إغلاق التطبيق ======
-  Future<void> _setLocale(Locale locale) async {
+  // ====== بتغيّر اللغة فورًا وتحفظ الاختيار عشان يفضل ثابت بعد إغلاق التطبيق.
+  // لو اتبعتلها null، بتمسح الاختيار المحفوظ ويرجع التطبيق يتبع لغة الجهاز ======
+  Future<void> _setLocale(Locale? locale) async {
     setState(() => _locale = locale);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('languageCode', locale.languageCode);
+    if (locale == null) {
+      await prefs.remove('languageCode');
+    } else {
+      await prefs.setString('languageCode', locale.languageCode);
+    }
   }
 
   @override
@@ -63,6 +80,8 @@ class _TayarAppState extends State<TayarApp> {
         primaryColor: const Color(0xFFFF6B00),
         fontFamily: 'Arial',
       ),
+      // ====== locale: null → Flutter بيقرأ لغة الجهاز تلقائيًا ويطابقها مع
+      // supportedLocales. لو المستخدم اختار لغة يدويًا، بتتفرض هنا مباشرة ======
       locale: _locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
