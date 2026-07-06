@@ -7,6 +7,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'passenger_home.dart' show TayarColors;
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'rate_trip_screen.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -32,7 +34,8 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
 
   // ====== بيانات الرحلة (بتتحدث مع أي تغيير في الأوردر) ======
   String _status = 'accepted'; // accepted → in_progress → completed / cancelled
-  String _driverName = 'الطيار';
+  String _driverName = '';
+  String _driverId = '';
   double _fare = 0;
   String _pickupAddress = '';
   String _destinationAddress = '';
@@ -97,7 +100,10 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
 
     setState(() {
       _status = newStatus;
-      _driverName = (data['driverName'] as String?) ?? 'الطيار';
+      _driverName =
+          (data['driverName'] as String?) ??
+          AppLocalizations.of(context)!.defaultDriverName;
+      _driverId = (data['driverId'] as String?) ?? '';
       _fare = (data['acceptedFare'] as num?)?.toDouble() ?? 0;
       _pickupAddress = (data['pickupAddress'] as String?) ?? '';
       _destinationAddress = (data['destinationAddress'] as String?) ?? '';
@@ -112,8 +118,14 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
       }
     });
 
-    // ====== الرحلة خلصت أو اتلغت ======
-    if (newStatus == 'completed' || newStatus == 'cancelled') {
+    // ====== الرحلة خلصت: نوجه الراكب مباشرة لشاشة تقييم الطيار ======
+    if (newStatus == 'completed') {
+      _goToRateTripScreen();
+      return;
+    }
+
+    // ====== الرحلة اتلغت ======
+    if (newStatus == 'cancelled') {
       _showEndDialog(newStatus);
       return;
     }
@@ -300,13 +312,36 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
     }
   }
 
-  void _showEndDialog(String status) {
+  // ====== لما الرحلة تخلص (completed) بننتقل مباشرة لشاشة تقييم الطيار
+  // بدل ديالوج الشكر، عشان نضمن إن الراكب يقيّم كل رحلة ======
+  void _goToRateTripScreen() {
     if (_endDialogShown) return;
     _endDialogShown = true;
-    final bool completed = status == 'completed';
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => RateTripScreen(
+            orderId: widget.orderId,
+            driverId: _driverId,
+            driverName: _driverName,
+            fare: _fare,
+          ),
+        ),
+        (route) => route.isFirst,
+      );
+    });
+  }
+
+  // ====== ديالوج الإلغاء فقط (لما الطيار أو النظام يلغي الرحلة) ======
+  void _showEndDialog(String status) {
+    if (_endDialogShown) return;
+    _endDialogShown = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final loc = AppLocalizations.of(context)!;
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -317,22 +352,16 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
           ),
           title: Column(
             children: [
-              Icon(
-                completed ? Icons.flag_circle : Icons.cancel,
-                color: completed ? TayarColors.primary : Colors.redAccent,
-                size: 56,
-              ),
+              const Icon(Icons.cancel, color: Colors.redAccent, size: 56),
               const SizedBox(height: 12),
               Text(
-                completed ? 'وصلت لوجهتك!' : 'تم إلغاء الرحلة',
+                loc.tripCancelledTitle,
                 style: const TextStyle(color: Colors.white),
               ),
             ],
           ),
           content: Text(
-            completed
-                ? 'شكرا لاسخدامك طيار!'
-                : 'الرحلة اتلغت من الطيار أو من النظام',
+            loc.tripCancelledByDriverOrSystemLabel,
             textAlign: TextAlign.center,
             style: const TextStyle(color: TayarColors.textGrey),
           ),
@@ -341,9 +370,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               child: TextButton(
                 onPressed: () =>
                     Navigator.of(context).popUntil((route) => route.isFirst),
-                child: const Text(
-                  'تمام',
-                  style: TextStyle(color: TayarColors.primary),
+                child: Text(
+                  loc.ok,
+                  style: const TextStyle(color: TayarColors.primary),
                 ),
               ),
             ),
@@ -354,21 +383,23 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
   }
 
   String get _statusLabel {
+    final loc = AppLocalizations.of(context)!;
     if (_status == 'in_progress' && _arrivedAtDestination) {
-      return 'وصلتوا لوجهتكم 🎉';
+      return loc.arrivedAtYourDestinationStatusLabel;
     }
     switch (_status) {
       case 'accepted':
-        return 'الطيار في الطريق ليك';
+        return loc.driverOnWayToYouLabel;
       case 'in_progress':
-        return 'الرحلة بدأت - في الطريق للوجهة';
+        return loc.tripStartedOnWayToDestinationLabel;
       default:
-        return 'جاري التحديث...';
+        return loc.updatingLabel;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: TayarColors.background,
       body: Stack(
@@ -483,16 +514,20 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.celebration, color: Colors.white, size: 18),
-                    SizedBox(width: 10),
+                    const Icon(
+                      Icons.celebration,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 10),
                     Flexible(
                       child: Text(
-                        'وصلتوا لوجهتكم! في انتظار الطيار ينهي الرحلة',
+                        loc.arrivedWaitingDriverToEndTripLabel,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
@@ -525,10 +560,10 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
@@ -536,10 +571,10 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                         color: TayarColors.primary,
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text(
-                      'في انتظار بدء الطيار مشاركة موقعه...',
-                      style: TextStyle(color: Colors.white, fontSize: 13),
+                      loc.waitingDriverShareLocationLabel,
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
                     ),
                   ],
                 ),
@@ -624,7 +659,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                               ),
                             ),
                             Text(
-                              '${_fare.toStringAsFixed(0)} جنيه',
+                              loc.currencyEGP(_fare.toStringAsFixed(0)),
                               style: const TextStyle(
                                 color: TayarColors.textGrey,
                                 fontSize: 13,
@@ -638,14 +673,16 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '${_remainingDistanceKm!.toStringAsFixed(1)} كم',
+                              loc.distanceKmLabel(
+                                _remainingDistanceKm!.toStringAsFixed(1),
+                              ),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              '${_remainingDurationMin ?? 0} دقيقة',
+                              loc.durationMinLabel(_remainingDurationMin ?? 0),
                               style: const TextStyle(
                                 color: TayarColors.textGrey,
                                 fontSize: 12,
