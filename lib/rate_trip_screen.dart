@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, PassengerHomeScreen;
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 /// ====== شاشة تقييم الطيار بعد انتهاء الرحلة ======
 /// بتظهر تلقائيًا لما الأوردر يوصل لحالة completed، وبتسمح للراكب
@@ -37,7 +38,9 @@ class _RateTripScreenState extends State<RateTripScreen> {
   Future<void> _submitRating() async {
     if (_stars == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('من فضلك اختار عدد النجوم الأول')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pleaseSelectStarsFirst),
+        ),
       );
       return;
     }
@@ -71,39 +74,49 @@ class _RateTripScreenState extends State<RateTripScreen> {
       if (!mounted) return;
       setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذر حفظ التقييم، حاول تاني')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.failedToSaveRatingError),
+        ),
       );
     }
   }
 
-  void _finish({bool showThanks = false}) {
-    Navigator.of(context).popUntil((route) => route.isFirst);
+  Future<void> _finish({bool showThanks = false}) async {
+    final loc = AppLocalizations.of(context)!;
     if (showThanks) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('شكرًا لتقييمك! 🌟')));
+      ).showSnackBar(SnackBar(content: Text(loc.thankYouForRatingLabel)));
+      await Future.delayed(const Duration(milliseconds: 600));
     }
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const PassengerHomeScreen()),
+      (route) => false,
+    );
   }
 
-  String get _starsLabel {
+  String _starsLabel(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     switch (_stars) {
       case 1:
-        return 'سيء جدًا';
+        return loc.ratingVeryBadLabel;
       case 2:
-        return 'مقبول';
+        return loc.ratingFairLabel;
       case 3:
-        return 'كويس';
+        return loc.ratingGoodLabel;
       case 4:
-        return 'جيد جدًا';
+        return loc.ratingVeryGoodLabel;
       case 5:
-        return 'ممتاز';
+        return loc.ratingExcellentLabel;
       default:
-        return 'اختار تقييمك';
+        return loc.chooseYourRatingLabel;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     // ====== منمنعش الرجوع بالزرار الفيزيائي بدون تقييم أو تخطي واضح ======
     return PopScope(
       canPop: false,
@@ -121,18 +134,21 @@ class _RateTripScreenState extends State<RateTripScreen> {
                   size: 64,
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'وصلت لوجهتك بأمان!',
-                  style: TextStyle(
+                Text(
+                  loc.rateTripArrivedSafelyTitle,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'قيّم رحلتك مع الطيار',
-                  style: TextStyle(color: TayarColors.textGrey, fontSize: 14),
+                Text(
+                  loc.rateTripSubtitle,
+                  style: const TextStyle(
+                    color: TayarColors.textGrey,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 28),
 
@@ -170,7 +186,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${widget.fare.toStringAsFixed(0)} جنيه',
+                              loc.currencyEGP(widget.fare.toStringAsFixed(0)),
                               style: const TextStyle(
                                 color: TayarColors.textGrey,
                                 fontSize: 13,
@@ -205,7 +221,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _starsLabel,
+                  _starsLabel(context),
                   style: const TextStyle(
                     color: TayarColors.textGrey,
                     fontSize: 13,
@@ -220,7 +236,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                   maxLines: 3,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'اكتب تعليقك (اختياري)',
+                    hintText: loc.commentHintOptional,
                     hintStyle: const TextStyle(color: TayarColors.textGrey),
                     filled: true,
                     fillColor: TayarColors.cardDark,
@@ -254,9 +270,9 @@ class _RateTripScreenState extends State<RateTripScreen> {
                               strokeWidth: 2,
                             ),
                           )
-                        : const Text(
-                            'إرسال التقييم',
-                            style: TextStyle(
+                        : Text(
+                            loc.submitRatingButton,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -269,9 +285,9 @@ class _RateTripScreenState extends State<RateTripScreen> {
                 // ====== تخطي بدون تقييم ======
                 TextButton(
                   onPressed: _isSubmitting ? null : () => _finish(),
-                  child: const Text(
-                    'تخطي',
-                    style: TextStyle(color: TayarColors.textGrey),
+                  child: Text(
+                    loc.skipButton,
+                    style: const TextStyle(color: TayarColors.textGrey),
                   ),
                 ),
               ],
