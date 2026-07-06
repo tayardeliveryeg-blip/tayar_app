@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'passenger_home.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
@@ -41,18 +42,19 @@ class NotificationsScreen extends StatelessWidget {
     }
   }
 
-  String _timeAgo(DateTime dateTime) {
+  String _timeAgo(DateTime dateTime, AppLocalizations l10n) {
     final diff = DateTime.now().difference(dateTime);
-    if (diff.inMinutes < 1) return 'الآن';
-    if (diff.inMinutes < 60) return 'من ${diff.inMinutes} دقيقة';
-    if (diff.inHours < 24) return 'من ${diff.inHours} ساعة';
-    if (diff.inDays < 7) return 'من ${diff.inDays} يوم';
+    if (diff.inMinutes < 1) return l10n.justNowLabel;
+    if (diff.inMinutes < 60) return l10n.minutesAgoLabel(diff.inMinutes);
+    if (diff.inHours < 24) return l10n.hoursAgoLabel(diff.inHours);
+    if (diff.inDays < 7) return l10n.daysAgoLabel(diff.inDays);
     return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
   }
 
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: TayarColors.background,
@@ -60,9 +62,9 @@ class NotificationsScreen extends StatelessWidget {
         backgroundColor: TayarColors.background,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'الإشعارات',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          l10n.navNotifications,
+          style: const TextStyle(color: Colors.white),
         ),
         actions: [
           if (uid != null)
@@ -76,9 +78,12 @@ class NotificationsScreen extends StatelessWidget {
                 if (!hasUnread) return const SizedBox.shrink();
                 return TextButton(
                   onPressed: () => _markAllAsRead(docs),
-                  child: const Text(
-                    'تحديد الكل كمقروء',
-                    style: TextStyle(color: TayarColors.primary, fontSize: 13),
+                  child: Text(
+                    l10n.markAllAsReadButton,
+                    style: const TextStyle(
+                      color: TayarColors.primary,
+                      fontSize: 13,
+                    ),
                   ),
                 );
               },
@@ -86,10 +91,10 @@ class NotificationsScreen extends StatelessWidget {
         ],
       ),
       body: uid == null
-          ? const Center(
+          ? Center(
               child: Text(
-                'لازم تسجل الدخول عشان تشوف الإشعارات',
-                style: TextStyle(color: TayarColors.textGrey),
+                l10n.mustSignInToViewNotifications,
+                style: const TextStyle(color: TayarColors.textGrey),
               ),
             )
           : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -99,10 +104,10 @@ class NotificationsScreen extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Center(
+                  return Center(
                     child: Text(
-                      'حصل خطأ في تحميل الإشعارات',
-                      style: TextStyle(color: TayarColors.textGrey),
+                      l10n.errorLoadingNotifications,
+                      style: const TextStyle(color: TayarColors.textGrey),
                     ),
                   );
                 }
@@ -126,9 +131,9 @@ class NotificationsScreen extends StatelessWidget {
                           size: 56,
                         ),
                         const SizedBox(height: 12),
-                        const Text(
-                          'مفيش إشعارات لسه',
-                          style: TextStyle(color: TayarColors.textGrey),
+                        Text(
+                          l10n.noNotificationsYet,
+                          style: const TextStyle(color: TayarColors.textGrey),
                         ),
                       ],
                     ),
@@ -173,9 +178,7 @@ class NotificationsScreen extends StatelessWidget {
                               radius: 20,
                               backgroundColor: isRead
                                   ? Colors.white12
-                                  : TayarColors.primary.withValues(
-                                      alpha: 0.15,
-                                    ),
+                                  : TayarColors.primary.withValues(alpha: 0.15),
                               child: Icon(
                                 _iconForType(data['type'] as String?),
                                 color: isRead
@@ -209,7 +212,7 @@ class NotificationsScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    _timeAgo(createdAt),
+                                    _timeAgo(createdAt, l10n),
                                     style: const TextStyle(
                                       color: TayarColors.textGrey,
                                       fontSize: 11,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'passenger_home.dart';
 
 // ====================================================
@@ -19,7 +20,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   Future<void> _sendOtp() async {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty || phone.length < 10) {
-      _showError('من فضلك اكتب رقم موبايل صحيح');
+      _showError(AppLocalizations.of(context)!.invalidPhoneNumberError);
       return;
     }
 
@@ -41,7 +42,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       },
       verificationFailed: (FirebaseAuthException e) {
         setState(() => _isLoading = false);
-        _showError('حصل خطأ: ${e.message ?? "حاول تاني"}');
+        final l10n = AppLocalizations.of(context)!;
+        _showError(
+          l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel),
+        );
       },
       codeSent: (String verificationId, int? resendToken) {
         setState(() => _isLoading = false);
@@ -75,6 +79,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -88,20 +93,20 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 20),
-            const Text(
-              'رقم الموبايل',
+            Text(
+              l10n.phoneNumberLabel,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'هنبعتلك كود تحقق على الرقم ده',
+            Text(
+              l10n.otpSendNoticeLabel,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
             const SizedBox(height: 40),
 
@@ -160,9 +165,9 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text(
-                        'إرسال الكود',
-                        style: TextStyle(
+                    : Text(
+                        l10n.sendCodeButton,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
@@ -201,7 +206,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   Future<void> _verifyOtp() async {
     final otp = _otpController.text.trim();
     if (otp.length != 6) {
-      _showError('اكتب الكود المكون من 6 أرقام');
+      _showError(AppLocalizations.of(context)!.otpLengthError);
       return;
     }
 
@@ -222,10 +227,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       );
     } on FirebaseAuthException catch (e) {
       setState(() => _isLoading = false);
+      final l10n = AppLocalizations.of(context)!;
       _showError(
         e.code == 'invalid-verification-code'
-            ? 'الكود غلط، حاول تاني'
-            : 'حصل خطأ: ${e.message ?? "حاول تاني"}',
+            ? l10n.invalidOtpError
+            : l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel),
       );
     }
   }
@@ -238,6 +244,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -251,10 +258,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 20),
-            const Text(
-              'تأكيد الرقم',
+            Text(
+              l10n.confirmPhoneNumberTitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -262,7 +269,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'بعتنالك كود تحقق على ${widget.phoneNumber}',
+              l10n.otpSentToNumberLabel(widget.phoneNumber),
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
@@ -316,9 +323,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text(
-                        'تأكيد',
-                        style: TextStyle(
+                    : Text(
+                        l10n.confirmButton,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 17,
                           fontWeight: FontWeight.bold,

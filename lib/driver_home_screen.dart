@@ -617,19 +617,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               ),
             ),
           ),
-          // ====== زرار تبديل اللغة (عربي / إنجليزي) ======
-          IconButton(
-            icon: const Icon(Icons.language, color: Colors.white),
-            tooltip: AppLocalizations.of(context)!.languageToggleTooltip,
-            onPressed: () {
-              final isArabic =
-                  Localizations.localeOf(context).languageCode == 'ar';
-              TayarApp.setLocale(
-                context,
-                isArabic ? const Locale('en') : const Locale('ar'),
-              );
-            },
-          ),
+          // ====== زرار تبديل اللغة اتشال من هنا؛ التحكم في اللغة بقى
+          // من شاشة الإعدادات فقط (مكان واحد موحّد لكل التطبيق) ======
           IconButton(
             icon: const Icon(Icons.person, color: Colors.white),
             onPressed: () async {
@@ -1219,7 +1208,7 @@ class _OrderRequestCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            paymentMethod,
+                            paymentMethodDisplay(context, paymentMethod),
                             style: const TextStyle(
                               color: TayarColors.textGrey,
                               fontSize: 11,
@@ -1505,7 +1494,7 @@ class _ActiveTripCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                paymentMethod,
+                paymentMethodDisplay(context, paymentMethod),
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 13,
@@ -2115,7 +2104,10 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               ),
                             ),
                             Text(
-                              widget.paymentMethod,
+                              paymentMethodDisplay(
+                                context,
+                                widget.paymentMethod,
+                              ),
                               style: const TextStyle(
                                 color: TayarColors.textGrey,
                                 fontSize: 13,

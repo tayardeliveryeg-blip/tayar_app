@@ -75,9 +75,102 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // ====== بيفتح شيت لاختيار اللغة: عربي / إنجليزي / لغة الجهاز ======
+  void _showLanguageSheet(BuildContext context) {
+    // ====== null = التطبيق شغال حاليًا على لغة الجهاز تلقائيًا ======
+    final manualLocale = TayarApp.getManualLocale(context);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: TayarColors.cardDark,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade700,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    AppLocalizations.of(context)!.appLanguageLabel,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              RadioListTile<Locale?>(
+                value: null,
+                groupValue: manualLocale,
+                activeColor: TayarColors.primary,
+                title: Text(
+                  AppLocalizations.of(context)!.useDeviceLanguageLabel,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                onChanged: (value) {
+                  TayarApp.setLocale(context, value);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+              RadioListTile<Locale?>(
+                value: const Locale('ar'),
+                groupValue: manualLocale,
+                activeColor: TayarColors.primary,
+                title: const Text(
+                  'العربية',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onChanged: (value) {
+                  TayarApp.setLocale(context, value);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+              RadioListTile<Locale?>(
+                value: const Locale('en'),
+                groupValue: manualLocale,
+                activeColor: TayarColors.primary,
+                title: const Text(
+                  'English',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onChanged: (value) {
+                  TayarApp.setLocale(context, value);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    // ====== null يعني التطبيق شغال على لغة الجهاز تلقائيًا ======
+    final manualLocale = TayarApp.getManualLocale(context);
+    final languageSubtitle = manualLocale == null
+        ? AppLocalizations.of(context)!.useDeviceLanguageLabel
+        : (isArabic ? 'العربية' : 'English');
 
     return Scaffold(
       backgroundColor: TayarColors.background,
@@ -109,19 +202,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: const TextStyle(color: Colors.white),
                       ),
                       subtitle: Text(
-                        isArabic ? 'العربية' : 'English',
+                        languageSubtitle,
                         style: const TextStyle(color: TayarColors.textGrey),
                       ),
                       trailing: const Icon(
                         Icons.chevron_left,
                         color: TayarColors.textGrey,
                       ),
-                      onTap: () {
-                        TayarApp.setLocale(
-                          context,
-                          isArabic ? const Locale('en') : const Locale('ar'),
-                        );
-                      },
+                      onTap: () => _showLanguageSheet(context),
                     ),
                   ],
                 ),

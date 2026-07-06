@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'login_screen.dart';
 import 'passenger_home.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 // ====== شاشة الأمان: قفل التطبيق برقم سري + عرض وسيلة تسجيل الدخول + حذف الحساب ======
 class SecurityScreen extends StatefulWidget {
@@ -50,14 +51,15 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
   Future<String?> _promptSetPin() async {
     final controller = TextEditingController();
+    final loc = AppLocalizations.of(context)!;
     return showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: TayarColors.cardDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'حدد رقم سري من 4 أرقام',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          loc.setPinTitle,
+          style: const TextStyle(color: Colors.white),
         ),
         content: TextField(
           controller: controller,
@@ -70,16 +72,16 @@ class _SecurityScreenState extends State<SecurityScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'إلغاء',
-              style: TextStyle(color: TayarColors.textGrey),
+            child: Text(
+              loc.cancel,
+              style: const TextStyle(color: TayarColors.textGrey),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text(
-              'حفظ',
-              style: TextStyle(color: TayarColors.primary),
+            child: Text(
+              loc.saveButton,
+              style: const TextStyle(color: TayarColors.primary),
             ),
           ),
         ],
@@ -88,42 +90,46 @@ class _SecurityScreenState extends State<SecurityScreen> {
   }
 
   String _providerLabel() {
+    final loc = AppLocalizations.of(context)!;
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return 'غير معروف';
+    if (user == null) return loc.unknownProviderLabel;
     final providers = user.providerData.map((p) => p.providerId).toList();
-    if (providers.contains('google.com')) return 'حساب Google';
-    if (providers.contains('phone')) return 'رقم الهاتف (${user.phoneNumber ?? ''})';
-    if (providers.contains('password')) return 'البريد الإلكتروني وكلمة المرور';
-    return 'غير معروف';
+    if (providers.contains('google.com')) return loc.googleAccountLabel;
+    if (providers.contains('phone')) {
+      return loc.phoneNumberProviderLabel(user.phoneNumber ?? '');
+    }
+    if (providers.contains('password')) return loc.emailPasswordProviderLabel;
+    return loc.unknownProviderLabel;
   }
 
   Future<void> _confirmDeleteAccount() async {
+    final loc = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: TayarColors.cardDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'حذف الحساب نهائيًا',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          loc.deleteAccountPermanentlyTitle,
+          style: const TextStyle(color: Colors.white),
         ),
-        content: const Text(
-          'هيتم حذف حسابك وكل بياناتك نهائيًا ومش هتقدر ترجعها تاني. متأكد؟',
-          style: TextStyle(color: TayarColors.textGrey),
+        content: Text(
+          loc.deleteAccountConfirmBody,
+          style: const TextStyle(color: TayarColors.textGrey),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'إلغاء',
-              style: TextStyle(color: TayarColors.textGrey),
+            child: Text(
+              loc.cancel,
+              style: const TextStyle(color: TayarColors.textGrey),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'حذف نهائي',
-              style: TextStyle(color: Colors.redAccent),
+            child: Text(
+              loc.deletePermanentlyButton,
+              style: const TextStyle(color: Colors.redAccent),
             ),
           ),
         ],
@@ -163,15 +169,13 @@ class _SecurityScreenState extends State<SecurityScreen> {
       if (!mounted) return;
       if (e.code == 'requires-recent-login') {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'لازم تسجل الخروج والدخول تاني قبل ما تقدر تحذف حسابك',
-            ),
-          ),
+          SnackBar(content: Text(loc.reauthRequiredForDeleteError)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('حصل خطأ: ${e.message}')),
+          SnackBar(
+            content: Text(loc.errorOccurredWithMessage(e.message ?? '')),
+          ),
         );
       }
     }
@@ -179,13 +183,17 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: TayarColors.background,
       appBar: AppBar(
         backgroundColor: TayarColors.background,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('الأمان', style: TextStyle(color: Colors.white)),
+        title: Text(
+          loc.navSecurity,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       body: _loading
           ? const Center(
@@ -201,9 +209,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         Icons.verified_user_outlined,
                         color: TayarColors.primary,
                       ),
-                      title: const Text(
-                        'وسيلة تسجيل الدخول',
-                        style: TextStyle(color: Colors.white),
+                      title: Text(
+                        loc.signInMethodLabel,
+                        style: const TextStyle(color: Colors.white),
                       ),
                       subtitle: Text(
                         _providerLabel(),
@@ -223,13 +231,13 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         Icons.lock_outline,
                         color: TayarColors.primary,
                       ),
-                      title: const Text(
-                        'قفل التطبيق برقم سري',
-                        style: TextStyle(color: Colors.white),
+                      title: Text(
+                        loc.appLockTitle,
+                        style: const TextStyle(color: Colors.white),
                       ),
-                      subtitle: const Text(
-                        'هتحتاج تدخل الرقم السري كل ما تفتح التطبيق',
-                        style: TextStyle(color: TayarColors.textGrey),
+                      subtitle: Text(
+                        loc.appLockSubtitle,
+                        style: const TextStyle(color: TayarColors.textGrey),
                       ),
                     ),
                   ],
@@ -242,9 +250,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         Icons.delete_outline,
                         color: Colors.redAccent,
                       ),
-                      title: const Text(
-                        'حذف الحساب نهائيًا',
-                        style: TextStyle(color: Colors.redAccent),
+                      title: Text(
+                        loc.deleteAccountPermanentlyTitle,
+                        style: const TextStyle(color: Colors.redAccent),
                       ),
                       onTap: _confirmDeleteAccount,
                     ),

@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'passenger_home.dart' show TayarColors;
 import 'trip_tracking_screen.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 /// ====== شاشة البحث عن عروض الطيارين (زي InDrive) ======
 /// بتستنى عروض من مجموعة orders/{orderId}/offers وتعرضهم لايف،
@@ -223,7 +224,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
 
       if (!mounted) return;
       _showAcceptedDialog(
-        driverName: (data['driverName'] as String?) ?? 'الطيار',
+        driverName:
+            (data['driverName'] as String?) ??
+            AppLocalizations.of(context)!.defaultDriverName,
         price: (data['price'] as num?)?.toDouble() ?? _proposedFare,
       );
     } catch (e) {
@@ -231,7 +234,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       if (!mounted) return;
       setState(() => _isProcessingAccept = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذر قبول العرض، حاول تاني')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.failedToAcceptOfferError),
+        ),
       );
     }
   }
@@ -240,21 +245,29 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
     required String driverName,
     required double price,
   }) {
+    final loc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: TayarColors.cardDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Column(
+        title: Column(
           children: [
-            Icon(Icons.check_circle, color: TayarColors.primary, size: 56),
-            SizedBox(height: 12),
-            Text('تم قبول العرض!', style: TextStyle(color: Colors.white)),
+            const Icon(
+              Icons.check_circle,
+              color: TayarColors.primary,
+              size: 56,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.offerAcceptedTitle,
+              style: const TextStyle(color: Colors.white),
+            ),
           ],
         ),
         content: Text(
-          'الطيار $driverName في الطريق ليك بسعر ${price.toStringAsFixed(0)} جنيه',
+          loc.driverOnWayWithFareLabel(driverName, price.toStringAsFixed(0)),
           textAlign: TextAlign.center,
           style: const TextStyle(color: TayarColors.textGrey),
         ),
@@ -270,9 +283,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                   ),
                 );
               },
-              child: const Text(
-                'تمام',
-                style: TextStyle(color: TayarColors.primary),
+              child: Text(
+                loc.ok,
+                style: const TextStyle(color: TayarColors.primary),
               ),
             ),
           ),
@@ -292,25 +305,26 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
   }
 
   void _confirmCancel() {
+    final loc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: TayarColors.cardDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'إلغاء البحث؟',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          loc.cancelSearchTitle,
+          style: const TextStyle(color: Colors.white),
         ),
-        content: const Text(
-          'هيتم إلغاء طلبك وإيقاف البحث عن طيارين',
-          style: TextStyle(color: TayarColors.textGrey),
+        content: Text(
+          loc.cancelSearchBody,
+          style: const TextStyle(color: TayarColors.textGrey),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'رجوع',
-              style: TextStyle(color: TayarColors.textGrey),
+            child: Text(
+              loc.goBackButton,
+              style: const TextStyle(color: TayarColors.textGrey),
             ),
           ),
           TextButton(
@@ -318,9 +332,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
               Navigator.pop(context);
               _cancelSearch();
             },
-            child: const Text(
-              'إلغاء الطلب',
-              style: TextStyle(color: Colors.redAccent),
+            child: Text(
+              loc.cancelOrderButton,
+              style: const TextStyle(color: Colors.redAccent),
             ),
           ),
         ],
@@ -400,7 +414,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       isDismissible: false,
       enableDrag: false,
       builder: (_) => _OfferNotificationSheet(
-        driverName: (data['driverName'] as String?) ?? 'طيار',
+        driverName:
+            (data['driverName'] as String?) ??
+            AppLocalizations.of(context)!.defaultDriverName,
         rating: (data['rating'] as num?)?.toDouble(),
         price: (data['price'] as num?)?.toDouble() ?? _proposedFare,
         photoUrl: data['driverPhotoUrl'] as String?,
@@ -424,6 +440,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -611,10 +628,10 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  const Expanded(
+                                  Expanded(
                                     child: Text(
-                                      'طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية',
-                                      style: TextStyle(
+                                      loc.clientOrderPriority,
+                                      style: const TextStyle(
                                         color: TayarColors.textGrey,
                                         fontSize: 12,
                                       ),
@@ -647,7 +664,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                   SizedBox(
                                     width: 150,
                                     child: Text(
-                                      '${_proposedFare.toStringAsFixed(0)} جنيه',
+                                      loc.currencyEGP(
+                                        _proposedFare.toStringAsFixed(0),
+                                      ),
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
                                         color: Colors.white,
@@ -665,9 +684,11 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                               const SizedBox(height: 8),
                               TextButton(
                                 onPressed: _increaseFare,
-                                child: const Text(
-                                  'زيادة الأجرة',
-                                  style: TextStyle(color: TayarColors.primary),
+                                child: Text(
+                                  loc.increaseFareButton,
+                                  style: const TextStyle(
+                                    color: TayarColors.primary,
+                                  ),
                                 ),
                               ),
                             ],
@@ -697,7 +718,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        'قبول أقرب طيار مقابل ${_proposedFare.toStringAsFixed(0)} جنيه تلقائيًا',
+                                        loc.autoAcceptNearestDriverLabel(
+                                          _proposedFare.toStringAsFixed(0),
+                                        ),
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 13,
@@ -734,7 +757,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    '${_proposedFare.toStringAsFixed(0)} جنيه نقدًا',
+                                    loc.cashAmountLabel(
+                                      _proposedFare.toStringAsFixed(0),
+                                    ),
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 13,
@@ -837,7 +862,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                     return _OfferCard(
                                       driverName:
                                           (data['driverName'] as String?) ??
-                                          'طيار',
+                                          loc.defaultDriverName,
                                       rating: (data['driverRating'] as num?)
                                           ?.toDouble(),
                                       price:
@@ -865,9 +890,11 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text(
-                                  'إلغاء الطلب',
-                                  style: TextStyle(color: TayarColors.textGrey),
+                                child: Text(
+                                  loc.cancelOrderButton,
+                                  style: const TextStyle(
+                                    color: TayarColors.textGrey,
+                                  ),
                                 ),
                               ),
                             ),
@@ -922,8 +949,10 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
               child: Text(
                 key: ValueKey(offers.length),
                 offers.length == 1
-                    ? 'طيار واحد بيشوف طلبك'
-                    : '${offers.length} طيارين بيشوفوا طلبك',
+                    ? AppLocalizations.of(context)!.oneDriverViewingOrderLabel
+                    : AppLocalizations.of(
+                        context,
+                      )!.multipleDriversViewingOrderLabel(offers.length),
                 textDirection: TextDirection.rtl,
                 style: const TextStyle(
                   color: Colors.white,
@@ -991,6 +1020,7 @@ class _RaiseFareCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       children: [
         Row(
@@ -999,7 +1029,7 @@ class _RaiseFareCard extends StatelessWidget {
             const SizedBox(width: 48),
             Expanded(
               child: Text(
-                'جرب تزود السعر',
+                loc.tryRaisingFareTitle,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.white,
@@ -1019,9 +1049,9 @@ class _RaiseFareCard extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 4),
-        const Text(
-          'ممكن تزود فرصك للحصول علي مشوارك بسرعة',
-          style: TextStyle(color: TayarColors.textGrey, fontSize: 13),
+        Text(
+          loc.raiseFareHintBody,
+          style: const TextStyle(color: TayarColors.textGrey, fontSize: 13),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
@@ -1037,7 +1067,7 @@ class _RaiseFareCard extends StatelessWidget {
               ),
             ),
             child: Text(
-              'البحث بسعر ${suggestedFare.toStringAsFixed(0)} جنيه',
+              loc.searchWithFareLabel(suggestedFare.toStringAsFixed(0)),
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -1150,7 +1180,7 @@ class _OfferCard extends StatelessWidget {
             ),
           ),
           Text(
-            '${price.toStringAsFixed(0)} جنيه',
+            AppLocalizations.of(context)!.currencyEGP(price.toStringAsFixed(0)),
             style: const TextStyle(
               color: TayarColors.primary,
               fontSize: 16,
@@ -1169,9 +1199,9 @@ class _OfferCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text(
-                'قبول',
-                style: TextStyle(color: Colors.white, fontSize: 12),
+              child: Text(
+                AppLocalizations.of(context)!.acceptButton,
+                style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
           ),
@@ -1242,6 +1272,7 @@ class _OfferNotificationSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
@@ -1296,7 +1327,7 @@ class _OfferNotificationSheet extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'عرض جديد من $driverName',
+                            loc.newOfferFromDriverLabel(driverName),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 15,
@@ -1327,7 +1358,7 @@ class _OfferNotificationSheet extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${price.toStringAsFixed(0)} جنيه',
+                      loc.currencyEGP(price.toStringAsFixed(0)),
                       style: const TextStyle(
                         color: TayarColors.primary,
                         fontSize: 20,
@@ -1350,9 +1381,9 @@ class _OfferNotificationSheet extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'رفض',
-                            style: TextStyle(color: TayarColors.textGrey),
+                          child: Text(
+                            loc.rejectButton,
+                            style: const TextStyle(color: TayarColors.textGrey),
                           ),
                         ),
                       ),
@@ -1369,9 +1400,9 @@ class _OfferNotificationSheet extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'قبول',
-                            style: TextStyle(
+                          child: Text(
+                            loc.acceptButton,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),

@@ -1,7 +1,7 @@
 {
-  "appName": "Tayar - Arrived in a flash",
-  "clientOrderPriority": "Your order reaches the nearest drivers, the lowest price takes priority.",
-  "driverNoOrders": "No available orders right now.. stay ready!",
+  "appName": "Tayar - Get There Instantly",
+  "clientOrderPriority": "Your request goes to the nearest drivers; the best price gets priority",
+  "driverNoOrders": "No orders available right now.. stay ready!",
   "driverNoRatings": "No ratings from passengers yet.. keep it up",
   "tabRequests": "Requests",
   "tabIncome": "Income",
@@ -9,17 +9,17 @@
   "tabWallet": "Wallet",
   "errorLoadingOrders": "An error occurred while loading orders",
   "defaultDriverName": "Driver",
-  "statusAvailable": "Available Now",
+  "statusAvailable": "Available now",
   "statusUnavailable": "Unavailable",
 
-  "permissionLocationRequired": "You need to allow location access first to go available",
+  "permissionLocationRequired": "You need to allow location permission first to go online",
   "offerSentWaitingPassenger": "Your offer was sent, waiting for the passenger's response",
-  "offerSendFailed": "Couldn't send the offer, try again",
-  "arrivedAtDestination": "🎉 You've arrived at the destination",
+  "offerSendFailed": "Couldn't send the offer, please try again",
+  "arrivedAtDestination": "🎉 You've arrived at your destination",
   "endTrip": "End Trip",
   "startTrip": "Start Trip",
-  "driverToggleOnline": "Available",
-  "driverToggleOffline": "Unavailable",
+  "driverToggleOnline": "Online",
+  "driverToggleOffline": "Offline",
   "mustSignInFirst": "You need to sign in first",
   "paymentMethodCash": "Cash",
 
@@ -40,7 +40,7 @@
     }
   },
 
-  "currencyEGP": "{amount} EGP",
+  "currencyEGP": "EGP {amount}",
   "@currencyEGP": {
     "placeholders": {
       "amount": {
@@ -58,20 +58,20 @@
     }
   },
 
-  "offerSentAlreadyLabel": "Your offer was sent, waiting for the passenger",
+  "offerSentAlreadyLabel": "Your offer has been sent, waiting for the passenger",
   "offerCustomButton": "Offer a different price",
-  "acceptProposedPrice": "Accept the proposed price",
+  "acceptProposedPrice": "Accept proposed price",
   "setYourPriceLabel": "Set the price you're offering",
-  "submitOfferButton": "Send Offer",
+  "submitOfferButton": "Submit Offer",
 
-  "tripInProgressLabel": "Trip in progress now",
+  "tripInProgressLabel": "Trip in progress",
   "tripAcceptedWaitingLabel": "Trip accepted - waiting to start",
 
   "todayIncome": "Today's Income",
   "totalIncome": "Total Income",
-  "completedTripsCount": "Completed Trips Count",
+  "completedTripsCount": "Completed Trips",
 
-  "ratingCountLabel": "From {count} ratings",
+  "ratingCountLabel": "from {count} ratings",
   "@ratingCountLabel": {
     "placeholders": {
       "count": {
@@ -80,22 +80,22 @@
     }
   },
 
-  "availableBalance": "Your Available Balance",
-  "totalEarningsBeforeCommission": "Total Earnings (Before Commission)",
+  "availableBalance": "Available Balance",
+  "totalEarningsBeforeCommission": "Total Earnings (before commission)",
   "companyCommission": "Company Commission (10%)",
 
   "motorcycleInfoTitle": "Motorcycle Info",
   "bikeModelLabel": "Model",
   "bikeColorLabel": "Color",
   "bikePlateLabel": "Plate Number",
-  "bikeYearLabel": "Model (Year of Manufacture)",
+  "bikeYearLabel": "Model (Year)",
 
   "orderDetailsTitle": "Order Details",
   "locationUnavailableForOrder": "Location unavailable for this order",
-  "offerAtMyPriceButton": "Offer My Price",
+  "offerAtMyPriceButton": "Offer my price",
   "alreadyOfferedOnOrder": "You've already made an offer on this order",
 
-  "logout": "Logout",
+  "logout": "Log Out",
   "cancel": "Cancel",
   "confirmLogoutMessage": "Are you sure you want to log out of your account?",
   "languageToggleTooltip": "العربية / English",
@@ -107,33 +107,34 @@
   "backToPassengerModeButton": "Back to Passenger Mode",
 
   "appLanguageLabel": "App Language",
-  "enablePushNotifications": "Enable App Notifications",
+  "useDeviceLanguageLabel": "Use device language",
+  "enablePushNotifications": "Enable app notifications",
   "pushNotificationsDescription": "Notifications for orders, offers, and important updates",
-  "termsAndConditions": "Terms and Conditions",
-  "termsAndConditionsBody": "By using the Tayar app, you agree to its terms of use, that the service is provided directly between the passenger and the driver, and that the company only provides the connection platform.",
+  "termsAndConditions": "Terms & Conditions",
+  "termsAndConditionsBody": "By using the Tayar app, you agree to its terms of use. The service is provided directly between passenger and driver, and the company only provides the connecting platform.",
   "privacyPolicy": "Privacy Policy",
-  "privacyPolicyBody": "We protect your data and only use your location while a trip is actually in progress, and we never share your data with any third party without your consent.",
+  "privacyPolicyBody": "We protect your data and only use your location while an actual trip is in progress. We never share your data with any third party without your consent.",
   "appVersionLabel": "App Version",
   "ok": "OK",
 
   "firstNameHint": "First Name",
   "lastNameHint": "Last Name",
   "birthDateHint": "Date of Birth",
-  "phoneNumberLabel": "Mobile Number",
+  "phoneNumberLabel": "Phone Number",
   "addressLabel": "Address",
   "saveButton": "Save",
   "fullNameRequiredError": "Please enter your full name",
-  "saveFailedError": "Couldn't save, try again",
+  "saveFailedError": "Couldn't save, please try again",
   "profileUpdatedSuccess": "Profile updated successfully",
   "changePhotoLabel": "Change Photo",
   "photoTooLargeError": "The photo is too large, please choose a smaller one",
 
-  "locatingAddress": "Locating you...",
+  "locatingAddress": "Locating address...",
   "addressUnknown": "Unknown location",
   "addressFetchFailed": "Couldn't determine the address",
   "paymentMethodWallet": "E-Wallet",
   "paymentMethodInstapay": "InstaPay",
-  "choosePaymentMethodTitle": "Choose payment method",
+  "choosePaymentMethodTitle": "Choose Payment Method",
   "fromLabel": "From",
   "chooseDestinationHint": "Choose where you want to go",
   "serviceRideMe": "Ride Me",
@@ -148,17 +149,17 @@
       }
     }
   },
-  "defaultUserName": "Mohamed",
+  "defaultUserName": "User",
   "driverModeButton": "Driver Mode",
   "orderHistoryLabel": "Order History",
 
   "driverRegistrationTitle": "Driver Registration",
   "closeButton": "Close",
-  "submitApplicationSuccessTitle": "Your application was submitted!",
-  "submitApplicationSuccessBody": "We'll review your data within 24 hours, and let you know as soon as your driver account is approved.",
-  "submitFailedError": "Couldn't submit the application, try again",
-  "applicationUnderReviewBanner": "Your application is currently under review, we'll notify you once there's a response.",
-  "registrationIntroText": "Upload your personal information and vehicle details. We'll review all data within 24 hours",
+  "submitApplicationSuccessTitle": "Your application has been sent!",
+  "submitApplicationSuccessBody": "We'll review your details within 24 hours, and notify you as soon as your driver account is approved.",
+  "submitFailedError": "Couldn't submit the application, please try again",
+  "applicationUnderReviewBanner": "Your application is currently under review, we'll notify you as soon as we respond.",
+  "registrationIntroText": "Upload your personal and vehicle details. We'll review all information within 24 hours",
   "sectionPersonalInfo": "Personal Information",
   "sectionDrivingLicense": "Driving License",
   "sectionPersonalDocuments": "Personal Documents",
@@ -173,7 +174,7 @@
   "licenseExpiryHint": "Expiry Date",
   "criminalRecordUploadRequired": "Please upload the criminal record document and enter the ID number",
   "criminalRecordFrontLabel": "Criminal Record Document",
-  "criminalRecordBackLabel": "Back Side of the Criminal Record Document",
+  "criminalRecordBackLabel": "Back of the Criminal Record Document",
   "idNumberHint": "ID Number",
   "bikeInfoRequiredError": "Please complete the basic motorcycle information",
   "bikePhotoLabel": "Motorcycle Photo",
@@ -181,5 +182,253 @@
   "bikeBrandHint": "Motorcycle Brand",
   "bikeModelHint": "Motorcycle Model",
   "bikeColorHint": "Motorcycle Color",
-  "bikeYearHint": "Manufacturing Year"
+  "bikeYearHint": "Year of Manufacture",
+
+  "helpScreenTitle": "Help",
+  "faqOrderTripQuestion": "How do I request a trip?",
+  "faqOrderTripAnswer": "From the home screen, set your pickup point then choose your destination, then check the suggested price and send the request. You'll receive offers from nearby drivers and can choose the one that suits you.",
+  "faqPricingQuestion": "How is the price determined?",
+  "faqPricingAnswer": "The price is calculated based on the actual distance between the pickup point and the destination. You can raise or lower the suggested price while negotiating with drivers.",
+  "faqPaymentMethodsQuestion": "What payment methods are available?",
+  "faqPaymentMethodsAnswer": "You can pay cash directly to the driver, through the e-wallet, or via InstaPay. You can choose the payment method while confirming the request.",
+  "faqNoAcceptQuestion": "No one is accepting my request, what should I do?",
+  "faqNoAcceptAnswer": "Try raising the price a bit while negotiating, especially during peak times or in remote areas — this makes the request more appealing to nearby drivers.",
+  "faqBecomeDriverQuestion": "How do I become a driver on the Tayar app?",
+  "faqBecomeDriverAnswer": "From the side menu, choose \"Driver Mode\" and complete the registration steps (personal info, license, motorcycle). After review, you'll be able to receive requests.",
+  "faqDriverEarningsQuestion": "How are driver earnings calculated?",
+  "faqDriverEarningsAnswer": "For each trip, the driver gets 90% of the trip value, while the company takes 10% for running the platform. You can track your earnings details from the \"Income\" tab.",
+  "faqDeliverPackageQuestion": "Can I deliver a package instead of doing a passenger trip?",
+  "faqDeliverPackageAnswer": "Yes, through the \"Package Delivery\" service you can send a package from one place to another without being present for the trip. The same negotiation system applies here too.",
+  "faqTripProblemQuestion": "What should I do if a problem occurs during a trip?",
+  "faqTripProblemAnswer": "You can contact our support team directly from the \"Support\" screen in the side menu, and we'll help you resolve the issue right away.",
+
+  "chooseYourRideSubtitle": "Choose the ride that suits you",
+  "continueWithGoogleButton": "Continue with Google",
+  "continueWithAppleButton": "Continue with Apple",
+  "continueWithPhoneButton": "Continue with Phone",
+  "loginTermsAgreementNotice": "By joining, you agree to the terms of use and privacy policy",
+  "signInFailedError": "Sign in failed: {error}",
+  "@signInFailedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "signInWithAppleFailedError": "Apple sign in failed: {error}",
+  "@signInWithAppleFailedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "markAllAsReadButton": "Mark all as read",
+  "mustSignInToViewNotifications": "You need to sign in to view notifications",
+  "errorLoadingNotifications": "An error occurred while loading notifications",
+  "noNotificationsYet": "No notifications yet",
+  "justNowLabel": "Just now",
+  "minutesAgoLabel": "{minutes} min ago",
+  "@minutesAgoLabel": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgoLabel": "{hours}h ago",
+  "@hoursAgoLabel": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgoLabel": "{days}d ago",
+  "@daysAgoLabel": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+
+  "defaultCustomerName": "User",
+  "setYourFareTitle": "Set Your Fare",
+  "routeFromLabel": "From",
+  "routeToLabel": "To",
+  "distanceLabel": "Distance",
+  "estimatedTimeLabel": "Estimated Time",
+  "suggestedFareForDriversLabel": "Suggested fare for drivers",
+  "autoSuggestedFareLabel": "Auto-suggested fare: EGP {amount}",
+  "@autoSuggestedFareLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "autoAcceptCheckboxLabel": "Auto-accept the first offer at the suggested price",
+  "searchForDriversButton": "Search for Drivers",
+
+  "invalidPhoneNumberError": "Please enter a valid phone number",
+  "tryAgainLabel": "Try Again",
+  "errorOccurredWithMessage": "An error occurred: {message}",
+  "@errorOccurredWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "otpSendNoticeLabel": "We'll send a verification code to this number",
+  "sendCodeButton": "Send Code",
+  "otpLengthError": "Enter the 6-digit code",
+  "invalidOtpError": "Incorrect code, please try again",
+  "confirmPhoneNumberTitle": "Confirm Number",
+  "otpSentToNumberLabel": "We've sent a verification code to {phone}",
+  "@otpSentToNumberLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+
+  "determiningAddressLabel": "Determining address...",
+  "customLocationLabel": "Custom Location",
+  "doneButton": "Done",
+
+  "rateTripArrivedSafelyTitle": "You've arrived safely!",
+  "rateTripSubtitle": "Rate your trip with the driver",
+  "pleaseSelectStarsFirst": "Please select a star rating first",
+  "failedToSaveRatingError": "Couldn't save the rating, please try again",
+  "thankYouForRatingLabel": "Thank you for your rating! 🌟",
+  "ratingVeryBadLabel": "Very Bad",
+  "ratingFairLabel": "Fair",
+  "ratingGoodLabel": "Good",
+  "ratingVeryGoodLabel": "Very Good",
+  "ratingExcellentLabel": "Excellent",
+  "chooseYourRatingLabel": "Choose your rating",
+  "commentHintOptional": "Write a comment (optional)",
+  "submitRatingButton": "Submit Rating",
+  "skipButton": "Skip",
+
+  "failedToAcceptOfferError": "Couldn't accept the offer, please try again",
+  "offerAcceptedTitle": "Offer Accepted!",
+  "driverOnWayWithFareLabel": "Driver {driverName} is on the way to you for EGP {price}",
+  "@driverOnWayWithFareLabel": {
+    "placeholders": {
+      "driverName": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelSearchTitle": "Cancel search?",
+  "cancelSearchBody": "This will cancel your request and stop searching for drivers",
+  "goBackButton": "Go Back",
+  "cancelOrderButton": "Cancel Order",
+  "increaseFareButton": "Increase Fare",
+  "autoAcceptNearestDriverLabel": "Automatically accept the nearest driver for EGP {amount}",
+  "@autoAcceptNearestDriverLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cashAmountLabel": "EGP {amount} in cash",
+  "@cashAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "oneDriverViewingOrderLabel": "One driver is viewing your request",
+  "multipleDriversViewingOrderLabel": "{count} drivers are viewing your request",
+  "@multipleDriversViewingOrderLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tryRaisingFareTitle": "Try raising the fare",
+  "raiseFareHintBody": "This can improve your chances of getting a ride faster",
+  "searchWithFareLabel": "Search with fare EGP {amount}",
+  "@searchWithFareLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "newOfferFromDriverLabel": "New offer from {driverName}",
+  "@newOfferFromDriverLabel": {
+    "placeholders": {
+      "driverName": {
+        "type": "String"
+      }
+    }
+  },
+  "rejectButton": "Reject",
+  "acceptButton": "Accept",
+
+  "setPinTitle": "Set a 4-digit PIN",
+  "unknownProviderLabel": "Unknown",
+  "googleAccountLabel": "Google Account",
+  "phoneNumberProviderLabel": "Phone Number ({phone})",
+  "@phoneNumberProviderLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "emailPasswordProviderLabel": "Email & Password",
+  "deleteAccountPermanentlyTitle": "Delete Account Permanently",
+  "deleteAccountConfirmBody": "Your account and all your data will be permanently deleted and cannot be recovered. Are you sure?",
+  "deletePermanentlyButton": "Delete Permanently",
+  "reauthRequiredForDeleteError": "You need to sign out and sign back in before you can delete your account",
+  "signInMethodLabel": "Sign-in Method",
+  "appLockTitle": "Lock app with a PIN",
+  "appLockSubtitle": "You'll need to enter the PIN every time you open the app",
+
+  "noMatchingResultsError": "No matching results",
+  "searchFailedTryAgainError": "Search failed, please try again",
+  "unknownPlaceLabel": "Unknown place",
+  "whereDoYouWantToGoTitle": "Where do you want to go?",
+  "searchPlaceHint": "Type a street or place name...",
+  "pickFromMapLabel": "Pick from map",
+  "startTypingToSearchLabel": "Start typing to search for a place",
+  "recentSearchesLabel": "Recent Searches",
+
+  "failedToOpenAppError": "Couldn't open the required app",
+  "whatsappSupportMessage": "Hello, I need help with the Tayar app",
+  "supportEmailSubject": "Tayar App Support",
+  "supportMessageSentConfirmation": "Your message has been sent, our support team will get in touch with you soon",
+  "genericErrorTryAgain": "An error occurred, please try again",
+  "contactUsDirectlyLabel": "Contact us directly",
+  "whatsappLabel": "WhatsApp",
+  "callLabel": "Call",
+  "emailLabel": "Email",
+  "orSendMessageHereLabel": "Or send us your message here",
+  "supportMessageHint": "Write your issue or inquiry here...",
+  "sendButton": "Send",
+
+  "tripCompletedTitle": "You've arrived at your destination!",
+  "tripCancelledTitle": "Trip Cancelled",
+  "thankYouForUsingTayarLabel": "Thank you for using Tayar!",
+  "tripCancelledByDriverOrSystemLabel": "The trip was cancelled by the driver or the system",
+  "arrivedAtYourDestinationStatusLabel": "You've arrived at your destination 🎉",
+  "driverOnWayToYouLabel": "The driver is on the way to you",
+  "tripStartedOnWayToDestinationLabel": "Trip started - on the way to the destination",
+  "updatingLabel": "Updating...",
+  "arrivedWaitingDriverToEndTripLabel": "You've arrived at your destination! Waiting for the driver to end the trip",
+  "waitingDriverShareLocationLabel": "Waiting for the driver to start sharing their location..."
 }

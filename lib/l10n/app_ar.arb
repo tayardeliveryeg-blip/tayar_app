@@ -107,6 +107,7 @@
   "backToPassengerModeButton": "رجوع لوضع الركاب",
 
   "appLanguageLabel": "لغة التطبيق",
+  "useDeviceLanguageLabel": "استخدام لغة الجهاز",
   "enablePushNotifications": "تفعيل إشعارات التطبيق",
   "pushNotificationsDescription": "إشعارات الطلبات والعروض والتحديثات المهمة",
   "termsAndConditions": "الشروط والأحكام",
@@ -181,5 +182,253 @@
   "bikeBrandHint": "العلامة التجارية للموتوسيكل",
   "bikeModelHint": "طراز الموتوسيكل",
   "bikeColorHint": "لون الموتوسيكل",
-  "bikeYearHint": "سنة الانتاج"
+  "bikeYearHint": "سنة الانتاج",
+
+  "helpScreenTitle": "مساعدة",
+  "faqOrderTripQuestion": "إزاي أطلب رحلة؟",
+  "faqOrderTripAnswer": "من الشاشة الرئيسية، حدد نقطة الانطلاق ثم اختار الوجهة، وبعدها شوف السعر المقترح وابعت الطلب. هتظهرلك عروض من الطيارين القريبين وتقدر تختار العرض اللي يناسبك.",
+  "faqPricingQuestion": "إزاي بيتحدد السعر؟",
+  "faqPricingAnswer": "السعر بيتحسب على أساس المسافة الفعلية بين نقطة الانطلاق والوجهة، وتقدر تزود أو تقلل السعر المقترح وقت المزايدة مع الطيارين.",
+  "faqPaymentMethodsQuestion": "وسايل الدفع المتاحة إيه؟",
+  "faqPaymentMethodsAnswer": "تقدر تدفع كاش للطيار مباشرة، أو من خلال المحفظة الإلكترونية، أو عن طريق إنستاباي. تقدر تختار وسيلة الدفع وانت بتأكد الطلب.",
+  "faqNoAcceptQuestion": "مفيش حد بيقبل طلبي، أعمل إيه؟",
+  "faqNoAcceptAnswer": "جرب تزود السعر شوية وقت المزايدة، خصوصًا في أوقات الذروة أو المناطق البعيدة، ده بيخلي الطلب أكثر جاذبية للطيارين القريبين.",
+  "faqBecomeDriverQuestion": "إزاي أبقى طيار في تطبيق طيار؟",
+  "faqBecomeDriverAnswer": "من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الموتوسيكل)، وبعد المراجعة هتقدر تستقبل طلبات.",
+  "faqDriverEarningsQuestion": "إزاي بتتحسب أرباح الطيار؟",
+  "faqDriverEarningsAnswer": "من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"الدخلي\".",
+  "faqDeliverPackageQuestion": "تقدر أوصّل طرد بدل ما أعمل رحلة راكب؟",
+  "faqDeliverPackageAnswer": "أيوه، من خدمة \"توصيل الطرود\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.",
+  "faqTripProblemQuestion": "إيه اللي أعمله لو حصلت مشكلة في رحلة؟",
+  "faqTripProblemAnswer": "تقدر تتواصل مع فريق الدعم مباشرة من شاشة \"الدعم\" في القايمة الجانبية، وهنساعدك تحل المشكلة أول بأول.",
+
+  "chooseYourRideSubtitle": "اختار المشوار المناسب ليك",
+  "continueWithGoogleButton": "المتابعة باستخدام Google",
+  "continueWithAppleButton": "المتابعة باستخدام Apple",
+  "continueWithPhoneButton": "المتابعة عبر الهاتف",
+  "loginTermsAgreementNotice": "يشير الانضمام إلى موافقتك على شروط الاستخدام والسياسة الخصوصية",
+  "signInFailedError": "فشل تسجيل الدخول: {error}",
+  "@signInFailedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "signInWithAppleFailedError": "فشل تسجيل الدخول بآبل: {error}",
+  "@signInWithAppleFailedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "markAllAsReadButton": "تحديد الكل كمقروء",
+  "mustSignInToViewNotifications": "لازم تسجل الدخول عشان تشوف الإشعارات",
+  "errorLoadingNotifications": "حصل خطأ في تحميل الإشعارات",
+  "noNotificationsYet": "مفيش إشعارات لسه",
+  "justNowLabel": "الآن",
+  "minutesAgoLabel": "من {minutes} دقيقة",
+  "@minutesAgoLabel": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgoLabel": "من {hours} ساعة",
+  "@hoursAgoLabel": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgoLabel": "من {days} يوم",
+  "@daysAgoLabel": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+
+  "defaultCustomerName": "مستخدم",
+  "setYourFareTitle": "حدد سعرك",
+  "routeFromLabel": "من",
+  "routeToLabel": "إلى",
+  "distanceLabel": "المسافة",
+  "estimatedTimeLabel": "الوقت المتوقع",
+  "suggestedFareForDriversLabel": "السعر المقترح للطيارين",
+  "autoSuggestedFareLabel": "السعر المقترح تلقائيًا: {amount} جنيه",
+  "@autoSuggestedFareLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "autoAcceptCheckboxLabel": "قبول تلقائي لأول عرض بنفس السعر المقترح",
+  "searchForDriversButton": "البحث عن طيارين",
+
+  "invalidPhoneNumberError": "من فضلك اكتب رقم موبايل صحيح",
+  "tryAgainLabel": "حاول تاني",
+  "errorOccurredWithMessage": "حصل خطأ: {message}",
+  "@errorOccurredWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "otpSendNoticeLabel": "هنبعتلك كود تحقق على الرقم ده",
+  "sendCodeButton": "إرسال الكود",
+  "otpLengthError": "اكتب الكود المكون من 6 أرقام",
+  "invalidOtpError": "الكود غلط، حاول تاني",
+  "confirmPhoneNumberTitle": "تأكيد الرقم",
+  "otpSentToNumberLabel": "بعتنالك كود تحقق على {phone}",
+  "@otpSentToNumberLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+
+  "determiningAddressLabel": "جاري تحديد العنوان...",
+  "customLocationLabel": "موقع مخصص",
+  "doneButton": "تم",
+
+  "rateTripArrivedSafelyTitle": "وصلت لوجهتك بأمان!",
+  "rateTripSubtitle": "قيّم رحلتك مع الطيار",
+  "pleaseSelectStarsFirst": "من فضلك اختار عدد النجوم الأول",
+  "failedToSaveRatingError": "تعذر حفظ التقييم، حاول تاني",
+  "thankYouForRatingLabel": "شكرًا لتقييمك! 🌟",
+  "ratingVeryBadLabel": "سيء جدًا",
+  "ratingFairLabel": "مقبول",
+  "ratingGoodLabel": "كويس",
+  "ratingVeryGoodLabel": "جيد جدًا",
+  "ratingExcellentLabel": "ممتاز",
+  "chooseYourRatingLabel": "اختار تقييمك",
+  "commentHintOptional": "اكتب تعليقك (اختياري)",
+  "submitRatingButton": "إرسال التقييم",
+  "skipButton": "تخطي",
+
+  "failedToAcceptOfferError": "تعذر قبول العرض، حاول تاني",
+  "offerAcceptedTitle": "تم قبول العرض!",
+  "driverOnWayWithFareLabel": "الطيار {driverName} في الطريق ليك بسعر {price} جنيه",
+  "@driverOnWayWithFareLabel": {
+    "placeholders": {
+      "driverName": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelSearchTitle": "إلغاء البحث؟",
+  "cancelSearchBody": "هيتم إلغاء طلبك وإيقاف البحث عن طيارين",
+  "goBackButton": "رجوع",
+  "cancelOrderButton": "إلغاء الطلب",
+  "increaseFareButton": "زيادة الأجرة",
+  "autoAcceptNearestDriverLabel": "قبول أقرب طيار مقابل {amount} جنيه تلقائيًا",
+  "@autoAcceptNearestDriverLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cashAmountLabel": "{amount} جنيه نقدًا",
+  "@cashAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "oneDriverViewingOrderLabel": "طيار واحد بيشوف طلبك",
+  "multipleDriversViewingOrderLabel": "{count} طيارين بيشوفوا طلبك",
+  "@multipleDriversViewingOrderLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tryRaisingFareTitle": "جرب تزود السعر",
+  "raiseFareHintBody": "ممكن تزود فرصك للحصول علي مشوارك بسرعة",
+  "searchWithFareLabel": "البحث بسعر {amount} جنيه",
+  "@searchWithFareLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "newOfferFromDriverLabel": "عرض جديد من {driverName}",
+  "@newOfferFromDriverLabel": {
+    "placeholders": {
+      "driverName": {
+        "type": "String"
+      }
+    }
+  },
+  "rejectButton": "رفض",
+  "acceptButton": "قبول",
+
+  "setPinTitle": "حدد رقم سري من 4 أرقام",
+  "unknownProviderLabel": "غير معروف",
+  "googleAccountLabel": "حساب Google",
+  "phoneNumberProviderLabel": "رقم الهاتف ({phone})",
+  "@phoneNumberProviderLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "emailPasswordProviderLabel": "البريد الإلكتروني وكلمة المرور",
+  "deleteAccountPermanentlyTitle": "حذف الحساب نهائيًا",
+  "deleteAccountConfirmBody": "هيتم حذف حسابك وكل بياناتك نهائيًا ومش هتقدر ترجعها تاني. متأكد؟",
+  "deletePermanentlyButton": "حذف نهائي",
+  "reauthRequiredForDeleteError": "لازم تسجل الخروج والدخول تاني قبل ما تقدر تحذف حسابك",
+  "signInMethodLabel": "وسيلة تسجيل الدخول",
+  "appLockTitle": "قفل التطبيق برقم سري",
+  "appLockSubtitle": "هتحتاج تدخل الرقم السري كل ما تفتح التطبيق",
+
+  "noMatchingResultsError": "مفيش نتائج مطابقة",
+  "searchFailedTryAgainError": "تعذر البحث حاليًا، حاول تاني",
+  "unknownPlaceLabel": "مكان غير معروف",
+  "whereDoYouWantToGoTitle": "عايز تروح فين؟",
+  "searchPlaceHint": "اكتب اسم الشارع أو المكان...",
+  "pickFromMapLabel": "اختار من الخريطة",
+  "startTypingToSearchLabel": "ابدأ الكتابة عشان تدور على مكان",
+  "recentSearchesLabel": "عمليات البحث الأخيرة",
+
+  "failedToOpenAppError": "تعذر فتح التطبيق المطلوب",
+  "whatsappSupportMessage": "مرحبًا، محتاج مساعدة في تطبيق طيار",
+  "supportEmailSubject": "مساعدة تطبيق طيار",
+  "supportMessageSentConfirmation": "تم إرسال رسالتك، هيتواصل معاك فريق الدعم قريب",
+  "genericErrorTryAgain": "حصل خطأ، حاول تاني",
+  "contactUsDirectlyLabel": "تواصل معانا مباشرة",
+  "whatsappLabel": "واتساب",
+  "callLabel": "اتصال",
+  "emailLabel": "إيميل",
+  "orSendMessageHereLabel": "أو ابعتلنا رسالتك هنا",
+  "supportMessageHint": "اكتب مشكلتك أو استفسارك هنا...",
+  "sendButton": "إرسال",
+
+  "tripCompletedTitle": "وصلت لوجهتك!",
+  "tripCancelledTitle": "تم إلغاء الرحلة",
+  "thankYouForUsingTayarLabel": "شكرا لاستخدامك طيار!",
+  "tripCancelledByDriverOrSystemLabel": "الرحلة اتلغت من الطيار أو من النظام",
+  "arrivedAtYourDestinationStatusLabel": "وصلتوا لوجهتكم 🎉",
+  "driverOnWayToYouLabel": "الطيار في الطريق ليك",
+  "tripStartedOnWayToDestinationLabel": "الرحلة بدأت - في الطريق للوجهة",
+  "updatingLabel": "جاري التحديث...",
+  "arrivedWaitingDriverToEndTripLabel": "وصلتوا لوجهتكم! في انتظار الطيار ينهي الرحلة",
+  "waitingDriverShareLocationLabel": "في انتظار بدء الطيار مشاركة موقعه..."
 }

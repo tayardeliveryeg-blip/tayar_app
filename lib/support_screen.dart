@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'passenger_home.dart';
 
 // ====== شاشة الدعم: تواصل مباشر (واتساب/اتصال/إيميل) + إرسال شكوى/استفسار ======
@@ -29,23 +30,28 @@ class _SupportScreenState extends State<SupportScreen> {
   Future<void> _launch(Uri uri) async {
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('تعذر فتح التطبيق المطلوب')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
+        ),
+      );
     }
   }
 
   Future<void> _openWhatsapp() => _launch(
     Uri.parse(
       'https://wa.me/${_supportPhone.replaceAll('+', '')}'
-      '?text=${Uri.encodeComponent('مرحبًا، محتاج مساعدة في تطبيق طيار')}',
+      '?text=${Uri.encodeComponent(AppLocalizations.of(context)!.whatsappSupportMessage)}',
     ),
   );
 
   Future<void> _callSupport() => _launch(Uri.parse('tel:$_supportPhone'));
 
-  Future<void> _emailSupport() =>
-      _launch(Uri.parse('mailto:$_supportEmail?subject=مساعدة تطبيق طيار'));
+  Future<void> _emailSupport() => _launch(
+    Uri.parse(
+      'mailto:$_supportEmail?subject=${AppLocalizations.of(context)!.supportEmailSubject}',
+    ),
+  );
 
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
@@ -64,15 +70,19 @@ class _SupportScreenState extends State<SupportScreen> {
       _messageController.clear();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إرسال رسالتك، هيتواصل معاك فريق الدعم قريب'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.supportMessageSentConfirmation,
+          ),
         ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('حصل خطأ، حاول تاني')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.genericErrorTryAgain),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -80,20 +90,24 @@ class _SupportScreenState extends State<SupportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: TayarColors.background,
       appBar: AppBar(
         backgroundColor: TayarColors.background,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('الدعم', style: TextStyle(color: Colors.white)),
+        title: Text(
+          loc.navSupport,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text(
-            'تواصل معانا مباشرة',
-            style: TextStyle(
+          Text(
+            loc.contactUsDirectlyLabel,
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -105,7 +119,7 @@ class _SupportScreenState extends State<SupportScreen> {
               Expanded(
                 child: _SupportActionButton(
                   icon: Icons.chat,
-                  label: 'واتساب',
+                  label: loc.whatsappLabel,
                   onTap: _openWhatsapp,
                 ),
               ),
@@ -113,7 +127,7 @@ class _SupportScreenState extends State<SupportScreen> {
               Expanded(
                 child: _SupportActionButton(
                   icon: Icons.call_outlined,
-                  label: 'اتصال',
+                  label: loc.callLabel,
                   onTap: _callSupport,
                 ),
               ),
@@ -121,16 +135,16 @@ class _SupportScreenState extends State<SupportScreen> {
               Expanded(
                 child: _SupportActionButton(
                   icon: Icons.email_outlined,
-                  label: 'إيميل',
+                  label: loc.emailLabel,
                   onTap: _emailSupport,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 28),
-          const Text(
-            'أو ابعتلنا رسالتك هنا',
-            style: TextStyle(
+          Text(
+            loc.orSendMessageHereLabel,
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -147,10 +161,10 @@ class _SupportScreenState extends State<SupportScreen> {
               controller: _messageController,
               maxLines: 5,
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: 'اكتب مشكلتك أو استفسارك هنا...',
-                hintStyle: TextStyle(color: TayarColors.textGrey),
+                hintText: loc.supportMessageHint,
+                hintStyle: const TextStyle(color: TayarColors.textGrey),
               ),
             ),
           ),
@@ -175,9 +189,9 @@ class _SupportScreenState extends State<SupportScreen> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text(
-                      'إرسال',
-                      style: TextStyle(
+                  : Text(
+                      loc.sendButton,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),

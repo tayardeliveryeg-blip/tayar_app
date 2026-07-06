@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'passenger_home.dart' show TayarColors;
 import 'select_destination_screen.dart' show PlaceResult;
 
@@ -32,17 +33,30 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
 
   late LatLng _selectedLocation = widget.initialLocation ?? _defaultCenter;
 
-  String _addressTitle = 'جاري تحديد العنوان...';
+  String _addressTitle = '';
   String _addressSubtitle = '';
   bool _isLoadingAddress = true;
+
+  AppLocalizations? _l10n;
+  bool _initialFetchDone = false;
 
   @override
   void initState() {
     super.initState();
-    _getAddressFromCoordinates(
-      _selectedLocation.latitude,
-      _selectedLocation.longitude,
-    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _l10n = AppLocalizations.of(context)!;
+    if (!_initialFetchDone) {
+      _initialFetchDone = true;
+      _addressTitle = _l10n!.determiningAddressLabel;
+      _getAddressFromCoordinates(
+        _selectedLocation.latitude,
+        _selectedLocation.longitude,
+      );
+    }
   }
 
   @override
@@ -67,7 +81,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
     setState(() {
       _selectedLocation = _pinRealLocation(event.camera);
       _isLoadingAddress = true;
-      _addressTitle = 'جاري تحديد العنوان...';
+      _addressTitle = _l10n!.determiningAddressLabel;
       _addressSubtitle = '';
     });
 
@@ -82,8 +96,9 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
 
   Future<void> _getAddressFromCoordinates(double lat, double lng) async {
     try {
+      final languageCode = Localizations.localeOf(context).languageCode;
       final url = Uri.parse(
-        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lng&accept-language=ar',
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lng&accept-language=$languageCode',
       );
       final response = await http.get(
         url,
@@ -100,7 +115,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
 
         if (!mounted) return;
         setState(() {
-          _addressTitle = road.isNotEmpty ? road : 'موقع مخصص';
+          _addressTitle = road.isNotEmpty ? road : _l10n!.customLocationLabel;
           _addressSubtitle = suburb;
           _isLoadingAddress = false;
         });
@@ -109,7 +124,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
       debugPrint('❌ خطأ في جلب اسم العنوان: $e');
       if (!mounted) return;
       setState(() {
-        _addressTitle = 'تعذر تحديد العنوان';
+        _addressTitle = _l10n!.addressFetchFailed;
         _addressSubtitle = '';
         _isLoadingAddress = false;
       });
@@ -297,9 +312,9 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Text(
-                  'تم',
-                  style: TextStyle(
+                child: Text(
+                  AppLocalizations.of(context)!.doneButton,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

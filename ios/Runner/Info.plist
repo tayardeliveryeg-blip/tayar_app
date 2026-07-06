@@ -16,6 +16,11 @@
 		<string>6.0</string>
 		<key>CFBundleName</key>
 		<string>tayay_app</string>
+		<key>CFBundleLocalizations</key>
+		<array>
+			<string>ar</string>
+			<string>en</string>
+		</array>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
@@ -74,7 +79,6 @@
 		<key>UISupportedInterfaceOrientations~ipad</key>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8</string>
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>

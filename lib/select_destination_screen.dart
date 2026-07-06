@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'passenger_home.dart' show TayarColors;
 import 'pick_on_map_screen.dart' show PickOnMapScreen;
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 /// نتيجة بحث واحدة (مكان مقترح)
 class PlaceResult {
@@ -204,14 +205,16 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
       setState(() {
         _results = finalResults;
         _isLoading = false;
-        _error = finalResults.isEmpty ? 'مفيش نتائج مطابقة' : null;
+        _error = finalResults.isEmpty
+            ? AppLocalizations.of(context)!.noMatchingResultsError
+            : null;
       });
     } catch (e) {
       debugPrint('❌ خطأ في البحث عن مكان: $e');
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _error = 'تعذر البحث حاليًا، حاول تاني';
+        _error = AppLocalizations.of(context)!.searchFailedTryAgainError;
       });
     }
   }
@@ -247,7 +250,9 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
           .where((s) => s.toString().isNotEmpty && s.toString() != title)
           .join('، ');
       return PlaceResult(
-        title: title.isNotEmpty ? title : 'مكان غير معروف',
+        title: title.isNotEmpty
+            ? title
+            : AppLocalizations.of(context)!.unknownPlaceLabel,
         subtitle: subtitle,
         location: LatLng(
           (coords[1] as num).toDouble(),
@@ -280,7 +285,9 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
             ? parts.sublist(1).join('،').trim()
             : '';
         return PlaceResult(
-          title: title.isNotEmpty ? title : 'مكان غير معروف',
+          title: title.isNotEmpty
+              ? title
+              : AppLocalizations.of(context)!.unknownPlaceLabel,
           subtitle: subtitle,
           location: LatLng(
             double.parse(item['lat']),
@@ -296,6 +303,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: TayarColors.background,
       appBar: AppBar(
@@ -305,9 +313,9 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
           icon: const Icon(Icons.arrow_forward, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'عايز تروح فين؟',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          loc.whereDoYouWantToGoTitle,
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       body: Column(
@@ -331,9 +339,9 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                       autofocus: true,
                       onChanged: _onQueryChanged,
                       style: const TextStyle(color: Colors.white, fontSize: 16),
-                      decoration: const InputDecoration(
-                        hintText: 'اكتب اسم الشارع أو المكان...',
-                        hintStyle: TextStyle(color: TayarColors.textGrey),
+                      decoration: InputDecoration(
+                        hintText: loc.searchPlaceHint,
+                        hintStyle: const TextStyle(color: TayarColors.textGrey),
                         border: InputBorder.none,
                       ),
                     ),
@@ -366,9 +374,9 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                 ),
                 child: const Icon(Icons.map, color: TayarColors.primary),
               ),
-              title: const Text(
-                'اختار من الخريطة',
-                style: TextStyle(
+              title: Text(
+                loc.pickFromMapLabel,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -387,24 +395,25 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
   }
 
   Widget _buildResultsArea() {
+    final loc = AppLocalizations.of(context)!;
     // الخانة فاضية → نعرض سجل البحث لو موجود
     if (_controller.text.trim().isEmpty) {
       if (_recentSearches.isEmpty) {
-        return const Center(
+        return Center(
           child: Text(
-            'ابدأ الكتابة عشان تدور على مكان',
-            style: TextStyle(color: TayarColors.textGrey),
+            loc.startTypingToSearchLabel,
+            style: const TextStyle(color: TayarColors.textGrey),
           ),
         );
       }
       return ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
-              'عمليات البحث الأخيرة',
-              style: TextStyle(
+              loc.recentSearchesLabel,
+              style: const TextStyle(
                 color: TayarColors.textGrey,
                 fontSize: 13,
                 fontWeight: FontWeight.bold,

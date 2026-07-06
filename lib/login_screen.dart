@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:crypto/crypto.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'phone_auth_screen.dart';
 import 'passenger_home.dart';
 
@@ -40,7 +41,9 @@ class LoginScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل تسجيل الدخول: $e'),
+            content: Text(
+              AppLocalizations.of(context)!.signInFailedError(e.toString()),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -92,7 +95,11 @@ class LoginScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل تسجيل الدخول بآبل: ${e.message}'),
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.signInWithAppleFailedError(e.message.toString()),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -101,7 +108,9 @@ class LoginScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل تسجيل الدخول: $e'),
+            content: Text(
+              AppLocalizations.of(context)!.signInFailedError(e.toString()),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -140,17 +149,17 @@ class LoginScreen extends StatelessWidget {
             // لوجو التطبيق
             Image.asset('assets/icon/app_icon.png', width: 120, height: 120),
             const SizedBox(height: 20),
-            const Text(
-              "طيار - وصلك في لحظة",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.appName,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            const Text("اختار المشوار المناسب ليك"),
+            Text(AppLocalizations.of(context)!.chooseYourRideSubtitle),
             const Spacer(),
 
             // زر المتابعة باستخدام Google
             _buildCustomButton(
-              text: "المتابعة باستخدام Google",
+              text: AppLocalizations.of(context)!.continueWithGoogleButton,
               icon: Icons.g_mobiledata,
               color: Colors.white,
               textColor: Colors.black,
@@ -161,7 +170,7 @@ class LoginScreen extends StatelessWidget {
             // زر المتابعة باستخدام Apple (يظهر بس على iOS، حسب متطلبات آبل)
             if (_showAppleButton) ...[
               _buildCustomButton(
-                text: "المتابعة باستخدام Apple",
+                text: AppLocalizations.of(context)!.continueWithAppleButton,
                 icon: Icons.apple,
                 color: Colors.black,
                 textColor: Colors.white,
@@ -172,7 +181,7 @@ class LoginScreen extends StatelessWidget {
 
             // زر المتابعة عبر الهاتف
             _buildCustomButton(
-              text: "المتابعة عبر الهاتف",
+              text: AppLocalizations.of(context)!.continueWithPhoneButton,
               icon: Icons.phone,
               color: Colors.grey[800]!,
               textColor: Colors.white,
@@ -188,10 +197,10 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             // النصوص القانونية في الأسفل
-            const Text(
-              "يشير الانضمام إلى موافقتك على شروط الاستخدام والسياسة الخصوصية",
+            Text(
+              AppLocalizations.of(context)!.loginTermsAgreementNotice,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const SizedBox(height: 20),
           ],

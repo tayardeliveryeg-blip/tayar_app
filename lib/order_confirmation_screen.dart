@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
-import 'passenger_home.dart' show TayarColors;
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'passenger_home.dart' show TayarColors, paymentMethodDisplay;
 import 'searching_offers_screen.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
@@ -86,7 +87,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
 
       final orderRef = await FirebaseFirestore.instance.collection('orders').add({
         'customerId': user?.uid,
-        'customerName': user?.displayName ?? 'مستخدم',
+        'customerName':
+            user?.displayName ??
+            AppLocalizations.of(context)!.defaultCustomerName,
         'customerPhone': user?.phoneNumber,
         'pickupAddress': widget.pickupAddress,
         'pickupLocation': pickupGeoFirePoint.data,
@@ -127,13 +130,16 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
       if (!mounted) return;
       setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تعذر إرسال الطلب، حاول تاني')),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.submitFailedError),
+        ),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: TayarColors.background,
       appBar: AppBar(
@@ -143,7 +149,10 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
           icon: const Icon(Icons.arrow_forward, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('حدد سعرك', style: TextStyle(color: Colors.white)),
+        title: Text(
+          l10n.setYourFareTitle,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -162,7 +171,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                   _RouteRow(
                     icon: Icons.radio_button_checked,
                     iconColor: TayarColors.primary,
-                    label: 'من',
+                    label: l10n.routeFromLabel,
                     address: widget.pickupAddress,
                   ),
                   Padding(
@@ -177,7 +186,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                   _RouteRow(
                     icon: Icons.location_on,
                     iconColor: Colors.redAccent,
-                    label: 'إلى',
+                    label: l10n.routeToLabel,
                     address: widget.destinationAddress,
                   ),
                 ],
@@ -195,16 +204,21 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
               child: Column(
                 children: [
                   _DetailRow(
-                    label: 'المسافة',
-                    value: '${widget.distanceKm.toStringAsFixed(1)} كم',
+                    label: l10n.distanceLabel,
+                    value: l10n.distanceKmLabel(
+                      widget.distanceKm.toStringAsFixed(1),
+                    ),
                   ),
                   const Divider(color: Colors.white12),
                   _DetailRow(
-                    label: 'الوقت المتوقع',
-                    value: '${widget.durationMin} دقيقة',
+                    label: l10n.estimatedTimeLabel,
+                    value: l10n.durationMinLabel(widget.durationMin),
                   ),
                   const Divider(color: Colors.white12),
-                  _DetailRow(label: 'طريقة الدفع', value: widget.paymentMethod),
+                  _DetailRow(
+                    label: l10n.paymentMethodLabel,
+                    value: paymentMethodDisplay(context, widget.paymentMethod),
+                  ),
                 ],
               ),
             ),
@@ -222,9 +236,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
               ),
               child: Column(
                 children: [
-                  const Text(
-                    'السعر المقترح للطيارين',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  Text(
+                    l10n.suggestedFareForDriversLabel,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -239,7 +253,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       SizedBox(
                         width: 140,
                         child: Text(
-                          '${_proposedFare.toStringAsFixed(0)} جنيه',
+                          l10n.currencyEGP(_proposedFare.toStringAsFixed(0)),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: TayarColors.primary,
@@ -253,7 +267,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'السعر المقترح تلقائيًا: ${widget.fare.toStringAsFixed(0)} جنيه',
+                    l10n.autoSuggestedFareLabel(widget.fare.toStringAsFixed(0)),
                     style: const TextStyle(
                       color: TayarColors.textGrey,
                       fontSize: 12,
@@ -279,10 +293,13 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       onChanged: (value) =>
                           setState(() => _autoAccept = value ?? false),
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'قبول تلقائي لأول عرض بنفس السعر المقترح',
-                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        l10n.autoAcceptCheckboxLabel,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
@@ -314,9 +331,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text(
-                        'البحث عن طيارين',
-                        style: TextStyle(
+                    : Text(
+                        l10n.searchForDriversButton,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

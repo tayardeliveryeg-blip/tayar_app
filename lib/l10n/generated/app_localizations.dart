@@ -476,6 +476,12 @@ abstract class AppLocalizations {
   /// **'لغة التطبيق'**
   String get appLanguageLabel;
 
+  /// No description provided for @useDeviceLanguageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدام لغة الجهاز'**
+  String get useDeviceLanguageLabel;
+
   /// No description provided for @enablePushNotifications.
   ///
   /// In ar, this message translates to:
@@ -589,6 +595,1050 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر'**
   String get photoTooLargeError;
+
+  /// No description provided for @locatingAddress.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري تحديد الموقع...'**
+  String get locatingAddress;
+
+  /// No description provided for @addressUnknown.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقع غير معروف'**
+  String get addressUnknown;
+
+  /// No description provided for @addressFetchFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر تحديد العنوان'**
+  String get addressFetchFailed;
+
+  /// No description provided for @paymentMethodWallet.
+  ///
+  /// In ar, this message translates to:
+  /// **'محفظة إلكترونية'**
+  String get paymentMethodWallet;
+
+  /// No description provided for @paymentMethodInstapay.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنستاباي'**
+  String get paymentMethodInstapay;
+
+  /// No description provided for @choosePaymentMethodTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار طريقة الدفع'**
+  String get choosePaymentMethodTitle;
+
+  /// No description provided for @fromLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من أين'**
+  String get fromLabel;
+
+  /// No description provided for @chooseDestinationHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار الواجهة اللي عايز تروحها'**
+  String get chooseDestinationHint;
+
+  /// No description provided for @serviceRideMe.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلني'**
+  String get serviceRideMe;
+
+  /// No description provided for @serviceDeliverOrders.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصل طلباتي'**
+  String get serviceDeliverOrders;
+
+  /// No description provided for @paymentMethodLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريقة الدفع'**
+  String get paymentMethodLabel;
+
+  /// No description provided for @confirmButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد'**
+  String get confirmButton;
+
+  /// No description provided for @durationMinLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{duration} دقيقة'**
+  String durationMinLabel(int duration);
+
+  /// No description provided for @defaultUserName.
+  ///
+  /// In ar, this message translates to:
+  /// **'محمد'**
+  String get defaultUserName;
+
+  /// No description provided for @driverModeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'وضع الطيار'**
+  String get driverModeButton;
+
+  /// No description provided for @orderHistoryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل الطلبات'**
+  String get orderHistoryLabel;
+
+  /// No description provided for @driverRegistrationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الطيار'**
+  String get driverRegistrationTitle;
+
+  /// No description provided for @closeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إغلاق'**
+  String get closeButton;
+
+  /// No description provided for @submitApplicationSuccessTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طلبك!'**
+  String get submitApplicationSuccessTitle;
+
+  /// No description provided for @submitApplicationSuccessBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنراجع بياناتك خلال 24 ساعة، وهنبلغك أول ما يتم قبول حسابك كطيار.'**
+  String get submitApplicationSuccessBody;
+
+  /// No description provided for @submitFailedError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر إرسال الطلب، حاول تاني'**
+  String get submitFailedError;
+
+  /// No description provided for @applicationUnderReviewBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبك قيد المراجعة حاليًا، هنبلغك أول ما يتم الرد.'**
+  String get applicationUnderReviewBanner;
+
+  /// No description provided for @registrationIntroText.
+  ///
+  /// In ar, this message translates to:
+  /// **'قم بتحميل بياناتك الشخصية وبيانات مركبتك. سنراجع جميع البيانات خلال 24 ساعة'**
+  String get registrationIntroText;
+
+  /// No description provided for @sectionPersonalInfo.
+  ///
+  /// In ar, this message translates to:
+  /// **'المعلومات الشخصية'**
+  String get sectionPersonalInfo;
+
+  /// No description provided for @sectionDrivingLicense.
+  ///
+  /// In ar, this message translates to:
+  /// **'رخصة القيادة'**
+  String get sectionDrivingLicense;
+
+  /// No description provided for @sectionPersonalDocuments.
+  ///
+  /// In ar, this message translates to:
+  /// **'المستندات الشخصية'**
+  String get sectionPersonalDocuments;
+
+  /// No description provided for @sectionBikeInfo.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات الموتوسيكل'**
+  String get sectionBikeInfo;
+
+  /// No description provided for @applicationUnderReviewButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبك قيد المراجعة'**
+  String get applicationUnderReviewButton;
+
+  /// No description provided for @continueButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'متابعة'**
+  String get continueButton;
+
+  /// No description provided for @sectionCompleteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم استكمال البيانات'**
+  String get sectionCompleteLabel;
+
+  /// No description provided for @sectionIncompleteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قم بتعبئة المعلومات المطلوبة'**
+  String get sectionIncompleteLabel;
+
+  /// No description provided for @optionalLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختياري'**
+  String get optionalLabel;
+
+  /// No description provided for @personalPhotoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة شخصية'**
+  String get personalPhotoLabel;
+
+  /// No description provided for @licensePhotoUploadRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك ارفع صورة الرخصة وأدخل تاريخ الانتهاء'**
+  String get licensePhotoUploadRequired;
+
+  /// No description provided for @licenseExpiryHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ انتهاء الصلاحية'**
+  String get licenseExpiryHint;
+
+  /// No description provided for @criminalRecordUploadRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك ارفع صحيفة الحالة الجنائية وأدخل رقم الهوية'**
+  String get criminalRecordUploadRequired;
+
+  /// No description provided for @criminalRecordFrontLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صحيفة الحالة الجنائية'**
+  String get criminalRecordFrontLabel;
+
+  /// No description provided for @criminalRecordBackLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجانب الخلفي لصحيفة الحالة الجنائية'**
+  String get criminalRecordBackLabel;
+
+  /// No description provided for @idNumberHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهوية'**
+  String get idNumberHint;
+
+  /// No description provided for @bikeInfoRequiredError.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك أكمل بيانات الموتوسيكل الأساسية'**
+  String get bikeInfoRequiredError;
+
+  /// No description provided for @bikePhotoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة الموتوسيكل'**
+  String get bikePhotoLabel;
+
+  /// No description provided for @bikeLicensePhotoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رخصة الموتوسيكل'**
+  String get bikeLicensePhotoLabel;
+
+  /// No description provided for @bikeBrandHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'العلامة التجارية للموتوسيكل'**
+  String get bikeBrandHint;
+
+  /// No description provided for @bikeModelHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'طراز الموتوسيكل'**
+  String get bikeModelHint;
+
+  /// No description provided for @bikeColorHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون الموتوسيكل'**
+  String get bikeColorHint;
+
+  /// No description provided for @bikeYearHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنة الانتاج'**
+  String get bikeYearHint;
+
+  /// No description provided for @helpScreenTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساعدة'**
+  String get helpScreenTitle;
+
+  /// No description provided for @faqOrderTripQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاي أطلب رحلة؟'**
+  String get faqOrderTripQuestion;
+
+  /// No description provided for @faqOrderTripAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'من الشاشة الرئيسية، حدد نقطة الانطلاق ثم اختار الوجهة، وبعدها شوف السعر المقترح وابعت الطلب. هتظهرلك عروض من الطيارين القريبين وتقدر تختار العرض اللي يناسبك.'**
+  String get faqOrderTripAnswer;
+
+  /// No description provided for @faqPricingQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاي بيتحدد السعر؟'**
+  String get faqPricingQuestion;
+
+  /// No description provided for @faqPricingAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر بيتحسب على أساس المسافة الفعلية بين نقطة الانطلاق والوجهة، وتقدر تزود أو تقلل السعر المقترح وقت المزايدة مع الطيارين.'**
+  String get faqPricingAnswer;
+
+  /// No description provided for @faqPaymentMethodsQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'وسايل الدفع المتاحة إيه؟'**
+  String get faqPaymentMethodsQuestion;
+
+  /// No description provided for @faqPaymentMethodsAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تدفع كاش للطيار مباشرة، أو من خلال المحفظة الإلكترونية، أو عن طريق إنستاباي. تقدر تختار وسيلة الدفع وانت بتأكد الطلب.'**
+  String get faqPaymentMethodsAnswer;
+
+  /// No description provided for @faqNoAcceptQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حد بيقبل طلبي، أعمل إيه؟'**
+  String get faqNoAcceptQuestion;
+
+  /// No description provided for @faqNoAcceptAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرب تزود السعر شوية وقت المزايدة، خصوصًا في أوقات الذروة أو المناطق البعيدة، ده بيخلي الطلب أكثر جاذبية للطيارين القريبين.'**
+  String get faqNoAcceptAnswer;
+
+  /// No description provided for @faqBecomeDriverQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاي أبقى طيار في تطبيق طيار؟'**
+  String get faqBecomeDriverQuestion;
+
+  /// No description provided for @faqBecomeDriverAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الموتوسيكل)، وبعد المراجعة هتقدر تستقبل طلبات.'**
+  String get faqBecomeDriverAnswer;
+
+  /// No description provided for @faqDriverEarningsQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاي بتتحسب أرباح الطيار؟'**
+  String get faqDriverEarningsQuestion;
+
+  /// No description provided for @faqDriverEarningsAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"الدخلي\".'**
+  String get faqDriverEarningsAnswer;
+
+  /// No description provided for @faqDeliverPackageQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر أوصّل طرد بدل ما أعمل رحلة راكب؟'**
+  String get faqDeliverPackageQuestion;
+
+  /// No description provided for @faqDeliverPackageAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيوه، من خدمة \"توصيل الطرود\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.'**
+  String get faqDeliverPackageAnswer;
+
+  /// No description provided for @faqTripProblemQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيه اللي أعمله لو حصلت مشكلة في رحلة؟'**
+  String get faqTripProblemQuestion;
+
+  /// No description provided for @faqTripProblemAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تتواصل مع فريق الدعم مباشرة من شاشة \"الدعم\" في القايمة الجانبية، وهنساعدك تحل المشكلة أول بأول.'**
+  String get faqTripProblemAnswer;
+
+  /// No description provided for @chooseYourRideSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار المشوار المناسب ليك'**
+  String get chooseYourRideSubtitle;
+
+  /// No description provided for @continueWithGoogleButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتابعة باستخدام Google'**
+  String get continueWithGoogleButton;
+
+  /// No description provided for @continueWithAppleButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتابعة باستخدام Apple'**
+  String get continueWithAppleButton;
+
+  /// No description provided for @continueWithPhoneButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتابعة عبر الهاتف'**
+  String get continueWithPhoneButton;
+
+  /// No description provided for @loginTermsAgreementNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'يشير الانضمام إلى موافقتك على شروط الاستخدام والسياسة الخصوصية'**
+  String get loginTermsAgreementNotice;
+
+  /// No description provided for @signInFailedError.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تسجيل الدخول: {error}'**
+  String signInFailedError(String error);
+
+  /// No description provided for @signInWithAppleFailedError.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تسجيل الدخول بآبل: {error}'**
+  String signInWithAppleFailedError(String error);
+
+  /// No description provided for @markAllAsReadButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد الكل كمقروء'**
+  String get markAllAsReadButton;
+
+  /// No description provided for @mustSignInToViewNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم تسجل الدخول عشان تشوف الإشعارات'**
+  String get mustSignInToViewNotifications;
+
+  /// No description provided for @errorLoadingNotifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'حصل خطأ في تحميل الإشعارات'**
+  String get errorLoadingNotifications;
+
+  /// No description provided for @noNotificationsYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش إشعارات لسه'**
+  String get noNotificationsYet;
+
+  /// No description provided for @justNowLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الآن'**
+  String get justNowLabel;
+
+  /// No description provided for @minutesAgoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {minutes} دقيقة'**
+  String minutesAgoLabel(int minutes);
+
+  /// No description provided for @hoursAgoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {hours} ساعة'**
+  String hoursAgoLabel(int hours);
+
+  /// No description provided for @daysAgoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من {days} يوم'**
+  String daysAgoLabel(int days);
+
+  /// No description provided for @defaultCustomerName.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستخدم'**
+  String get defaultCustomerName;
+
+  /// No description provided for @setYourFareTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد سعرك'**
+  String get setYourFareTitle;
+
+  /// No description provided for @routeFromLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من'**
+  String get routeFromLabel;
+
+  /// No description provided for @routeToLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى'**
+  String get routeToLabel;
+
+  /// No description provided for @distanceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسافة'**
+  String get distanceLabel;
+
+  /// No description provided for @estimatedTimeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت المتوقع'**
+  String get estimatedTimeLabel;
+
+  /// No description provided for @suggestedFareForDriversLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر المقترح للطيارين'**
+  String get suggestedFareForDriversLabel;
+
+  /// No description provided for @autoSuggestedFareLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر المقترح تلقائيًا: {amount} جنيه'**
+  String autoSuggestedFareLabel(String amount);
+
+  /// No description provided for @autoAcceptCheckboxLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول تلقائي لأول عرض بنفس السعر المقترح'**
+  String get autoAcceptCheckboxLabel;
+
+  /// No description provided for @searchForDriversButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث عن طيارين'**
+  String get searchForDriversButton;
+
+  /// No description provided for @invalidPhoneNumberError.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك اكتب رقم موبايل صحيح'**
+  String get invalidPhoneNumberError;
+
+  /// No description provided for @tryAgainLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حاول تاني'**
+  String get tryAgainLabel;
+
+  /// No description provided for @errorOccurredWithMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'حصل خطأ: {message}'**
+  String errorOccurredWithMessage(String message);
+
+  /// No description provided for @otpSendNoticeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنبعتلك كود تحقق على الرقم ده'**
+  String get otpSendNoticeLabel;
+
+  /// No description provided for @sendCodeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال الكود'**
+  String get sendCodeButton;
+
+  /// No description provided for @otpLengthError.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب الكود المكون من 6 أرقام'**
+  String get otpLengthError;
+
+  /// No description provided for @invalidOtpError.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكود غلط، حاول تاني'**
+  String get invalidOtpError;
+
+  /// No description provided for @confirmPhoneNumberTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الرقم'**
+  String get confirmPhoneNumberTitle;
+
+  /// No description provided for @otpSentToNumberLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعتنالك كود تحقق على {phone}'**
+  String otpSentToNumberLabel(String phone);
+
+  /// No description provided for @determiningAddressLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري تحديد العنوان...'**
+  String get determiningAddressLabel;
+
+  /// No description provided for @customLocationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقع مخصص'**
+  String get customLocationLabel;
+
+  /// No description provided for @doneButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم'**
+  String get doneButton;
+
+  /// No description provided for @rateTripArrivedSafelyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت لوجهتك بأمان!'**
+  String get rateTripArrivedSafelyTitle;
+
+  /// No description provided for @rateTripSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيّم رحلتك مع الطيار'**
+  String get rateTripSubtitle;
+
+  /// No description provided for @pleaseSelectStarsFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك اختار عدد النجوم الأول'**
+  String get pleaseSelectStarsFirst;
+
+  /// No description provided for @failedToSaveRatingError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر حفظ التقييم، حاول تاني'**
+  String get failedToSaveRatingError;
+
+  /// No description provided for @thankYouForRatingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكرًا لتقييمك! 🌟'**
+  String get thankYouForRatingLabel;
+
+  /// No description provided for @ratingVeryBadLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيء جدًا'**
+  String get ratingVeryBadLabel;
+
+  /// No description provided for @ratingFairLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقبول'**
+  String get ratingFairLabel;
+
+  /// No description provided for @ratingGoodLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كويس'**
+  String get ratingGoodLabel;
+
+  /// No description provided for @ratingVeryGoodLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'جيد جدًا'**
+  String get ratingVeryGoodLabel;
+
+  /// No description provided for @ratingExcellentLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ممتاز'**
+  String get ratingExcellentLabel;
+
+  /// No description provided for @chooseYourRatingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار تقييمك'**
+  String get chooseYourRatingLabel;
+
+  /// No description provided for @commentHintOptional.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب تعليقك (اختياري)'**
+  String get commentHintOptional;
+
+  /// No description provided for @submitRatingButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال التقييم'**
+  String get submitRatingButton;
+
+  /// No description provided for @skipButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخطي'**
+  String get skipButton;
+
+  /// No description provided for @failedToAcceptOfferError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر قبول العرض، حاول تاني'**
+  String get failedToAcceptOfferError;
+
+  /// No description provided for @offerAcceptedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قبول العرض!'**
+  String get offerAcceptedTitle;
+
+  /// No description provided for @driverOnWayWithFareLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطيار {driverName} في الطريق ليك بسعر {price} جنيه'**
+  String driverOnWayWithFareLabel(String driverName, String price);
+
+  /// No description provided for @cancelSearchTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء البحث؟'**
+  String get cancelSearchTitle;
+
+  /// No description provided for @cancelSearchBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيتم إلغاء طلبك وإيقاف البحث عن طيارين'**
+  String get cancelSearchBody;
+
+  /// No description provided for @goBackButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'رجوع'**
+  String get goBackButton;
+
+  /// No description provided for @cancelOrderButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الطلب'**
+  String get cancelOrderButton;
+
+  /// No description provided for @increaseFareButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيادة الأجرة'**
+  String get increaseFareButton;
+
+  /// No description provided for @autoAcceptNearestDriverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول أقرب طيار مقابل {amount} جنيه تلقائيًا'**
+  String autoAcceptNearestDriverLabel(String amount);
+
+  /// No description provided for @cashAmountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} جنيه نقدًا'**
+  String cashAmountLabel(String amount);
+
+  /// No description provided for @oneDriverViewingOrderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيار واحد بيشوف طلبك'**
+  String get oneDriverViewingOrderLabel;
+
+  /// No description provided for @multipleDriversViewingOrderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} طيارين بيشوفوا طلبك'**
+  String multipleDriversViewingOrderLabel(int count);
+
+  /// No description provided for @tryRaisingFareTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرب تزود السعر'**
+  String get tryRaisingFareTitle;
+
+  /// No description provided for @raiseFareHintBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ممكن تزود فرصك للحصول علي مشوارك بسرعة'**
+  String get raiseFareHintBody;
+
+  /// No description provided for @searchWithFareLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث بسعر {amount} جنيه'**
+  String searchWithFareLabel(String amount);
+
+  /// No description provided for @newOfferFromDriverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض جديد من {driverName}'**
+  String newOfferFromDriverLabel(String driverName);
+
+  /// No description provided for @rejectButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفض'**
+  String get rejectButton;
+
+  /// No description provided for @acceptButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول'**
+  String get acceptButton;
+
+  /// No description provided for @setPinTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد رقم سري من 4 أرقام'**
+  String get setPinTitle;
+
+  /// No description provided for @unknownProviderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير معروف'**
+  String get unknownProviderLabel;
+
+  /// No description provided for @googleAccountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب Google'**
+  String get googleAccountLabel;
+
+  /// No description provided for @phoneNumberProviderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف ({phone})'**
+  String phoneNumberProviderLabel(String phone);
+
+  /// No description provided for @emailPasswordProviderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني وكلمة المرور'**
+  String get emailPasswordProviderLabel;
+
+  /// No description provided for @deleteAccountPermanentlyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف الحساب نهائيًا'**
+  String get deleteAccountPermanentlyTitle;
+
+  /// No description provided for @deleteAccountConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيتم حذف حسابك وكل بياناتك نهائيًا ومش هتقدر ترجعها تاني. متأكد؟'**
+  String get deleteAccountConfirmBody;
+
+  /// No description provided for @deletePermanentlyButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف نهائي'**
+  String get deletePermanentlyButton;
+
+  /// No description provided for @reauthRequiredForDeleteError.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم تسجل الخروج والدخول تاني قبل ما تقدر تحذف حسابك'**
+  String get reauthRequiredForDeleteError;
+
+  /// No description provided for @signInMethodLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وسيلة تسجيل الدخول'**
+  String get signInMethodLabel;
+
+  /// No description provided for @appLockTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قفل التطبيق برقم سري'**
+  String get appLockTitle;
+
+  /// No description provided for @appLockSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هتحتاج تدخل الرقم السري كل ما تفتح التطبيق'**
+  String get appLockSubtitle;
+
+  /// No description provided for @noMatchingResultsError.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش نتائج مطابقة'**
+  String get noMatchingResultsError;
+
+  /// No description provided for @searchFailedTryAgainError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر البحث حاليًا، حاول تاني'**
+  String get searchFailedTryAgainError;
+
+  /// No description provided for @unknownPlaceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكان غير معروف'**
+  String get unknownPlaceLabel;
+
+  /// No description provided for @whereDoYouWantToGoTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عايز تروح فين؟'**
+  String get whereDoYouWantToGoTitle;
+
+  /// No description provided for @searchPlaceHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب اسم الشارع أو المكان...'**
+  String get searchPlaceHint;
+
+  /// No description provided for @pickFromMapLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار من الخريطة'**
+  String get pickFromMapLabel;
+
+  /// No description provided for @startTypingToSearchLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ الكتابة عشان تدور على مكان'**
+  String get startTypingToSearchLabel;
+
+  /// No description provided for @recentSearchesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عمليات البحث الأخيرة'**
+  String get recentSearchesLabel;
+
+  /// No description provided for @failedToOpenAppError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر فتح التطبيق المطلوب'**
+  String get failedToOpenAppError;
+
+  /// No description provided for @whatsappSupportMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحبًا، محتاج مساعدة في تطبيق طيار'**
+  String get whatsappSupportMessage;
+
+  /// No description provided for @supportEmailSubject.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساعدة تطبيق طيار'**
+  String get supportEmailSubject;
+
+  /// No description provided for @supportMessageSentConfirmation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال رسالتك، هيتواصل معاك فريق الدعم قريب'**
+  String get supportMessageSentConfirmation;
+
+  /// No description provided for @genericErrorTryAgain.
+  ///
+  /// In ar, this message translates to:
+  /// **'حصل خطأ، حاول تاني'**
+  String get genericErrorTryAgain;
+
+  /// No description provided for @contactUsDirectlyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تواصل معانا مباشرة'**
+  String get contactUsDirectlyLabel;
+
+  /// No description provided for @whatsappLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'واتساب'**
+  String get whatsappLabel;
+
+  /// No description provided for @callLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتصال'**
+  String get callLabel;
+
+  /// No description provided for @emailLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيميل'**
+  String get emailLabel;
+
+  /// No description provided for @orSendMessageHereLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو ابعتلنا رسالتك هنا'**
+  String get orSendMessageHereLabel;
+
+  /// No description provided for @supportMessageHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب مشكلتك أو استفسارك هنا...'**
+  String get supportMessageHint;
+
+  /// No description provided for @sendButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال'**
+  String get sendButton;
+
+  /// No description provided for @tripCompletedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت لوجهتك!'**
+  String get tripCompletedTitle;
+
+  /// No description provided for @tripCancelledTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إلغاء الرحلة'**
+  String get tripCancelledTitle;
+
+  /// No description provided for @thankYouForUsingTayarLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكرا لاستخدامك طيار!'**
+  String get thankYouForUsingTayarLabel;
+
+  /// No description provided for @tripCancelledByDriverOrSystemLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرحلة اتلغت من الطيار أو من النظام'**
+  String get tripCancelledByDriverOrSystemLabel;
+
+  /// No description provided for @arrivedAtYourDestinationStatusLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلتوا لوجهتكم 🎉'**
+  String get arrivedAtYourDestinationStatusLabel;
+
+  /// No description provided for @driverOnWayToYouLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطيار في الطريق ليك'**
+  String get driverOnWayToYouLabel;
+
+  /// No description provided for @tripStartedOnWayToDestinationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرحلة بدأت - في الطريق للوجهة'**
+  String get tripStartedOnWayToDestinationLabel;
+
+  /// No description provided for @updatingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري التحديث...'**
+  String get updatingLabel;
+
+  /// No description provided for @arrivedWaitingDriverToEndTripLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلتوا لوجهتكم! في انتظار الطيار ينهي الرحلة'**
+  String get arrivedWaitingDriverToEndTripLabel;
+
+  /// No description provided for @waitingDriverShareLocationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'في انتظار بدء الطيار مشاركة موقعه...'**
+  String get waitingDriverShareLocationLabel;
 }
 
 class _AppLocalizationsDelegate
