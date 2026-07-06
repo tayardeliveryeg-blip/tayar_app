@@ -135,10 +135,10 @@ class _SplashScreenState extends State<SplashScreen>
                               ),
                               child: Opacity(
                                 opacity: _motoOpacity.value,
-                                child: const Icon(
-                                  Icons.two_wheeler_rounded,
-                                  color: Colors.white,
-                                  size: 82,
+                                child: Image.asset(
+                                  'assets/splash/moto_icon.png',
+                                  width: 96,
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
