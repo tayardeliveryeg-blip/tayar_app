@@ -82,6 +82,7 @@ class _CreateDeliveryOrderScreenState
       MaterialPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _pickupLocation ?? _dropoffLocation,
+          title: AppLocalizations.of(context)!.selectPickupLocationTitle,
         ),
       ),
     );
@@ -100,7 +101,7 @@ class _CreateDeliveryOrderScreenState
       MaterialPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _dropoffLocation ?? _pickupLocation,
-          title: AppLocalizations.of(context)!.selectDropoffLocationTitle,
+          title: AppLocalizations.of(context)!.selectDeliveryLocationTitle,
         ),
       ),
     );

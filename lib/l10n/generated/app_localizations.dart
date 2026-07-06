@@ -1586,12 +1586,6 @@ abstract class AppLocalizations {
   /// **'عايز تروح فين؟'**
   String get whereDoYouWantToGoTitle;
 
-  /// No description provided for @selectDropoffLocationTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'اختار مكان التسليم'**
-  String get selectDropoffLocationTitle;
-
   /// No description provided for @searchPlaceHint.
   ///
   /// In ar, this message translates to:
