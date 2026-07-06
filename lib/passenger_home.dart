@@ -14,6 +14,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'select_destination_screen.dart';
 import 'order_confirmation_screen.dart';
+import 'create_delivery_order_screen.dart';
 import 'driver_registration_screen.dart';
 import 'login_screen.dart';
 import 'notifications_screen.dart';
@@ -472,6 +473,19 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       // الزوم على المسار وبداية رسمه بالأنيميشن بيحصلوا مع بعض جوه _fetchRoute
       await _fetchRoute(_currentLocation, result.location);
     }
+  }
+
+  // ====== فتح شاشة "وصل طلباتي" (طلب توصيل طرد/بضاعة) ======
+  Future<void> _openDeliveryOrder() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CreateDeliveryOrderScreen(
+          initialPickupLocation: _currentLocation,
+          initialPickupAddress: _currentAddress,
+        ),
+      ),
+    );
   }
 
   void _clearDestination() {
@@ -958,6 +972,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               onTapPaymentMethod: _showPaymentMethodSheet,
               onCancelDestination: _clearDestination,
               onConfirmOrder: _openOrderConfirmation,
+              onTapRideMe: _openDestinationSearch,
+              onTapDeliverOrders: _openDeliveryOrder,
             ),
           ),
         ],
@@ -979,6 +995,8 @@ class TayarBottomSheet extends StatelessWidget {
   final VoidCallback onTapPaymentMethod;
   final VoidCallback onCancelDestination;
   final VoidCallback onConfirmOrder;
+  final VoidCallback onTapRideMe;
+  final VoidCallback onTapDeliverOrders;
 
   const TayarBottomSheet({
     super.key,
@@ -991,6 +1009,8 @@ class TayarBottomSheet extends StatelessWidget {
     required this.onTapPaymentMethod,
     required this.onCancelDestination,
     required this.onConfirmOrder,
+    required this.onTapRideMe,
+    required this.onTapDeliverOrders,
   });
 
   @override
@@ -1084,9 +1104,7 @@ class TayarBottomSheet extends StatelessWidget {
                     child: ServiceCard(
                       title: AppLocalizations.of(context)!.serviceRideMe,
                       icon: Icons.two_wheeler,
-                      onTap: () {
-                        // TODO: نفّذ منطق طلب وصلني
-                      },
+                      onTap: onTapRideMe,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -1094,9 +1112,7 @@ class TayarBottomSheet extends StatelessWidget {
                     child: ServiceCard(
                       title: AppLocalizations.of(context)!.serviceDeliverOrders,
                       icon: Icons.inventory_2_outlined,
-                      onTap: () {
-                        // TODO: نفّذ منطق طلب وصل طلباتي
-                      },
+                      onTap: onTapDeliverOrders,
                     ),
                   ),
                 ],
