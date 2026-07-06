@@ -311,6 +311,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serviceDeliverOrders => 'Deliver My Orders';
 
   @override
+  String get deliveryOrderTitle => 'Delivery Order';
+
+  @override
+  String get pickupLocationLabel => 'Pickup Location';
+
+  @override
+  String get deliveryLocationLabel => 'Delivery Location';
+
+  @override
+  String get tapToSelectLocationLabel => 'Tap to select location';
+
+  @override
+  String get pickupAddressDetailsLabel => 'Pickup Address Details';
+
+  @override
+  String get pickupAddressDetailsHint => 'e.g. 2nd floor, next to the pharmacy';
+
+  @override
+  String get deliveryAddressDetailsLabel => 'Delivery Address Details';
+
+  @override
+  String get deliveryAddressDetailsHint => 'e.g. 2nd floor, next to the pharmacy';
+
+  @override
+  String get senderPhoneLabel => 'Sender\'s Phone Number';
+
+  @override
+  String get receiverPhoneLabel => 'Receiver\'s Phone Number';
+
+  @override
+  String get phoneNumberHint => '01xxxxxxxxx';
+
+  @override
+  String get saveOrderButton => 'Save Order';
+
+  @override
+  String get fillAllFieldsError => 'Please select locations and fill in all required fields';
+
+  @override
+  String get estimatedFareLabel => 'Suggested Fare';
+
+  @override
+  String get selectPickupLocationTitle => 'Select Pickup Location';
+
+  @override
+  String get selectDeliveryLocationTitle => 'Select Delivery Location';
+
+  @override
   String get paymentMethodLabel => 'Payment Method';
 
   @override

@@ -305,6 +305,54 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serviceDeliverOrders => 'وصل طلباتي';
 
   @override
+  String get deliveryOrderTitle => 'توصيل طلب';
+
+  @override
+  String get pickupLocationLabel => 'مكان الاستلام';
+
+  @override
+  String get deliveryLocationLabel => 'مكان التسليم';
+
+  @override
+  String get tapToSelectLocationLabel => 'اضغط لاختيار الموقع';
+
+  @override
+  String get pickupAddressDetailsLabel => 'تفاصيل مكان الاستلام';
+
+  @override
+  String get pickupAddressDetailsHint => 'مثال: الدور التاني، جنب الصيدلية';
+
+  @override
+  String get deliveryAddressDetailsLabel => 'تفاصيل مكان التسليم';
+
+  @override
+  String get deliveryAddressDetailsHint => 'مثال: الدور التاني، جنب الصيدلية';
+
+  @override
+  String get senderPhoneLabel => 'رقم موبايل المُرسل';
+
+  @override
+  String get receiverPhoneLabel => 'رقم موبايل المُستلم';
+
+  @override
+  String get phoneNumberHint => '01xxxxxxxxx';
+
+  @override
+  String get saveOrderButton => 'حفظ الطلب';
+
+  @override
+  String get fillAllFieldsError => 'من فضلك اختار المواقع واملأ كل البيانات المطلوبة';
+
+  @override
+  String get estimatedFareLabel => 'السعر المقترح';
+
+  @override
+  String get selectPickupLocationTitle => 'اختار مكان الاستلام';
+
+  @override
+  String get selectDeliveryLocationTitle => 'اختار مكان التسليم';
+
+  @override
   String get paymentMethodLabel => 'طريقة الدفع';
 
   @override
