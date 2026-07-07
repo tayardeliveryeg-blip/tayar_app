@@ -60,6 +60,15 @@ class _TripChatScreenState extends State<TripChatScreen> {
           );
         }
       });
+    } catch (e) {
+      // ====== نوضح سبب فشل الإرسال بدل ما يختفي بصمت (غالبًا صلاحيات Firestore) ======
+      debugPrint('❌ خطأ في إرسال الرسالة: $e');
+      _controller.text = text;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context)!.chatErrorLoadingMessages}: $e')),
+        );
+      }
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -105,6 +114,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
+                  debugPrint('❌ خطأ في تحميل رسائل الشات: ${snapshot.error}');
                   return Center(
                     child: Text(
                       loc.chatErrorLoadingMessages,
