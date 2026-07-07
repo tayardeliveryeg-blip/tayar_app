@@ -6,6 +6,7 @@
 /// بيئة (environment variables) بدل ما تفضل ثابتة جوه الكود لو التطبيق
 /// هيتفتح كـ open source في أي وقت.
 class ZegoCallConfig {
-  static const int appId = 0; // ضيف الـ App ID بتاعك هنا (رقم)
-  static const String appSign = ''; // ضيف الـ App Sign بتاعك هنا (نص)
+  static const int appId = 1751431110;
+  static const String appSign =
+      'c432ac2d11a1fa4443b26c984a5de2c85ece3d034281186cdee0f835974667aa';
 }
