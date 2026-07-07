@@ -1801,6 +1801,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{amount} جنيه'**
   String fareAmountEgpLabel(String amount);
+
+  /// No description provided for @chatWithDriverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شات'**
+  String get chatWithDriverLabel;
+
+  /// No description provided for @callDriverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكالمة'**
+  String get callDriverLabel;
+
+  /// No description provided for @chatWithPassengerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شات'**
+  String get chatWithPassengerLabel;
+
+  /// No description provided for @callPassengerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكالمة'**
+  String get callPassengerLabel;
+
+  /// No description provided for @chatErrorLoadingMessages.
+  ///
+  /// In ar, this message translates to:
+  /// **'حصل خطأ في تحميل الرسائل'**
+  String get chatErrorLoadingMessages;
+
+  /// No description provided for @chatNoMessagesYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش رسائل لسه، ابدأ المحادثة'**
+  String get chatNoMessagesYet;
+
+  /// No description provided for @chatTypeMessageHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب رسالة...'**
+  String get chatTypeMessageHint;
 }
 
 class _AppLocalizationsDelegate
@@ -1836,3 +1878,4 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     'that was used.',
   );
 }
+
