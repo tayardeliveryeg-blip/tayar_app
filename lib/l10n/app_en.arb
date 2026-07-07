@@ -465,5 +465,14 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "chatWithDriverLabel": "Chat",
+  "callDriverLabel": "Call",
+  "chatWithPassengerLabel": "Chat",
+  "callPassengerLabel": "Call",
+  "chatErrorLoadingMessages": "Failed to load messages",
+  "chatNoMessagesYet": "No messages yet, start the conversation",
+  "chatTypeMessageHint": "Type a message..."
 }
+
