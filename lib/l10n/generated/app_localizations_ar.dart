@@ -931,4 +931,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String fareAmountEgpLabel(String amount) {
     return '$amount جنيه';
   }
+
+  @override
+  String get chatWithDriverLabel => 'شات';
+
+  @override
+  String get callDriverLabel => 'مكالمة';
+
+  @override
+  String get chatWithPassengerLabel => 'شات';
+
+  @override
+  String get callPassengerLabel => 'مكالمة';
+
+  @override
+  String get chatErrorLoadingMessages => 'حصل خطأ في تحميل الرسائل';
+
+  @override
+  String get chatNoMessagesYet => 'مفيش رسائل لسه، ابدأ المحادثة';
+
+  @override
+  String get chatTypeMessageHint => 'اكتب رسالة...';
 }
+
