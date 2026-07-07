@@ -465,5 +465,14 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "chatWithDriverLabel": "شات",
+  "callDriverLabel": "مكالمة",
+  "chatWithPassengerLabel": "شات",
+  "callPassengerLabel": "مكالمة",
+  "chatErrorLoadingMessages": "حصل خطأ في تحميل الرسائل",
+  "chatNoMessagesYet": "مفيش رسائل لسه، ابدأ المحادثة",
+  "chatTypeMessageHint": "اكتب رسالة..."
 }
+
