@@ -15,8 +15,8 @@ class SupportScreen extends StatefulWidget {
 }
 
 class _SupportScreenState extends State<SupportScreen> {
-  static const String _supportPhone = '+201000000000';
-  static const String _supportEmail = 'support@tayar.app';
+  static const String _supportPhone = '+201142263460';
+  static const String _supportEmail = 'tayardeliveryeg@gmail.com';
 
   final _messageController = TextEditingController();
   bool _sending = false;
