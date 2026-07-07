@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Build logs and manual backup archives (don't need to be in git history)
+build_log.txt
+flutter_build_log.txt
+*.zip
