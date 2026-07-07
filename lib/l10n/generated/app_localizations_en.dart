@@ -951,4 +951,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String fareAmountEgpLabel(String amount) {
     return '$amount EGP';
   }
+
+  @override
+  String get chatWithDriverLabel => 'Chat';
+
+  @override
+  String get callDriverLabel => 'Call';
+
+  @override
+  String get chatWithPassengerLabel => 'Chat';
+
+  @override
+  String get callPassengerLabel => 'Call';
+
+  @override
+  String get chatErrorLoadingMessages => 'Failed to load messages';
+
+  @override
+  String get chatNoMessagesYet => 'No messages yet, start the conversation';
+
+  @override
+  String get chatTypeMessageHint => 'Type a message...';
 }
+
