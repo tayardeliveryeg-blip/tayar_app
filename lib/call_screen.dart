@@ -41,13 +41,14 @@ class CallScreen extends StatelessWidget {
       appSign: ZegoCallConfig.appSign,
       userID: myUserId,
       userName: myUserName,
-      callID: 'trip_${orderId}', // نفس الـ ID للطرفين = نفس المكالمة
-      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
-        ..onOnlySelfInRoom = (context) {
-          // ====== الطرف التاني قفل أو لسه ما دخلش: نرجّع المستخدم للشاشة السابقة ======
-          Navigator.of(context).maybePop();
-        }
-        ..onHangUpConfirmation = null,
+      callID: 'trip_$orderId', // نفس الـ ID للطرفين = نفس المكالمة
+      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall(),
+      events: ZegoUIKitPrebuiltCallEvents(
+        onCallEnd: (event, defaultAction) {
+          // ====== أي سبب لانتهاء المكالمة (شخص واحد فاضل، أو حد قفل): نرجع للشاشة السابقة ======
+          defaultAction.call();
+        },
+      ),
     );
   }
 }
