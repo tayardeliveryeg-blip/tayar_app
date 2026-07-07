@@ -20,6 +20,8 @@ import 'help_screen.dart';
 import 'support_screen.dart';
 import 'driver_profile_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'trip_chat_screen.dart';
+import 'call_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -732,6 +734,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             final bool inProgress = data['status'] == 'in_progress';
 
             return _ActiveTripCard(
+              orderId: trip.id,
+              customerName:
+                  (data['customerName'] as String?) ??
+                  AppLocalizations.of(context)!.defaultCustomerName,
               pickupAddress: (data['pickupAddress'] as String?) ?? '',
               destinationAddress: (data['destinationAddress'] as String?) ?? '',
               fare: (data['acceptedFare'] as num?)?.toDouble() ?? 0,
@@ -1464,6 +1470,8 @@ class _StepButton extends StatelessWidget {
 
 // ====== كارت الرحلة النشطة فوق قائمة الطلبات ======
 class _ActiveTripCard extends StatelessWidget {
+  final String orderId;
+  final String customerName;
   final String pickupAddress;
   final String destinationAddress;
   final double fare;
@@ -1473,6 +1481,8 @@ class _ActiveTripCard extends StatelessWidget {
   final VoidCallback onComplete;
 
   const _ActiveTripCard({
+    required this.orderId,
+    required this.customerName,
     required this.pickupAddress,
     required this.destinationAddress,
     required this.fare,
@@ -1540,6 +1550,53 @@ class _ActiveTripCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
+
+          // ====== زرارين التواصل مع الراكب: شات ومكالمة صوتية ======
+          Row(
+            children: [
+              Expanded(
+                child: _DriverContactButton(
+                  icon: Icons.chat_bubble_outline,
+                  label: AppLocalizations.of(context)!.chatWithPassengerLabel,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TripChatScreen(
+                          orderId: orderId,
+                          otherPartyName: customerName,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _DriverContactButton(
+                  icon: Icons.call_outlined,
+                  label: AppLocalizations.of(context)!.callPassengerLabel,
+                  onTap: () {
+                    final user = FirebaseAuth.instance.currentUser;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CallScreen(
+                          orderId: orderId,
+                          myUserId: user?.uid ?? '',
+                          myUserName:
+                              user?.displayName ??
+                              AppLocalizations.of(context)!.defaultDriverName,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
           SizedBox(
             width: double.infinity,
             height: 44,
@@ -1563,6 +1620,49 @@ class _ActiveTripCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ====== زرار موحّد لأزرار "شات" و"مكالمة" في كارت الرحلة النشطة للطيار ======
+class _DriverContactButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _DriverContactButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: TayarColors.primary.withValues(alpha: 0.18),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: TayarColors.primary.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: TayarColors.primary, size: 18),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                color: TayarColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -2307,3 +2407,4 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
     );
   }
 }
+
