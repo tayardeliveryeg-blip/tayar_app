@@ -471,6 +471,14 @@
   "callDriverLabel": "مكالمة",
   "chatWithPassengerLabel": "شات",
   "callPassengerLabel": "مكالمة",
+  "originalProposedFareLabel": "السعر المقترح: {amount} جنيه",
+  "@originalProposedFareLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "chatErrorLoadingMessages": "حصل خطأ في تحميل الرسائل",
   "chatNoMessagesYet": "مفيش رسائل لسه، ابدأ المحادثة",
   "chatTypeMessageHint": "اكتب رسالة..."

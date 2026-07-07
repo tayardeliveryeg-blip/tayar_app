@@ -965,6 +965,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get callPassengerLabel => 'Call';
 
   @override
+  String originalProposedFareLabel(String amount) {
+    return 'Proposed price: $amount EGP';
+  }
+
+  @override
   String get chatErrorLoadingMessages => 'Failed to load messages';
 
   @override

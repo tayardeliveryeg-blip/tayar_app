@@ -471,6 +471,14 @@
   "callDriverLabel": "Call",
   "chatWithPassengerLabel": "Chat",
   "callPassengerLabel": "Call",
+  "originalProposedFareLabel": "Proposed price: {amount} EGP",
+  "@originalProposedFareLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "chatErrorLoadingMessages": "Failed to load messages",
   "chatNoMessagesYet": "No messages yet, start the conversation",
   "chatTypeMessageHint": "Type a message..."

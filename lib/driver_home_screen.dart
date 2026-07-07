@@ -22,6 +22,7 @@ import 'driver_profile_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'trip_chat_screen.dart';
 import 'call_screen.dart';
+import 'driver_trip_tracking_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -205,6 +206,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               : null;
 
           if (_sharingTripId == tripId) return;
+          final bool isNewlyAcceptedTrip = _sharingTripId == null;
           _sharingTripId = tripId;
           _hasNotifiedArrival = false;
           // ====== اختفي من قايمة "المتاحين" فورًا عند قبول رحلة ======
@@ -215,6 +217,19 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           // ====== نبعت موقعه الحالي فورًا من غير ما ننتظر أول حركة فعلية،
           // عشان الراكب يشوفه على طول لحظة القبول مش بعد ما يمشي 5 متر ======
           _pushImmediateDriverLocation(tripId);
+
+          // ====== أول لحظة يتقبل فيها عرض الطيار، نفتحله شاشة الخريطة/التتبع
+          // تلقائيًا عشان يشوف نقطة الانطلاق والوصول والمسار على طول ======
+          if (isNewlyAcceptedTrip) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => DriverTripTrackingScreen(orderId: tripId),
+                ),
+              );
+            });
+          }
         });
   }
 
@@ -747,6 +762,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               inProgress: inProgress,
               onStart: () => _startTrip(trip.id),
               onComplete: () => _completeTrip(trip.id),
+              onOpenTracking: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => DriverTripTrackingScreen(orderId: trip.id),
+                ),
+              ),
             );
           },
         ),
@@ -1479,6 +1500,7 @@ class _ActiveTripCard extends StatelessWidget {
   final bool inProgress;
   final VoidCallback onStart;
   final VoidCallback onComplete;
+  final VoidCallback onOpenTracking;
 
   const _ActiveTripCard({
     required this.orderId,
@@ -1490,66 +1512,96 @@ class _ActiveTripCard extends StatelessWidget {
     required this.inProgress,
     required this.onStart,
     required this.onComplete,
+    required this.onOpenTracking,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: TayarColors.primary.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            inProgress
-                ? AppLocalizations.of(context)!.tripInProgressLabel
-                : AppLocalizations.of(context)!.tripAcceptedWaitingLabel,
-            style: const TextStyle(
-              color: TayarColors.primary,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
+          // ====== منطقة قابلة للضغط: بتفتح شاشة الخريطة والتتبع اللحظي ======
+          InkWell(
+            onTap: onOpenTracking,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          inProgress
+                              ? AppLocalizations.of(context)!.tripInProgressLabel
+                              : AppLocalizations.of(
+                                  context,
+                                )!.tripAcceptedWaitingLabel,
+                          style: const TextStyle(
+                            color: TayarColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.map_outlined,
+                        color: TayarColors.primary.withValues(alpha: 0.8),
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '$pickupAddress ← $destinationAddress',
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.currencyEGP(fare.toStringAsFixed(0)),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.payments_outlined,
+                        color: Colors.white.withValues(alpha: 0.7),
+                        size: 14,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        paymentMethodDisplay(context, paymentMethod),
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            '$pickupAddress ← $destinationAddress',
-            style: const TextStyle(color: Colors.white, fontSize: 13),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text(
-                AppLocalizations.of(
-                  context,
-                )!.currencyEGP(fare.toStringAsFixed(0)),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.payments_outlined,
-                color: Colors.white.withValues(alpha: 0.7),
-                size: 14,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                paymentMethodDisplay(context, paymentMethod),
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
 
           // ====== زرارين التواصل مع الراكب: شات ومكالمة صوتية ======
           Row(
@@ -1617,6 +1669,9 @@ class _ActiveTripCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            ),
+          ),
+              ],
             ),
           ),
         ],

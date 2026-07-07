@@ -945,6 +945,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get callPassengerLabel => 'مكالمة';
 
   @override
+  String originalProposedFareLabel(String amount) {
+    return 'السعر المقترح: $amount جنيه';
+  }
+
+  @override
   String get chatErrorLoadingMessages => 'حصل خطأ في تحميل الرسائل';
 
   @override

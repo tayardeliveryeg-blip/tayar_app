@@ -1826,6 +1826,12 @@ abstract class AppLocalizations {
   /// **'مكالمة'**
   String get callPassengerLabel;
 
+  /// No description provided for @originalProposedFareLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر المقترح: {amount} جنيه'**
+  String originalProposedFareLabel(String amount);
+
   /// No description provided for @chatErrorLoadingMessages.
   ///
   /// In ar, this message translates to:
