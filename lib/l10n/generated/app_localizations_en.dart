@@ -12,7 +12,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Tayar - Get There Instantly';
 
   @override
-  String get clientOrderPriority => 'Your request goes to the nearest drivers; the best price gets priority';
+  String get clientOrderPriority =>
+      'Your request goes to the nearest drivers; the best price gets priority';
 
   @override
   String get driverNoOrders => 'No orders available right now.. stay ready!';
@@ -48,10 +49,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusUnavailable => 'Unavailable';
 
   @override
-  String get permissionLocationRequired => 'You need to allow location permission first to go online';
+  String get permissionLocationRequired =>
+      'You need to allow location permission first to go online';
 
   @override
-  String get offerSentWaitingPassenger => 'Your offer was sent, waiting for the passenger\'s response';
+  String get offerSentWaitingPassenger =>
+      'Your offer was sent, waiting for the passenger\'s response';
 
   @override
   String get offerSendFailed => 'Couldn\'t send the offer, please try again';
@@ -105,7 +108,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get offerSentAlreadyLabel => 'Your offer has been sent, waiting for the passenger';
+  String get offerSentAlreadyLabel =>
+      'Your offer has been sent, waiting for the passenger';
 
   @override
   String get offerCustomButton => 'Offer a different price';
@@ -143,7 +147,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get availableBalance => 'Available Balance';
 
   @override
-  String get totalEarningsBeforeCommission => 'Total Earnings (before commission)';
+  String get totalEarningsBeforeCommission =>
+      'Total Earnings (before commission)';
 
   @override
   String get companyCommission => 'Company Commission (10%)';
@@ -167,13 +172,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderDetailsTitle => 'Order Details';
 
   @override
-  String get locationUnavailableForOrder => 'Location unavailable for this order';
+  String get locationUnavailableForOrder =>
+      'Location unavailable for this order';
 
   @override
   String get offerAtMyPriceButton => 'Offer my price';
 
   @override
-  String get alreadyOfferedOnOrder => 'You\'ve already made an offer on this order';
+  String get alreadyOfferedOnOrder =>
+      'You\'ve already made an offer on this order';
 
   @override
   String get logout => 'Log Out';
@@ -182,7 +189,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
-  String get confirmLogoutMessage => 'Are you sure you want to log out of your account?';
+  String get confirmLogoutMessage =>
+      'Are you sure you want to log out of your account?';
 
   @override
   String get languageToggleTooltip => 'العربية / English';
@@ -215,19 +223,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enablePushNotifications => 'Enable app notifications';
 
   @override
-  String get pushNotificationsDescription => 'Notifications for orders, offers, and important updates';
+  String get pushNotificationsDescription =>
+      'Notifications for orders, offers, and important updates';
 
   @override
   String get termsAndConditions => 'Terms & Conditions';
 
   @override
-  String get termsAndConditionsBody => 'By using the Tayar app, you agree to its terms of use. The service is provided directly between passenger and driver, and the company only provides the connecting platform.';
+  String get termsAndConditionsBody =>
+      'By using the Tayar app, you agree to its terms of use. The service is provided directly between passenger and driver, and the company only provides the connecting platform.';
 
   @override
   String get privacyPolicy => 'Privacy Policy';
 
   @override
-  String get privacyPolicyBody => 'We protect your data and only use your location while an actual trip is in progress. We never share your data with any third party without your consent.';
+  String get privacyPolicyBody =>
+      'We protect your data and only use your location while an actual trip is in progress. We never share your data with any third party without your consent.';
 
   @override
   String get appVersionLabel => 'App Version';
@@ -266,7 +277,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changePhotoLabel => 'Change Photo';
 
   @override
-  String get photoTooLargeError => 'The photo is too large, please choose a smaller one';
+  String get photoTooLargeError =>
+      'The photo is too large, please choose a smaller one';
 
   @override
   String get locatingAddress => 'Locating address...';
@@ -320,7 +332,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deliveryAddressDetailsLabel => 'Delivery Address Details';
 
   @override
-  String get deliveryAddressDetailsHint => 'e.g. 2nd floor, next to the pharmacy';
+  String get deliveryAddressDetailsHint =>
+      'e.g. 2nd floor, next to the pharmacy';
 
   @override
   String get senderPhoneLabel => 'Sender\'s Phone Number';
@@ -335,7 +348,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveOrderButton => 'Save Order';
 
   @override
-  String get fillAllFieldsError => 'Please select locations and fill in all required fields';
+  String get fillAllFieldsError =>
+      'Please select locations and fill in all required fields';
 
   @override
   String get estimatedFareLabel => 'Suggested Fare';
@@ -376,16 +390,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get submitApplicationSuccessTitle => 'Your application has been sent!';
 
   @override
-  String get submitApplicationSuccessBody => 'We\'ll review your details within 24 hours, and notify you as soon as your driver account is approved.';
+  String get submitApplicationSuccessBody =>
+      'We\'ll review your details within 24 hours, and notify you as soon as your driver account is approved.';
 
   @override
-  String get submitFailedError => 'Couldn\'t submit the application, please try again';
+  String get submitFailedError =>
+      'Couldn\'t submit the application, please try again';
 
   @override
-  String get applicationUnderReviewBanner => 'Your application is currently under review, we\'ll notify you as soon as we respond.';
+  String get applicationUnderReviewBanner =>
+      'Your application is currently under review, we\'ll notify you as soon as we respond.';
 
   @override
-  String get registrationIntroText => 'Upload your personal and vehicle details. We\'ll review all information within 24 hours';
+  String get registrationIntroText =>
+      'Upload your personal and vehicle details. We\'ll review all information within 24 hours';
 
   @override
   String get sectionPersonalInfo => 'Personal Information';
@@ -409,7 +427,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionCompleteLabel => 'Information completed';
 
   @override
-  String get sectionIncompleteLabel => 'Please fill in the required information';
+  String get sectionIncompleteLabel =>
+      'Please fill in the required information';
 
   @override
   String get optionalLabel => 'Optional';
@@ -418,13 +437,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personalPhotoLabel => 'Personal Photo';
 
   @override
-  String get licensePhotoUploadRequired => 'Please upload the license photo and enter the expiry date';
+  String get licensePhotoUploadRequired =>
+      'Please upload the license photo and enter the expiry date';
 
   @override
   String get licenseExpiryHint => 'Expiry Date';
 
   @override
-  String get criminalRecordUploadRequired => 'Please upload the criminal record document and enter the ID number';
+  String get criminalRecordUploadRequired =>
+      'Please upload the criminal record document and enter the ID number';
 
   @override
   String get criminalRecordFrontLabel => 'Criminal Record Document';
@@ -436,7 +457,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get idNumberHint => 'ID Number';
 
   @override
-  String get bikeInfoRequiredError => 'Please complete the basic motorcycle information';
+  String get bikeInfoRequiredError =>
+      'Please complete the basic motorcycle information';
 
   @override
   String get bikePhotoLabel => 'Motorcycle Photo';
@@ -463,49 +485,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get faqOrderTripQuestion => 'How do I request a trip?';
 
   @override
-  String get faqOrderTripAnswer => 'From the home screen, set your pickup point then choose your destination, then check the suggested price and send the request. You\'ll receive offers from nearby drivers and can choose the one that suits you.';
+  String get faqOrderTripAnswer =>
+      'From the home screen, set your pickup point then choose your destination, then check the suggested price and send the request. You\'ll receive offers from nearby drivers and can choose the one that suits you.';
 
   @override
   String get faqPricingQuestion => 'How is the price determined?';
 
   @override
-  String get faqPricingAnswer => 'The price is calculated based on the actual distance between the pickup point and the destination. You can raise or lower the suggested price while negotiating with drivers.';
+  String get faqPricingAnswer =>
+      'The price is calculated based on the actual distance between the pickup point and the destination. You can raise or lower the suggested price while negotiating with drivers.';
 
   @override
   String get faqPaymentMethodsQuestion => 'What payment methods are available?';
 
   @override
-  String get faqPaymentMethodsAnswer => 'You can pay cash directly to the driver, through the e-wallet, or via InstaPay. You can choose the payment method while confirming the request.';
+  String get faqPaymentMethodsAnswer =>
+      'You can pay cash directly to the driver, through the e-wallet, or via InstaPay. You can choose the payment method while confirming the request.';
 
   @override
-  String get faqNoAcceptQuestion => 'No one is accepting my request, what should I do?';
+  String get faqNoAcceptQuestion =>
+      'No one is accepting my request, what should I do?';
 
   @override
-  String get faqNoAcceptAnswer => 'Try raising the price a bit while negotiating, especially during peak times or in remote areas — this makes the request more appealing to nearby drivers.';
+  String get faqNoAcceptAnswer =>
+      'Try raising the price a bit while negotiating, especially during peak times or in remote areas — this makes the request more appealing to nearby drivers.';
 
   @override
-  String get faqBecomeDriverQuestion => 'How do I become a driver on the Tayar app?';
+  String get faqBecomeDriverQuestion =>
+      'How do I become a driver on the Tayar app?';
 
   @override
-  String get faqBecomeDriverAnswer => 'From the side menu, choose \"Driver Mode\" and complete the registration steps (personal info, license, motorcycle). After review, you\'ll be able to receive requests.';
+  String get faqBecomeDriverAnswer =>
+      'From the side menu, choose \"Driver Mode\" and complete the registration steps (personal info, license, motorcycle). After review, you\'ll be able to receive requests.';
 
   @override
   String get faqDriverEarningsQuestion => 'How are driver earnings calculated?';
 
   @override
-  String get faqDriverEarningsAnswer => 'For each trip, the driver gets 90% of the trip value, while the company takes 10% for running the platform. You can track your earnings details from the \"Income\" tab.';
+  String get faqDriverEarningsAnswer =>
+      'For each trip, the driver gets 90% of the trip value, while the company takes 10% for running the platform. You can track your earnings details from the \"Income\" tab.';
 
   @override
-  String get faqDeliverPackageQuestion => 'Can I deliver a package instead of doing a passenger trip?';
+  String get faqDeliverPackageQuestion =>
+      'Can I deliver a package instead of doing a passenger trip?';
 
   @override
-  String get faqDeliverPackageAnswer => 'Yes, through the \"Package Delivery\" service you can send a package from one place to another without being present for the trip. The same negotiation system applies here too.';
+  String get faqDeliverPackageAnswer =>
+      'Yes, through the \"Package Delivery\" service you can send a package from one place to another without being present for the trip. The same negotiation system applies here too.';
 
   @override
-  String get faqTripProblemQuestion => 'What should I do if a problem occurs during a trip?';
+  String get faqTripProblemQuestion =>
+      'What should I do if a problem occurs during a trip?';
 
   @override
-  String get faqTripProblemAnswer => 'You can contact our support team directly from the \"Support\" screen in the side menu, and we\'ll help you resolve the issue right away.';
+  String get faqTripProblemAnswer =>
+      'You can contact our support team directly from the \"Support\" screen in the side menu, and we\'ll help you resolve the issue right away.';
 
   @override
   String get chooseYourRideSubtitle => 'Choose the ride that suits you';
@@ -520,7 +554,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueWithPhoneButton => 'Continue with Phone';
 
   @override
-  String get loginTermsAgreementNotice => 'By joining, you agree to the terms of use and privacy policy';
+  String get loginTermsAgreementNotice =>
+      'By joining, you agree to the terms of use and privacy policy';
 
   @override
   String signInFailedError(String error) {
@@ -536,10 +571,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markAllAsReadButton => 'Mark all as read';
 
   @override
-  String get mustSignInToViewNotifications => 'You need to sign in to view notifications';
+  String get mustSignInToViewNotifications =>
+      'You need to sign in to view notifications';
 
   @override
-  String get errorLoadingNotifications => 'An error occurred while loading notifications';
+  String get errorLoadingNotifications =>
+      'An error occurred while loading notifications';
 
   @override
   String get noNotificationsYet => 'No notifications yet';
@@ -589,7 +626,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get autoAcceptCheckboxLabel => 'Auto-accept the first offer at the suggested price';
+  String get autoAcceptCheckboxLabel =>
+      'Auto-accept the first offer at the suggested price';
 
   @override
   String get searchForDriversButton => 'Search for Drivers';
@@ -606,7 +644,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get otpSendNoticeLabel => 'We\'ll send a verification code to this number';
+  String get otpSendNoticeLabel =>
+      'We\'ll send a verification code to this number';
 
   @override
   String get sendCodeButton => 'Send Code';
@@ -644,7 +683,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSelectStarsFirst => 'Please select a star rating first';
 
   @override
-  String get failedToSaveRatingError => 'Couldn\'t save the rating, please try again';
+  String get failedToSaveRatingError =>
+      'Couldn\'t save the rating, please try again';
 
   @override
   String get thankYouForRatingLabel => 'Thank you for your rating! 🌟';
@@ -677,7 +717,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skipButton => 'Skip';
 
   @override
-  String get failedToAcceptOfferError => 'Couldn\'t accept the offer, please try again';
+  String get failedToAcceptOfferError =>
+      'Couldn\'t accept the offer, please try again';
 
   @override
   String get offerAcceptedTitle => 'Offer Accepted!';
@@ -691,7 +732,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelSearchTitle => 'Cancel search?';
 
   @override
-  String get cancelSearchBody => 'This will cancel your request and stop searching for drivers';
+  String get cancelSearchBody =>
+      'This will cancel your request and stop searching for drivers';
 
   @override
   String get goBackButton => 'Go Back';
@@ -724,7 +766,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryRaisingFareTitle => 'Try raising the fare';
 
   @override
-  String get raiseFareHintBody => 'This can improve your chances of getting a ride faster';
+  String get raiseFareHintBody =>
+      'This can improve your chances of getting a ride faster';
 
   @override
   String searchWithFareLabel(String amount) {
@@ -763,13 +806,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccountPermanentlyTitle => 'Delete Account Permanently';
 
   @override
-  String get deleteAccountConfirmBody => 'Your account and all your data will be permanently deleted and cannot be recovered. Are you sure?';
+  String get deleteAccountConfirmBody =>
+      'Your account and all your data will be permanently deleted and cannot be recovered. Are you sure?';
 
   @override
   String get deletePermanentlyButton => 'Delete Permanently';
 
   @override
-  String get reauthRequiredForDeleteError => 'You need to sign out and sign back in before you can delete your account';
+  String get reauthRequiredForDeleteError =>
+      'You need to sign out and sign back in before you can delete your account';
 
   @override
   String get signInMethodLabel => 'Sign-in Method';
@@ -778,7 +823,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appLockTitle => 'Lock app with a PIN';
 
   @override
-  String get appLockSubtitle => 'You\'ll need to enter the PIN every time you open the app';
+  String get appLockSubtitle =>
+      'You\'ll need to enter the PIN every time you open the app';
 
   @override
   String get noMatchingResultsError => 'No matching results';
@@ -814,7 +860,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get supportEmailSubject => 'Tayar App Support';
 
   @override
-  String get supportMessageSentConfirmation => 'Your message has been sent, our support team will get in touch with you soon';
+  String get supportMessageSentConfirmation =>
+      'Your message has been sent, our support team will get in touch with you soon';
 
   @override
   String get genericErrorTryAgain => 'An error occurred, please try again';
@@ -850,25 +897,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thankYouForUsingTayarLabel => 'Thank you for using Tayar!';
 
   @override
-  String get tripCancelledByDriverOrSystemLabel => 'The trip was cancelled by the driver or the system';
+  String get tripCancelledByDriverOrSystemLabel =>
+      'The trip was cancelled by the driver or the system';
 
   @override
-  String get arrivedAtYourDestinationStatusLabel => 'You\'ve arrived at your destination 🎉';
+  String get arrivedAtYourDestinationStatusLabel =>
+      'You\'ve arrived at your destination 🎉';
 
   @override
   String get driverOnWayToYouLabel => 'The driver is on the way to you';
 
   @override
-  String get tripStartedOnWayToDestinationLabel => 'Trip started - on the way to the destination';
+  String get tripStartedOnWayToDestinationLabel =>
+      'Trip started - on the way to the destination';
 
   @override
   String get updatingLabel => 'Updating...';
 
   @override
-  String get arrivedWaitingDriverToEndTripLabel => 'You\'ve arrived at your destination! Waiting for the driver to end the trip';
+  String get arrivedWaitingDriverToEndTripLabel =>
+      'You\'ve arrived at your destination! Waiting for the driver to end the trip';
 
   @override
-  String get waitingDriverShareLocationLabel => 'Waiting for the driver to start sharing their location...';
+  String get waitingDriverShareLocationLabel =>
+      'Waiting for the driver to start sharing their location...';
 
   @override
   String get noOrdersYetTitle => 'No orders yet';
