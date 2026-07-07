@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'passenger_home.dart' show TayarColors;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'rate_trip_screen.dart';
+import 'trip_chat_screen.dart';
+import 'call_screen.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -693,6 +696,51 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     ],
                   ),
                   const SizedBox(height: 12),
+
+                  // ====== زرارين التواصل مع الطيار: شات ومكالمة صوتية ======
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _ContactActionButton(
+                          icon: Icons.chat_bubble_outline,
+                          label: loc.chatWithDriverLabel,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => TripChatScreen(
+                                  orderId: widget.orderId,
+                                  otherPartyName: _driverName,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _ContactActionButton(
+                          icon: Icons.call_outlined,
+                          label: loc.callDriverLabel,
+                          onTap: () {
+                            final user = FirebaseAuth.instance.currentUser;
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => CallScreen(
+                                  orderId: widget.orderId,
+                                  myUserId: user?.uid ?? '',
+                                  myUserName:
+                                      user?.displayName ??
+                                      loc.defaultCustomerName,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
                   Row(
                     children: [
                       Icon(
@@ -728,6 +776,49 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
   }
 }
 
+// ====== زرار موحّد لأزرار "شات" و"مكالمة" في كارت الرحلة ======
+class _ContactActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ContactActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: TayarColors.primary.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: TayarColors.primary, size: 18),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                color: TayarColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ====== أيقونة دبوس بيضاء بشكل موحد لنقاط البيك أب/الوجهة ======
 class _PinIcon extends StatelessWidget {
   final IconData icon;
@@ -749,3 +840,4 @@ class _PinIcon extends StatelessWidget {
     );
   }
 }
+
