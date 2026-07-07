@@ -42,7 +42,12 @@
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>location</string>
+			<string>voip</string>
+			<string>audio</string>
 		</array>
+		<!-- ====== إذن الميكروفون: لازم للمكالمة الصوتية داخل التطبيق بين الراكب والطيار ====== -->
+		<key>NSMicrophoneUsageDescription</key>
+		<string>محتاجين وصولك للميكروفون عشان تقدر تعمل مكالمة صوتية مع الطيار أو الراكب داخل التطبيق</string>
 		<key>UIApplicationSceneManifest</key>
 		<dict>
 			<key>UIApplicationSupportsMultipleScenes</key>
@@ -88,3 +93,4 @@
 		<false/>
 	</dict>
 </plist>
+
