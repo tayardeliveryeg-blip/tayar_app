@@ -19,6 +19,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverNoOrders => 'مفيش طلبات متاحة دلوقتي.. خليك مستعد!';
 
   @override
+  String get driverOfflineHint => 'أنت غير متاح دلوقتي.. دوس "اونلاين" عشان تشوف الطلبات المتاحة';
+
+  @override
   String get driverNoRatings => 'لسه مفيش تقييمات من الركاب.. شد حيلك';
 
   @override

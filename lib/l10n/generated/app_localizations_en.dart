@@ -19,6 +19,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverNoOrders => 'No orders available right now.. stay ready!';
 
   @override
+  String get driverOfflineHint => 'You\'re currently offline.. tap "Online" to see available orders';
+
+  @override
   String get driverNoRatings => 'No ratings from passengers yet.. keep it up';
 
   @override

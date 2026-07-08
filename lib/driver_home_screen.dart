@@ -599,70 +599,54 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            AppLocalizations.of(context)!.appName,
-            style: const TextStyle(color: Colors.white),
-            maxLines: 1,
-          ),
-        ),
-        titleSpacing: 0,
-        actions: [
-          // ====== زرار "متاح / غير متاح" ======
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: GestureDetector(
-              onTap: _isTogglingOnline ? null : _toggleOnline,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: _isOnline
-                      ? TayarColors.primary.withValues(alpha: 0.15)
-                      : Colors.white.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: _isOnline ? TayarColors.primary : Colors.white38,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (_isTogglingOnline)
-                      const SizedBox(
-                        width: 14,
-                        height: 14,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    else
-                      Icon(
-                        Icons.circle,
-                        size: 10,
-                        color: _isOnline ? TayarColors.primary : Colors.grey,
-                      ),
-                    const SizedBox(width: 6),
-                    Text(
-                      _isOnline
-                          ? AppLocalizations.of(context)!.driverToggleOnline
-                          : AppLocalizations.of(context)!.driverToggleOffline,
-                      style: TextStyle(
-                        color: _isOnline ? TayarColors.primary : Colors.white70,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+        title: GestureDetector(
+          onTap: _isTogglingOnline ? null : _toggleOnline,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: _isOnline
+                  ? TayarColors.primary.withValues(alpha: 0.15)
+                  : Colors.white.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: _isOnline ? TayarColors.primary : Colors.white38,
               ),
             ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_isTogglingOnline)
+                  const SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                else
+                  Icon(
+                    Icons.circle,
+                    size: 10,
+                    color: _isOnline ? TayarColors.primary : Colors.grey,
+                  ),
+                const SizedBox(width: 6),
+                Text(
+                  _isOnline
+                      ? AppLocalizations.of(context)!.driverToggleOnline
+                      : AppLocalizations.of(context)!.driverToggleOffline,
+                  style: TextStyle(
+                    color: _isOnline ? TayarColors.primary : Colors.white70,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
+        ),
+        centerTitle: true,
+        actions: [
           // ====== زرار تبديل اللغة اتشال من هنا؛ التحكم في اللغة بقى
           // من شاشة الإعدادات فقط (مكان واحد موحّد لكل التطبيق) ======
           IconButton(
@@ -772,9 +756,31 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           },
         ),
 
-        // ====== الطلبات المتاحة اللي بتدور على عروض ======
+        // ====== الطلبات المتاحة اللي بتدور على عروض (تظهر بس لو الطيار أونلاين) ======
         Expanded(
-          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          child: !_isOnline
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.power_settings_new,
+                          color: TayarColors.textGrey,
+                          size: 40,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          AppLocalizations.of(context)!.driverOfflineHint,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: TayarColors.textGrey),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: _ordersRef
                 .where('status', isEqualTo: 'searching')
                 .orderBy('createdAt', descending: true)

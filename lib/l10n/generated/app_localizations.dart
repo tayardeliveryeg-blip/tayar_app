@@ -116,6 +116,12 @@ abstract class AppLocalizations {
   /// **'مفيش طلبات متاحة دلوقتي.. خليك مستعد!'**
   String get driverNoOrders;
 
+  /// No description provided for @driverOfflineHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت غير متاح دلوقتي.. دوس "اونلاين" عشان تشوف الطلبات المتاحة'**
+  String get driverOfflineHint;
+
   /// No description provided for @driverNoRatings.
   ///
   /// In ar, this message translates to:
