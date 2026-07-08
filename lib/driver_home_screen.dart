@@ -891,49 +891,63 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 28,
-                    backgroundColor: TayarColors.primary,
-                    child: Icon(
-                      Icons.two_wheeler,
-                      color: Colors.white,
-                      size: 30,
-                    ),
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const DriverProfileScreen(),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _currentUser?.displayName ??
-                              AppLocalizations.of(context)!.defaultDriverName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _isOnline
-                              ? AppLocalizations.of(context)!.statusAvailable
-                              : AppLocalizations.of(context)!.statusUnavailable,
-                          style: TextStyle(
-                            color: _isOnline
-                                ? TayarColors.primary
-                                : TayarColors.textGrey,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 28,
+                      backgroundColor: TayarColors.primary,
+                      child: Icon(
+                        Icons.two_wheeler,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _currentUser?.displayName ??
+                                AppLocalizations.of(context)!.defaultDriverName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _isOnline
+                                ? AppLocalizations.of(context)!.statusAvailable
+                                : AppLocalizations.of(
+                                    context,
+                                  )!.statusUnavailable,
+                            style: TextStyle(
+                              color: _isOnline
+                                  ? TayarColors.primary
+                                  : TayarColors.textGrey,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right, color: Colors.white),
+                  ],
+                ),
               ),
             ),
             const Divider(color: Colors.white24, height: 1),
@@ -941,19 +955,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  _DriverDrawerItem(
-                    icon: Icons.person_outline,
-                    label: AppLocalizations.of(context)!.navProfile,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const DriverProfileScreen(),
-                        ),
-                      );
-                    },
-                  ),
                   _DriverDrawerItem(
                     icon: Icons.list_alt,
                     label: AppLocalizations.of(context)!.tabRequests,

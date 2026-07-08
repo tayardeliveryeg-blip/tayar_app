@@ -1456,55 +1456,61 @@ class TayarDrawer extends StatelessWidget {
       child: SafeArea(
         child: Column(
           children: [
-            // ====== بيانات اليوزر ======
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 28,
-                    backgroundColor: TayarColors.primary,
-                    child: Icon(Icons.person, color: Colors.white, size: 30),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.defaultUserName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            ...List.generate(
-                              5,
-                              (i) => const Icon(
-                                Icons.star,
-                                color: TayarColors.primary,
-                                size: 16,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            const Text(
-                              '4.75 (5)',
-                              style: TextStyle(
-                                color: TayarColors.textGrey,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+            // ====== بيانات اليوزر (بتفتح البروفايل عند الدوس) ======
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: اربطها بشاشة بروفايل الراكب لما تتضاف
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 28,
+                      backgroundColor: TayarColors.primary,
+                      child: Icon(Icons.person, color: Colors.white, size: 30),
                     ),
-                  ),
-                  const Icon(Icons.chevron_left, color: Colors.white),
-                ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.defaultUserName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              ...List.generate(
+                                5,
+                                (i) => const Icon(
+                                  Icons.star,
+                                  color: TayarColors.primary,
+                                  size: 16,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              const Text(
+                                '4.75 (5)',
+                                style: TextStyle(
+                                  color: TayarColors.textGrey,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right, color: Colors.white),
+                  ],
+                ),
               ),
             ),
             const Divider(color: Colors.white24, height: 1),
@@ -1520,6 +1526,10 @@ class TayarDrawer extends StatelessWidget {
                     selected: true,
                   ),
                   _DrawerItem(
+                    icon: Icons.delivery_dining,
+                    label: AppLocalizations.of(context)!.serviceDeliverOrders,
+                  ),
+                  _DrawerItem(
                     icon: Icons.history,
                     label: AppLocalizations.of(context)!.orderHistoryLabel,
                     onTap: () {
@@ -1531,10 +1541,6 @@ class TayarDrawer extends StatelessWidget {
                         ),
                       );
                     },
-                  ),
-                  _DrawerItem(
-                    icon: Icons.delivery_dining,
-                    label: AppLocalizations.of(context)!.serviceDeliverOrders,
                   ),
                   _DrawerItem(
                     icon: Icons.notifications_none,
