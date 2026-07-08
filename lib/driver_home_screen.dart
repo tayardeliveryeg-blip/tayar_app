@@ -905,14 +905,39 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 28,
-                      backgroundColor: TayarColors.primary,
-                      child: Icon(
-                        Icons.two_wheeler,
-                        color: Colors.white,
-                        size: 30,
-                      ),
+                    StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                      stream: _currentUser == null
+                          ? null
+                          : FirebaseFirestore.instance
+                                .collection('drivers')
+                                .doc(_currentUser!.uid)
+                                .snapshots(),
+                      builder: (context, snapshot) {
+                        final photoBase64 =
+                            (snapshot.data?.data()?['personalInfo']
+                                    as Map<String, dynamic>?)?['photoBase64']
+                                as String?;
+                        ImageProvider? photo;
+                        if (photoBase64 != null && photoBase64.isNotEmpty) {
+                          try {
+                            photo = MemoryImage(base64Decode(photoBase64));
+                          } catch (_) {
+                            photo = null;
+                          }
+                        }
+                        return CircleAvatar(
+                          radius: 28,
+                          backgroundColor: TayarColors.primary,
+                          backgroundImage: photo,
+                          child: photo == null
+                              ? const Icon(
+                                  Icons.two_wheeler,
+                                  color: Colors.white,
+                                  size: 30,
+                                )
+                              : null,
+                        );
+                      },
                     ),
                     const SizedBox(width: 12),
                     Expanded(

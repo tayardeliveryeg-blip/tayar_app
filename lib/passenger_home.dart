@@ -1472,10 +1472,39 @@ class TayarDrawer extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 28,
-                      backgroundColor: TayarColors.primary,
-                      child: Icon(Icons.person, color: Colors.white, size: 30),
+                    StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                      stream: FirebaseAuth.instance.currentUser == null
+                          ? null
+                          : FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(FirebaseAuth.instance.currentUser!.uid)
+                                .snapshots(),
+                      builder: (context, snapshot) {
+                        final photoBase64 =
+                            (snapshot.data?.data()?['personalInfo']
+                                    as Map<String, dynamic>?)?['photoBase64']
+                                as String?;
+                        ImageProvider? photo;
+                        if (photoBase64 != null && photoBase64.isNotEmpty) {
+                          try {
+                            photo = MemoryImage(base64Decode(photoBase64));
+                          } catch (_) {
+                            photo = null;
+                          }
+                        }
+                        return CircleAvatar(
+                          radius: 28,
+                          backgroundColor: TayarColors.primary,
+                          backgroundImage: photo,
+                          child: photo == null
+                              ? const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 30,
+                                )
+                              : null,
+                        );
+                      },
                     ),
                     const SizedBox(width: 12),
                     Expanded(
