@@ -20,6 +20,7 @@ import 'driver_registration_screen.dart';
 import 'login_screen.dart';
 import 'notifications_screen.dart';
 import 'order_history_screen.dart';
+import 'passenger_profile_screen.dart';
 import 'security_screen.dart';
 import 'settings_screen.dart';
 import 'help_screen.dart';
@@ -1460,7 +1461,12 @@ class TayarDrawer extends StatelessWidget {
             InkWell(
               onTap: () {
                 Navigator.pop(context);
-                // TODO: اربطها بشاشة بروفايل الراكب لما تتضاف
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const PassengerProfileScreen(),
+                  ),
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.all(16),
