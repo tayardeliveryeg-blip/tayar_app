@@ -12,14 +12,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'طيار - وصلك في لحظة';
 
   @override
-  String get clientOrderPriority =>
-      'طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية';
+  String get clientOrderPriority => 'طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية';
 
   @override
   String get driverNoOrders => 'مفيش طلبات متاحة دلوقتي.. خليك مستعد!';
 
   @override
-  String get driverOfflineHint => 'أنت غير متاح دلوقتي.. دوس "اونلاين" عشان تشوف الطلبات المتاحة';
+  String get driverOfflineHint => 'أنت غير متاح دلوقتي.. دوس \"اونلاين\" عشان تشوف الطلبات المتاحة';
 
   @override
   String get driverNoRatings => 'لسه مفيش تقييمات من الركاب.. شد حيلك';
@@ -52,8 +51,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get statusUnavailable => 'غير متاح';
 
   @override
-  String get permissionLocationRequired =>
-      'محتاج تسمح بصلاحية الموقع الأول عشان تبقى متاح';
+  String get permissionLocationRequired => 'محتاج تسمح بصلاحية الموقع الأول عشان تبقى متاح';
 
   @override
   String get offerSentWaitingPassenger => 'تم إرسال عرضك، بننتظر رد الراكب';
@@ -220,22 +218,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get enablePushNotifications => 'تفعيل إشعارات التطبيق';
 
   @override
-  String get pushNotificationsDescription =>
-      'إشعارات الطلبات والعروض والتحديثات المهمة';
+  String get pushNotificationsDescription => 'إشعارات الطلبات والعروض والتحديثات المهمة';
 
   @override
   String get termsAndConditions => 'الشروط والأحكام';
 
   @override
-  String get termsAndConditionsBody =>
-      'باستخدامك تطبيق طيار أنت موافق على شروط الاستخدام الخاصة بيه، وإن الخدمة مقدَّمة بين الراكب والطيار مباشرة، وإن الشركة بتوفر منصة الربط فقط.';
+  String get termsAndConditionsBody => 'باستخدامك تطبيق طيار أنت موافق على شروط الاستخدام الخاصة بيه، وإن الخدمة مقدَّمة بين الراكب والطيار مباشرة، وإن الشركة بتوفر منصة الربط فقط.';
 
   @override
   String get privacyPolicy => 'سياسة الخصوصية';
 
   @override
-  String get privacyPolicyBody =>
-      'بنحافظ على بياناتك ومنستخدمش موقعك إلا وقت وجود رحلة فعلية، ومبنشاركش بياناتك مع أي طرف تالت من غير موافقتك.';
+  String get privacyPolicyBody => 'بنحافظ على بياناتك ومنستخدمش موقعك إلا وقت وجود رحلة فعلية، ومبنشاركش بياناتك مع أي طرف تالت من غير موافقتك.';
 
   @override
   String get appVersionLabel => 'إصدار التطبيق';
@@ -274,8 +269,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePhotoLabel => 'تغيير الصورة';
 
   @override
-  String get photoTooLargeError =>
-      'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر';
+  String get photoTooLargeError => 'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر';
 
   @override
   String get locatingAddress => 'جاري تحديد الموقع...';
@@ -344,8 +338,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get saveOrderButton => 'حفظ الطلب';
 
   @override
-  String get fillAllFieldsError =>
-      'من فضلك اختار المواقع واملأ كل البيانات المطلوبة';
+  String get fillAllFieldsError => 'من فضلك اختار المواقع واملأ كل البيانات المطلوبة';
 
   @override
   String get estimatedFareLabel => 'السعر المقترح';
@@ -386,19 +379,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get submitApplicationSuccessTitle => 'تم إرسال طلبك!';
 
   @override
-  String get submitApplicationSuccessBody =>
-      'سنراجع بياناتك خلال 24 ساعة، وهنبلغك أول ما يتم قبول حسابك كطيار.';
+  String get submitApplicationSuccessBody => 'سنراجع بياناتك خلال 24 ساعة، وهنبلغك أول ما يتم قبول حسابك كطيار.';
 
   @override
   String get submitFailedError => 'تعذر إرسال الطلب، حاول تاني';
 
   @override
-  String get applicationUnderReviewBanner =>
-      'طلبك قيد المراجعة حاليًا، هنبلغك أول ما يتم الرد.';
+  String get applicationUnderReviewBanner => 'طلبك قيد المراجعة حاليًا، هنبلغك أول ما يتم الرد.';
 
   @override
-  String get registrationIntroText =>
-      'قم بتحميل بياناتك الشخصية وبيانات مركبتك. سنراجع جميع البيانات خلال 24 ساعة';
+  String get registrationIntroText => 'قم بتحميل بياناتك الشخصية وبيانات مركبتك. سنراجع جميع البيانات خلال 24 ساعة';
 
   @override
   String get sectionPersonalInfo => 'المعلومات الشخصية';
@@ -431,15 +421,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get personalPhotoLabel => 'صورة شخصية';
 
   @override
-  String get licensePhotoUploadRequired =>
-      'من فضلك ارفع صورة الرخصة وأدخل تاريخ الانتهاء';
+  String get licensePhotoUploadRequired => 'من فضلك ارفع صورة الرخصة وأدخل تاريخ الانتهاء';
 
   @override
   String get licenseExpiryHint => 'تاريخ انتهاء الصلاحية';
 
   @override
-  String get criminalRecordUploadRequired =>
-      'من فضلك ارفع صحيفة الحالة الجنائية وأدخل رقم الهوية';
+  String get criminalRecordUploadRequired => 'من فضلك ارفع صحيفة الحالة الجنائية وأدخل رقم الهوية';
 
   @override
   String get criminalRecordFrontLabel => 'صحيفة الحالة الجنائية';
@@ -478,58 +466,49 @@ class AppLocalizationsAr extends AppLocalizations {
   String get faqOrderTripQuestion => 'إزاي أطلب رحلة؟';
 
   @override
-  String get faqOrderTripAnswer =>
-      'من الشاشة الرئيسية، حدد نقطة الانطلاق ثم اختار الوجهة، وبعدها شوف السعر المقترح وابعت الطلب. هتظهرلك عروض من الطيارين القريبين وتقدر تختار العرض اللي يناسبك.';
+  String get faqOrderTripAnswer => 'من الشاشة الرئيسية، حدد نقطة الانطلاق ثم اختار الوجهة، وبعدها شوف السعر المقترح وابعت الطلب. هتظهرلك عروض من الطيارين القريبين وتقدر تختار العرض اللي يناسبك.';
 
   @override
   String get faqPricingQuestion => 'إزاي بيتحدد السعر؟';
 
   @override
-  String get faqPricingAnswer =>
-      'السعر بيتحسب على أساس المسافة الفعلية بين نقطة الانطلاق والوجهة، وتقدر تزود أو تقلل السعر المقترح وقت المزايدة مع الطيارين.';
+  String get faqPricingAnswer => 'السعر بيتحسب على أساس المسافة الفعلية بين نقطة الانطلاق والوجهة، وتقدر تزود أو تقلل السعر المقترح وقت المزايدة مع الطيارين.';
 
   @override
   String get faqPaymentMethodsQuestion => 'وسايل الدفع المتاحة إيه؟';
 
   @override
-  String get faqPaymentMethodsAnswer =>
-      'تقدر تدفع كاش للطيار مباشرة، أو من خلال المحفظة الإلكترونية، أو عن طريق إنستاباي. تقدر تختار وسيلة الدفع وانت بتأكد الطلب.';
+  String get faqPaymentMethodsAnswer => 'تقدر تدفع كاش للطيار مباشرة، أو من خلال المحفظة الإلكترونية، أو عن طريق إنستاباي. تقدر تختار وسيلة الدفع وانت بتأكد الطلب.';
 
   @override
   String get faqNoAcceptQuestion => 'مفيش حد بيقبل طلبي، أعمل إيه؟';
 
   @override
-  String get faqNoAcceptAnswer =>
-      'جرب تزود السعر شوية وقت المزايدة، خصوصًا في أوقات الذروة أو المناطق البعيدة، ده بيخلي الطلب أكثر جاذبية للطيارين القريبين.';
+  String get faqNoAcceptAnswer => 'جرب تزود السعر شوية وقت المزايدة، خصوصًا في أوقات الذروة أو المناطق البعيدة، ده بيخلي الطلب أكثر جاذبية للطيارين القريبين.';
 
   @override
   String get faqBecomeDriverQuestion => 'إزاي أبقى طيار في تطبيق طيار؟';
 
   @override
-  String get faqBecomeDriverAnswer =>
-      'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الموتوسيكل)، وبعد المراجعة هتقدر تستقبل طلبات.';
+  String get faqBecomeDriverAnswer => 'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الموتوسيكل)، وبعد المراجعة هتقدر تستقبل طلبات.';
 
   @override
   String get faqDriverEarningsQuestion => 'إزاي بتتحسب أرباح الطيار؟';
 
   @override
-  String get faqDriverEarningsAnswer =>
-      'من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"الدخلي\".';
+  String get faqDriverEarningsAnswer => 'من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"الدخلي\".';
 
   @override
-  String get faqDeliverPackageQuestion =>
-      'تقدر أوصّل طرد بدل ما أعمل رحلة راكب؟';
+  String get faqDeliverPackageQuestion => 'تقدر أوصّل طرد بدل ما أعمل رحلة راكب؟';
 
   @override
-  String get faqDeliverPackageAnswer =>
-      'أيوه، من خدمة \"توصيل الطرود\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.';
+  String get faqDeliverPackageAnswer => 'أيوه، من خدمة \"توصيل الطرود\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.';
 
   @override
   String get faqTripProblemQuestion => 'إيه اللي أعمله لو حصلت مشكلة في رحلة؟';
 
   @override
-  String get faqTripProblemAnswer =>
-      'تقدر تتواصل مع فريق الدعم مباشرة من شاشة \"الدعم\" في القايمة الجانبية، وهنساعدك تحل المشكلة أول بأول.';
+  String get faqTripProblemAnswer => 'تقدر تتواصل مع فريق الدعم مباشرة من شاشة \"الدعم\" في القايمة الجانبية، وهنساعدك تحل المشكلة أول بأول.';
 
   @override
   String get chooseYourRideSubtitle => 'اختار المشوار المناسب ليك';
@@ -544,8 +523,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get continueWithPhoneButton => 'المتابعة عبر الهاتف';
 
   @override
-  String get loginTermsAgreementNotice =>
-      'يشير الانضمام إلى موافقتك على شروط الاستخدام والسياسة الخصوصية';
+  String get loginTermsAgreementNotice => 'يشير الانضمام إلى موافقتك على شروط الاستخدام والسياسة الخصوصية';
 
   @override
   String signInFailedError(String error) {
@@ -561,8 +539,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get markAllAsReadButton => 'تحديد الكل كمقروء';
 
   @override
-  String get mustSignInToViewNotifications =>
-      'لازم تسجل الدخول عشان تشوف الإشعارات';
+  String get mustSignInToViewNotifications => 'لازم تسجل الدخول عشان تشوف الإشعارات';
 
   @override
   String get errorLoadingNotifications => 'حصل خطأ في تحميل الإشعارات';
@@ -615,8 +592,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get autoAcceptCheckboxLabel =>
-      'قبول تلقائي لأول عرض بنفس السعر المقترح';
+  String get autoAcceptCheckboxLabel => 'قبول تلقائي لأول عرض بنفس السعر المقترح';
 
   @override
   String get searchForDriversButton => 'البحث عن طيارين';
@@ -790,15 +766,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteAccountPermanentlyTitle => 'حذف الحساب نهائيًا';
 
   @override
-  String get deleteAccountConfirmBody =>
-      'هيتم حذف حسابك وكل بياناتك نهائيًا ومش هتقدر ترجعها تاني. متأكد؟';
+  String get deleteAccountConfirmBody => 'هيتم حذف حسابك وكل بياناتك نهائيًا ومش هتقدر ترجعها تاني. متأكد؟';
 
   @override
   String get deletePermanentlyButton => 'حذف نهائي';
 
   @override
-  String get reauthRequiredForDeleteError =>
-      'لازم تسجل الخروج والدخول تاني قبل ما تقدر تحذف حسابك';
+  String get reauthRequiredForDeleteError => 'لازم تسجل الخروج والدخول تاني قبل ما تقدر تحذف حسابك';
 
   @override
   String get signInMethodLabel => 'وسيلة تسجيل الدخول';
@@ -843,8 +817,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get supportEmailSubject => 'مساعدة تطبيق طيار';
 
   @override
-  String get supportMessageSentConfirmation =>
-      'تم إرسال رسالتك، هيتواصل معاك فريق الدعم قريب';
+  String get supportMessageSentConfirmation => 'تم إرسال رسالتك، هيتواصل معاك فريق الدعم قريب';
 
   @override
   String get genericErrorTryAgain => 'حصل خطأ، حاول تاني';
@@ -880,8 +853,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get thankYouForUsingTayarLabel => 'شكرا لاستخدامك طيار!';
 
   @override
-  String get tripCancelledByDriverOrSystemLabel =>
-      'الرحلة اتلغت من الطيار أو من النظام';
+  String get tripCancelledByDriverOrSystemLabel => 'الرحلة اتلغت من الطيار أو من النظام';
 
   @override
   String get arrivedAtYourDestinationStatusLabel => 'وصلتوا لوجهتكم 🎉';
@@ -890,19 +862,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverOnWayToYouLabel => 'الطيار في الطريق ليك';
 
   @override
-  String get tripStartedOnWayToDestinationLabel =>
-      'الرحلة بدأت - في الطريق للوجهة';
+  String get tripStartedOnWayToDestinationLabel => 'الرحلة بدأت - في الطريق للوجهة';
 
   @override
   String get updatingLabel => 'جاري التحديث...';
 
   @override
-  String get arrivedWaitingDriverToEndTripLabel =>
-      'وصلتوا لوجهتكم! في انتظار الطيار ينهي الرحلة';
+  String get arrivedWaitingDriverToEndTripLabel => 'وصلتوا لوجهتكم! في انتظار الطيار ينهي الرحلة';
 
   @override
-  String get waitingDriverShareLocationLabel =>
-      'في انتظار بدء الطيار مشاركة موقعه...';
+  String get waitingDriverShareLocationLabel => 'في انتظار بدء الطيار مشاركة موقعه...';
 
   @override
   String get noOrdersYetTitle => 'مفيش طلبات لسه';
