@@ -1530,10 +1530,20 @@ class TayarDrawer extends StatelessWidget {
                     icon: Icons.two_wheeler,
                     label: AppLocalizations.of(context)!.serviceRideMe,
                     selected: true,
+                    onTap: () => Navigator.pop(context),
                   ),
                   _DrawerItem(
                     icon: Icons.delivery_dining,
                     label: AppLocalizations.of(context)!.serviceDeliverOrders,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CreateDeliveryOrderScreen(),
+                        ),
+                      );
+                    },
                   ),
                   _DrawerItem(
                     icon: Icons.history,
