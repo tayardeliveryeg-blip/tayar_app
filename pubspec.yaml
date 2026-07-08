@@ -48,21 +48,20 @@ dependencies:
   crypto: ^3.0.5
   geoflutterfire_plus: ^0.0.32
   url_launcher: ^6.3.0
-  zego_uikit_prebuilt_call: ^4.24.2
+  zego_uikit_prebuilt_call: ^4.18.0
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2  
-  
+   
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.1
   # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+  # encourage good coding practices. The lint set provided by the analysis_options.yaml
+  # file located at the root of your package. See that file for details about deactivating
+  # specific lint rules and activating others.
   flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
