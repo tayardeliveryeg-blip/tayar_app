@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'pick_on_map_screen.dart' show PickOnMapScreen;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
@@ -310,17 +310,17 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_forward, color: Colors.white),
+          icon:  Icon(Icons.arrow_forward, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.title ?? loc.whereDoYouWantToGoTitle,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: Column(
@@ -331,22 +331,22 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
-                color: TayarColors.cardDark,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.search, color: TayarColors.textGrey),
+                   Icon(Icons.search, color: context.textGreyColor),
                   const SizedBox(width: 10),
                   Expanded(
                     child: TextField(
                       controller: _controller,
                       autofocus: true,
                       onChanged: _onQueryChanged,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                      style:  TextStyle(color: context.textColor, fontSize: 16),
                       decoration: InputDecoration(
                         hintText: loc.searchPlaceHint,
-                        hintStyle: const TextStyle(color: TayarColors.textGrey),
+                        hintStyle:  TextStyle(color: context.textGreyColor),
                         border: InputBorder.none,
                       ),
                     ),
@@ -374,15 +374,15 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: TayarColors.cardDark,
+                  color: context.cardColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.map, color: TayarColors.primary),
               ),
               title: Text(
                 loc.pickFromMapLabel,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.textColor,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
@@ -390,7 +390,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
               onTap: _openPickOnMap,
             ),
           ),
-          const Divider(color: Colors.white12, height: 1),
+          Divider(color: context.dividerColor2, height: 1),
 
           // ====== النتائج أو سجل البحث ======
           Expanded(child: _buildResultsArea()),
@@ -407,7 +407,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
         return Center(
           child: Text(
             loc.startTypingToSearchLabel,
-            style: const TextStyle(color: TayarColors.textGrey),
+            style:  TextStyle(color: context.textGreyColor),
           ),
         );
       }
@@ -418,8 +418,8 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
               loc.recentSearchesLabel,
-              style: const TextStyle(
-                color: TayarColors.textGrey,
+              style:  TextStyle(
+                color: context.textGreyColor,
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
               ),
@@ -427,16 +427,16 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
           ),
           ..._recentSearches.map(
             (place) => ListTile(
-              leading: const Icon(Icons.history, color: TayarColors.textGrey),
+              leading:  Icon(Icons.history, color: context.textGreyColor),
               title: Text(
                 place.title,
-                style: const TextStyle(color: Colors.white, fontSize: 15),
+                style:  TextStyle(color: context.textColor, fontSize: 15),
               ),
               subtitle: place.subtitle.isNotEmpty
                   ? Text(
                       place.subtitle,
-                      style: const TextStyle(
-                        color: TayarColors.textGrey,
+                      style:  TextStyle(
+                        color: context.textGreyColor,
                         fontSize: 13,
                       ),
                     )
@@ -453,7 +453,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
       return Center(
         child: Text(
           _error!,
-          style: const TextStyle(color: TayarColors.textGrey),
+          style:  TextStyle(color: context.textGreyColor),
         ),
       );
     }
@@ -463,7 +463,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _results.length,
       separatorBuilder: (_, __) =>
-          const Divider(color: Colors.white12, height: 1),
+           Divider(color: context.dividerColor2, height: 1),
       itemBuilder: (context, index) {
         final place = _results[index];
         return ListTile(
@@ -473,13 +473,13 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
           ),
           title: Text(
             place.title,
-            style: const TextStyle(color: Colors.white, fontSize: 15),
+            style: TextStyle(color: context.textColor, fontSize: 15),
           ),
           subtitle: place.subtitle.isNotEmpty
               ? Text(
                   place.subtitle,
-                  style: const TextStyle(
-                    color: TayarColors.textGrey,
+                  style:  TextStyle(
+                    color: context.textGreyColor,
                     fontSize: 13,
                   ),
                 )
