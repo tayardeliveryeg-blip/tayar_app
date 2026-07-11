@@ -8,7 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
-import 'passenger_home.dart' show TayarColors, paymentMethodDisplay;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'trip_chat_screen.dart';
 import 'call_screen.dart';
@@ -328,7 +328,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(
-          backgroundColor: TayarColors.cardDark,
+          backgroundColor: context.cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -338,7 +338,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
               const SizedBox(height: 12),
               Text(
                 loc.tripCancelledTitle,
-                style: const TextStyle(color: Colors.white),
+                style:  TextStyle(color: context.textColor),
               ),
             ],
           ),
@@ -365,7 +365,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
     final bool inProgress = _status == 'in_progress';
 
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       body: Stack(
         children: [
           // ====== الخريطة ======
@@ -462,7 +462,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: TayarColors.background.withValues(alpha: 0.9),
+                  color: context.bgColor.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -471,7 +471,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                     ),
                   ],
                 ),
-                child: const Icon(Icons.arrow_forward, color: Colors.white),
+                child: Icon(Icons.arrow_forward, color: context.textColor),
               ),
             ),
           ),
@@ -481,8 +481,8 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
             alignment: Alignment.bottomCenter,
             child: Container(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              decoration: const BoxDecoration(
-                color: TayarColors.background,
+              decoration:  BoxDecoration(
+                color: context.bgColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
@@ -527,8 +527,8 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                             children: [
                               Text(
                                 _customerName,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style:  TextStyle(
+                                  color: context.textColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
@@ -538,8 +538,8 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                                   _distanceKm.toStringAsFixed(1),
                                   _durationMin,
                                 ),
-                                style: const TextStyle(
-                                  color: TayarColors.textGrey,
+                                style:  TextStyle(
+                                  color: context.textGreyColor,
                                   fontSize: 13,
                                 ),
                               ),
@@ -563,8 +563,8 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                                 loc.originalProposedFareLabel(
                                   _proposedFare.toStringAsFixed(0),
                                 ),
-                                style: const TextStyle(
-                                  color: TayarColors.textGrey,
+                                style:  TextStyle(
+                                  color: context.textGreyColor,
                                   fontSize: 11,
                                 ),
                               ),
@@ -578,7 +578,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: TayarColors.cardDark,
+                        color: context.cardColor,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
@@ -595,8 +595,8 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                               Expanded(
                                 child: Text(
                                   _pickupAddress,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: context.textColor,
                                     fontSize: 13,
                                   ),
                                   maxLines: 1,
@@ -605,12 +605,12 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                               ),
                             ],
                           ),
-                          const Padding(
+                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 4),
                             child: SizedBox(
                               height: 12,
                               child: VerticalDivider(
-                                color: Colors.white24,
+                                color: context.dividerColor2,
                                 thickness: 2,
                               ),
                             ),
@@ -626,8 +626,8 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                               Expanded(
                                 child: Text(
                                   _destinationAddress,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style:  TextStyle(
+                                    color: context.textColor,
                                     fontSize: 13,
                                   ),
                                   maxLines: 1,
@@ -641,14 +641,14 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                             children: [
                               Icon(
                                 Icons.payments_outlined,
-                                color: Colors.white.withValues(alpha: 0.7),
+                                color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.7),
                                 size: 14,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 paymentMethodDisplay(context, _paymentMethod),
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.7),
+                                  color: (context.isDarkMode ? Colors.white : Colors.black).withValues(alpha: 0.7),
                                   fontSize: 12,
                                 ),
                               ),
@@ -788,7 +788,7 @@ class _PinIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.textColor,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 6),
