@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'driver_home_screen.dart';
 import 'l10n/generated/app_localizations.dart';
 
@@ -74,19 +74,19 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(
-          backgroundColor: TayarColors.cardDark,
+          backgroundColor: context.cardColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Column(
             children: [
               const Icon(Icons.hourglass_top, color: TayarColors.primary, size: 56),
               const SizedBox(height: 12),
-              Text(loc.submitApplicationSuccessTitle, style: const TextStyle(color: Colors.white)),
+              Text(loc.submitApplicationSuccessTitle, style: TextStyle(color: context.textColor)),
             ],
           ),
           content: Text(
             loc.submitApplicationSuccessBody,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: TayarColors.textGrey),
+            style:  TextStyle(color: context.textGreyColor),
           ),
           actions: [
             Center(
@@ -125,15 +125,15 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
     }
 
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        title: Text(AppLocalizations.of(context)!.driverRegistrationTitle, style: const TextStyle(color: Colors.white)),
+        title: Text(AppLocalizations.of(context)!.driverRegistrationTitle, style:  TextStyle(color: context.textColor)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.closeButton, style: const TextStyle(color: TayarColors.textGrey)),
+            child: Text(AppLocalizations.of(context)!.closeButton, style:  TextStyle(color: context.textGreyColor)),
           ),
         ],
       ),
@@ -155,14 +155,14 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.applicationUnderReviewBanner,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: context.textColor),
                         textAlign: TextAlign.center,
                       ),
                     )
                   else
                     Text(
                       AppLocalizations.of(context)!.registrationIntroText,
-                      style: const TextStyle(color: TayarColors.textGrey, fontSize: 14),
+                      style:  TextStyle(color: context.textGreyColor, fontSize: 14),
                     ),
                   const SizedBox(height: 20),
                   Expanded(
@@ -199,21 +199,21 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TayarColors.primary,
-                        disabledBackgroundColor: TayarColors.cardDark,
+                        disabledBackgroundColor: context.cardColor,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
                       child: _isSubmitting
-                          ? const SizedBox(
+                          ?  SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              child: CircularProgressIndicator(color: context.textColor, strokeWidth: 2),
                             )
                           : Text(
                               status == 'pending_review'
                                   ? AppLocalizations.of(context)!.applicationUnderReviewButton
                                   : AppLocalizations.of(context)!.continueButton,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style:  TextStyle(
+                                color: context.textColor,
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -239,24 +239,24 @@ class _SectionTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(vertical: 4),
-      title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16)),
+      title: Text(title, style:  TextStyle(color: context.textColor, fontSize: 16)),
       subtitle: Text(
         isComplete
             ? AppLocalizations.of(context)!.sectionCompleteLabel
             : AppLocalizations.of(context)!.sectionIncompleteLabel,
         style: TextStyle(
-          color: isComplete ? TayarColors.primary : TayarColors.textGrey,
+          color: isComplete ? TayarColors.primary : context.textGreyColor,
           fontSize: 13,
         ),
       ),
       leading: CircleAvatar(
-        backgroundColor: isComplete ? TayarColors.primary.withValues(alpha: 0.15) : TayarColors.cardDark,
+        backgroundColor: isComplete ? TayarColors.primary.withValues(alpha: 0.15) : context.cardColor,
         child: Icon(
           isComplete ? Icons.check : Icons.description_outlined,
-          color: isComplete ? TayarColors.primary : Colors.white70,
+          color: isComplete ? TayarColors.primary : context.textGreyColor,
         ),
       ),
-      trailing: const Icon(Icons.chevron_left, color: TayarColors.textGrey),
+      trailing:  Icon(Icons.chevron_left, color: context.textGreyColor),
     );
   }
 }
@@ -278,13 +278,13 @@ class _FormTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
-        style: const TextStyle(color: Colors.white),
+        style:  TextStyle(color: context.textColor),
         textAlign: TextAlign.right,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(color: TayarColors.textGrey),
+          hintStyle:  TextStyle(color: context.textGreyColor),
           filled: true,
-          fillColor: TayarColors.cardDark,
+          fillColor: context.cardColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -321,14 +321,14 @@ class _PhotoUploadTile extends StatelessWidget {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: TayarColors.cardDark,
+                  color: context.cardColor,
                   borderRadius: BorderRadius.circular(14),
                   image: imageBytes != null
                       ? DecorationImage(image: MemoryImage(imageBytes!), fit: BoxFit.cover)
                       : null,
                 ),
                 child: imageBytes == null
-                    ? const Icon(Icons.add, color: Colors.white70, size: 30)
+                    ?  Icon(Icons.add, color: context.textGreyColor, size: 30)
                     : null,
               ),
               if (optional)
@@ -348,7 +348,7 @@ class _PhotoUploadTile extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 12), textAlign: TextAlign.center),
+        Text(label, style:  TextStyle(color: context.textColor, fontSize: 12), textAlign: TextAlign.center),
       ],
     );
   }
@@ -750,19 +750,19 @@ class _SectionScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_forward, color: Colors.white),
+          icon:  Icon(Icons.arrow_forward, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
+        title: Text(title, style:  TextStyle(color: context.textColor)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.closeButton, style: const TextStyle(color: TayarColors.textGrey)),
+            child: Text(AppLocalizations.of(context)!.closeButton, style:  TextStyle(color: context.textGreyColor)),
           ),
         ],
       ),
@@ -788,7 +788,7 @@ class _SectionScaffold extends StatelessWidget {
                       )
                     : Text(
                         AppLocalizations.of(context)!.saveButton,
-                        style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
+                        style:  TextStyle(color: context.textColor, fontSize: 17, fontWeight: FontWeight.bold),
                       ),
               ),
             ),
