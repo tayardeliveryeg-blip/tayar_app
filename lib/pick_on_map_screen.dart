@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
@@ -68,8 +67,8 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
   // ====== بترجع الإحداثية الحقيقية اللي فعليًا تحت الدبوس في نص الشاشة ======
   LatLng _pinRealLocation(MapCamera camera) {
     final size = camera.nonRotatedSize;
-    final pinPoint = math.Point<double>(size.x / 2, size.y / 2);
-    return camera.pointToLatLng(pinPoint);
+    final pinOffset = Offset(size.width / 2, size.height / 2);
+    return camera.offsetToCrs(pinOffset);
   }
 
   void _onMapEvent(MapEvent event) {
