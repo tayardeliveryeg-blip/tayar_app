@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 
 // ====================================================
 // ====== شاشة بروفايل الطيار: قابلة للتعديل ======
@@ -179,14 +179,14 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme:  IconThemeData(color: context.textColor),
         title: Text(
           AppLocalizations.of(context)!.navProfile,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: _isLoading
@@ -213,8 +213,8 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
                               AppLocalizations.of(context)!.changePhotoLabel,
-                              style: const TextStyle(
-                                color: TayarColors.textGrey,
+                              style:  TextStyle(
+                                color: context.textGreyColor,
                                 fontSize: 12,
                               ),
                             ),
@@ -261,18 +261,18 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         ),
                       ),
                       child: _isSaving
-                          ? const SizedBox(
+                          ?  SizedBox(
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: context.textColor,
                                 strokeWidth: 2,
                               ),
                             )
                           : Text(
                               AppLocalizations.of(context)!.saveButton,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style:  TextStyle(
+                                color: context.textColor,
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -319,10 +319,10 @@ class _ProfilePhotoPicker extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 56,
-            backgroundColor: TayarColors.cardDark,
+            backgroundColor: context.cardColor,
             backgroundImage: imageProvider,
             child: imageProvider == null
-                ? const Icon(Icons.person, color: Colors.white70, size: 48)
+                ?  Icon(Icons.person, color: context.textGreyColor, size: 48)
                 : null,
           ),
           Positioned(
@@ -368,13 +368,13 @@ class _ProfileTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
-        style: const TextStyle(color: Colors.white),
+        style:  TextStyle(color: context.textColor),
         textAlign: TextAlign.right,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(color: TayarColors.textGrey),
+          hintStyle:  TextStyle(color: context.textGreyColor),
           filled: true,
-          fillColor: TayarColors.cardDark,
+          fillColor: context.cardColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
