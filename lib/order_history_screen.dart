@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'passenger_home.dart' show TayarColors, paymentMethodDisplay;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
 
 // ====== شاشة سجل الطلبات: بتعرض كل طلبات الراكب الحالي (رحلات + توصيل) ======
 // بنجيب كل حاجة من collection('orders') فلترة على customerId، وبنرتب
@@ -25,7 +25,7 @@ class OrderHistoryScreen extends StatelessWidget {
       case 'accepted':
         return TayarColors.primary;
       default:
-        return TayarColors.textGrey;
+        return context.textGreyColor;
     }
   }
 
@@ -62,21 +62,21 @@ class OrderHistoryScreen extends StatelessWidget {
     final uid = FirebaseAuth.instance.currentUser?.uid;
 
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme:  IconThemeData(color: context.textColor),
         title: Text(
           l10n.orderHistoryLabel,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: uid == null
           ? Center(
               child: Text(
                 l10n.noOrdersYetTitle,
-                style: const TextStyle(color: TayarColors.textGrey),
+                style:  TextStyle(color: context.textGreyColor),
               ),
             )
           : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -88,7 +88,7 @@ class OrderHistoryScreen extends StatelessWidget {
                   return Center(
                     child: Text(
                       l10n.searchFailedTryAgainError,
-                      style: const TextStyle(color: TayarColors.textGrey),
+                      style:  TextStyle(color: context.textGreyColor),
                     ),
                   );
                 }
@@ -114,16 +114,16 @@ class OrderHistoryScreen extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                         Icon(
                           Icons.history,
-                          color: TayarColors.textGrey,
+                          color: context.textGreyColor,
                           size: 56,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           l10n.noOrdersYetTitle,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style:  TextStyle(
+                            color: context.textColor,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -131,8 +131,8 @@ class OrderHistoryScreen extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           l10n.noOrdersYetSubtitle,
-                          style: const TextStyle(
-                            color: TayarColors.textGrey,
+                          style:  TextStyle(
+                            color: context.textGreyColor,
                             fontSize: 13,
                           ),
                         ),
@@ -161,7 +161,7 @@ class OrderHistoryScreen extends StatelessWidget {
                     return Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: TayarColors.cardDark,
+                        color: context.cardColor,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: TayarColors.primary.withValues(alpha: 0.15),
@@ -184,8 +184,8 @@ class OrderHistoryScreen extends StatelessWidget {
                                 isDelivery
                                     ? l10n.deliveryOrderTypeLabel
                                     : l10n.rideOrderTypeLabel,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style:  TextStyle(
+                                  color: context.textColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
@@ -217,17 +217,17 @@ class OrderHistoryScreen extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(
+                               Icon(
                                 Icons.flag,
-                                color: TayarColors.textGrey,
+                                color: context.textGreyColor,
                                 size: 16,
                               ),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   destinationAddress,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style:  TextStyle(
+                                    color: context.textColor,
                                     fontSize: 13,
                                   ),
                                   maxLines: 2,
@@ -241,8 +241,8 @@ class OrderHistoryScreen extends StatelessWidget {
                             children: [
                               Text(
                                 _formatDate(createdAt),
-                                style: const TextStyle(
-                                  color: TayarColors.textGrey,
+                                style:  TextStyle(
+                                  color: context.textGreyColor,
                                   fontSize: 11,
                                 ),
                               ),
@@ -270,8 +270,8 @@ class OrderHistoryScreen extends StatelessWidget {
                                       context,
                                       paymentMethod,
                                     ),
-                                    style: const TextStyle(
-                                      color: TayarColors.textGrey,
+                                    style:  TextStyle(
+                                      color: context.textGreyColor,
                                       fontSize: 11,
                                     ),
                                   ),
@@ -287,8 +287,8 @@ class OrderHistoryScreen extends StatelessWidget {
                                       const SizedBox(width: 2),
                                       Text(
                                         '$rating',
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                        style:  TextStyle(
+                                          color: context.textColor,
                                           fontSize: 12,
                                         ),
                                       ),
