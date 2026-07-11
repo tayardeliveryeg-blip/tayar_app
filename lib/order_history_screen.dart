@@ -15,7 +15,7 @@ class OrderHistoryScreen extends StatelessWidget {
       FirebaseFirestore.instance.collection('orders');
 
   // ====== لون وحالة كل طلب ======
-  Color _statusColor(String? status) {
+  Color _statusColor(BuildContext context, String? status) {
     switch (status) {
       case 'completed':
         return Colors.greenAccent;
@@ -198,6 +198,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                 ),
                                 decoration: BoxDecoration(
                                   color: _statusColor(
+                                    context,
                                     status,
                                   ).withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(20),
@@ -205,7 +206,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                 child: Text(
                                   _statusLabel(status, l10n),
                                   style: TextStyle(
-                                    color: _statusColor(status),
+                                    color: _statusColor(context, status),
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                   ),
