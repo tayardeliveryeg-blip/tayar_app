@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
-import 'passenger_home.dart' show TayarColors, paymentMethodDisplay;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'select_destination_screen.dart' show SelectDestinationScreen, PlaceResult;
 import 'searching_offers_screen.dart';
 
@@ -174,7 +174,7 @@ class _CreateDeliveryOrderScreenState
 
     final selected = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -202,8 +202,8 @@ class _CreateDeliveryOrderScreenState
                   alignment: Alignment.centerRight,
                   child: Text(
                     loc.choosePaymentMethodTitle,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style:  TextStyle(
+                      color: context.textColor,
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
                     ),
@@ -221,12 +221,12 @@ class _CreateDeliveryOrderScreenState
                     option['icon'] as IconData,
                     color: isSelected
                         ? TayarColors.primary
-                        : TayarColors.textGrey,
+                        : context.textGreyColor,
                   ),
                   title: Text(
                     label,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: context.textColor,
                       fontSize: 15,
                       fontWeight: isSelected
                           ? FontWeight.bold
@@ -336,17 +336,17 @@ class _CreateDeliveryOrderScreenState
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_forward, color: Colors.white),
+          icon:  Icon(Icons.arrow_forward, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           loc.deliveryOrderTitle,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: SingleChildScrollView(
@@ -358,7 +358,7 @@ class _CreateDeliveryOrderScreenState
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TayarColors.cardDark,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -375,7 +375,7 @@ class _CreateDeliveryOrderScreenState
                     child: Row(
                       children: [
                         const SizedBox(width: 10),
-                        Container(width: 2, height: 24, color: Colors.white24),
+                        Container(width: 2, height: 24, color: context.dividerColor2),
                       ],
                     ),
                   ),
@@ -436,7 +436,7 @@ class _CreateDeliveryOrderScreenState
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: TayarColors.cardDark,
+                  color: context.cardColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -449,24 +449,24 @@ class _CreateDeliveryOrderScreenState
                     Expanded(
                       child: Text(
                         loc.paymentMethodLabel,
-                        style: const TextStyle(
-                          color: TayarColors.textGrey,
+                        style:  TextStyle(
+                          color: context.textGreyColor,
                           fontSize: 14,
                         ),
                       ),
                     ),
                     Text(
                       paymentMethodDisplay(context, _paymentMethod),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style:  TextStyle(
+                        color: context.textColor,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Icon(
+                     Icon(
                       Icons.chevron_left,
-                      color: TayarColors.textGrey,
+                      color: context.textGreyColor,
                       size: 20,
                     ),
                   ],
@@ -500,29 +500,29 @@ class _CreateDeliveryOrderScreenState
                       children: [
                         Text(
                           loc.distanceLabel,
-                          style: const TextStyle(
-                            color: TayarColors.textGrey,
+                          style:  TextStyle(
+                            color: context.textGreyColor,
                             fontSize: 14,
                           ),
                         ),
                         Text(
                           loc.distanceKmLabel(_distanceKm!.toStringAsFixed(1)),
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style:  TextStyle(
+                            color: context.textColor,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                    const Divider(color: Colors.white12),
+                     Divider(color: context.dividerColor2),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           loc.estimatedFareLabel,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style:  TextStyle(
+                            color: context.textColor,
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),
@@ -557,18 +557,18 @@ class _CreateDeliveryOrderScreenState
                   ),
                 ),
                 child: _isSubmitting
-                    ? const SizedBox(
+                    ?  SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: context.textColor,
                           strokeWidth: 2,
                         ),
                       )
                     : Text(
                         loc.saveOrderButton,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style:  TextStyle(
+                          color: context.textColor,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -615,15 +615,15 @@ class _LocationPickRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: TayarColors.textGrey,
+                  style:  TextStyle(
+                    color: context.textGreyColor,
                     fontSize: 12,
                   ),
                 ),
                 Text(
                   address ?? loc.tapToSelectLocationLabel,
                   style: TextStyle(
-                    color: address != null ? Colors.white : TayarColors.textGrey,
+                    color: address != null ? context.textColor : context.textGreyColor,
                     fontSize: 15,
                     fontWeight: address != null
                         ? FontWeight.w600
@@ -633,7 +633,7 @@ class _LocationPickRow extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.chevron_left, color: TayarColors.textGrey, size: 20),
+           Icon(Icons.chevron_left, color: context.textGreyColor, size: 20),
         ],
       ),
     );
@@ -663,7 +663,7 @@ class _LabeledTextField extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: TayarColors.cardDark,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -673,7 +673,7 @@ class _LabeledTextField extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10),
             child: Text(
               label,
-              style: const TextStyle(color: TayarColors.textGrey, fontSize: 12),
+              style:  TextStyle(color: context.textGreyColor, fontSize: 12),
             ),
           ),
           TextField(
@@ -681,10 +681,10 @@ class _LabeledTextField extends StatelessWidget {
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             onChanged: onChanged,
-            style: const TextStyle(color: Colors.white, fontSize: 15),
+            style:  TextStyle(color: context.textColor, fontSize: 15),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: const TextStyle(color: TayarColors.textGrey),
+              hintStyle:  TextStyle(color: context.textGreyColor),
               border: InputBorder.none,
               isDense: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 8),
