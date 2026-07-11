@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 
 /// ====== شاشة المحادثة بين الراكب والطيار ======
 /// بتتفعّل بعد قبول الطلب من الطرفين، وبتستخدم subcollection
@@ -86,9 +86,9 @@ class _TripChatScreenState extends State<TripChatScreen> {
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.cardDark,
+        backgroundColor: context.cardColor,
         elevation: 0,
         title: Row(
           children: [
@@ -100,7 +100,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
             const SizedBox(width: 10),
             Text(
               widget.otherPartyName,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(color: context.textColor, fontSize: 16),
             ),
           ],
         ),
@@ -118,7 +118,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
                   return Center(
                     child: Text(
                       loc.chatErrorLoadingMessages,
-                      style: const TextStyle(color: TayarColors.textGrey),
+                      style:  TextStyle(color: context.textGreyColor),
                     ),
                   );
                 }
@@ -135,7 +135,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
                   return Center(
                     child: Text(
                       loc.chatNoMessagesYet,
-                      style: const TextStyle(color: TayarColors.textGrey),
+                      style:  TextStyle(color: context.textGreyColor),
                     ),
                   );
                 }
@@ -172,7 +172,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: isMe
-                              ? TayarColors.cardDark
+                              ? context.cardColor
                               : TayarColors.primary,
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -182,8 +182,8 @@ class _TripChatScreenState extends State<TripChatScreen> {
                           children: [
                             Text(
                               text,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style:  TextStyle(
+                                color: context.textColor,
                                 fontSize: 14,
                               ),
                             ),
@@ -192,7 +192,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
                               Text(
                                 timeLabel,
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.7),
+                                  color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.7),
                                   fontSize: 10,
                                 ),
                               ),
@@ -213,10 +213,10 @@ class _TripChatScreenState extends State<TripChatScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: TayarColors.cardDark,
+                color: context.cardColor,
                 border: Border(
                   top: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.08),
                   ),
                 ),
               ),
@@ -226,14 +226,14 @@ class _TripChatScreenState extends State<TripChatScreen> {
                     child: TextField(
                       controller: _controller,
                       textDirection: TextDirection.rtl,
-                      style: const TextStyle(color: Colors.white),
+                      style: TextStyle(color: context.textColor),
                       decoration: InputDecoration(
                         hintText: loc.chatTypeMessageHint,
-                        hintStyle: const TextStyle(
-                          color: TayarColors.textGrey,
+                        hintStyle:  TextStyle(
+                          color: context.textGreyColor,
                         ),
                         filled: true,
-                        fillColor: TayarColors.background,
+                        fillColor: context.bgColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 10,
@@ -264,7 +264,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Icon(Icons.send, color: Colors.white, size: 20),
+                          :  Icon(Icons.send, color: context.textColor, size: 20),
                     ),
                   ),
                 ],
