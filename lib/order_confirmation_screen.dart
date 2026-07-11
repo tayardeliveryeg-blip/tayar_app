@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'passenger_home.dart' show TayarColors, paymentMethodDisplay;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'searching_offers_screen.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
@@ -141,17 +141,17 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_forward, color: Colors.white),
+          icon:  Icon(Icons.arrow_forward, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           l10n.setYourFareTitle,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: Padding(
@@ -163,7 +163,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TayarColors.cardDark,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -179,7 +179,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     child: Row(
                       children: [
                         const SizedBox(width: 10),
-                        Container(width: 2, height: 24, color: Colors.white24),
+                        Container(width: 2, height: 24, color: context.dividerColor2),
                       ],
                     ),
                   ),
@@ -198,7 +198,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TayarColors.cardDark,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -209,12 +209,12 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       widget.distanceKm.toStringAsFixed(1),
                     ),
                   ),
-                  const Divider(color: Colors.white12),
+                   Divider(color: context.dividerColor2),
                   _DetailRow(
                     label: l10n.estimatedTimeLabel,
                     value: l10n.durationMinLabel(widget.durationMin),
                   ),
-                  const Divider(color: Colors.white12),
+                   Divider(color: context.dividerColor2),
                   _DetailRow(
                     label: l10n.paymentMethodLabel,
                     value: paymentMethodDisplay(context, widget.paymentMethod),
@@ -238,7 +238,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                 children: [
                   Text(
                     l10n.suggestedFareForDriversLabel,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: context.textColor, fontSize: 14),
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -268,8 +268,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                   const SizedBox(height: 6),
                   Text(
                     l10n.autoSuggestedFareLabel(widget.fare.toStringAsFixed(0)),
-                    style: const TextStyle(
-                      color: TayarColors.textGrey,
+                    style:  TextStyle(
+                      color: context.textGreyColor,
                       fontSize: 12,
                     ),
                   ),
@@ -296,8 +296,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     Expanded(
                       child: Text(
                         l10n.autoAcceptCheckboxLabel,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: context.textColor,
                           fontSize: 14,
                         ),
                       ),
@@ -323,18 +323,18 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     ? const SizedBox.shrink()
                     : const Icon(Icons.search, color: Colors.white),
                 label: _isSubmitting
-                    ? const SizedBox(
+                    ?  SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: context.textColor,
                           strokeWidth: 2,
                         ),
                       )
                     : Text(
                         l10n.searchForDriversButton,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style:  TextStyle(
+                          color: context.textColor,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -402,15 +402,15 @@ class _RouteRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
-                  color: TayarColors.textGrey,
+                style:  TextStyle(
+                  color: context.textGreyColor,
                   fontSize: 12,
                 ),
               ),
               Text(
                 address,
-                style: const TextStyle(
-                  color: Colors.white,
+                style:  TextStyle(
+                  color: context.textColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
@@ -438,12 +438,12 @@ class _DetailRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(color: TayarColors.textGrey, fontSize: 14),
+            style:  TextStyle(color: context.textGreyColor, fontSize: 14),
           ),
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
+            style:  TextStyle(
+              color: context.textColor,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
