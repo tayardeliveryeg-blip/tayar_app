@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'rate_trip_screen.dart';
 import 'trip_chat_screen.dart';
@@ -349,7 +349,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(
-          backgroundColor: TayarColors.cardDark,
+          backgroundColor: context.cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -359,14 +359,14 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               const SizedBox(height: 12),
               Text(
                 loc.tripCancelledTitle,
-                style: const TextStyle(color: Colors.white),
+                style:  TextStyle(color: context.textColor),
               ),
             ],
           ),
           content: Text(
             loc.tripCancelledByDriverOrSystemLabel,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: TayarColors.textGrey),
+            style:  TextStyle(color: context.textGreyColor),
           ),
           actions: [
             Center(
@@ -404,7 +404,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       body: Stack(
         children: [
           // ====== الخريطة ======
@@ -530,8 +530,8 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                       child: Text(
                         loc.arrivedWaitingDriverToEndTripLabel,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style:  TextStyle(
+                          color: context.textColor,
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                         ),
@@ -554,7 +554,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: TayarColors.background.withValues(alpha: 0.95),
+                  color: context.bgColor.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
@@ -577,7 +577,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     const SizedBox(width: 10),
                     Text(
                       loc.waitingDriverShareLocationLabel,
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      style: TextStyle(color: context.textColor, fontSize: 13),
                     ),
                   ],
                 ),
@@ -594,7 +594,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: TayarColors.background.withValues(alpha: 0.9),
+                  color: context.bgColor.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -603,7 +603,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     ),
                   ],
                 ),
-                child: const Icon(Icons.arrow_forward, color: Colors.white),
+                child: Icon(Icons.arrow_forward, color: context.textColor),
               ),
             ),
           ),
@@ -613,8 +613,8 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
             alignment: Alignment.bottomCenter,
             child: Container(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              decoration: const BoxDecoration(
-                color: TayarColors.background,
+              decoration:  BoxDecoration(
+                color: context.bgColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
@@ -655,16 +655,16 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                           children: [
                             Text(
                               _driverName,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style:  TextStyle(
+                                color: context.textColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
                             ),
                             Text(
                               loc.currencyEGP(_fare.toStringAsFixed(0)),
-                              style: const TextStyle(
-                                color: TayarColors.textGrey,
+                              style:  TextStyle(
+                                color: context.textGreyColor,
                                 fontSize: 13,
                               ),
                             ),
@@ -679,15 +679,15 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                               loc.distanceKmLabel(
                                 _remainingDistanceKm!.toStringAsFixed(1),
                               ),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style:  TextStyle(
+                                color: context.textColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               loc.durationMinLabel(_remainingDurationMin ?? 0),
-                              style: const TextStyle(
-                                color: TayarColors.textGrey,
+                              style:  TextStyle(
+                                color: context.textGreyColor,
                                 fontSize: 12,
                               ),
                             ),
@@ -756,8 +756,8 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                           _status == 'in_progress'
                               ? _destinationAddress
                               : _pickupAddress,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style:  TextStyle(
+                            color: context.textColor,
                             fontSize: 13,
                           ),
                           maxLines: 1,
@@ -830,7 +830,7 @@ class _PinIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.textColor,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 6),
