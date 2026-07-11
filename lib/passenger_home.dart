@@ -26,6 +26,8 @@ import 'settings_screen.dart';
 import 'help_screen.dart';
 import 'support_screen.dart';
 
+export 'theme_extensions.dart'; // مصدر TayarColors / TayarTheme / TayarThemeColors الوحيد
+
 // ====== القيمة الداخلية لطريقة الدفع بتفضل ثابتة (عربي) عشان التوافق مع
 // Firestore وشاشة الطيار، والترجمة بتحصل بس وقت العرض عن طريق الدالة دي ======
 String paymentMethodDisplay(BuildContext context, String value) {
@@ -38,15 +40,6 @@ String paymentMethodDisplay(BuildContext context, String value) {
     default:
       return loc.paymentMethodCash;
   }
-}
-
-// ====== ألوان البراند ======
-class TayarColors {
-  static const Color primary = Color(0xFFFF6B00); // الأورانج الأساسي
-  static const Color background = Color(0xFF1A1816); // الخلفية الداكنة
-  static const Color cardDark = Color(0xFF2A2826);
-  static const Color textWhite = Colors.white;
-  static const Color textGrey = Color(0xFFB0B0B0);
 }
 
 // ====== روابط طيار الرسمية على السوشيال ميديا ======
@@ -537,7 +530,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
     final selected = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -565,8 +558,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   alignment: Alignment.centerRight,
                   child: Text(
                     loc.choosePaymentMethodTitle,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.textColor,
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
                     ),
@@ -584,12 +577,12 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     option['icon'] as IconData,
                     color: isSelected
                         ? TayarColors.primary
-                        : TayarColors.textGrey,
+                        : context.textGreyColor,
                   ),
                   title: Text(
                     label,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: context.textColor,
                       fontSize: 15,
                       fontWeight: isSelected
                           ? FontWeight.bold
@@ -637,7 +630,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       drawer: const TayarDrawer(),
       body: Stack(
         children: [
@@ -832,7 +825,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: TayarColors.background,
+                          color: context.cardColor,
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
@@ -844,9 +837,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.chevron_left,
-                              color: TayarColors.textGrey,
+                              color: context.textGreyColor,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
@@ -856,15 +849,15 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                               children: [
                                 Text(
                                   AppLocalizations.of(context)!.fromLabel,
-                                  style: const TextStyle(
-                                    color: TayarColors.textGrey,
+                                  style: TextStyle(
+                                    color: context.textGreyColor,
                                     fontSize: 13,
                                   ),
                                 ),
                                 Text(
                                   _addressDisplay(context),
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: context.textColor,
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -926,7 +919,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: TayarColors.background.withValues(alpha: 0.9),
+                    color: context.bgColor.withValues(alpha: 0.9),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -935,7 +928,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.menu, color: Colors.white),
+                  child: Icon(Icons.menu, color: context.textColor),
                 ),
               ),
             ),
@@ -960,7 +953,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: TayarColors.background.withValues(alpha: 0.9),
+                        color: context.bgColor.withValues(alpha: 0.9),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
@@ -969,9 +962,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.navigation_outlined,
-                        color: Colors.white,
+                        color: context.textColor,
                       ),
                     ),
                   ),
@@ -1043,9 +1036,9 @@ class TayarBottomSheet extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 0),
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        decoration: const BoxDecoration(
-          color: TayarColors.background,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: context.bgColor,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(24),
             topRight: Radius.circular(24),
           ),
@@ -1073,7 +1066,7 @@ class TayarBottomSheet extends StatelessWidget {
                   vertical: 14,
                 ),
                 decoration: BoxDecoration(
-                  color: TayarColors.cardDark,
+                  color: context.cardColor,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
@@ -1082,7 +1075,7 @@ class TayarBottomSheet extends StatelessWidget {
                       Icons.search,
                       color: destinationAddress != null
                           ? TayarColors.primary
-                          : TayarColors.textGrey,
+                          : context.textGreyColor,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -1091,8 +1084,8 @@ class TayarBottomSheet extends StatelessWidget {
                             AppLocalizations.of(context)!.chooseDestinationHint,
                         style: TextStyle(
                           color: destinationAddress != null
-                              ? Colors.white
-                              : TayarColors.textGrey,
+                              ? context.textColor
+                              : context.textGreyColor,
                           fontSize: 16,
                           fontWeight: destinationAddress != null
                               ? FontWeight.bold
@@ -1184,7 +1177,7 @@ class _TripSummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TayarColors.cardDark,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: TayarColors.primary.withValues(alpha: 0.3)),
       ),
@@ -1222,7 +1215,7 @@ class _TripSummaryCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                color: TayarColors.background,
+                color: context.bgColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -1231,24 +1224,24 @@ class _TripSummaryCard extends StatelessWidget {
                   const SizedBox(width: 10),
                   Text(
                     AppLocalizations.of(context)!.paymentMethodLabel,
-                    style: const TextStyle(
-                      color: TayarColors.textGrey,
+                    style: TextStyle(
+                      color: context.textGreyColor,
                       fontSize: 14,
                     ),
                   ),
                   const Spacer(),
                   Text(
                     paymentMethodDisplay(context, paymentMethod),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.textColor,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(
+                  Icon(
                     Icons.keyboard_arrow_left,
-                    color: TayarColors.textGrey,
+                    color: context.textGreyColor,
                     size: 20,
                   ),
                 ],
@@ -1264,14 +1257,14 @@ class _TripSummaryCard extends StatelessWidget {
                   onPressed: onCancel,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: const BorderSide(color: TayarColors.textGrey),
+                    side: BorderSide(color: context.textGreyColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.cancel,
-                    style: const TextStyle(color: TayarColors.textGrey),
+                    style: TextStyle(color: context.textGreyColor),
                   ),
                 ),
               ),
@@ -1322,14 +1315,14 @@ class _TripStat extends StatelessWidget {
       children: [
         Icon(
           icon,
-          color: highlight ? TayarColors.primary : Colors.white70,
+          color: highlight ? TayarColors.primary : context.textGreyColor,
           size: 22,
         ),
         const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
-            color: highlight ? TayarColors.primary : Colors.white,
+            color: highlight ? TayarColors.primary : context.textColor,
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -1360,7 +1353,7 @@ class ServiceCard extends StatelessWidget {
         height: 130,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: TayarColors.cardDark,
+          color: context.cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: TayarColors.primary.withValues(alpha: 0.3)),
         ),
@@ -1370,8 +1363,8 @@ class ServiceCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: context.textColor,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -1399,19 +1392,19 @@ class TayarDrawer extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: TayarColors.cardDark,
+        backgroundColor: context.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(loc.logout, style: const TextStyle(color: Colors.white)),
+        title: Text(loc.logout, style: TextStyle(color: context.textColor)),
         content: Text(
           loc.confirmLogoutMessage,
-          style: const TextStyle(color: TayarColors.textGrey),
+          style: TextStyle(color: context.textGreyColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               loc.cancel,
-              style: const TextStyle(color: TayarColors.textGrey),
+              style: TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
@@ -1453,7 +1446,7 @@ class TayarDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       child: SafeArea(
         child: Column(
           children: [
@@ -1513,8 +1506,8 @@ class TayarDrawer extends StatelessWidget {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.defaultUserName,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: context.textColor,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1531,10 +1524,10 @@ class TayarDrawer extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              const Text(
+                              Text(
                                 '4.75 (5)',
                                 style: TextStyle(
-                                  color: TayarColors.textGrey,
+                                  color: context.textGreyColor,
                                   fontSize: 13,
                                 ),
                               ),
@@ -1543,12 +1536,12 @@ class TayarDrawer extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: Colors.white),
+                    Icon(Icons.chevron_right, color: context.textColor),
                   ],
                 ),
               ),
             ),
-            const Divider(color: Colors.white24, height: 1),
+            Divider(color: context.dividerColor2, height: 1),
 
             // ====== قايمة العناصر ======
             Expanded(
@@ -1650,7 +1643,7 @@ class TayarDrawer extends StatelessWidget {
                       );
                     },
                   ),
-                  const Divider(color: Colors.white24, height: 24),
+                  Divider(color: context.dividerColor2, height: 24),
                   _DrawerItem(
                     icon: Icons.logout,
                     label: AppLocalizations.of(context)!.logout,
@@ -1746,18 +1739,18 @@ class _DrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color itemColor = isDestructive
         ? Colors.redAccent
-        : (selected ? TayarColors.primary : Colors.white);
+        : (selected ? TayarColors.primary : context.textColor);
 
     return Container(
       color: selected
-          ? Colors.white.withValues(alpha: 0.08)
+          ? TayarColors.primary.withValues(alpha: 0.08)
           : Colors.transparent,
       child: ListTile(
         leading: Icon(
           icon,
           color: isDestructive
               ? Colors.redAccent
-              : (selected ? TayarColors.primary : Colors.white70),
+              : (selected ? TayarColors.primary : context.textGreyColor),
         ),
         title: Text(
           label,
@@ -1791,10 +1784,10 @@ class _SocialIcon extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.white54),
+          border: Border.all(color: context.dividerColor2),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: Colors.white, size: 20),
+        child: Icon(icon, color: context.textColor, size: 20),
       ),
     );
   }
