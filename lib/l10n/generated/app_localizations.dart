@@ -494,6 +494,30 @@ abstract class AppLocalizations {
   /// **'استخدام لغة الجهاز'**
   String get useDeviceLanguageLabel;
 
+  /// No description provided for @appThemeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مظهر التطبيق'**
+  String get appThemeLabel;
+
+  /// No description provided for @darkModeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوضع الغامق'**
+  String get darkModeLabel;
+
+  /// No description provided for @lightModeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوضع الفاتح'**
+  String get lightModeLabel;
+
+  /// No description provided for @useDeviceThemeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدام إعداد الجهاز'**
+  String get useDeviceThemeLabel;
+
   /// No description provided for @enablePushNotifications.
   ///
   /// In ar, this message translates to:

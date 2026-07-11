@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main.dart' show AuthGate;
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 
 /// ====== شاشة السبلاش المتحركة اللي بتظهر أول ما التطبيق يفتح ======
 /// المربع البرتقالي بيظهر فاضي الأول، وبعدين شعار الموتوسيكل بيدخل
@@ -97,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen>
     final travelDistance = (screenWidth / 2) + boxSize;
 
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,
@@ -151,10 +151,10 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: 22),
                 Opacity(
                   opacity: _titleOpacity.value,
-                  child: const Text(
+                  child: Text(
                     'TAYAR',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: context.textColor,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Arial',

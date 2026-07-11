@@ -81,11 +81,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: context.textColor),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -96,8 +96,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
             Text(
               l10n.phoneNumberLabel,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.black,
+              style: TextStyle(
+                color: context.textColor,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
@@ -106,7 +106,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
             Text(
               l10n.otpSendNoticeLabel,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
+              style: TextStyle(color: context.textGreyColor, fontSize: 14),
             ),
             const SizedBox(height: 40),
 
@@ -114,28 +114,28 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: context.dividerColor2),
               ),
               child: Row(
                 children: [
-                  const Text(
+                  Text(
                     '+20',
-                    style: TextStyle(color: Colors.black, fontSize: 16),
+                    style: TextStyle(color: context.textColor, fontSize: 16),
                   ),
                   const SizedBox(width: 8),
-                  Container(width: 1, height: 24, color: Colors.grey.shade400),
+                  Container(width: 1, height: 24, color: context.dividerColor2),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       textAlign: TextAlign.right,
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                      decoration: const InputDecoration(
+                      style: TextStyle(color: context.textColor, fontSize: 16),
+                      decoration: InputDecoration(
                         hintText: '01xxxxxxxxx',
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle: TextStyle(color: context.textGreyColor),
                         border: InputBorder.none,
                       ),
                     ),
@@ -246,11 +246,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: context.textColor),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -261,8 +261,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             Text(
               l10n.confirmPhoneNumberTitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.black,
+              style: TextStyle(
+                color: context.textColor,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
@@ -271,7 +271,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             Text(
               l10n.otpSentToNumberLabel(widget.phoneNumber),
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
+              style: TextStyle(color: context.textGreyColor, fontSize: 14),
             ),
             const SizedBox(height: 40),
 
@@ -279,23 +279,23 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: context.dividerColor2),
               ),
               child: TextField(
                 controller: _otpController,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 maxLength: 6,
-                style: const TextStyle(
-                  color: Colors.black,
+                style: TextStyle(
+                  color: context.textColor,
                   fontSize: 22,
                   letterSpacing: 8,
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: '------',
-                  hintStyle: TextStyle(color: Colors.grey),
+                  hintStyle: TextStyle(color: context.textGreyColor),
                   border: InputBorder.none,
                   counterText: '',
                 ),

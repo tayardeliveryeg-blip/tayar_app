@@ -48,14 +48,14 @@ class HelpScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final faqs = _buildFaqs(l10n);
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme:  IconThemeData(color: context.textColor),
         title: Text(
           l10n.helpScreenTitle,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: ListView.separated(
@@ -68,16 +68,16 @@ class HelpScreen extends StatelessWidget {
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: Container(
               decoration: BoxDecoration(
-                color: TayarColors.cardDark,
+                color: context.cardColor,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: ExpansionTile(
                 iconColor: TayarColors.primary,
-                collapsedIconColor: TayarColors.textGrey,
+                collapsedIconColor: context.textGreyColor,
                 title: Text(
                   faq.question,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.textColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -87,8 +87,8 @@ class HelpScreen extends StatelessWidget {
                 children: [
                   Text(
                     faq.answer,
-                    style: const TextStyle(
-                      color: TayarColors.textGrey,
+                    style:  TextStyle(
+                      color: context.textGreyColor,
                       fontSize: 13,
                       height: 1.6,
                     ),

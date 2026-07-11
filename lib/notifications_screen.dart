@@ -57,14 +57,14 @@ class NotificationsScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme:  IconThemeData(color: context.textColor),
         title: Text(
           l10n.navNotifications,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
         actions: [
           if (uid != null)
@@ -94,7 +94,7 @@ class NotificationsScreen extends StatelessWidget {
           ? Center(
               child: Text(
                 l10n.mustSignInToViewNotifications,
-                style: const TextStyle(color: TayarColors.textGrey),
+                style:  TextStyle(color: context.textGreyColor),
               ),
             )
           : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -107,7 +107,7 @@ class NotificationsScreen extends StatelessWidget {
                   return Center(
                     child: Text(
                       l10n.errorLoadingNotifications,
-                      style: const TextStyle(color: TayarColors.textGrey),
+                      style:  TextStyle(color: context.textGreyColor),
                     ),
                   );
                 }
@@ -127,13 +127,13 @@ class NotificationsScreen extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.notifications_none,
-                          color: TayarColors.textGrey.withValues(alpha: 0.6),
+                          color: context.textGreyColor.withValues(alpha: 0.6),
                           size: 56,
                         ),
                         const SizedBox(height: 12),
                         Text(
                           l10n.noNotificationsYet,
-                          style: const TextStyle(color: TayarColors.textGrey),
+                          style:  TextStyle(color: context.textGreyColor),
                         ),
                       ],
                     ),
@@ -161,7 +161,7 @@ class NotificationsScreen extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: TayarColors.cardDark,
+                          color: context.cardColor,
                           borderRadius: BorderRadius.circular(14),
                           border: isRead
                               ? null
@@ -177,12 +177,12 @@ class NotificationsScreen extends StatelessWidget {
                             CircleAvatar(
                               radius: 20,
                               backgroundColor: isRead
-                                  ? Colors.white12
+                                  ? context.dividerColor2
                                   : TayarColors.primary.withValues(alpha: 0.15),
                               child: Icon(
                                 _iconForType(data['type'] as String?),
                                 color: isRead
-                                    ? TayarColors.textGrey
+                                    ? context.textGreyColor
                                     : TayarColors.primary,
                                 size: 18,
                               ),
@@ -195,7 +195,7 @@ class NotificationsScreen extends StatelessWidget {
                                   Text(
                                     title,
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: context.textColor,
                                       fontWeight: isRead
                                           ? FontWeight.normal
                                           : FontWeight.bold,
@@ -205,16 +205,16 @@ class NotificationsScreen extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     body,
-                                    style: const TextStyle(
-                                      color: TayarColors.textGrey,
+                                    style:  TextStyle(
+                                      color: context.textGreyColor,
                                       fontSize: 13,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
                                     _timeAgo(createdAt, l10n),
-                                    style: const TextStyle(
-                                      color: TayarColors.textGrey,
+                                    style:  TextStyle(
+                                      color: context.textGreyColor,
                                       fontSize: 11,
                                     ),
                                   ),

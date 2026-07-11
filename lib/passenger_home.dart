@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -246,9 +247,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   // الدبوس بقى ثابت في نص الشاشة بالظبط طول الوقت (وقت السحب ووقت الثبات)،
   // فمفيش داعي لأي تعويض/رفع (pinLift) — نص الشاشة الحقيقي هو نفسه مكان الدبوس دايمًا.
   LatLng _pinRealLocation(MapCamera camera) {
-    final size = camera.nonRotatedSize;
-    final pinOffset = Offset(size.width / 2, size.height / 2);
-    return camera.offsetToCrs(pinOffset);
+    final size = camera.nonRotatedSize; // Point<double> في نسخة flutter_map دي
+    final pinPoint = math.Point<double>(size.x / 2, size.y / 2);
+    return camera.pointToLatLng(pinPoint);
   }
 
   // ====== بيتنادى كل مرة الخريطة تتحرك (سحب أو زوم) ======

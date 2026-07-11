@@ -92,14 +92,14 @@ class _SupportScreenState extends State<SupportScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme:  IconThemeData(color: context.textColor),
         title: Text(
           loc.navSupport,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: ListView(
@@ -107,8 +107,8 @@ class _SupportScreenState extends State<SupportScreen> {
         children: [
           Text(
             loc.contactUsDirectlyLabel,
-            style: const TextStyle(
-              color: Colors.white,
+            style:  TextStyle(
+              color: context.textColor,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -144,8 +144,8 @@ class _SupportScreenState extends State<SupportScreen> {
           const SizedBox(height: 28),
           Text(
             loc.orSendMessageHereLabel,
-            style: const TextStyle(
-              color: Colors.white,
+            style:  TextStyle(
+              color: context.textColor,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -154,17 +154,17 @@ class _SupportScreenState extends State<SupportScreen> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: TayarColors.cardDark,
+              color: context.cardColor,
               borderRadius: BorderRadius.circular(14),
             ),
             child: TextField(
               controller: _messageController,
               maxLines: 5,
-              style: const TextStyle(color: Colors.white),
+              style:  TextStyle(color: context.textColor),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: loc.supportMessageHint,
-                hintStyle: const TextStyle(color: TayarColors.textGrey),
+                hintStyle:  TextStyle(color: context.textGreyColor),
               ),
             ),
           ),
@@ -181,18 +181,18 @@ class _SupportScreenState extends State<SupportScreen> {
                 ),
               ),
               child: _sending
-                  ? const SizedBox(
+                  ?  SizedBox(
                       width: 22,
                       height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: context.textColor,
                       ),
                     )
                   : Text(
                       loc.sendButton,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style:  TextStyle(
+                        color: context.textColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -223,7 +223,7 @@ class _SupportActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: TayarColors.cardDark,
+          color: context.cardColor,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
@@ -232,7 +232,7 @@ class _SupportActionButton extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               label,
-              style: const TextStyle(color: Colors.white, fontSize: 13),
+              style: TextStyle(color: context.textColor, fontSize: 13),
             ),
           ],
         ),

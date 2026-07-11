@@ -218,6 +218,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get useDeviceLanguageLabel => 'استخدام لغة الجهاز';
 
   @override
+  String get appThemeLabel => 'مظهر التطبيق';
+
+  @override
+  String get darkModeLabel => 'الوضع الغامق';
+
+  @override
+  String get lightModeLabel => 'الوضع الفاتح';
+
+  @override
+  String get useDeviceThemeLabel => 'استخدام إعداد الجهاز';
+
+  @override
   String get enablePushNotifications => 'تفعيل إشعارات التطبيق';
 
   @override

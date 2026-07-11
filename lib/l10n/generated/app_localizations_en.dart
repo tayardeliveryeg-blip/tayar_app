@@ -224,6 +224,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get useDeviceLanguageLabel => 'Use device language';
 
   @override
+  String get appThemeLabel => 'App Theme';
+
+  @override
+  String get darkModeLabel => 'Dark Mode';
+
+  @override
+  String get lightModeLabel => 'Light Mode';
+
+  @override
+  String get useDeviceThemeLabel => 'Use device setting';
+
+  @override
   String get enablePushNotifications => 'Enable app notifications';
 
   @override

@@ -55,18 +55,18 @@ class _SecurityScreenState extends State<SecurityScreen> {
     return showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: TayarColors.cardDark,
+        backgroundColor: context.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           loc.setPinTitle,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
           maxLength: 4,
           obscureText: true,
-          style: const TextStyle(color: Colors.white, letterSpacing: 8),
+          style:  TextStyle(color: context.textColor, letterSpacing: 8),
           decoration: const InputDecoration(counterText: ''),
         ),
         actions: [
@@ -74,7 +74,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text(
               loc.cancel,
-              style: const TextStyle(color: TayarColors.textGrey),
+              style:  TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
@@ -107,22 +107,22 @@ class _SecurityScreenState extends State<SecurityScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: TayarColors.cardDark,
+        backgroundColor: context.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           loc.deleteAccountPermanentlyTitle,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
         content: Text(
           loc.deleteAccountConfirmBody,
-          style: const TextStyle(color: TayarColors.textGrey),
+          style:  TextStyle(color: context.textGreyColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               loc.cancel,
-              style: const TextStyle(color: TayarColors.textGrey),
+              style:  TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
@@ -185,14 +185,14 @@ class _SecurityScreenState extends State<SecurityScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme:  IconThemeData(color: context.textColor),
         title: Text(
           loc.navSecurity,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: _loading
@@ -211,11 +211,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
                       ),
                       title: Text(
                         loc.signInMethodLabel,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: context.textColor),
                       ),
                       subtitle: Text(
                         _providerLabel(),
-                        style: const TextStyle(color: TayarColors.textGrey),
+                        style:  TextStyle(color: context.textGreyColor),
                       ),
                     ),
                   ],
@@ -233,11 +233,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
                       ),
                       title: Text(
                         loc.appLockTitle,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: context.textColor),
                       ),
                       subtitle: Text(
                         loc.appLockSubtitle,
-                        style: const TextStyle(color: TayarColors.textGrey),
+                        style:  TextStyle(color: context.textGreyColor),
                       ),
                     ),
                   ],
@@ -272,7 +272,7 @@ class _SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: TayarColors.cardDark,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(children: children),

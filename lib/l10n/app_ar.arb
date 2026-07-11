@@ -110,6 +110,10 @@
 
   "appLanguageLabel": "لغة التطبيق",
   "useDeviceLanguageLabel": "استخدام لغة الجهاز",
+  "appThemeLabel": "مظهر التطبيق",
+  "darkModeLabel": "الوضع الغامق",
+  "lightModeLabel": "الوضع الفاتح",
+  "useDeviceThemeLabel": "استخدام إعداد الجهاز",
   "enablePushNotifications": "تفعيل إشعارات التطبيق",
   "pushNotificationsDescription": "إشعارات الطلبات والعروض والتحديثات المهمة",
   "termsAndConditions": "الشروط والأحكام",

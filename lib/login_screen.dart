@@ -140,7 +140,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.bgColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -151,10 +151,17 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               AppLocalizations.of(context)!.appName,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: context.textColor,
+              ),
             ),
             const SizedBox(height: 10),
-            Text(AppLocalizations.of(context)!.chooseYourRideSubtitle),
+            Text(
+              AppLocalizations.of(context)!.chooseYourRideSubtitle,
+              style: TextStyle(color: context.textGreyColor),
+            ),
             const Spacer(),
 
             // زر المتابعة باستخدام Google
@@ -200,7 +207,7 @@ class LoginScreen extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.loginTermsAgreementNotice,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(fontSize: 12, color: context.textGreyColor),
             ),
             const SizedBox(height: 20),
           ],

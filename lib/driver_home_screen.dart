@@ -85,22 +85,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: TayarColors.cardDark,
+        backgroundColor: context.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           AppLocalizations.of(context)!.logout,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
         content: Text(
           AppLocalizations.of(context)!.confirmLogoutMessage,
-          style: const TextStyle(color: TayarColors.textGrey),
+          style:  TextStyle(color: context.textGreyColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: TayarColors.textGrey),
+              style:  TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
@@ -527,7 +527,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: TayarColors.cardDark,
+      backgroundColor: context.cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -577,7 +577,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         ),
         action: SnackBarAction(
           label: AppLocalizations.of(context)!.endTrip,
-          textColor: Colors.white,
+          textColor: context.textColor,
           onPressed: () => _completeTrip(tripId),
         ),
       ),
@@ -589,13 +589,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     final user = _currentUser;
 
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
+            icon:  Icon(Icons.menu, color: context.textColor),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
@@ -606,22 +606,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             decoration: BoxDecoration(
               color: _isOnline
                   ? TayarColors.primary.withValues(alpha: 0.15)
-                  : Colors.white.withValues(alpha: 0.08),
+                  : (context.isDarkMode ? Colors.white : Colors.black).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: _isOnline ? TayarColors.primary : Colors.white38,
+                color: _isOnline ? TayarColors.primary : context.dividerColor2,
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (_isTogglingOnline)
-                  const SizedBox(
+                   SizedBox(
                     width: 14,
                     height: 14,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: context.textColor,
                     ),
                   )
                 else
@@ -636,7 +636,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       ? AppLocalizations.of(context)!.driverToggleOnline
                       : AppLocalizations.of(context)!.driverToggleOffline,
                   style: TextStyle(
-                    color: _isOnline ? TayarColors.primary : Colors.white70,
+                    color: _isOnline ? TayarColors.primary : context.textGreyColor,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -650,7 +650,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           // ====== زرار تبديل اللغة اتشال من هنا؛ التحكم في اللغة بقى
           // من شاشة الإعدادات فقط (مكان واحد موحّد لكل التطبيق) ======
           IconButton(
-            icon: const Icon(Icons.person, color: Colors.white),
+            icon:  Icon(Icons.person, color: context.textColor),
             onPressed: () async {
               // ====== نحفظ إن آخر وضع بقى "راكب" عشان يفتح عليه المرة الجاية ======
               await _saveLastMode('passenger');
@@ -669,7 +669,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           ? Center(
               child: Text(
                 AppLocalizations.of(context)!.mustSignInFirst,
-                style: TextStyle(color: TayarColors.textGrey),
+                style: TextStyle(color: context.textGreyColor),
               ),
             )
           : IndexedStack(
@@ -687,9 +687,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           : BottomNavigationBar(
               currentIndex: _selectedTab,
               onTap: (index) => setState(() => _selectedTab = index),
-              backgroundColor: TayarColors.cardDark,
+              backgroundColor: context.cardColor,
               selectedItemColor: TayarColors.primary,
-              unselectedItemColor: TayarColors.textGrey,
+              unselectedItemColor: context.textGreyColor,
               type: BottomNavigationBarType.fixed,
               items: [
                 BottomNavigationBarItem(
@@ -767,14 +767,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       children: [
                         Icon(
                           Icons.power_settings_new,
-                          color: TayarColors.textGrey,
+                          color: context.textGreyColor,
                           size: 40,
                         ),
                         const SizedBox(height: 12),
                         Text(
                           AppLocalizations.of(context)!.driverOfflineHint,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: TayarColors.textGrey),
+                          style: TextStyle(color: context.textGreyColor),
                         ),
                       ],
                     ),
@@ -790,7 +790,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 return Center(
                   child: Text(
                     AppLocalizations.of(context)!.errorLoadingOrders,
-                    style: TextStyle(color: TayarColors.textGrey),
+                    style: TextStyle(color: context.textGreyColor),
                   ),
                 );
               }
@@ -805,7 +805,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 return Center(
                   child: Text(
                     AppLocalizations.of(context)!.driverNoOrders,
-                    style: const TextStyle(color: TayarColors.textGrey),
+                    style:  TextStyle(color: context.textGreyColor),
                   ),
                 );
               }
@@ -893,7 +893,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   // ====== القايمة الجانبية (Drawer) ======
   Widget _buildDriverDrawer(BuildContext context) {
     return Drawer(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       child: SafeArea(
         child: Column(
           children: [
@@ -953,8 +953,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                           Text(
                             _currentUser?.displayName ??
                                 AppLocalizations.of(context)!.defaultDriverName,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style:  TextStyle(
+                              color: context.textColor,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -969,19 +969,19 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                             style: TextStyle(
                               color: _isOnline
                                   ? TayarColors.primary
-                                  : TayarColors.textGrey,
+                                  : context.textGreyColor,
                               fontSize: 13,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: Colors.white),
+                    Icon(Icons.chevron_right, color: context.textGreyColor),
                   ],
                 ),
               ),
             ),
-            const Divider(color: Colors.white24, height: 1),
+             Divider(color: context.dividerColor2, height: 1),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -1022,7 +1022,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       Navigator.pop(context);
                     },
                   ),
-                  const Divider(color: Colors.white24, height: 24),
+                   Divider(color: context.dividerColor2, height: 24),
                   _DriverDrawerItem(
                     icon: Icons.notifications_none,
                     label: AppLocalizations.of(context)!.navNotifications,
@@ -1086,7 +1086,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       );
                     },
                   ),
-                  const Divider(color: Colors.white24, height: 24),
+                   Divider(color: context.dividerColor2, height: 24),
                   _DriverDrawerItem(
                     icon: Icons.logout,
                     label: AppLocalizations.of(context)!.logout,
@@ -1200,7 +1200,7 @@ class _OrderRequestCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: TayarColors.cardDark,
+          color: context.cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: TayarColors.primary.withValues(alpha: 0.25),
@@ -1227,14 +1227,14 @@ class _OrderRequestCard extends StatelessWidget {
                 ),
               ],
             ),
-            const Padding(
+             Padding(
               padding: EdgeInsets.symmetric(vertical: 2),
               child: Row(
                 children: [
                   SizedBox(width: 7),
                   SizedBox(
                     height: 14,
-                    child: VerticalDivider(color: Colors.white24, thickness: 2),
+                    child: VerticalDivider(color: context.dividerColor2, thickness: 2),
                   ),
                 ],
               ),
@@ -1250,7 +1250,7 @@ class _OrderRequestCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     destinationAddress,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style:  TextStyle(color: context.textColor, fontSize: 14),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1266,8 +1266,8 @@ class _OrderRequestCard extends StatelessWidget {
                     distanceKm.toStringAsFixed(1),
                     durationMin,
                   ),
-                  style: const TextStyle(
-                    color: TayarColors.textGrey,
+                  style:  TextStyle(
+                    color: context.textGreyColor,
                     fontSize: 12,
                   ),
                 ),
@@ -1291,22 +1291,22 @@ class _OrderRequestCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
+                        color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                           Icon(
                             Icons.payments_outlined,
-                            color: TayarColors.textGrey,
+                            color: context.textGreyColor,
                             size: 12,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             paymentMethodDisplay(context, paymentMethod),
-                            style: const TextStyle(
-                              color: TayarColors.textGrey,
+                            style:  TextStyle(
+                              color: context.textGreyColor,
                               fontSize: 11,
                             ),
                           ),
@@ -1324,7 +1324,7 @@ class _OrderRequestCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
                     AppLocalizations.of(context)!.offerSentAlreadyLabel,
-                    style: TextStyle(color: TayarColors.textGrey, fontSize: 13),
+                    style: TextStyle(color: context.textGreyColor, fontSize: 13),
                   ),
                 ),
               )
@@ -1360,7 +1360,7 @@ class _OrderRequestCard extends StatelessWidget {
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.acceptProposedPrice,
-                        style: const TextStyle(color: Colors.white),
+                        style:  TextStyle(color: context.textColor),
                       ),
                     ),
                   ),
@@ -1426,7 +1426,7 @@ class _OfferSheetState extends State<_OfferSheet> {
           const SizedBox(height: 16),
           Text(
             '${widget.pickupAddress} ← ${widget.destinationAddress}',
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style:  TextStyle(color: context.textColor, fontSize: 14),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
@@ -1434,12 +1434,12 @@ class _OfferSheetState extends State<_OfferSheet> {
             AppLocalizations.of(
               context,
             )!.distanceKmLabel(widget.distanceKm.toStringAsFixed(1)),
-            style: const TextStyle(color: TayarColors.textGrey, fontSize: 12),
+            style:  TextStyle(color: context.textGreyColor, fontSize: 12),
           ),
           const SizedBox(height: 20),
           Text(
             AppLocalizations.of(context)!.setYourPriceLabel,
-            style: TextStyle(color: Colors.white, fontSize: 14),
+            style: TextStyle(color: context.textColor, fontSize: 14),
           ),
           const SizedBox(height: 12),
           Row(
@@ -1594,7 +1594,7 @@ class _ActiveTripCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     '$pickupAddress ← $destinationAddress',
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    style: TextStyle(color: context.textColor, fontSize: 13),
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -1603,8 +1603,8 @@ class _ActiveTripCard extends StatelessWidget {
                         AppLocalizations.of(
                           context,
                         )!.currencyEGP(fare.toStringAsFixed(0)),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style:  TextStyle(
+                          color: context.textColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -1612,14 +1612,14 @@ class _ActiveTripCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Icon(
                         Icons.payments_outlined,
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.7),
                         size: 14,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         paymentMethodDisplay(context, paymentMethod),
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.7),
+                          color: (context.isDarkMode ? Colors.white : Colors.black).withValues(alpha: 0.7),
                           fontSize: 13,
                         ),
                       ),
@@ -1696,8 +1696,8 @@ class _ActiveTripCard extends StatelessWidget {
                 inProgress
                     ? AppLocalizations.of(context)!.endTrip
                     : AppLocalizations.of(context)!.startTrip,
-                style: const TextStyle(
-                  color: Colors.white,
+                style:  TextStyle(
+                  color: context.textColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1775,14 +1775,14 @@ class _DriverDrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color itemColor = isDestructive
         ? Colors.redAccent
-        : (selected ? TayarColors.primary : Colors.white);
+        : (selected ? TayarColors.primary : context.textColor);
 
     return ListTile(
       leading: Icon(
         icon,
         color: isDestructive
             ? Colors.redAccent
-            : (selected ? TayarColors.primary : Colors.white70),
+            : (selected ? TayarColors.primary : context.textGreyColor),
       ),
       title: Text(
         label,
@@ -1810,10 +1810,10 @@ class _DriverSocialIcon extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.white54),
+          border: Border.all(color: context.textGreyColor),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: Colors.white, size: 20),
+        child: Icon(icon, color: context.textColor, size: 20),
       ),
     );
   }
@@ -1964,7 +1964,7 @@ class _DriverRatingTabState extends State<_DriverRatingTab> {
           return Center(
             child: Text(
               AppLocalizations.of(context)!.driverNoRatings,
-              style: TextStyle(color: TayarColors.textGrey),
+              style: TextStyle(color: context.textGreyColor),
             ),
           );
         }
@@ -1999,8 +1999,8 @@ class _DriverRatingTabState extends State<_DriverRatingTab> {
               const SizedBox(height: 8),
               Text(
                 AppLocalizations.of(context)!.ratingCountLabel(count),
-                style: const TextStyle(
-                  color: TayarColors.textGrey,
+                style:  TextStyle(
+                  color: context.textGreyColor,
                   fontSize: 14,
                 ),
               ),
@@ -2057,7 +2057,7 @@ class _DriverWalletTab extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.availableBalance,
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    style: TextStyle(color: context.textGreyColor, fontSize: 14),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -2113,7 +2113,7 @@ class _IncomeSummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: TayarColors.cardDark,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -2123,7 +2123,7 @@ class _IncomeSummaryCard extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
+              style: TextStyle(color: context.textGreyColor, fontSize: 14),
             ),
           ),
           Text(
@@ -2132,8 +2132,8 @@ class _IncomeSummaryCard extends StatelessWidget {
                     context,
                   )!.currencyEGP(value.toStringAsFixed(0))
                 : value.toStringAsFixed(0),
-            style: const TextStyle(
-              color: Colors.white,
+            style:  TextStyle(
+              color: context.textColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -2234,14 +2234,14 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
         : const LatLng(30.2854, 31.7414); // مركز افتراضي (العاشر من رمضان)
 
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme:  IconThemeData(color: context.textColor),
         title: Text(
           AppLocalizations.of(context)!.orderDetailsTitle,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
       ),
       body: Column(
@@ -2297,7 +2297,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                 : Center(
                     child: Text(
                       AppLocalizations.of(context)!.locationUnavailableForOrder,
-                      style: TextStyle(color: TayarColors.textGrey),
+                      style: TextStyle(color: context.textGreyColor),
                     ),
                   ),
           ),
@@ -2313,7 +2313,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: TayarColors.cardDark,
+                      color: context.cardColor,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Column(
@@ -2335,12 +2335,12 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             ),
                           ],
                         ),
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 6),
                           child: SizedBox(
                             height: 14,
                             child: VerticalDivider(
-                              color: Colors.white24,
+                              color: context.dividerColor2,
                               thickness: 2,
                             ),
                           ),
@@ -2356,7 +2356,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             Expanded(
                               child: Text(
                                 widget.destinationAddress,
-                                style: const TextStyle(color: Colors.white),
+                                style:  TextStyle(color: context.textColor),
                               ),
                             ),
                           ],
@@ -2372,8 +2372,8 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                                 widget.distanceKm.toStringAsFixed(1),
                                 widget.durationMin,
                               ),
-                              style: const TextStyle(
-                                color: TayarColors.textGrey,
+                              style:  TextStyle(
+                                color: context.textGreyColor,
                                 fontSize: 13,
                               ),
                             ),
@@ -2382,8 +2382,8 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                                 context,
                                 widget.paymentMethod,
                               ),
-                              style: const TextStyle(
-                                color: TayarColors.textGrey,
+                              style:  TextStyle(
+                                color: context.textGreyColor,
                                 fontSize: 13,
                               ),
                             ),
@@ -2469,7 +2469,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.acceptProposedPrice,
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: context.textColor),
                             ),
                           ),
                         ),
@@ -2481,7 +2481,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         child: Text(
                           AppLocalizations.of(context)!.alreadyOfferedOnOrder,
-                          style: TextStyle(color: TayarColors.textGrey),
+                          style: TextStyle(color: context.textGreyColor),
                         ),
                       ),
                     ),

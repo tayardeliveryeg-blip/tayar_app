@@ -110,6 +110,10 @@
 
   "appLanguageLabel": "App Language",
   "useDeviceLanguageLabel": "Use device language",
+  "appThemeLabel": "App Theme",
+  "darkModeLabel": "Dark Mode",
+  "lightModeLabel": "Light Mode",
+  "useDeviceThemeLabel": "Use device setting",
   "enablePushNotifications": "Enable app notifications",
   "pushNotificationsDescription": "Notifications for orders, offers, and important updates",
   "termsAndConditions": "Terms & Conditions",

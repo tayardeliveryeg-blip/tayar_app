@@ -53,13 +53,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: TayarColors.cardDark,
+        backgroundColor: context.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
+        title: Text(title, style: TextStyle(color: context.textColor)),
         content: SingleChildScrollView(
           child: Text(
             body,
-            style: const TextStyle(color: TayarColors.textGrey),
+            style: TextStyle(color: context.textGreyColor),
           ),
         ),
         actions: [
@@ -82,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: TayarColors.cardDark,
+      backgroundColor: context.cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -107,8 +107,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   alignment: Alignment.centerRight,
                   child: Text(
                     AppLocalizations.of(context)!.appLanguageLabel,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.textColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -122,7 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 activeColor: TayarColors.primary,
                 title: Text(
                   AppLocalizations.of(context)!.useDeviceLanguageLabel,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: context.textColor),
                 ),
                 onChanged: (value) {
                   TayarApp.setLocale(context, value);
@@ -133,9 +133,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 value: const Locale('ar'),
                 groupValue: manualLocale,
                 activeColor: TayarColors.primary,
-                title: const Text(
+                title: Text(
                   'العربية',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: context.textColor),
                 ),
                 onChanged: (value) {
                   TayarApp.setLocale(context, value);
@@ -146,12 +146,99 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 value: const Locale('en'),
                 groupValue: manualLocale,
                 activeColor: TayarColors.primary,
-                title: const Text(
+                title: Text(
                   'English',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: context.textColor),
                 ),
                 onChanged: (value) {
                   TayarApp.setLocale(context, value);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // ====== بيفتح شيت لاختيار وضع الإضاءة: فاتح / غامق / تلقائي حسب الجهاز ======
+  void _showThemeModeSheet(BuildContext context) {
+    final currentMode = TayarApp.getThemeMode(context);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade700,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    AppLocalizations.of(context)!.appThemeLabel,
+                    style: TextStyle(
+                      color: context.textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              RadioListTile<ThemeMode>(
+                value: ThemeMode.dark,
+                groupValue: currentMode,
+                activeColor: TayarColors.primary,
+                title: Text(
+                  AppLocalizations.of(context)!.darkModeLabel,
+                  style: TextStyle(color: context.textColor),
+                ),
+                onChanged: (value) {
+                  TayarApp.setThemeMode(context, value!);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+              RadioListTile<ThemeMode>(
+                value: ThemeMode.light,
+                groupValue: currentMode,
+                activeColor: TayarColors.primary,
+                title: Text(
+                  AppLocalizations.of(context)!.lightModeLabel,
+                  style: TextStyle(color: context.textColor),
+                ),
+                onChanged: (value) {
+                  TayarApp.setThemeMode(context, value!);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+              RadioListTile<ThemeMode>(
+                value: ThemeMode.system,
+                groupValue: currentMode,
+                activeColor: TayarColors.primary,
+                title: Text(
+                  AppLocalizations.of(context)!.useDeviceThemeLabel,
+                  style: TextStyle(color: context.textColor),
+                ),
+                onChanged: (value) {
+                  TayarApp.setThemeMode(context, value!);
                   Navigator.pop(sheetContext);
                 },
               ),
@@ -172,15 +259,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ? AppLocalizations.of(context)!.useDeviceLanguageLabel
         : (isArabic ? 'العربية' : 'English');
 
+    final currentThemeMode = TayarApp.getThemeMode(context);
+    final themeSubtitle = switch (currentThemeMode) {
+      ThemeMode.light => AppLocalizations.of(context)!.lightModeLabel,
+      ThemeMode.dark => AppLocalizations.of(context)!.darkModeLabel,
+      ThemeMode.system => AppLocalizations.of(context)!.useDeviceThemeLabel,
+    };
+
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       appBar: AppBar(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: context.textColor),
         title: Text(
           AppLocalizations.of(context)!.navSettings,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: _loading
@@ -199,17 +293,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text(
                         AppLocalizations.of(context)!.appLanguageLabel,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: context.textColor),
                       ),
                       subtitle: Text(
                         languageSubtitle,
-                        style: const TextStyle(color: TayarColors.textGrey),
+                        style: TextStyle(color: context.textGreyColor),
                       ),
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_left,
-                        color: TayarColors.textGrey,
+                        color: context.textGreyColor,
                       ),
                       onTap: () => _showLanguageSheet(context),
+                    ),
+                    Divider(color: context.dividerColor2, height: 1),
+                    ListTile(
+                      leading: Icon(
+                        context.isDarkMode
+                            ? Icons.dark_mode_outlined
+                            : Icons.light_mode_outlined,
+                        color: TayarColors.primary,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.appThemeLabel,
+                        style: TextStyle(color: context.textColor),
+                      ),
+                      subtitle: Text(
+                        themeSubtitle,
+                        style: TextStyle(color: context.textGreyColor),
+                      ),
+                      trailing: Icon(
+                        Icons.chevron_left,
+                        color: context.textGreyColor,
+                      ),
+                      onTap: () => _showThemeModeSheet(context),
                     ),
                   ],
                 ),
@@ -226,13 +342,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text(
                         AppLocalizations.of(context)!.enablePushNotifications,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: context.textColor),
                       ),
                       subtitle: Text(
                         AppLocalizations.of(
                           context,
                         )!.pushNotificationsDescription,
-                        style: const TextStyle(color: TayarColors.textGrey),
+                        style: TextStyle(color: context.textGreyColor),
                       ),
                     ),
                   ],
@@ -247,18 +363,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text(
                         AppLocalizations.of(context)!.termsAndConditions,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: context.textColor),
                       ),
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_left,
-                        color: TayarColors.textGrey,
+                        color: context.textGreyColor,
                       ),
                       onTap: () => _showTextDialog(
                         AppLocalizations.of(context)!.termsAndConditions,
                         AppLocalizations.of(context)!.termsAndConditionsBody,
                       ),
                     ),
-                    const Divider(color: Colors.white12, height: 1),
+                    Divider(color: context.dividerColor2, height: 1),
                     ListTile(
                       leading: const Icon(
                         Icons.privacy_tip_outlined,
@@ -266,11 +382,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text(
                         AppLocalizations.of(context)!.privacyPolicy,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: context.textColor),
                       ),
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_left,
-                        color: TayarColors.textGrey,
+                        color: context.textGreyColor,
                       ),
                       onTap: () => _showTextDialog(
                         AppLocalizations.of(context)!.privacyPolicy,
@@ -289,11 +405,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text(
                         AppLocalizations.of(context)!.appVersionLabel,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: context.textColor),
                       ),
-                      trailing: const Text(
+                      trailing: Text(
                         '1.0.0',
-                        style: TextStyle(color: TayarColors.textGrey),
+                        style: TextStyle(color: context.textGreyColor),
                       ),
                     ),
                   ],
@@ -312,7 +428,7 @@ class _SettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: TayarColors.cardDark,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(children: children),

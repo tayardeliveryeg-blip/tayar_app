@@ -840,4 +840,3 @@ class _PinIcon extends StatelessWidget {
     );
   }
 }
-
