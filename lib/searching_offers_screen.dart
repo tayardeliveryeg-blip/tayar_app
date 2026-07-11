@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'trip_tracking_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
@@ -250,7 +250,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        backgroundColor: TayarColors.cardDark,
+        backgroundColor: context.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Column(
           children: [
@@ -262,14 +262,14 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
             const SizedBox(height: 12),
             Text(
               loc.offerAcceptedTitle,
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: context.textColor),
             ),
           ],
         ),
         content: Text(
           loc.driverOnWayWithFareLabel(driverName, price.toStringAsFixed(0)),
           textAlign: TextAlign.center,
-          style: const TextStyle(color: TayarColors.textGrey),
+          style:  TextStyle(color: context.textGreyColor),
         ),
         actions: [
           Center(
@@ -309,22 +309,22 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: TayarColors.cardDark,
+        backgroundColor: context.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           loc.cancelSearchTitle,
-          style: const TextStyle(color: Colors.white),
+          style:  TextStyle(color: context.textColor),
         ),
         content: Text(
           loc.cancelSearchBody,
-          style: const TextStyle(color: TayarColors.textGrey),
+          style:  TextStyle(color: context.textGreyColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               loc.goBackButton,
-              style: const TextStyle(color: TayarColors.textGrey),
+              style:  TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
@@ -447,7 +447,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
         if (!didPop) _confirmCancel();
       },
       child: Scaffold(
-        backgroundColor: TayarColors.background,
+        backgroundColor: context.bgColor,
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: _orderRef
               .collection('offers')
@@ -531,7 +531,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                         width: 52,
                                         height: 52,
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: context.textColor,
                                           borderRadius: BorderRadius.circular(
                                             14,
                                           ),
@@ -587,8 +587,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                       if (offers.isNotEmpty) _buildOffersBadge(offers),
                       Container(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-                        decoration: const BoxDecoration(
-                          color: TayarColors.background,
+                        decoration:  BoxDecoration(
+                          color: context.bgColor,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(24),
                             topRight: Radius.circular(24),
@@ -622,8 +622,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 children: [
                                   Text(
                                     _formattedElapsed,
-                                    style: const TextStyle(
-                                      color: Colors.white70,
+                                    style:  TextStyle(
+                                      color: context.textGreyColor,
                                       fontSize: 13,
                                     ),
                                   ),
@@ -631,8 +631,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                   Expanded(
                                     child: Text(
                                       loc.clientOrderPriority,
-                                      style: const TextStyle(
-                                        color: TayarColors.textGrey,
+                                      style:  TextStyle(
+                                        color: context.textGreyColor,
                                         fontSize: 12,
                                       ),
                                       maxLines: 1,
@@ -647,7 +647,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 child: LinearProgressIndicator(
                                   value: (_elapsedSeconds % 20) / 20,
                                   minHeight: 4,
-                                  backgroundColor: Colors.white12,
+                                  backgroundColor: context.dividerColor2,
                                   color: TayarColors.primary,
                                 ),
                               ),
@@ -668,8 +668,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                         _proposedFare.toStringAsFixed(0),
                                       ),
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style:  TextStyle(
+                                        color: context.textColor,
                                         fontSize: 26,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -705,7 +705,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                   vertical: 10,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: TayarColors.cardDark,
+                                  color: context.cardColor,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
@@ -721,8 +721,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                         loc.autoAcceptNearestDriverLabel(
                                           _proposedFare.toStringAsFixed(0),
                                         ),
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                        style:  TextStyle(
+                                          color: context.textColor,
                                           fontSize: 13,
                                         ),
                                       ),
@@ -745,7 +745,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 vertical: 10,
                               ),
                               decoration: BoxDecoration(
-                                color: TayarColors.cardDark,
+                                color: context.cardColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -760,8 +760,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                     loc.cashAmountLabel(
                                       _proposedFare.toStringAsFixed(0),
                                     ),
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style:  TextStyle(
+                                      color: context.textColor,
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -778,7 +778,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 vertical: 12,
                               ),
                               decoration: BoxDecoration(
-                                color: TayarColors.cardDark,
+                                color: context.cardColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Column(
@@ -794,8 +794,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                       Expanded(
                                         child: Text(
                                           widget.pickupAddress,
-                                          style: const TextStyle(
-                                            color: Colors.white,
+                                          style:  TextStyle(
+                                            color: context.textColor,
                                             fontSize: 13,
                                           ),
                                           maxLines: 1,
@@ -804,7 +804,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                       ),
                                     ],
                                   ),
-                                  const Padding(
+                                   Padding(
                                     padding: EdgeInsets.symmetric(vertical: 2),
                                     child: Row(
                                       children: [
@@ -812,7 +812,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                         SizedBox(
                                           height: 12,
                                           child: VerticalDivider(
-                                            color: Colors.white24,
+                                            color: context.dividerColor2,
                                             thickness: 2,
                                           ),
                                         ),
@@ -830,8 +830,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                       Expanded(
                                         child: Text(
                                           widget.destinationAddress,
-                                          style: const TextStyle(
-                                            color: Colors.white,
+                                          style:  TextStyle(
+                                            color: context.textColor,
                                             fontSize: 13,
                                           ),
                                           maxLines: 1,
@@ -883,8 +883,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                               child: OutlinedButton(
                                 onPressed: _confirmCancel,
                                 style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                    color: TayarColors.textGrey,
+                                  side:  BorderSide(
+                                    color: context.textGreyColor,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -892,8 +892,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 ),
                                 child: Text(
                                   loc.cancelOrderButton,
-                                  style: const TextStyle(
-                                    color: TayarColors.textGrey,
+                                  style:  TextStyle(
+                                    color: context.textGreyColor,
                                   ),
                                 ),
                               ),
@@ -928,7 +928,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: TayarColors.background.withValues(alpha: 0.95),
+          color: context.bgColor.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
@@ -954,8 +954,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                         context,
                       )!.multipleDriversViewingOrderLabel(offers.length),
                 textDirection: TextDirection.rtl,
-                style: const TextStyle(
-                  color: Colors.white,
+                style:  TextStyle(
+                  color: context.textColor,
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1031,17 +1031,17 @@ class _RaiseFareCard extends StatelessWidget {
               child: Text(
                 loc.tryRaisingFareTitle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style:  TextStyle(
+                  color: context.textColor,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             IconButton(
-              icon: const Icon(
+              icon:  Icon(
                 Icons.close,
-                color: TayarColors.textGrey,
+                color: context.textGreyColor,
                 size: 20,
               ),
               onPressed: onDismiss,
@@ -1051,7 +1051,7 @@ class _RaiseFareCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           loc.raiseFareHintBody,
-          style: const TextStyle(color: TayarColors.textGrey, fontSize: 13),
+          style:  TextStyle(color: context.textGreyColor, fontSize: 13),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
@@ -1100,12 +1100,12 @@ class _FareStepButton extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           color: enabled
-              ? TayarColors.cardDark
-              : TayarColors.cardDark.withValues(alpha: 0.5),
+              ? context.cardColor
+              : context.cardColor.withValues(alpha: 0.5),
           shape: BoxShape.circle,
           border: Border.all(color: TayarColors.primary.withValues(alpha: 0.5)),
         ),
-        child: Icon(icon, color: Colors.white, size: 20),
+        child: Icon(icon, color: context.textColor, size: 20),
       ),
     );
   }
@@ -1132,7 +1132,7 @@ class _OfferCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: TayarColors.cardDark,
+        color: context.cardColor,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: TayarColors.primary.withValues(alpha: 0.25)),
       ),
@@ -1150,8 +1150,8 @@ class _OfferCard extends StatelessWidget {
               children: [
                 Text(
                   driverName,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.textColor,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -1168,8 +1168,8 @@ class _OfferCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         rating!.toStringAsFixed(1),
-                        style: const TextStyle(
-                          color: TayarColors.textGrey,
+                        style:  TextStyle(
+                          color: context.textGreyColor,
                           fontSize: 11,
                         ),
                       ),
@@ -1178,8 +1178,8 @@ class _OfferCard extends StatelessWidget {
                 else
                   Text(
                     AppLocalizations.of(context)!.newDriverLabel,
-                    style: const TextStyle(
-                      color: TayarColors.textGrey,
+                    style:  TextStyle(
+                      color: context.textGreyColor,
                       fontSize: 11,
                       fontStyle: FontStyle.italic,
                     ),
@@ -1244,7 +1244,7 @@ class _OfferAvatarPop extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: TayarColors.background, width: 2),
+          border: Border.all(color: context.bgColor, width: 2),
         ),
         child: CircleAvatar(
           backgroundColor: TayarColors.primary,
@@ -1300,7 +1300,7 @@ class _OfferNotificationSheet extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TayarColors.cardDark,
+              color: context.cardColor,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -1322,9 +1322,9 @@ class _OfferNotificationSheet extends StatelessWidget {
                           ? NetworkImage(photoUrl!)
                           : null,
                       child: (photoUrl == null || photoUrl!.isEmpty)
-                          ? const Icon(
+                          ?  Icon(
                               Icons.person,
-                              color: Colors.white,
+                              color: context.textColor,
                               size: 26,
                             )
                           : null,
@@ -1336,8 +1336,8 @@ class _OfferNotificationSheet extends StatelessWidget {
                         children: [
                           Text(
                             loc.newOfferFromDriverLabel(driverName),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style:  TextStyle(
+                              color: context.textColor,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1354,8 +1354,8 @@ class _OfferNotificationSheet extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   rating!.toStringAsFixed(1),
-                                  style: const TextStyle(
-                                    color: TayarColors.textGrey,
+                                  style:  TextStyle(
+                                    color: context.textGreyColor,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -1364,8 +1364,8 @@ class _OfferNotificationSheet extends StatelessWidget {
                           else
                             Text(
                               AppLocalizations.of(context)!.newDriverLabel,
-                              style: const TextStyle(
-                                color: TayarColors.textGrey,
+                              style:  TextStyle(
+                                color: context.textGreyColor,
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -1392,14 +1392,14 @@ class _OfferNotificationSheet extends StatelessWidget {
                         child: OutlinedButton(
                           onPressed: onReject,
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: TayarColors.textGrey),
+                            side:  BorderSide(color: context.textGreyColor),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: Text(
                             loc.rejectButton,
-                            style: const TextStyle(color: TayarColors.textGrey),
+                            style:  TextStyle(color: context.textGreyColor),
                           ),
                         ),
                       ),
