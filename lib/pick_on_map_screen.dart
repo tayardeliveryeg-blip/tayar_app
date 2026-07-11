@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'passenger_home.dart' show TayarColors;
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'select_destination_screen.dart' show PlaceResult;
 
 /// ====== شاشة اختيار الوجهة من الخريطة ======
@@ -145,7 +145,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TayarColors.background,
+      backgroundColor: context.bgColor,
       body: Stack(
         children: [
           // ====== الخريطة ======
@@ -184,7 +184,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: TayarColors.background,
+                      color: context.bgColor,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
@@ -210,8 +210,8 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                             children: [
                               Text(
                                 _addressTitle,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style:  TextStyle(
+                                  color: context.textColor,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -221,8 +221,8 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                               if (_addressSubtitle.isNotEmpty)
                                 Text(
                                   _addressSubtitle,
-                                  style: const TextStyle(
-                                    color: TayarColors.textGrey,
+                                  style:  TextStyle(
+                                    color: context.textGreyColor,
                                     fontSize: 12,
                                   ),
                                   maxLines: 1,
@@ -239,7 +239,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.textColor,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
@@ -261,7 +261,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     decoration: BoxDecoration(
                       color: Colors.red,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
+                      border: Border.all(color: context.textColor, width: 1.5),
                     ),
                   ),
                 ],
@@ -279,7 +279,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: TayarColors.background.withValues(alpha: 0.9),
+                  color: context.bgColor.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -288,7 +288,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     ),
                   ],
                 ),
-                child: const Icon(Icons.arrow_forward, color: Colors.white),
+                child: Icon(Icons.arrow_forward, color: context.textColor),
               ),
             ),
           ),
@@ -314,8 +314,8 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.doneButton,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style:  TextStyle(
+                    color: context.textColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
