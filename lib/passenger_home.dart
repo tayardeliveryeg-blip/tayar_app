@@ -536,7 +536,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       ),
       builder: (sheetContext) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -550,7 +550,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
               const SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
@@ -787,7 +787,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                         ),
                         decoration: BoxDecoration(
                           color: context.cardColor,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(AppRadius.lg),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.3),
@@ -869,7 +869,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     onTap: _openDestinationSearch,
                     child: Container(
                       height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                       decoration: BoxDecoration(
                         color: context.bgColor.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(25),
@@ -1137,10 +1137,10 @@ class _TripSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         border: Border.all(color: TayarColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
@@ -1178,7 +1178,7 @@ class _TripSummaryCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 color: context.bgColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Row(
                 children: [
@@ -1221,7 +1221,7 @@ class _TripSummaryCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     side: BorderSide(color: context.textGreyColor),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
                   child: Text(
@@ -1239,7 +1239,7 @@ class _TripSummaryCard extends StatelessWidget {
                     backgroundColor: TayarColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
                   child: Text(
@@ -1307,7 +1307,7 @@ class TayarDrawer extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
         title: Text(loc.logout, style: TextStyle(color: context.textColor)),
         content: Text(
           loc.confirmLogoutMessage,
@@ -1375,7 +1375,7 @@ class TayarDrawer extends StatelessWidget {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                   stream: FirebaseAuth.instance.currentUser == null
                       ? null
@@ -1570,7 +1570,7 @@ class TayarDrawer extends StatelessWidget {
 
             // ====== زرار وضع الطيار ======
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -1586,7 +1586,7 @@ class TayarDrawer extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                     ),
                   ),
                   child: Text(

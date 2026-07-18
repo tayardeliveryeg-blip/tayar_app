@@ -48,3 +48,11 @@ app.*.map.json
 build_log.txt
 flutter_build_log.txt
 *.zip
+
+# Cloud Functions dependencies (installed via npm install, not committed)
+functions/node_modules/
+
+# Agent tooling / local skill references (not part of the app)
+.agents/
+skills-lock.json
+missing_keys.txt
