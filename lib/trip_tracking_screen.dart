@@ -2,16 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'pin_marker.dart';
+import 'map_tile_layer.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'rate_trip_screen.dart';
 import 'trip_chat_screen.dart';
-import 'call_screen.dart';
+import 'call_invitation_helper.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -60,6 +62,10 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
 
   // ====== بيتفعّل تلقائيًا لما الطيار يوصل فعليًا لنقطة الوجهة وقت الرحلة ======
   bool _arrivedAtDestination = false;
+
+  // ====== بيتفعّل تلقائيًا لما الطيار يوصل لنقطة الانطلاق قبل ما الرحلة تبدأ،
+  // وبيطلع للراكب إشعار داخل التطبيق أول مرة بس ======
+  bool _arrivedAtPickup = false;
 
   DocumentReference<Map<String, dynamic>> get _orderRef =>
       FirebaseFirestore.instance.collection('orders').doc(widget.orderId);
@@ -185,9 +191,58 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
     }
   }
 
+  // ====== بتتأكد هل الطيار وصل فعليًا لنقطة الانطلاق قبل ما الرحلة تبدأ
+  // (accepted)، وتطلع للراكب إشعار جوه التطبيق أول ما يقرب 40 متر ======
+  void _checkPickupArrival(LatLng driverPos) {
+    if (_status != 'accepted' || _pickupLocation == null || _arrivedAtPickup) {
+      return;
+    }
+    final distanceMeters = const Distance().as(
+      LengthUnit.Meter,
+      driverPos,
+      _pickupLocation!,
+    );
+    if (distanceMeters.isFinite && distanceMeters < 40) {
+      setState(() => _arrivedAtPickup = true);
+      _notifyDriverArrivedAtPickup();
+    }
+  }
+
+  // ====== إشعار داخل التطبيق (SnackBar + اهتزاز خفيف) لحظة وصول الطيار
+  // لنقطة الانطلاق. إشعار داخلي بس (مش push)، فبيشتغل وقت ما الشاشة مفتوحة ======
+  void _notifyDriverArrivedAtPickup() {
+    HapticFeedback.mediumImpact();
+    if (!mounted) return;
+    final loc = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: TayarColors.primary,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 4),
+        content: Row(
+          children: [
+            Icon(Icons.directions_car, color: context.onPrimaryColor),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                loc.driverArrivedAtPickupLabel,
+                style: TextStyle(
+                  color: context.onPrimaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // ====== بتتأكد هل الطيار وصل فعليًا لنقطة الوجهة وقت الرحلة الفعلية
   // (in_progress)، وبتفعّل بانر تأكيد الوصول للراكب أول ما يقرب 40 متر ======
   void _checkArrival(LatLng driverPos) {
+    _checkPickupArrival(driverPos);
+
     if (_status != 'in_progress' ||
         _destinationLocation == null ||
         _arrivedAtDestination) {
@@ -359,14 +414,14 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               const SizedBox(height: 12),
               Text(
                 loc.tripCancelledTitle,
-                style:  TextStyle(color: context.textColor),
+                style: TextStyle(color: context.textColor),
               ),
             ],
           ),
           content: Text(
             loc.tripCancelledByDriverOrSystemLabel,
             textAlign: TextAlign.center,
-            style:  TextStyle(color: context.textGreyColor),
+            style: TextStyle(color: context.textGreyColor),
           ),
           actions: [
             Center(
@@ -389,6 +444,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
     final loc = AppLocalizations.of(context)!;
     if (_status == 'in_progress' && _arrivedAtDestination) {
       return loc.arrivedAtYourDestinationStatusLabel;
+    }
+    if (_status == 'accepted' && _arrivedAtPickup) {
+      return loc.driverArrivedAtPickupLabel;
     }
     switch (_status) {
       case 'accepted':
@@ -424,11 +482,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               },
             ),
             children: [
-              TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.tayar.app',
-              ),
+              const TayarTileLayer(),
               if (_routePoints.isNotEmpty)
                 PolylineLayer(
                   polylines: [
@@ -447,10 +501,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                       point: _pickupLocation!,
                       width: 40,
                       height: 40,
-                      child: const _PinIcon(
-                        icon: Icons.person,
-                        iconColor: TayarColors.primary,
-                      ),
+                      child: const PinMarker(type: PinType.pickup, size: 40),
                     ),
                   // نقطة الوجهة: بتظهر بعد ما الرحلة تبدأ فعليًا
                   if (_destinationLocation != null && _status == 'in_progress')
@@ -458,9 +509,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                       point: _destinationLocation!,
                       width: 40,
                       height: 40,
-                      child: const _PinIcon(
-                        icon: Icons.flag,
-                        iconColor: Colors.redAccent,
+                      child: const PinMarker(
+                        type: PinType.destination,
+                        size: 40,
                       ),
                     ),
                   // ماركر الطيار: بيتحرك بسلاسة ويلف حسب اتجاه حركته
@@ -496,6 +547,52 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
             ],
           ),
 
+          // ====== بانر تأكيد وصول الطيار لنقطة الانطلاق ======
+          if (_arrivedAtPickup && _status == 'accepted')
+            Positioned(
+              top: 120,
+              left: 16,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: TayarColors.primary,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.directions_car,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        loc.driverArrivedAtPickupLabel,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: context.textColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
           // ====== بانر تأكيد الوصول للوجهة ======
           if (_arrivedAtDestination && _status == 'in_progress')
             Positioned(
@@ -530,9 +627,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                       child: Text(
                         loc.arrivedWaitingDriverToEndTripLabel,
                         textAlign: TextAlign.center,
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: context.textColor,
-                          fontSize: 13,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -577,7 +674,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     const SizedBox(width: 10),
                     Text(
                       loc.waitingDriverShareLocationLabel,
-                      style: TextStyle(color: context.textColor, fontSize: 13),
+                      style: TextStyle(color: context.textColor, fontSize: 14),
                     ),
                   ],
                 ),
@@ -613,7 +710,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
             alignment: Alignment.bottomCenter,
             child: Container(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 color: context.bgColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
@@ -643,10 +740,13 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 24,
                         backgroundColor: TayarColors.primary,
-                        child: Icon(Icons.person, color: Colors.white),
+                        child: Icon(
+                          Icons.person,
+                          color: context.onPrimaryColor,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -655,7 +755,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                           children: [
                             Text(
                               _driverName,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -663,9 +763,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                             ),
                             Text(
                               loc.currencyEGP(_fare.toStringAsFixed(0)),
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textGreyColor,
-                                fontSize: 13,
+                                fontSize: 14,
                               ),
                             ),
                           ],
@@ -679,14 +779,14 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                               loc.distanceKmLabel(
                                 _remainingDistanceKm!.toStringAsFixed(1),
                               ),
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               loc.durationMinLabel(_remainingDurationMin ?? 0),
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textGreyColor,
                                 fontSize: 12,
                               ),
@@ -721,19 +821,21 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                         child: _ContactActionButton(
                           icon: Icons.call_outlined,
                           label: loc.callDriverLabel,
-                          onTap: () {
-                            final user = FirebaseAuth.instance.currentUser;
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => CallScreen(
-                                  orderId: widget.orderId,
-                                  myUserId: user?.uid ?? '',
-                                  myUserName:
-                                      user?.displayName ??
-                                      loc.defaultCustomerName,
-                                ),
-                              ),
-                            );
+                          onTap: () async {
+                            try {
+                              await sendCallInvitation(
+                                calleeId: _driverId,
+                                calleeName: _driverName,
+                              );
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('تعذر بدء المكالمة: $e'),
+                                  ),
+                                );
+                              }
+                            }
                           },
                         ),
                       ),
@@ -746,7 +848,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                       Icon(
                         _status == 'in_progress'
                             ? Icons.flag
-                            : Icons.radio_button_checked,
+                            : Icons.location_on,
                         color: TayarColors.primary,
                         size: 18,
                       ),
@@ -756,9 +858,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                           _status == 'in_progress'
                               ? _destinationAddress
                               : _pickupAddress,
-                          style:  TextStyle(
+                          style: TextStyle(
                             color: context.textColor,
-                            fontSize: 13,
+                            fontSize: 14,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -809,34 +911,12 @@ class _ContactActionButton extends StatelessWidget {
               style: const TextStyle(
                 color: TayarColors.primary,
                 fontWeight: FontWeight.bold,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-// ====== أيقونة دبوس بيضاء بشكل موحد لنقاط البيك أب/الوجهة ======
-class _PinIcon extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-
-  const _PinIcon({required this.icon, required this.iconColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.textColor,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 6),
-        ],
-      ),
-      child: Icon(icon, color: iconColor, size: 22),
     );
   }
 }

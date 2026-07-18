@@ -61,7 +61,7 @@ class HelpScreen extends StatelessWidget {
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: faqs.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 10),
+        separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (context, index) {
           final faq = faqs[index];
           return Theme(
@@ -89,7 +89,7 @@ class HelpScreen extends StatelessWidget {
                     faq.answer,
                     style:  TextStyle(
                       color: context.textGreyColor,
-                      fontSize: 13,
+                      fontSize: 14,
                       height: 1.6,
                     ),
                   ),

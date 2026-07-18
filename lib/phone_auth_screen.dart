@@ -20,7 +20,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   Future<void> _sendOtp() async {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty || phone.length < 10) {
-      _showError(AppLocalizations.of(context)!.invalidPhoneNumberError);
+      _showError(AppLocalizations.of(context)!.phoneNumberFormatError);
       return;
     }
 
@@ -151,25 +151,25 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _sendOtp,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6B00),
+                  backgroundColor: TayarColors.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: _isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: context.onPrimaryColor,
                           strokeWidth: 2,
                         ),
                       )
                     : Text(
                         l10n.sendCodeButton,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
+                        style: TextStyle(
+                          color: context.onPrimaryColor,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -309,25 +309,25 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _verifyOtp,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6B00),
+                  backgroundColor: TayarColors.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: _isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: context.onPrimaryColor,
                           strokeWidth: 2,
                         ),
                       )
                     : Text(
                         l10n.confirmButton,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
+                        style: TextStyle(
+                          color: context.onPrimaryColor,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

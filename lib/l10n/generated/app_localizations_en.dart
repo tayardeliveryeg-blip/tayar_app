@@ -9,21 +9,21 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Tayar - Get There Instantly';
+  String get appName => 'Tayar - Instantly There';
 
   @override
   String get clientOrderPriority =>
-      'Your request goes to the nearest drivers; the best price gets priority';
+      'Sent to nearby drivers; best price gets priority';
 
   @override
-  String get driverNoOrders => 'No orders available right now.. stay ready!';
+  String get driverNoOrders => 'No orders available';
 
   @override
   String get driverOfflineHint =>
-      'You\'re currently offline.. tap \"Online\" to see available orders';
+      'You\'re offline. Tap \"Online\" to see orders';
 
   @override
-  String get driverNoRatings => 'No ratings from passengers yet.. keep it up';
+  String get driverNoRatings => 'No ratings yet';
 
   @override
   String get newDriverLabel => 'New driver';
@@ -41,30 +41,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabWallet => 'Wallet';
 
   @override
-  String get errorLoadingOrders => 'An error occurred while loading orders';
+  String get errorLoadingOrders => 'Failed to load orders';
 
   @override
   String get defaultDriverName => 'Driver';
 
   @override
-  String get statusAvailable => 'Available now';
+  String get statusAvailable => 'Available';
 
   @override
   String get statusUnavailable => 'Unavailable';
 
   @override
-  String get permissionLocationRequired =>
-      'You need to allow location permission first to go online';
+  String get permissionLocationRequired => 'Allow location access to go online';
 
   @override
   String get offerSentWaitingPassenger =>
-      'Your offer was sent, waiting for the passenger\'s response';
+      'Offer sent, waiting for the passenger';
 
   @override
-  String get offerSendFailed => 'Couldn\'t send the offer, please try again';
+  String get offerSendFailed => 'Couldn\'t send offer, try again';
 
   @override
-  String get arrivedAtDestination => '🎉 You\'ve arrived at your destination';
+  String get arrivedAtDestination => 'You\'ve arrived at your destination';
 
   @override
   String get endTrip => 'End Trip';
@@ -79,7 +78,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverToggleOffline => 'Offline';
 
   @override
-  String get mustSignInFirst => 'You need to sign in first';
+  String get mustSignInFirst => 'Sign in first';
 
   @override
   String get paymentMethodCash => 'Cash';
@@ -112,17 +111,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get offerSentAlreadyLabel =>
-      'Your offer has been sent, waiting for the passenger';
+  String get offerSentAlreadyLabel => 'Offer sent, waiting for the passenger';
 
   @override
-  String get offerCustomButton => 'Offer a different price';
+  String get offerCustomButton => 'Different price';
 
   @override
   String get acceptProposedPrice => 'Accept proposed price';
 
   @override
-  String get setYourPriceLabel => 'Set the price you\'re offering';
+  String get setYourPriceLabel => 'Set your price';
 
   @override
   String get submitOfferButton => 'Submit Offer';
@@ -183,8 +181,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offerAtMyPriceButton => 'Offer my price';
 
   @override
-  String get alreadyOfferedOnOrder =>
-      'You\'ve already made an offer on this order';
+  String get alreadyOfferedOnOrder => 'You\'ve already offered on this order';
 
   @override
   String get logout => 'Log Out';
@@ -193,8 +190,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
-  String get confirmLogoutMessage =>
-      'Are you sure you want to log out of your account?';
+  String get confirmLogoutMessage => 'Log out of your account?';
 
   @override
   String get languageToggleTooltip => 'العربية / English';
@@ -203,7 +199,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navNotifications => 'Notifications';
 
   @override
-  String get navSecurity => 'Security';
+  String get navSecurity => 'Safety';
 
   @override
   String get navSettings => 'Settings';
@@ -218,13 +214,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backToPassengerModeButton => 'Back to Passenger Mode';
 
   @override
-  String get appLanguageLabel => 'App Language';
+  String get appLanguageLabel => 'Language';
 
   @override
   String get useDeviceLanguageLabel => 'Use device language';
 
   @override
-  String get appThemeLabel => 'App Theme';
+  String get appThemeLabel => 'Appearance';
 
   @override
   String get darkModeLabel => 'Dark Mode';
@@ -239,22 +235,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enablePushNotifications => 'Enable app notifications';
 
   @override
-  String get pushNotificationsDescription =>
-      'Notifications for orders, offers, and important updates';
+  String get pushNotificationsDescription => 'Order, offer, and update alerts';
 
   @override
   String get termsAndConditions => 'Terms & Conditions';
 
   @override
   String get termsAndConditionsBody =>
-      'By using the Tayar app, you agree to its terms of use. The service is provided directly between passenger and driver, and the company only provides the connecting platform.';
+      'By using Tayar, you agree to its terms. The service is provided directly between passenger and driver; the company only provides the platform.';
 
   @override
   String get privacyPolicy => 'Privacy Policy';
 
   @override
   String get privacyPolicyBody =>
-      'We protect your data and only use your location while an actual trip is in progress. We never share your data with any third party without your consent.';
+      'We protect your data and only access your location during an active trip. We never share your data without consent.';
 
   @override
   String get appVersionLabel => 'App Version';
@@ -263,7 +258,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ok => 'OK';
 
   @override
-  String get firstNameHint => 'First Name';
+  String get firstNameHint => 'Name';
 
   @override
   String get lastNameHint => 'Last Name';
@@ -275,7 +270,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneNumberLabel => 'Phone Number';
 
   @override
-  String get addressLabel => 'Address';
+  String get addressLabel => 'City';
 
   @override
   String get saveButton => 'Save';
@@ -284,7 +279,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fullNameRequiredError => 'Please enter your full name';
 
   @override
-  String get saveFailedError => 'Couldn\'t save, please try again';
+  String get saveFailedError => 'Couldn\'t save, try again';
 
   @override
   String get profileUpdatedSuccess => 'Profile updated successfully';
@@ -293,8 +288,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changePhotoLabel => 'Change Photo';
 
   @override
-  String get photoTooLargeError =>
-      'The photo is too large, please choose a smaller one';
+  String get photoTooLargeError => 'Photo too large, choose a smaller one';
+
+  @override
+  String get invalidPhoneNumberError =>
+      'Invalid phone number, please enter a valid Egyptian number';
 
   @override
   String get locatingAddress => 'Locating address...';
@@ -303,7 +301,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addressUnknown => 'Unknown location';
 
   @override
-  String get addressFetchFailed => 'Couldn\'t determine the address';
+  String get addressFetchFailed => 'Couldn\'t get address';
 
   @override
   String get paymentMethodWallet => 'E-Wallet';
@@ -315,10 +313,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get choosePaymentMethodTitle => 'Choose Payment Method';
 
   @override
-  String get fromLabel => 'From';
+  String get fromLabel => 'Where from';
 
   @override
-  String get chooseDestinationHint => 'Choose where you want to go';
+  String get chooseDestinationHint => 'Where to?';
 
   @override
   String get serviceRideMe => 'Ride Me';
@@ -365,7 +363,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fillAllFieldsError =>
-      'Please select locations and fill in all required fields';
+      'Please select locations and fill required fields';
 
   @override
   String get estimatedFareLabel => 'Suggested Fare';
@@ -403,23 +401,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get closeButton => 'Close';
 
   @override
-  String get submitApplicationSuccessTitle => 'Your application has been sent!';
+  String get submitApplicationSuccessTitle => 'Application sent!';
 
   @override
   String get submitApplicationSuccessBody =>
-      'We\'ll review your details within 24 hours, and notify you as soon as your driver account is approved.';
+      'We\'ll review your details within 24 hours and notify you once approved.';
 
   @override
-  String get submitFailedError =>
-      'Couldn\'t submit the application, please try again';
+  String get submitFailedError => 'Couldn\'t submit, try again';
 
   @override
   String get applicationUnderReviewBanner =>
-      'Your application is currently under review, we\'ll notify you as soon as we respond.';
+      'Your application is under review. We\'ll notify you soon.';
 
   @override
   String get registrationIntroText =>
-      'Upload your personal and vehicle details. We\'ll review all information within 24 hours';
+      'Upload your personal and vehicle details. We\'ll review within 24 hours.';
 
   @override
   String get sectionPersonalInfo => 'Personal Information';
@@ -443,8 +440,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionCompleteLabel => 'Information completed';
 
   @override
-  String get sectionIncompleteLabel =>
-      'Please fill in the required information';
+  String get sectionIncompleteLabel => 'Fill in required information';
 
   @override
   String get optionalLabel => 'Optional';
@@ -454,27 +450,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get licensePhotoUploadRequired =>
-      'Please upload the license photo and enter the expiry date';
+      'Please upload license photo and expiry date';
 
   @override
   String get licenseExpiryHint => 'Expiry Date';
 
   @override
   String get criminalRecordUploadRequired =>
-      'Please upload the criminal record document and enter the ID number';
+      'Please upload criminal record and ID number';
 
   @override
   String get criminalRecordFrontLabel => 'Criminal Record Document';
 
   @override
-  String get criminalRecordBackLabel => 'Back of the Criminal Record Document';
+  String get criminalRecordBackLabel => 'Criminal Record (Back)';
 
   @override
   String get idNumberHint => 'ID Number';
 
   @override
-  String get bikeInfoRequiredError =>
-      'Please complete the basic motorcycle information';
+  String get bikeInfoRequiredError => 'Please complete basic motorcycle info';
 
   @override
   String get bikePhotoLabel => 'Motorcycle Photo';
@@ -502,21 +497,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqOrderTripAnswer =>
-      'From the home screen, set your pickup point then choose your destination, then check the suggested price and send the request. You\'ll receive offers from nearby drivers and can choose the one that suits you.';
+      'From the home screen, pick your start and destination, check the suggested price, and send. Nearby drivers will send offers to choose from.';
 
   @override
   String get faqPricingQuestion => 'How is the price determined?';
 
   @override
   String get faqPricingAnswer =>
-      'The price is calculated based on the actual distance between the pickup point and the destination. You can raise or lower the suggested price while negotiating with drivers.';
+      'Price is based on actual distance. You can raise or lower it while negotiating with drivers.';
 
   @override
   String get faqPaymentMethodsQuestion => 'What payment methods are available?';
 
   @override
   String get faqPaymentMethodsAnswer =>
-      'You can pay cash directly to the driver, through the e-wallet, or via InstaPay. You can choose the payment method while confirming the request.';
+      'Pay cash to the driver, via e-wallet, or InstaPay — choose when confirming your order.';
 
   @override
   String get faqNoAcceptQuestion =>
@@ -524,7 +519,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqNoAcceptAnswer =>
-      'Try raising the price a bit while negotiating, especially during peak times or in remote areas — this makes the request more appealing to nearby drivers.';
+      'Try raising the price, especially at peak times or in remote areas, to attract nearby drivers.';
 
   @override
   String get faqBecomeDriverQuestion =>
@@ -532,14 +527,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqBecomeDriverAnswer =>
-      'From the side menu, choose \"Driver Mode\" and complete the registration steps (personal info, license, motorcycle). After review, you\'ll be able to receive requests.';
+      'Choose \"Driver Mode\" from the side menu and complete registration (info, license, motorcycle). You can accept orders after review.';
 
   @override
   String get faqDriverEarningsQuestion => 'How are driver earnings calculated?';
 
   @override
   String get faqDriverEarningsAnswer =>
-      'For each trip, the driver gets 90% of the trip value, while the company takes 10% for running the platform. You can track your earnings details from the \"Income\" tab.';
+      'You keep 90% of each trip; the company takes 10%. Track earnings in the \"Income\" tab.';
 
   @override
   String get faqDeliverPackageQuestion =>
@@ -547,7 +542,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqDeliverPackageAnswer =>
-      'Yes, through the \"Package Delivery\" service you can send a package from one place to another without being present for the trip. The same negotiation system applies here too.';
+      'Yes — use \"Package Delivery\" to send a package without joining the trip. Same negotiation system applies.';
 
   @override
   String get faqTripProblemQuestion =>
@@ -555,7 +550,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqTripProblemAnswer =>
-      'You can contact our support team directly from the \"Support\" screen in the side menu, and we\'ll help you resolve the issue right away.';
+      'Contact support directly from the \"Support\" screen in the side menu.';
 
   @override
   String get chooseYourRideSubtitle => 'Choose the ride that suits you';
@@ -587,12 +582,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markAllAsReadButton => 'Mark all as read';
 
   @override
-  String get mustSignInToViewNotifications =>
-      'You need to sign in to view notifications';
+  String get mustSignInToViewNotifications => 'Sign in to view notifications';
 
   @override
-  String get errorLoadingNotifications =>
-      'An error occurred while loading notifications';
+  String get errorLoadingNotifications => 'Failed to load notifications';
 
   @override
   String get noNotificationsYet => 'No notifications yet';
@@ -649,7 +642,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchForDriversButton => 'Search for Drivers';
 
   @override
-  String get invalidPhoneNumberError => 'Please enter a valid phone number';
+  String get phoneNumberFormatError => 'Please enter a valid phone number';
 
   @override
   String get tryAgainLabel => 'Try Again';
@@ -699,11 +692,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSelectStarsFirst => 'Please select a star rating first';
 
   @override
-  String get failedToSaveRatingError =>
-      'Couldn\'t save the rating, please try again';
+  String get failedToSaveRatingError => 'Couldn\'t save rating, try again';
 
   @override
-  String get thankYouForRatingLabel => 'Thank you for your rating! 🌟';
+  String get thankYouForRatingLabel => 'Thank you for your rating!';
 
   @override
   String get ratingVeryBadLabel => 'Very Bad';
@@ -733,8 +725,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skipButton => 'Skip';
 
   @override
-  String get failedToAcceptOfferError =>
-      'Couldn\'t accept the offer, please try again';
+  String get failedToAcceptOfferError => 'Couldn\'t accept offer, try again';
 
   @override
   String get offerAcceptedTitle => 'Offer Accepted!';
@@ -782,8 +773,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryRaisingFareTitle => 'Try raising the fare';
 
   @override
-  String get raiseFareHintBody =>
-      'This can improve your chances of getting a ride faster';
+  String get raiseFareHintBody => 'Improves your chances of a faster ride';
 
   @override
   String searchWithFareLabel(String amount) {
@@ -823,14 +813,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountConfirmBody =>
-      'Your account and all your data will be permanently deleted and cannot be recovered. Are you sure?';
+      'Your account and data will be permanently deleted and can\'t be recovered. Are you sure?';
 
   @override
   String get deletePermanentlyButton => 'Delete Permanently';
 
   @override
   String get reauthRequiredForDeleteError =>
-      'You need to sign out and sign back in before you can delete your account';
+      'Please sign out and back in before deleting your account';
 
   @override
   String get signInMethodLabel => 'Sign-in Method';
@@ -840,7 +830,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appLockSubtitle =>
-      'You\'ll need to enter the PIN every time you open the app';
+      'You\'ll need the PIN each time you open the app';
 
   @override
   String get noMatchingResultsError => 'No matching results';
@@ -877,7 +867,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get supportMessageSentConfirmation =>
-      'Your message has been sent, our support team will get in touch with you soon';
+      'Message sent, our team will reach out soon';
 
   @override
   String get genericErrorTryAgain => 'An error occurred, please try again';
@@ -917,11 +907,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'The trip was cancelled by the driver or the system';
 
   @override
-  String get arrivedAtYourDestinationStatusLabel =>
-      'You\'ve arrived at your destination 🎉';
+  String get driverOnWayToYouLabel => 'The driver is on the way to you';
 
   @override
-  String get driverOnWayToYouLabel => 'The driver is on the way to you';
+  String get driverArrivedAtPickupLabel => 'Driver has arrived';
+
+  @override
+  String get arrivedAtYourDestinationStatusLabel =>
+      'You\'ve arrived at your destination';
 
   @override
   String get tripStartedOnWayToDestinationLabel =>
@@ -932,11 +925,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get arrivedWaitingDriverToEndTripLabel =>
-      'You\'ve arrived at your destination! Waiting for the driver to end the trip';
+      'You\'ve arrived! Ask the driver to end the trip';
 
   @override
   String get waitingDriverShareLocationLabel =>
-      'Waiting for the driver to start sharing their location...';
+      'Waiting for driver\'s location...';
 
   @override
   String get noOrdersYetTitle => 'No orders yet';

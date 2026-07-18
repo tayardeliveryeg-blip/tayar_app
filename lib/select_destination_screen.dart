@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'pick_on_map_screen.dart' show PickOnMapScreen;
+import 'pin_marker.dart' show PinType;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 /// نتيجة بحث واحدة (مكان مقترح)
@@ -49,7 +50,15 @@ class SelectDestinationScreen extends StatefulWidget {
   // بيظهر بدله.
   final String? title;
 
-  const SelectDestinationScreen({super.key, this.initialLocation, this.title});
+  // نوع الدبوس المعروض في شاشة "اختار من الخريطة": انطلاق أو وجهة
+  final PinType pinType;
+
+  const SelectDestinationScreen({
+    super.key,
+    this.initialLocation,
+    this.title,
+    this.pinType = PinType.destination,
+  });
 
   @override
   State<SelectDestinationScreen> createState() =>
@@ -141,8 +150,10 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
     final result = await Navigator.push<PlaceResult>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            PickOnMapScreen(initialLocation: widget.initialLocation),
+        builder: (_) => PickOnMapScreen(
+          initialLocation: widget.initialLocation,
+          pinType: widget.pinType,
+        ),
       ),
     );
     if (result != null) {
@@ -315,12 +326,12 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
         backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon:  Icon(Icons.arrow_forward, color: context.textColor),
+          icon: Icon(Icons.arrow_forward, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.title ?? loc.whereDoYouWantToGoTitle,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: Column(
@@ -336,17 +347,17 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
               ),
               child: Row(
                 children: [
-                   Icon(Icons.search, color: context.textGreyColor),
+                  Icon(Icons.search, color: context.textGreyColor),
                   const SizedBox(width: 10),
                   Expanded(
                     child: TextField(
                       controller: _controller,
                       autofocus: true,
                       onChanged: _onQueryChanged,
-                      style:  TextStyle(color: context.textColor, fontSize: 16),
+                      style: TextStyle(color: context.textColor, fontSize: 16),
                       decoration: InputDecoration(
                         hintText: loc.searchPlaceHint,
-                        hintStyle:  TextStyle(color: context.textGreyColor),
+                        hintStyle: TextStyle(color: context.textGreyColor),
                         border: InputBorder.none,
                       ),
                     ),
@@ -407,7 +418,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
         return Center(
           child: Text(
             loc.startTypingToSearchLabel,
-            style:  TextStyle(color: context.textGreyColor),
+            style: TextStyle(color: context.textGreyColor),
           ),
         );
       }
@@ -418,26 +429,26 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
               loc.recentSearchesLabel,
-              style:  TextStyle(
+              style: TextStyle(
                 color: context.textGreyColor,
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
           ..._recentSearches.map(
             (place) => ListTile(
-              leading:  Icon(Icons.history, color: context.textGreyColor),
+              leading: Icon(Icons.history, color: context.textGreyColor),
               title: Text(
                 place.title,
-                style:  TextStyle(color: context.textColor, fontSize: 15),
+                style: TextStyle(color: context.textColor, fontSize: 15),
               ),
               subtitle: place.subtitle.isNotEmpty
                   ? Text(
                       place.subtitle,
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: context.textGreyColor,
-                        fontSize: 13,
+                        fontSize: 14,
                       ),
                     )
                   : null,
@@ -451,10 +462,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
     // فيه خطأ (مفيش نتائج أو فشل البحث)
     if (_error != null) {
       return Center(
-        child: Text(
-          _error!,
-          style:  TextStyle(color: context.textGreyColor),
-        ),
+        child: Text(_error!, style: TextStyle(color: context.textGreyColor)),
       );
     }
 
@@ -462,13 +470,13 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _results.length,
-      separatorBuilder: (_, __) =>
-           Divider(color: context.dividerColor2, height: 1),
+      separatorBuilder: (_, _) =>
+          Divider(color: context.dividerColor2, height: 1),
       itemBuilder: (context, index) {
         final place = _results[index];
         return ListTile(
-          leading: const Icon(
-            Icons.location_on_outlined,
+          leading: Icon(
+            widget.pinType == PinType.pickup ? Icons.location_on : Icons.flag,
             color: TayarColors.primary,
           ),
           title: Text(
@@ -478,10 +486,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
           subtitle: place.subtitle.isNotEmpty
               ? Text(
                   place.subtitle,
-                  style:  TextStyle(
-                    color: context.textGreyColor,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: context.textGreyColor, fontSize: 14),
                 )
               : null,
           onTap: () => _selectPlace(place),

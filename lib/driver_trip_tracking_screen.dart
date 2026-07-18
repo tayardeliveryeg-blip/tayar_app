@@ -3,15 +3,17 @@ import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
-import 'passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
+import 'passenger_home.dart'
+    show TayarColors, TayarThemeColors, paymentMethodDisplay;
+import 'pin_marker.dart';
+import 'map_tile_layer.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'trip_chat_screen.dart';
-import 'call_screen.dart';
+import 'call_invitation_helper.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي من ناحية الطيار ======
 /// بتتفتح فورًا لحظة قبول عرض الطيار، أو لما يدوس على كارت الرحلة النشطة
@@ -25,10 +27,11 @@ class DriverTripTrackingScreen extends StatefulWidget {
 
   @override
   State<DriverTripTrackingScreen> createState() =>
-      _DriverTripTrackingScreenState();
+      _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8();
 }
 
-class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
+class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
+    extends State<DriverTripTrackingScreen>
     with SingleTickerProviderStateMixin {
   final MapController _mapController = MapController();
   late final AnimationController _moveController;
@@ -41,6 +44,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
   // ====== بيانات الرحلة (بتتحدث مع أي تغيير في الأوردر) ======
   String _status = 'accepted'; // accepted → in_progress → completed / cancelled
   String _customerName = '';
+  String _customerId = '';
   double _proposedFare = 0;
   double _acceptedFare = 0;
   String _paymentMethod = 'كاش';
@@ -107,6 +111,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
       _customerName =
           (data['customerName'] as String?) ??
           AppLocalizations.of(context)!.defaultCustomerName;
+      _customerId = (data['customerId'] as String?) ?? '';
       _proposedFare = (data['proposedFare'] as num?)?.toDouble() ?? 0;
       _acceptedFare = (data['acceptedFare'] as num?)?.toDouble() ?? 0;
       _paymentMethod =
@@ -338,7 +343,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
               const SizedBox(height: 12),
               Text(
                 loc.tripCancelledTitle,
-                style:  TextStyle(color: context.textColor),
+                style: TextStyle(color: context.textColor),
               ),
             ],
           ),
@@ -383,11 +388,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
               },
             ),
             children: [
-              TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.tayar.app',
-              ),
+              const TayarTileLayer(),
               if (_routePoints.isNotEmpty)
                 PolylineLayer(
                   polylines: [
@@ -405,19 +406,16 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                       point: _pickupLocation!,
                       width: 40,
                       height: 40,
-                      child: const _PinIcon(
-                        icon: Icons.radio_button_checked,
-                        iconColor: TayarColors.primary,
-                      ),
+                      child: const PinMarker(type: PinType.pickup, size: 40),
                     ),
                   if (_destinationLocation != null)
                     Marker(
                       point: _destinationLocation!,
                       width: 40,
                       height: 40,
-                      child: const _PinIcon(
-                        icon: Icons.flag,
-                        iconColor: Colors.redAccent,
+                      child: const PinMarker(
+                        type: PinType.destination,
+                        size: 40,
                       ),
                     ),
                   if (_driverDisplayedPosition != null)
@@ -481,7 +479,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
             alignment: Alignment.bottomCenter,
             child: Container(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 color: context.bgColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
@@ -515,10 +513,13 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
 
                     Row(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 24,
                           backgroundColor: TayarColors.primary,
-                          child: Icon(Icons.person, color: Colors.white),
+                          child: Icon(
+                            Icons.person,
+                            color: context.onPrimaryColor,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -527,7 +528,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                             children: [
                               Text(
                                 _customerName,
-                                style:  TextStyle(
+                                style: TextStyle(
                                   color: context.textColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -538,9 +539,9 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                                   _distanceKm.toStringAsFixed(1),
                                   _durationMin,
                                 ),
-                                style:  TextStyle(
+                                style: TextStyle(
                                   color: context.textGreyColor,
-                                  fontSize: 13,
+                                  fontSize: 14,
                                 ),
                               ),
                             ],
@@ -563,9 +564,9 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                                 loc.originalProposedFareLabel(
                                   _proposedFare.toStringAsFixed(0),
                                 ),
-                                style:  TextStyle(
+                                style: TextStyle(
                                   color: context.textGreyColor,
-                                  fontSize: 11,
+                                  fontSize: 12,
                                 ),
                               ),
                           ],
@@ -587,7 +588,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                           Row(
                             children: [
                               const Icon(
-                                Icons.radio_button_checked,
+                                Icons.location_on,
                                 color: TayarColors.primary,
                                 size: 14,
                               ),
@@ -597,7 +598,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                                   _pickupAddress,
                                   style: TextStyle(
                                     color: context.textColor,
-                                    fontSize: 13,
+                                    fontSize: 14,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -605,7 +606,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                               ),
                             ],
                           ),
-                           Padding(
+                          Padding(
                             padding: EdgeInsets.symmetric(vertical: 4),
                             child: SizedBox(
                               height: 12,
@@ -618,17 +619,17 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                           Row(
                             children: [
                               const Icon(
-                                Icons.location_on,
-                                color: Colors.redAccent,
+                                Icons.flag,
+                                color: TayarColors.primary,
                                 size: 14,
                               ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   _destinationAddress,
-                                  style:  TextStyle(
+                                  style: TextStyle(
                                     color: context.textColor,
-                                    fontSize: 13,
+                                    fontSize: 14,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -641,14 +642,16 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                             children: [
                               Icon(
                                 Icons.payments_outlined,
-                                color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.7),
+                                color: context.textColor.withValues(alpha: 0.7),
                                 size: 14,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 paymentMethodDisplay(context, _paymentMethod),
                                 style: TextStyle(
-                                  color: (context.isDarkMode ? Colors.white : Colors.black).withValues(alpha: 0.7),
+                                  color: context.textColor.withValues(
+                                    alpha: 0.7,
+                                  ),
                                   fontSize: 12,
                                 ),
                               ),
@@ -683,19 +686,21 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                           child: _ContactActionButton(
                             icon: Icons.call_outlined,
                             label: loc.callPassengerLabel,
-                            onTap: () {
-                              final user = FirebaseAuth.instance.currentUser;
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => CallScreen(
-                                    orderId: widget.orderId,
-                                    myUserId: user?.uid ?? '',
-                                    myUserName:
-                                        user?.displayName ??
-                                        loc.defaultDriverName,
-                                  ),
-                                ),
-                              );
+                            onTap: () async {
+                              try {
+                                await sendCallInvitation(
+                                  calleeId: _customerId,
+                                  calleeName: _customerName,
+                                );
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('تعذر بدء المكالمة: $e'),
+                                    ),
+                                  );
+                                }
+                              }
                             },
                           ),
                         ),
@@ -716,8 +721,8 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen>
                         ),
                         child: Text(
                           inProgress ? loc.endTrip : loc.startTrip,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: context.onPrimaryColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -767,34 +772,12 @@ class _ContactActionButton extends StatelessWidget {
               style: const TextStyle(
                 color: TayarColors.primary,
                 fontWeight: FontWeight.bold,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-// ====== أيقونة دبوس بيضاء موحّدة لنقاط البيك أب/الوجهة ======
-class _PinIcon extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-
-  const _PinIcon({required this.icon, required this.iconColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.textColor,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 6),
-        ],
-      ),
-      child: Icon(icon, color: iconColor, size: 22),
     );
   }
 }

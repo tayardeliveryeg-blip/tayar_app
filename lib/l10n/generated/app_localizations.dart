@@ -113,19 +113,19 @@ abstract class AppLocalizations {
   /// No description provided for @driverNoOrders.
   ///
   /// In ar, this message translates to:
-  /// **'مفيش طلبات متاحة دلوقتي.. خليك مستعد!'**
+  /// **'مفيش طلبات متاحة'**
   String get driverNoOrders;
 
   /// No description provided for @driverOfflineHint.
   ///
   /// In ar, this message translates to:
-  /// **'أنت غير متاح دلوقتي.. دوس \"اونلاين\" عشان تشوف الطلبات المتاحة'**
+  /// **'أنت غير متاح دوس \"اونلاين\" عشان تشوف الطلبات المتاحة'**
   String get driverOfflineHint;
 
   /// No description provided for @driverNoRatings.
   ///
   /// In ar, this message translates to:
-  /// **'لسه مفيش تقييمات من الركاب.. شد حيلك'**
+  /// **'مفيش تقييمات'**
   String get driverNoRatings;
 
   /// No description provided for @newDriverLabel.
@@ -161,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorLoadingOrders.
   ///
   /// In ar, this message translates to:
-  /// **'حصل خطأ في تحميل الطلبات'**
+  /// **'خطأ في تحميل الطلبات'**
   String get errorLoadingOrders;
 
   /// No description provided for @defaultDriverName.
@@ -173,7 +173,7 @@ abstract class AppLocalizations {
   /// No description provided for @statusAvailable.
   ///
   /// In ar, this message translates to:
-  /// **'متاح دلوقتي'**
+  /// **'متاح'**
   String get statusAvailable;
 
   /// No description provided for @statusUnavailable.
@@ -185,13 +185,13 @@ abstract class AppLocalizations {
   /// No description provided for @permissionLocationRequired.
   ///
   /// In ar, this message translates to:
-  /// **'محتاج تسمح بصلاحية الموقع الأول عشان تبقى متاح'**
+  /// **'لازم تسمح بصلاحية الوصول للموقع الأول عشان تظهر أونلاين'**
   String get permissionLocationRequired;
 
   /// No description provided for @offerSentWaitingPassenger.
   ///
   /// In ar, this message translates to:
-  /// **'تم إرسال عرضك، بننتظر رد الراكب'**
+  /// **'تم إرسال عرضك، في انتظار رد الراكب'**
   String get offerSentWaitingPassenger;
 
   /// No description provided for @offerSendFailed.
@@ -203,19 +203,19 @@ abstract class AppLocalizations {
   /// No description provided for @arrivedAtDestination.
   ///
   /// In ar, this message translates to:
-  /// **'🎉 وصلت لوجهة الرحلة'**
+  /// **'وصلت وجهتك'**
   String get arrivedAtDestination;
 
   /// No description provided for @endTrip.
   ///
   /// In ar, this message translates to:
-  /// **'إنهاء الرحلة'**
+  /// **'إنهي الرحلة'**
   String get endTrip;
 
   /// No description provided for @startTrip.
   ///
   /// In ar, this message translates to:
-  /// **'بدء الرحلة'**
+  /// **'ابدأ الرحلة'**
   String get startTrip;
 
   /// No description provided for @driverToggleOnline.
@@ -233,19 +233,19 @@ abstract class AppLocalizations {
   /// No description provided for @mustSignInFirst.
   ///
   /// In ar, this message translates to:
-  /// **'لازم تسجل دخول الأول'**
+  /// **'لازم تسجل الدخول الأول'**
   String get mustSignInFirst;
 
   /// No description provided for @paymentMethodCash.
   ///
   /// In ar, this message translates to:
-  /// **'كاش'**
+  /// **'نقدي'**
   String get paymentMethodCash;
 
   /// No description provided for @navProfile.
   ///
   /// In ar, this message translates to:
-  /// **'البروفايل'**
+  /// **'الملف الشخصي'**
   String get navProfile;
 
   /// No description provided for @navIncome.
@@ -287,7 +287,7 @@ abstract class AppLocalizations {
   /// No description provided for @offerSentAlreadyLabel.
   ///
   /// In ar, this message translates to:
-  /// **'تم إرسال عرضك، في انتظار الراكب'**
+  /// **'تم إرسال عرضك، في انتظار رد الراكب'**
   String get offerSentAlreadyLabel;
 
   /// No description provided for @offerCustomButton.
@@ -305,7 +305,7 @@ abstract class AppLocalizations {
   /// No description provided for @setYourPriceLabel.
   ///
   /// In ar, this message translates to:
-  /// **'حدد السعر اللي تقدمه'**
+  /// **'حدد سعرك'**
   String get setYourPriceLabel;
 
   /// No description provided for @submitOfferButton.
@@ -371,7 +371,7 @@ abstract class AppLocalizations {
   /// No description provided for @motorcycleInfoTitle.
   ///
   /// In ar, this message translates to:
-  /// **'بيانات الموتوسيكل'**
+  /// **'بيانات الدراجة النارية'**
   String get motorcycleInfoTitle;
 
   /// No description provided for @bikeModelLabel.
@@ -437,7 +437,7 @@ abstract class AppLocalizations {
   /// No description provided for @confirmLogoutMessage.
   ///
   /// In ar, this message translates to:
-  /// **'متأكد إنك عايز تسجل خروج من حسابك؟'**
+  /// **'تأكيد تسجيل الخروج؟'**
   String get confirmLogoutMessage;
 
   /// No description provided for @languageToggleTooltip.
@@ -587,13 +587,13 @@ abstract class AppLocalizations {
   /// No description provided for @phoneNumberLabel.
   ///
   /// In ar, this message translates to:
-  /// **'رقم الموبايل'**
+  /// **'رقم الهاتف'**
   String get phoneNumberLabel;
 
   /// No description provided for @addressLabel.
   ///
   /// In ar, this message translates to:
-  /// **'العنوان'**
+  /// **'المدينة'**
   String get addressLabel;
 
   /// No description provided for @saveButton.
@@ -617,7 +617,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileUpdatedSuccess.
   ///
   /// In ar, this message translates to:
-  /// **'تم تحديث البروفايل بنجاح'**
+  /// **'تم تحديث الملف الشخصي بنجاح'**
   String get profileUpdatedSuccess;
 
   /// No description provided for @changePhotoLabel.
@@ -631,6 +631,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر'**
   String get photoTooLargeError;
+
+  /// No description provided for @invalidPhoneNumberError.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف غير صحيح، لازم يكون رقم مصري صحيح'**
+  String get invalidPhoneNumberError;
 
   /// No description provided for @locatingAddress.
   ///
@@ -671,13 +677,13 @@ abstract class AppLocalizations {
   /// No description provided for @fromLabel.
   ///
   /// In ar, this message translates to:
-  /// **'من أين'**
+  /// **'من'**
   String get fromLabel;
 
   /// No description provided for @chooseDestinationHint.
   ///
   /// In ar, this message translates to:
-  /// **'اختار الواجهة اللي عايز تروحها'**
+  /// **'إلى'**
   String get chooseDestinationHint;
 
   /// No description provided for @serviceRideMe.
@@ -743,13 +749,13 @@ abstract class AppLocalizations {
   /// No description provided for @senderPhoneLabel.
   ///
   /// In ar, this message translates to:
-  /// **'رقم موبايل المُرسل'**
+  /// **'رقم هاتف المُرسل'**
   String get senderPhoneLabel;
 
   /// No description provided for @receiverPhoneLabel.
   ///
   /// In ar, this message translates to:
-  /// **'رقم موبايل المُستلم'**
+  /// **'رقم هاتف المُستلم'**
   String get receiverPhoneLabel;
 
   /// No description provided for @phoneNumberHint.
@@ -809,7 +815,7 @@ abstract class AppLocalizations {
   /// No description provided for @defaultUserName.
   ///
   /// In ar, this message translates to:
-  /// **'محمد'**
+  /// **'مستخدم'**
   String get defaultUserName;
 
   /// No description provided for @driverModeButton.
@@ -839,7 +845,7 @@ abstract class AppLocalizations {
   /// No description provided for @submitApplicationSuccessTitle.
   ///
   /// In ar, this message translates to:
-  /// **'تم إرسال طلبك!'**
+  /// **'تم إرسال طلبك'**
   String get submitApplicationSuccessTitle;
 
   /// No description provided for @submitApplicationSuccessBody.
@@ -887,7 +893,7 @@ abstract class AppLocalizations {
   /// No description provided for @sectionBikeInfo.
   ///
   /// In ar, this message translates to:
-  /// **'معلومات الموتوسيكل'**
+  /// **'معلومات الدراجة النارية'**
   String get sectionBikeInfo;
 
   /// No description provided for @applicationUnderReviewButton.
@@ -965,37 +971,37 @@ abstract class AppLocalizations {
   /// No description provided for @bikeInfoRequiredError.
   ///
   /// In ar, this message translates to:
-  /// **'من فضلك أكمل بيانات الموتوسيكل الأساسية'**
+  /// **'من فضلك أكمل بيانات الدراجة النارية الأساسية'**
   String get bikeInfoRequiredError;
 
   /// No description provided for @bikePhotoLabel.
   ///
   /// In ar, this message translates to:
-  /// **'صورة الموتوسيكل'**
+  /// **'صورة الدراجة النارية'**
   String get bikePhotoLabel;
 
   /// No description provided for @bikeLicensePhotoLabel.
   ///
   /// In ar, this message translates to:
-  /// **'رخصة الموتوسيكل'**
+  /// **'رخصة الدراجة النارية'**
   String get bikeLicensePhotoLabel;
 
   /// No description provided for @bikeBrandHint.
   ///
   /// In ar, this message translates to:
-  /// **'العلامة التجارية للموتوسيكل'**
+  /// **'العلامة التجارية للدراجة نارية'**
   String get bikeBrandHint;
 
   /// No description provided for @bikeModelHint.
   ///
   /// In ar, this message translates to:
-  /// **'طراز الموتوسيكل'**
+  /// **'طراز الدراجة النارية'**
   String get bikeModelHint;
 
   /// No description provided for @bikeColorHint.
   ///
   /// In ar, this message translates to:
-  /// **'لون الموتوسيكل'**
+  /// **'لون الدراجة النارية'**
   String get bikeColorHint;
 
   /// No description provided for @bikeYearHint.
@@ -1043,7 +1049,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqPaymentMethodsAnswer.
   ///
   /// In ar, this message translates to:
-  /// **'تقدر تدفع كاش للطيار مباشرة، أو من خلال المحفظة الإلكترونية، أو عن طريق إنستاباي. تقدر تختار وسيلة الدفع وانت بتأكد الطلب.'**
+  /// **'تقدر تدفع نقدي للطيار مباشرة، أو من خلال المحفظة الإلكترونية، أو عن طريق إنستاباي. تقدر تختار وسيلة الدفع وانت بتأكد الطلب.'**
   String get faqPaymentMethodsAnswer;
 
   /// No description provided for @faqNoAcceptQuestion.
@@ -1067,7 +1073,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqBecomeDriverAnswer.
   ///
   /// In ar, this message translates to:
-  /// **'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الموتوسيكل)، وبعد المراجعة هتقدر تستقبل طلبات.'**
+  /// **'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة النارية)، وبعد المراجعة هتقدر تستقبل طلبات.'**
   String get faqBecomeDriverAnswer;
 
   /// No description provided for @faqDriverEarningsQuestion.
@@ -1085,7 +1091,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqDeliverPackageQuestion.
   ///
   /// In ar, this message translates to:
-  /// **'تقدر أوصّل طرد بدل ما أعمل رحلة راكب؟'**
+  /// **'اقدر أوصّل طرد بدل ما أعمل رحلة راكب؟'**
   String get faqDeliverPackageQuestion;
 
   /// No description provided for @faqDeliverPackageAnswer.
@@ -1109,7 +1115,7 @@ abstract class AppLocalizations {
   /// No description provided for @chooseYourRideSubtitle.
   ///
   /// In ar, this message translates to:
-  /// **'اختار المشوار المناسب ليك'**
+  /// **'اختار الرحلة المناسبة ليك'**
   String get chooseYourRideSubtitle;
 
   /// No description provided for @continueWithGoogleButton.
@@ -1256,11 +1262,11 @@ abstract class AppLocalizations {
   /// **'البحث عن طيارين'**
   String get searchForDriversButton;
 
-  /// No description provided for @invalidPhoneNumberError.
+  /// No description provided for @phoneNumberFormatError.
   ///
   /// In ar, this message translates to:
-  /// **'من فضلك اكتب رقم موبايل صحيح'**
-  String get invalidPhoneNumberError;
+  /// **'من فضلك اكتب رقم هاتف صحيح'**
+  String get phoneNumberFormatError;
 
   /// No description provided for @tryAgainLabel.
   ///
@@ -1331,7 +1337,7 @@ abstract class AppLocalizations {
   /// No description provided for @rateTripArrivedSafelyTitle.
   ///
   /// In ar, this message translates to:
-  /// **'وصلت لوجهتك بأمان!'**
+  /// **'وصلت وجهتك بأمان'**
   String get rateTripArrivedSafelyTitle;
 
   /// No description provided for @rateTripSubtitle.
@@ -1355,7 +1361,7 @@ abstract class AppLocalizations {
   /// No description provided for @thankYouForRatingLabel.
   ///
   /// In ar, this message translates to:
-  /// **'شكرًا لتقييمك! 🌟'**
+  /// **'شكراً لتقييمك'**
   String get thankYouForRatingLabel;
 
   /// No description provided for @ratingVeryBadLabel.
@@ -1421,7 +1427,7 @@ abstract class AppLocalizations {
   /// No description provided for @offerAcceptedTitle.
   ///
   /// In ar, this message translates to:
-  /// **'تم قبول العرض!'**
+  /// **'تم قبول العرض'**
   String get offerAcceptedTitle;
 
   /// No description provided for @driverOnWayWithFareLabel.
@@ -1493,7 +1499,7 @@ abstract class AppLocalizations {
   /// No description provided for @raiseFareHintBody.
   ///
   /// In ar, this message translates to:
-  /// **'ممكن تزود فرصك للحصول علي مشوارك بسرعة'**
+  /// **'زود فرصتك للحصول علي الرحلة بسرعة'**
   String get raiseFareHintBody;
 
   /// No description provided for @searchWithFareLabel.
@@ -1613,7 +1619,7 @@ abstract class AppLocalizations {
   /// No description provided for @whereDoYouWantToGoTitle.
   ///
   /// In ar, this message translates to:
-  /// **'عايز تروح فين؟'**
+  /// **'حدد مسارك'**
   String get whereDoYouWantToGoTitle;
 
   /// No description provided for @searchPlaceHint.
@@ -1715,7 +1721,7 @@ abstract class AppLocalizations {
   /// No description provided for @tripCompletedTitle.
   ///
   /// In ar, this message translates to:
-  /// **'وصلت لوجهتك!'**
+  /// **'وصلت وجهتك'**
   String get tripCompletedTitle;
 
   /// No description provided for @tripCancelledTitle.
@@ -1727,7 +1733,7 @@ abstract class AppLocalizations {
   /// No description provided for @thankYouForUsingTayarLabel.
   ///
   /// In ar, this message translates to:
-  /// **'شكرا لاستخدامك طيار!'**
+  /// **'شكرا لاستخدامك طيار'**
   String get thankYouForUsingTayarLabel;
 
   /// No description provided for @tripCancelledByDriverOrSystemLabel.
@@ -1736,17 +1742,23 @@ abstract class AppLocalizations {
   /// **'الرحلة اتلغت من الطيار أو من النظام'**
   String get tripCancelledByDriverOrSystemLabel;
 
-  /// No description provided for @arrivedAtYourDestinationStatusLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'وصلتوا لوجهتكم 🎉'**
-  String get arrivedAtYourDestinationStatusLabel;
-
   /// No description provided for @driverOnWayToYouLabel.
   ///
   /// In ar, this message translates to:
   /// **'الطيار في الطريق ليك'**
   String get driverOnWayToYouLabel;
+
+  /// No description provided for @driverArrivedAtPickupLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطيار وصلك'**
+  String get driverArrivedAtPickupLabel;
+
+  /// No description provided for @arrivedAtYourDestinationStatusLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت وجهتك'**
+  String get arrivedAtYourDestinationStatusLabel;
 
   /// No description provided for @tripStartedOnWayToDestinationLabel.
   ///
@@ -1763,19 +1775,19 @@ abstract class AppLocalizations {
   /// No description provided for @arrivedWaitingDriverToEndTripLabel.
   ///
   /// In ar, this message translates to:
-  /// **'وصلتوا لوجهتكم! في انتظار الطيار ينهي الرحلة'**
+  /// **'وصلت وجهتك، اطلب من الطيار ينهي الرحلة'**
   String get arrivedWaitingDriverToEndTripLabel;
 
   /// No description provided for @waitingDriverShareLocationLabel.
   ///
   /// In ar, this message translates to:
-  /// **'في انتظار بدء الطيار مشاركة موقعه...'**
+  /// **'في انتظار مشاركة موقع الطيار...'**
   String get waitingDriverShareLocationLabel;
 
   /// No description provided for @noOrdersYetTitle.
   ///
   /// In ar, this message translates to:
-  /// **'مفيش طلبات لسه'**
+  /// **'مفيش طلبات'**
   String get noOrdersYetTitle;
 
   /// No description provided for @noOrdersYetSubtitle.
@@ -1787,7 +1799,7 @@ abstract class AppLocalizations {
   /// No description provided for @orderStatusSearchingLabel.
   ///
   /// In ar, this message translates to:
-  /// **'بيدور على سائق'**
+  /// **'بيدور على طيار'**
   String get orderStatusSearchingLabel;
 
   /// No description provided for @orderStatusAcceptedLabel.
@@ -1835,7 +1847,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatWithDriverLabel.
   ///
   /// In ar, this message translates to:
-  /// **'شات'**
+  /// **'محادثة'**
   String get chatWithDriverLabel;
 
   /// No description provided for @callDriverLabel.
@@ -1847,7 +1859,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatWithPassengerLabel.
   ///
   /// In ar, this message translates to:
-  /// **'شات'**
+  /// **'محادثة'**
   String get chatWithPassengerLabel;
 
   /// No description provided for @callPassengerLabel.
@@ -1865,13 +1877,13 @@ abstract class AppLocalizations {
   /// No description provided for @chatErrorLoadingMessages.
   ///
   /// In ar, this message translates to:
-  /// **'حصل خطأ في تحميل الرسائل'**
+  /// **'خطأ في تحميل الرسائل'**
   String get chatErrorLoadingMessages;
 
   /// No description provided for @chatNoMessagesYet.
   ///
   /// In ar, this message translates to:
-  /// **'مفيش رسائل لسه، ابدأ المحادثة'**
+  /// **'ابدأ المحادثة'**
   String get chatNoMessagesYet;
 
   /// No description provided for @chatTypeMessageHint.

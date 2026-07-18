@@ -92,10 +92,10 @@ class _TripChatScreenState extends State<TripChatScreen> {
         elevation: 0,
         title: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 18,
               backgroundColor: TayarColors.primary,
-              child: Icon(Icons.person, color: Colors.white, size: 20),
+              child: Icon(Icons.person, color: context.onPrimaryColor, size: 20),
             ),
             const SizedBox(width: 10),
             Text(
@@ -192,8 +192,8 @@ class _TripChatScreenState extends State<TripChatScreen> {
                               Text(
                                 timeLabel,
                                 style: TextStyle(
-                                  color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.7),
-                                  fontSize: 10,
+                                  color: context.textColor.withValues(alpha: 0.7),
+                                  fontSize: 12,
                                 ),
                               ),
                             ],
@@ -216,7 +216,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
                 color: context.cardColor,
                 border: Border(
                   top: BorderSide(
-                    color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.08),
+                    color: context.textColor.withValues(alpha: 0.08),
                   ),
                 ),
               ),
@@ -257,10 +257,10 @@ class _TripChatScreenState extends State<TripChatScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: _sending
-                          ? const Padding(
-                              padding: EdgeInsets.all(12),
+                          ? Padding(
+                              padding: const EdgeInsets.all(12),
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: context.onPrimaryColor,
                                 strokeWidth: 2,
                               ),
                             )

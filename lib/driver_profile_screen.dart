@@ -142,7 +142,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
           'birthDate': _birthDateController.text.trim(),
           'phone': _phoneController.text.trim(),
           'address': _addressController.text.trim(),
-          if (photoBase64 != null) 'photoBase64': photoBase64,
+          'photoBase64': ?photoBase64,
           'hasPhoto': photoBase64 != null,
           'complete': true,
         },
@@ -273,7 +273,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                               AppLocalizations.of(context)!.saveButton,
                               style:  TextStyle(
                                 color: context.textColor,
-                                fontSize: 17,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -334,9 +334,9 @@ class _ProfilePhotoPicker extends StatelessWidget {
                 color: TayarColors.primary,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.camera_alt,
-                color: Colors.white,
+                color: context.onPrimaryColor,
                 size: 16,
               ),
             ),

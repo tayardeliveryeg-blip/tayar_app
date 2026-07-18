@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // ====== ألوان البراند ======
 // ملاحظة: القيم التالية (background, cardDark, textGrey) بتفضل بقيمها
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 // اللي بتتغيّر تلقائيًا حسب الوضع الحالي (شوف TayarThemeColors تحت).
 class TayarColors {
   static const Color primary = Color(0xFFFF6B00); // الأورانج الأساسي - ثابت في الوضعين
+  static const Color primaryDark = Color(0xFFE85F00); // درجة أغمق شوية للأورانج (hover/pressed states)
   static const Color background = Color(0xFF1A1816); // (قديم) الخلفية الداكنة
   static const Color cardDark = Color(0xFF2A2826); // (قديم)
   static const Color textWhite = Colors.white; // (قديم)
@@ -19,11 +21,17 @@ class TayarColors {
   static const Color cardDarkMode = Color(0xFF2A2826);
   static const Color cardLightMode = Colors.white;
   static const Color textWhiteDark = Colors.white;
-  static const Color textWhiteLight = Color(0xFF201D1A);
+  static const Color textWhiteLight = Colors.black;
   static const Color textGreyDark = Color(0xFFB0B0B0);
   static const Color textGreyLight = Color(0xFF6E6660);
   static const Color dividerDark = Colors.white12;
   static const Color dividerLight = Color(0x14000000); // black بنسبة شفافية قليلة
+
+  // ====== ألوان مساعدة موحّدة (تحل محل الألوان اللي كانت بتتكتب يدويًا
+  // في الشاشات المختلفة زي أخضر النجاح أو أحمر الخطأ) ======
+  static const Color success = Color(0xFF2E9E5B);
+  static const Color error = Color(0xFFE5484D);
+  static const Color warning = Color(0xFFF5A623);
 }
 
 // ====== Extension بيدّي أي شاشة وصول سهل وسريع للألوان الصح حسب الوضع
@@ -53,6 +61,78 @@ extension TayarThemeColors on BuildContext {
       isDarkMode ? TayarColors.textGreyDark : TayarColors.textGreyLight;
   Color get dividerColor2 =>
       isDarkMode ? TayarColors.dividerDark : TayarColors.dividerLight;
+
+  // ====== لون أي نص/أيقونة فوق خلفية برتقالية كاملة (زرار، أفاتار، شارة...):
+  // أبيض في الوضع الغامق / أسود في الوضع الفاتح. لا يُستخدم فوق التدرّجات
+  // البرتقالية الشفافة (withValues alpha) لأن المحتوى هناك بيفضل برتقالي ======
+  Color get onPrimaryColor => isDarkMode ? Colors.white : Colors.black;
+}
+
+// ====== تدرّج الخطوط الموحّد (Typography Scale) ======
+// بيحل مشكلة إن كل شاشة كانت بتحدد fontSize بشكل عشوائي (12, 13, 14, 17, 18, 26...).
+// بدل كده، أي نص جديد المفروض ياخد الستايل بتاعه من هنا عن طريق:
+//   Theme.of(context).textTheme.headlineSmall
+//   Theme.of(context).textTheme.bodyMedium
+//   ... إلخ
+// ده بيضمن إن كل العناوين في التطبيق كله بنفس الحجم والوزن، وكل النصوص العادية
+// كمان متسقة، من غير ما تحتاج تكتب fontSize يدويًا في كل مكان.
+TextTheme _buildTextTheme(Color baseColor) {
+  final base = GoogleFonts.cairoTextTheme();
+  return base.copyWith(
+    // عناوين كبيرة (شاشات splash / عناوين رئيسية)
+    displayLarge: base.displayLarge?.copyWith(
+      fontSize: 30,
+      fontWeight: FontWeight.w700,
+      color: baseColor,
+      height: 1.3,
+    ),
+    // عنوان الشاشة (زي "تسجيل الدخول"، "الملف الشخصي")
+    headlineSmall: base.headlineSmall?.copyWith(
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      color: baseColor,
+      height: 1.3,
+    ),
+    // عناوين فرعية جوه الشاشة (زي عنوان كارت أو قسم)
+    titleLarge: base.titleLarge?.copyWith(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: baseColor,
+      height: 1.3,
+    ),
+    titleMedium: base.titleMedium?.copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: baseColor,
+      height: 1.3,
+    ),
+    // النص الأساسي في التطبيق (فقرات، تفاصيل)
+    bodyLarge: base.bodyLarge?.copyWith(
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+      color: baseColor,
+      height: 1.5,
+    ),
+    bodyMedium: base.bodyMedium?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: baseColor,
+      height: 1.5,
+    ),
+    // نص ثانوي/مساعد (زي تواريخ، ملاحظات صغيرة)
+    bodySmall: base.bodySmall?.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: baseColor,
+      height: 1.4,
+    ),
+    // نص الأزرار
+    labelLarge: base.labelLarge?.copyWith(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      height: 1.2,
+    ),
+  );
 }
 
 // ====== تعريفات الثيم الكامل (فاتح وغامق) اللي بيستخدمها MaterialApp ======
@@ -61,13 +141,59 @@ class TayarTheme {
     brightness: Brightness.dark,
     scaffoldBackgroundColor: TayarColors.backgroundDark,
     primaryColor: TayarColors.primary,
-    fontFamily: 'Arial',
+    textTheme: _buildTextTheme(TayarColors.textWhiteDark),
     colorScheme: const ColorScheme.dark(
       primary: TayarColors.primary,
+      secondary: TayarColors.primary,
       surface: TayarColors.cardDarkMode,
+      error: TayarColors.error,
     ),
     cardColor: TayarColors.cardDarkMode,
     dividerColor: TayarColors.dividerDark,
+    // ====== AppBar موحّد لكل الشاشات ======
+    appBarTheme: AppBarTheme(
+      backgroundColor: TayarColors.backgroundDark,
+      elevation: 0,
+      centerTitle: true,
+      iconTheme: const IconThemeData(color: TayarColors.textWhiteDark),
+      titleTextStyle: GoogleFonts.cairo(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: TayarColors.textWhiteDark,
+      ),
+    ),
+    // ====== شكل موحّد لكل الأزرار الأساسية في التطبيق ======
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: TayarColors.primary,
+        foregroundColor: Colors.white,
+        minimumSize: const Size.fromHeight(52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        textStyle: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.w600),
+        elevation: 0,
+      ),
+    ),
+    // ====== شكل موحّد لحقول الإدخال (بدل ما كل شاشة تظبطه لوحدها) ======
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: TayarColors.cardDarkMode,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: TayarColors.primary, width: 1.5),
+      ),
+      hintStyle: GoogleFonts.cairo(color: TayarColors.textGreyDark, fontSize: 14),
+    ),
+    // ====== شكل موحّد للكروت ======
+    cardTheme: CardThemeData(
+      color: TayarColors.cardDarkMode,
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
@@ -81,13 +207,55 @@ class TayarTheme {
     brightness: Brightness.light,
     scaffoldBackgroundColor: TayarColors.backgroundLight,
     primaryColor: TayarColors.primary,
-    fontFamily: 'Arial',
+    textTheme: _buildTextTheme(TayarColors.textWhiteLight),
     colorScheme: const ColorScheme.light(
       primary: TayarColors.primary,
+      secondary: TayarColors.primary,
       surface: TayarColors.cardLightMode,
+      error: TayarColors.error,
     ),
     cardColor: TayarColors.cardLightMode,
     dividerColor: TayarColors.dividerLight,
+    appBarTheme: AppBarTheme(
+      backgroundColor: TayarColors.backgroundLight,
+      elevation: 0,
+      centerTitle: true,
+      iconTheme: const IconThemeData(color: TayarColors.textWhiteLight),
+      titleTextStyle: GoogleFonts.cairo(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: TayarColors.textWhiteLight,
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: TayarColors.primary,
+        foregroundColor: Colors.black,
+        minimumSize: const Size.fromHeight(52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        textStyle: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.w600),
+        elevation: 0,
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: TayarColors.dividerLight),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: TayarColors.primary, width: 1.5),
+      ),
+      hintStyle: GoogleFonts.cairo(color: TayarColors.textGreyLight, fontSize: 14),
+    ),
+    cardTheme: CardThemeData(
+      color: TayarColors.cardLightMode,
+      elevation: 0.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
