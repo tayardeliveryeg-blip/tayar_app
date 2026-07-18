@@ -93,7 +93,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+        ),
         title: Text(
           AppLocalizations.of(context)!.logout,
           style: TextStyle(color: context.textColor),
@@ -604,7 +606,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         duration: const Duration(seconds: 12),
         backgroundColor: TayarColors.primary,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
         content: Text(
           AppLocalizations.of(context)!.arrivedAtDestination,
           style: TextStyle(
@@ -639,7 +643,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         title: GestureDetector(
           onTap: _isTogglingOnline ? null : _toggleOnline,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: AppSpacing.sm,
+            ),
             decoration: BoxDecoration(
               color: _isOnline
                   ? TayarColors.primary.withValues(alpha: 0.15)
@@ -1411,7 +1418,9 @@ class _OrderRequestCard extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: onCustomOffer,
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.md,
+                        ),
                         side: const BorderSide(color: TayarColors.primary),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -1429,7 +1438,9 @@ class _OrderRequestCard extends StatelessWidget {
                       onPressed: onQuickAccept,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TayarColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.md,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
@@ -1746,7 +1757,9 @@ class _ActiveTripCard extends StatelessWidget {
                           } catch (e) {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('تعذر بدء المكالمة: $e')),
+                                SnackBar(
+                                  content: Text('تعذر بدء المكالمة: $e'),
+                                ),
                               );
                             }
                           }
@@ -2052,10 +2065,7 @@ class _DriverRatingTabState extends State<_DriverRatingTab> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                avg.toStringAsFixed(2),
-                style: TayarStatTextStyles.statHuge,
-              ),
+              Text(avg.toStringAsFixed(2), style: TayarStatTextStyles.statHuge),
               const SizedBox(height: 8),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -2500,7 +2510,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                                 color: TayarColors.primary,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppRadius.sm),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.sm,
+                                ),
                               ),
                             ),
                             child: Text(
@@ -2522,7 +2534,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               backgroundColor: TayarColors.primary,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppRadius.sm),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.sm,
+                                ),
                               ),
                             ),
                             child: Text(
@@ -2536,7 +2550,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                   ] else
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.md,
+                        ),
                         child: Text(
                           AppLocalizations.of(context)!.alreadyOfferedOnOrder,
                           style: TextStyle(color: context.textGreyColor),

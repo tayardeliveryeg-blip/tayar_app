@@ -247,6 +247,30 @@
     }
   },
 
+  "passwordLabel": "Password",
+  "loginButton": "Login",
+  "dontHaveAccountLink": "Don't have an account? Create one",
+  "orContinueWithLabel": "Or continue with",
+  "createAccountTitle": "Create a new account",
+  "nameLabel": "Name",
+  "confirmPasswordLabel": "Confirm password",
+  "createAccountButton": "Create account",
+  "agreeToTermsText": "I agree to the Terms and Conditions",
+  "alreadyHaveAccountLink": "Already have an account? Login",
+  "requiredFieldError": "This field is required",
+  "invalidEmailError": "Invalid email address",
+  "weakPasswordError": "Password is too weak (at least 6 characters)",
+  "emailAlreadyInUseError": "This email is already in use",
+  "passwordsDoNotMatchError": "Passwords do not match",
+  "registrationFailedError": "Registration failed: {error}",
+  "@registrationFailedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
   "markAllAsReadButton": "Mark all as read",
   "mustSignInToViewNotifications": "Sign in to view notifications",
   "errorLoadingNotifications": "Failed to load notifications",

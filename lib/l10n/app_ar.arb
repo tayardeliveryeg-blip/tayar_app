@@ -219,9 +219,9 @@
   "faqBecomeDriverQuestion": "إزاي أبقى طيار في تطبيق طيار؟",
   "faqBecomeDriverAnswer": "من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة النارية)، وبعد المراجعة هتقدر تستقبل طلبات.",
   "faqDriverEarningsQuestion": "إزاي بتتحسب أرباح الطيار؟",
-  "faqDriverEarningsAnswer": "من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"الدخلي\".",
-  "faqDeliverPackageQuestion": "اقدر أوصّل طرد بدل ما أعمل رحلة راكب؟",
-  "faqDeliverPackageAnswer": "أيوه، من خدمة \"توصيل الطرود\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.",
+  "faqDriverEarningsAnswer": "من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"دخلي\".",
+  "faqDeliverPackageQuestion": "اقدر أوصّل طلب بدل ما أعمل رحلة راكب؟",
+  "faqDeliverPackageAnswer": "أيوه، من خدمة \"وصل طلباتي\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.",
   "faqTripProblemQuestion": "إيه اللي أعمله لو حصلت مشكلة في رحلة؟",
   "faqTripProblemAnswer": "تقدر تتواصل مع فريق الدعم مباشرة من شاشة \"الدعم\" في القايمة الجانبية، وهنساعدك تحل المشكلة أول بأول.",
 
@@ -240,6 +240,30 @@
   },
   "signInWithAppleFailedError": "فشل تسجيل الدخول بآبل: {error}",
   "@signInWithAppleFailedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "passwordLabel": "كلمة السر",
+  "loginButton": "تسجيل الدخول",
+  "dontHaveAccountLink": "معندكش حساب؟ إنشاء حساب جديد",
+  "orContinueWithLabel": "أو تابع باستخدام",
+  "createAccountTitle": "إنشاء حساب جديد",
+  "nameLabel": "الاسم",
+  "confirmPasswordLabel": "تأكيد كلمة السر",
+  "createAccountButton": "إنشاء حساب",
+  "agreeToTermsText": "أوافق على الشروط والأحكام",
+  "alreadyHaveAccountLink": "عندك حساب بالفعل؟ تسجيل الدخول",
+  "requiredFieldError": "هذا الحقل مطلوب",
+  "invalidEmailError": "البريد الإلكتروني غير صحيح",
+  "weakPasswordError": "كلمة السر ضعيفة جداً (6 أحرف على الأقل)",
+  "emailAlreadyInUseError": "هذا البريد مستخدم بالفعل",
+  "passwordsDoNotMatchError": "كلمتا السر غير متطابقتين",
+  "registrationFailedError": "فشل إنشاء الحساب: {error}",
+  "@registrationFailedError": {
     "placeholders": {
       "error": {
         "type": "String"

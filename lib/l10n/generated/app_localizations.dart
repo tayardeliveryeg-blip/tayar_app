@@ -1085,19 +1085,19 @@ abstract class AppLocalizations {
   /// No description provided for @faqDriverEarningsAnswer.
   ///
   /// In ar, this message translates to:
-  /// **'من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"الدخلي\".'**
+  /// **'من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"دخلي\".'**
   String get faqDriverEarningsAnswer;
 
   /// No description provided for @faqDeliverPackageQuestion.
   ///
   /// In ar, this message translates to:
-  /// **'اقدر أوصّل طرد بدل ما أعمل رحلة راكب؟'**
+  /// **'اقدر أوصّل طلب بدل ما أعمل رحلة راكب؟'**
   String get faqDeliverPackageQuestion;
 
   /// No description provided for @faqDeliverPackageAnswer.
   ///
   /// In ar, this message translates to:
-  /// **'أيوه، من خدمة \"توصيل الطرود\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.'**
+  /// **'أيوه، من خدمة \"وصل طلباتي\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.'**
   String get faqDeliverPackageAnswer;
 
   /// No description provided for @faqTripProblemQuestion.
@@ -1153,6 +1153,102 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'فشل تسجيل الدخول بآبل: {error}'**
   String signInWithAppleFailedError(String error);
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة السر'**
+  String get passwordLabel;
+
+  /// No description provided for @loginButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الدخول'**
+  String get loginButton;
+
+  /// No description provided for @dontHaveAccountLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'معندكش حساب؟ إنشاء حساب جديد'**
+  String get dontHaveAccountLink;
+
+  /// No description provided for @orContinueWithLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو تابع باستخدام'**
+  String get orContinueWithLabel;
+
+  /// No description provided for @createAccountTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء حساب جديد'**
+  String get createAccountTitle;
+
+  /// No description provided for @nameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم'**
+  String get nameLabel;
+
+  /// No description provided for @confirmPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد كلمة السر'**
+  String get confirmPasswordLabel;
+
+  /// No description provided for @createAccountButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء حساب'**
+  String get createAccountButton;
+
+  /// No description provided for @agreeToTermsText.
+  ///
+  /// In ar, this message translates to:
+  /// **'أوافق على الشروط والأحكام'**
+  String get agreeToTermsText;
+
+  /// No description provided for @alreadyHaveAccountLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'عندك حساب بالفعل؟ تسجيل الدخول'**
+  String get alreadyHaveAccountLink;
+
+  /// No description provided for @requiredFieldError.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا الحقل مطلوب'**
+  String get requiredFieldError;
+
+  /// No description provided for @invalidEmailError.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني غير صحيح'**
+  String get invalidEmailError;
+
+  /// No description provided for @weakPasswordError.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة السر ضعيفة جداً (6 أحرف على الأقل)'**
+  String get weakPasswordError;
+
+  /// No description provided for @emailAlreadyInUseError.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا البريد مستخدم بالفعل'**
+  String get emailAlreadyInUseError;
+
+  /// No description provided for @passwordsDoNotMatchError.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتا السر غير متطابقتين'**
+  String get passwordsDoNotMatchError;
+
+  /// No description provided for @registrationFailedError.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل إنشاء الحساب: {error}'**
+  String registrationFailedError(String error);
 
   /// No description provided for @markAllAsReadButton.
   ///

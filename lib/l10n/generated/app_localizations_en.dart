@@ -579,6 +579,57 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get loginButton => 'Login';
+
+  @override
+  String get dontHaveAccountLink => 'Don\'t have an account? Create one';
+
+  @override
+  String get orContinueWithLabel => 'Or continue with';
+
+  @override
+  String get createAccountTitle => 'Create a new account';
+
+  @override
+  String get nameLabel => 'Name';
+
+  @override
+  String get confirmPasswordLabel => 'Confirm password';
+
+  @override
+  String get createAccountButton => 'Create account';
+
+  @override
+  String get agreeToTermsText => 'I agree to the Terms and Conditions';
+
+  @override
+  String get alreadyHaveAccountLink => 'Already have an account? Login';
+
+  @override
+  String get requiredFieldError => 'This field is required';
+
+  @override
+  String get invalidEmailError => 'Invalid email address';
+
+  @override
+  String get weakPasswordError =>
+      'Password is too weak (at least 6 characters)';
+
+  @override
+  String get emailAlreadyInUseError => 'This email is already in use';
+
+  @override
+  String get passwordsDoNotMatchError => 'Passwords do not match';
+
+  @override
+  String registrationFailedError(String error) {
+    return 'Registration failed: $error';
+  }
+
+  @override
   String get markAllAsReadButton => 'Mark all as read';
 
   @override

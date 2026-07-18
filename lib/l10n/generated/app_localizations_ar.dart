@@ -532,15 +532,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqDriverEarningsAnswer =>
-      'من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"الدخلي\".';
+      'من كل رحلة، الطيار بياخد نسبة 90% من قيمة الرحلة والشركة بتاخد 10% مقابل تشغيل المنصة. تقدر تتابع تفاصيل أرباحك من تبويب \"دخلي\".';
 
   @override
   String get faqDeliverPackageQuestion =>
-      'اقدر أوصّل طرد بدل ما أعمل رحلة راكب؟';
+      'اقدر أوصّل طلب بدل ما أعمل رحلة راكب؟';
 
   @override
   String get faqDeliverPackageAnswer =>
-      'أيوه، من خدمة \"توصيل الطرود\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.';
+      'أيوه، من خدمة \"وصل طلباتي\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.';
 
   @override
   String get faqTripProblemQuestion => 'إيه اللي أعمله لو حصلت مشكلة في رحلة؟';
@@ -573,6 +573,56 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String signInWithAppleFailedError(String error) {
     return 'فشل تسجيل الدخول بآبل: $error';
+  }
+
+  @override
+  String get passwordLabel => 'كلمة السر';
+
+  @override
+  String get loginButton => 'تسجيل الدخول';
+
+  @override
+  String get dontHaveAccountLink => 'معندكش حساب؟ إنشاء حساب جديد';
+
+  @override
+  String get orContinueWithLabel => 'أو تابع باستخدام';
+
+  @override
+  String get createAccountTitle => 'إنشاء حساب جديد';
+
+  @override
+  String get nameLabel => 'الاسم';
+
+  @override
+  String get confirmPasswordLabel => 'تأكيد كلمة السر';
+
+  @override
+  String get createAccountButton => 'إنشاء حساب';
+
+  @override
+  String get agreeToTermsText => 'أوافق على الشروط والأحكام';
+
+  @override
+  String get alreadyHaveAccountLink => 'عندك حساب بالفعل؟ تسجيل الدخول';
+
+  @override
+  String get requiredFieldError => 'هذا الحقل مطلوب';
+
+  @override
+  String get invalidEmailError => 'البريد الإلكتروني غير صحيح';
+
+  @override
+  String get weakPasswordError => 'كلمة السر ضعيفة جداً (6 أحرف على الأقل)';
+
+  @override
+  String get emailAlreadyInUseError => 'هذا البريد مستخدم بالفعل';
+
+  @override
+  String get passwordsDoNotMatchError => 'كلمتا السر غير متطابقتين';
+
+  @override
+  String registrationFailedError(String error) {
+    return 'فشل إنشاء الحساب: $error';
   }
 
   @override
