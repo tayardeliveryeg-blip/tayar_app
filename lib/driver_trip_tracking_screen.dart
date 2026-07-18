@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -14,6 +15,7 @@ import 'map_tile_layer.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'trip_chat_screen.dart';
 import 'call_invitation_helper.dart';
+import 'wallet_service.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي من ناحية الطيار ======
 /// بتتفتح فورًا لحظة قبول عرض الطيار، أو لما يدوس على كارت الرحلة النشطة
@@ -315,10 +317,12 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
   }
 
   Future<void> _completeTrip() async {
-    await _orderRef.update({
-      'status': 'completed',
-      'completedAt': FieldValue.serverTimestamp(),
-    });
+    final driverId = FirebaseAuth.instance.currentUser?.uid;
+    if (driverId == null) return;
+    await completeTripAndDeductCommission(
+      orderId: widget.orderId,
+      driverId: driverId,
+    );
     if (mounted) Navigator.of(context).maybePop();
   }
 

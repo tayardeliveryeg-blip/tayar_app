@@ -521,5 +521,23 @@
   "driverRoleTitle": "طيار",
   "driverRoleDescription": "اشتغل واكسب فلوس بموتوسيكلك",
   "completeProfileTitle": "كمّل بياناتك",
-  "completeProfileSubtitle": "هنستخدم اسمك عشان الناس تتعرف عليك"
+  "completeProfileSubtitle": "هنستخدم اسمك عشان الناس تتعرف عليك",
+
+  "topUpWalletButton": "اشحن محفظتك",
+  "topUpWalletTitle": "شحن رصيد المحفظة",
+  "topUpWalletSubtitle": "حوّل المبلغ إنستاباي وارفع صورة إيصال التحويل، وهنراجع طلبك ونضيفه لرصيدك أول بأول",
+  "topUpAmountLabel": "المبلغ (جنيه)",
+  "topUpProofLabel": "صورة إثبات التحويل",
+  "topUpProofRequiredError": "لازم ترفع صورة إثبات التحويل",
+  "invalidAmountError": "أدخل مبلغ صحيح",
+  "topUpSubmitButton": "إرسال الطلب",
+  "topUpSubmittedTitle": "تم إرسال طلبك",
+  "topUpSubmittedBody": "هنراجع طلب الشحن ونضيفه لرصيدك في أقرب وقت",
+  "walletTransactionsTitle": "سجل المعاملات",
+  "noWalletTransactionsLabel": "مفيش معاملات لسه",
+  "walletCommissionTransactionLabel": "عمولة رحلة",
+  "walletTopupPendingLabel": "طلب شحن - في انتظار المراجعة",
+  "walletTopupApprovedLabel": "طلب شحن - تم القبول",
+  "walletTopupRejectedLabel": "طلب شحن - مرفوض",
+  "negativeWalletBalanceNote": "رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة"
 }
