@@ -68,6 +68,56 @@ extension TayarThemeColors on BuildContext {
   Color get onPrimaryColor => isDarkMode ? Colors.white : Colors.black;
 }
 
+// ====== قيم الاستدارة الموحّدة (Border Radius Scale) ======
+// القيم دي مستخرجة من أكتر قيم كانت متكررة يدويًا في شاشات المشروع (10, 12,
+// 14, 16, 30)، عشان أي شاشة جديدة أو بتتحول تستخدم AppRadius.xxx بدل ما
+// تكتب رقم يدوي عشوائي، وعشان أي تعديل مستقبلي على شكل الاستدارة يحصل من
+// مكان واحد بس. الاستخدام: BorderRadius.circular(AppRadius.lg)
+class AppRadius {
+  static const double sm = 10; // كروت صغيرة / صور مصغّرة
+  static const double md = 12; // حقول الإدخال (متطابقة مع inputDecorationTheme)
+  static const double lg = 14; // الأزرار (متطابقة مع elevatedButtonTheme)
+  static const double xl = 16; // الكروت الرئيسية (متطابقة مع cardTheme)
+  static const double xxl = 20; // كروت/حاويات بارزة (زي كارت طلب جديد)
+  static const double pill = 30; // شارات/أزرار بيضاوية الشكل بالكامل
+}
+
+// ====== قيم المسافات الموحّدة (Spacing Scale) ======
+// نفس فكرة AppRadius بس للـ padding/margin/SizedBox، مبنية على أكتر قيم
+// كانت متكررة فعليًا (4, 8, 12, 16, 20, 24). الاستخدام:
+//   padding: const EdgeInsets.all(AppSpacing.lg)
+//   const SizedBox(height: AppSpacing.md)
+class AppSpacing {
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16; // القيمة الأكتر استخدامًا في المشروع كله
+  static const double xl = 20;
+  static const double xxl = 24;
+}
+
+// ====== ستايلات الأرقام الكبيرة (زي الرصيد، متوسط التقييم، الأرباح) ======
+// كانت بتتكرر بنفس الشكل بالظبط (نفس اللون والوزن) في أكتر من مكان في شاشة
+// السائق بس بفونت سايز مختلف حسب الأهمية. بدل تكرار TextStyle كامل في كل
+// مرة، الاستخدام بقى: style: TayarStatTextStyles.statMedium
+class TayarStatTextStyles {
+  static const TextStyle statSmall = TextStyle(
+    color: TayarColors.primary,
+    fontSize: 26,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle statMedium = TextStyle(
+    color: TayarColors.primary,
+    fontSize: 36,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle statHuge = TextStyle(
+    color: TayarColors.primary,
+    fontSize: 48,
+    fontWeight: FontWeight.bold,
+  );
+}
+
 // ====== تدرّج الخطوط الموحّد (Typography Scale) ======
 // بيحل مشكلة إن كل شاشة كانت بتحدد fontSize بشكل عشوائي (12, 13, 14, 17, 18, 26...).
 // بدل كده، أي نص جديد المفروض ياخد الستايل بتاعه من هنا عن طريق:

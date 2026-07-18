@@ -93,7 +93,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
         title: Text(
           AppLocalizations.of(context)!.logout,
           style: TextStyle(color: context.textColor),
@@ -604,7 +604,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         duration: const Duration(seconds: 12),
         backgroundColor: TayarColors.primary,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
         content: Text(
           AppLocalizations.of(context)!.arrivedAtDestination,
           style: TextStyle(
@@ -639,12 +639,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         title: GestureDetector(
           onTap: _isTogglingOnline ? null : _toggleOnline,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: AppSpacing.sm),
             decoration: BoxDecoration(
               color: _isOnline
                   ? TayarColors.primary.withValues(alpha: 0.15)
                   : context.textColor.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(AppRadius.xxl),
               border: Border.all(
                 color: _isOnline ? TayarColors.primary : context.dividerColor2,
               ),
@@ -801,7 +801,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           child: !_isOnline
               ? Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(AppSpacing.xxl),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -853,7 +853,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     }
 
                     return ListView.separated(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AppSpacing.lg),
                       itemCount: orders.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
@@ -961,7 +961,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                   stream: _currentUser == null
                       ? null
@@ -1176,7 +1176,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
             // ====== زرار الرجوع لوضع الركاب ======
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -1195,7 +1195,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                     ),
                   ),
                   child: Text(
@@ -1272,13 +1272,13 @@ class _OrderRequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(AppRadius.xl),
       onTap: onOpenDetails,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
           color: context.cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppRadius.xl),
           border: Border.all(
             color: TayarColors.primary.withValues(alpha: 0.25),
           ),
@@ -1365,7 +1365,7 @@ class _OrderRequestCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: context.textColor.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(AppRadius.xxl),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -1394,7 +1394,7 @@ class _OrderRequestCard extends StatelessWidget {
             if (alreadyOffered)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                   child: Text(
                     AppLocalizations.of(context)!.offerSentAlreadyLabel,
                     style: TextStyle(
@@ -1411,10 +1411,10 @@ class _OrderRequestCard extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: onCustomOffer,
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                         side: const BorderSide(color: TayarColors.primary),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                       ),
                       child: Text(
@@ -1429,9 +1429,9 @@ class _OrderRequestCard extends StatelessWidget {
                       onPressed: onQuickAccept,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TayarColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                       ),
                       child: Text(
@@ -1534,11 +1534,7 @@ class _OfferSheetState extends State<_OfferSheet> {
                     context,
                   )!.currencyEGP(_price.toStringAsFixed(0)),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: TayarColors.primary,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TayarStatTextStyles.statSmall,
                 ),
               ),
               _StepButton(
@@ -1556,7 +1552,7 @@ class _OfferSheetState extends State<_OfferSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: TayarColors.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
               ),
               child: Text(
@@ -1583,7 +1579,7 @@ class _StepButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(30),
+      borderRadius: BorderRadius.circular(AppRadius.pill),
       child: Container(
         width: 40,
         height: 40,
@@ -1631,7 +1627,7 @@ class _ActiveTripCard extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       decoration: BoxDecoration(
         color: TayarColors.primary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
       ),
       clipBehavior: Clip.antiAlias,
@@ -1769,7 +1765,7 @@ class _ActiveTripCard extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TayarColors.primary,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
                       ),
                     ),
                     child: Text(
@@ -1812,7 +1808,7 @@ class _DriverContactButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           color: TayarColors.primary.withValues(alpha: 0.18),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           border: Border.all(color: TayarColors.primary.withValues(alpha: 0.5)),
         ),
         child: Row(
@@ -1942,7 +1938,7 @@ class _DriverIncomeTab extends StatelessWidget {
         }
 
         return ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           children: [
             _IncomeSummaryCard(
               title: AppLocalizations.of(context)!.todayIncome,
@@ -2058,11 +2054,7 @@ class _DriverRatingTabState extends State<_DriverRatingTab> {
             children: [
               Text(
                 avg.toStringAsFixed(2),
-                style: const TextStyle(
-                  color: TayarColors.primary,
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TayarStatTextStyles.statHuge,
               ),
               const SizedBox(height: 8),
               Row(
@@ -2119,13 +2111,13 @@ class _DriverWalletTab extends StatelessWidget {
         final commission = total - netBalance;
 
         return ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AppSpacing.xxl),
               decoration: BoxDecoration(
                 color: TayarColors.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(AppRadius.xxl),
                 border: Border.all(
                   color: TayarColors.primary.withValues(alpha: 0.4),
                 ),
@@ -2144,11 +2136,7 @@ class _DriverWalletTab extends StatelessWidget {
                     AppLocalizations.of(
                       context,
                     )!.currencyEGP(netBalance.toStringAsFixed(0)),
-                    style: const TextStyle(
-                      color: TayarColors.primary,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TayarStatTextStyles.statMedium,
                   ),
                 ],
               ),
@@ -2194,7 +2182,7 @@ class _IncomeSummaryCard extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
       ),
       child: Row(
         children: [
@@ -2380,7 +2368,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
           Expanded(
             flex: 2,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -2388,7 +2376,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: context.cardColor,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2488,11 +2476,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               context,
                             )!.currencyEGP(_price.toStringAsFixed(0)),
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: TayarColors.primary,
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TayarStatTextStyles.statSmall,
                           ),
                         ),
                         _StepButton(
@@ -2516,7 +2500,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                                 color: TayarColors.primary,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(AppRadius.sm),
                               ),
                             ),
                             child: Text(
@@ -2538,7 +2522,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               backgroundColor: TayarColors.primary,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(AppRadius.sm),
                               ),
                             ),
                             child: Text(
@@ -2552,7 +2536,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                   ] else
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                         child: Text(
                           AppLocalizations.of(context)!.alreadyOfferedOnOrder,
                           style: TextStyle(color: context.textGreyColor),
