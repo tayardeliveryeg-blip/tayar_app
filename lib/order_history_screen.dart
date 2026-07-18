@@ -133,7 +133,7 @@ class OrderHistoryScreen extends StatelessWidget {
                           l10n.noOrdersYetSubtitle,
                           style:  TextStyle(
                             color: context.textGreyColor,
-                            fontSize: 13,
+                            fontSize: 14,
                           ),
                         ),
                       ],
@@ -144,7 +144,7 @@ class OrderHistoryScreen extends StatelessWidget {
                 return ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: docs.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final data = docs[index].data();
                     final serviceType = data['serviceType'] as String?;
@@ -207,7 +207,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                   _statusLabel(status, l10n),
                                   style: TextStyle(
                                     color: _statusColor(context, status),
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -229,7 +229,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                   destinationAddress,
                                   style:  TextStyle(
                                     color: context.textColor,
-                                    fontSize: 13,
+                                    fontSize: 14,
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
@@ -244,7 +244,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                 _formatDate(createdAt),
                                 style:  TextStyle(
                                   color: context.textGreyColor,
-                                  fontSize: 11,
+                                  fontSize: 12,
                                 ),
                               ),
                               const Spacer(),
@@ -256,7 +256,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                   style: const TextStyle(
                                     color: TayarColors.primary,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 13,
+                                    fontSize: 14,
                                   ),
                                 ),
                             ],
@@ -273,7 +273,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                     ),
                                     style:  TextStyle(
                                       color: context.textGreyColor,
-                                      fontSize: 11,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 const Spacer(),

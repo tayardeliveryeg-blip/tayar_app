@@ -7,7 +7,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>Tayay App</string>
+		<string>Tayar</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -91,6 +91,18 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<!-- ====== Google Sign-In: لازم عشان بعد ما المستخدم يسجّل دخول بجوجل من
+		Safari، النظام يعرف يرجّعه للتطبيق تاني بدل ما يفضل واقف في الصفحة.
+		القيمة لازم تكون REVERSED_CLIENT_ID من GoogleService-Info.plist بتاعك،
+		مش أي قيمة تانية ====== -->
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.354477388400-06t7huj3ihqf885onb3pgh45kkuudgcg</string>
+				</array>
+			</dict>
+		</array>
 	</dict>
 </plist>
-

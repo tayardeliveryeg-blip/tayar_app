@@ -83,9 +83,18 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
   }
 
   Future<void> _pickDate() async {
+    // ====== لو المستخدم عنده تاريخ ميلاد محفوظ بالفعل، نفتح الـ picker
+    // على نفس التاريخ ده بدل ما يرجع لسنة 2000 ثابتة كل مرة ======
+    DateTime initial = DateTime(2000);
+    final saved = _birthDateController.text.trim();
+    if (saved.isNotEmpty) {
+      final parsed = DateTime.tryParse(saved);
+      if (parsed != null) initial = parsed;
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000),
+      initialDate: initial,
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
@@ -121,6 +130,22 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
       return;
     }
 
+    // ====== تحقق بسيط من رقم الموبايل المصري: لازم يبدأ بـ 01 ويكون 11 رقم
+    // بالظبط (زي 01012345678)، أو يسمح بترك الحقل فاضي لو المستخدم عايز
+    // يكمله لاحقًا ======
+    final phone = _phoneController.text.trim();
+    final egyptianPhoneRegex = RegExp(r'^01[0125][0-9]{8}$');
+    if (phone.isNotEmpty && !egyptianPhoneRegex.hasMatch(phone)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.invalidPhoneNumberError,
+          ),
+        ),
+      );
+      return;
+    }
+
     setState(() => _isSaving = true);
     try {
       final photoBase64 = _encodePhotoIfNeeded();
@@ -132,7 +157,12 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
             content: Text(AppLocalizations.of(context)!.photoTooLargeError),
           ),
         );
-        setState(() => _isSaving = false);
+        // ====== نشيل الصورة الكبيرة من الذاكرة عشان المستخدم يضطر يختار
+        // صورة تانية بدل ما يفضل عالق يدوس Save على نفس الصورة المرفوضة ======
+        setState(() {
+          _newPhotoBytes = null;
+          _isSaving = false;
+        });
         return;
       }
 
@@ -143,7 +173,7 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
           'birthDate': _birthDateController.text.trim(),
           'phone': _phoneController.text.trim(),
           'address': _addressController.text.trim(),
-          if (photoBase64 != null) 'photoBase64': photoBase64,
+          'photoBase64': ?photoBase64,
           'hasPhoto': photoBase64 != null,
           'complete': true,
         },
@@ -274,7 +304,7 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
                               AppLocalizations.of(context)!.saveButton,
                               style:  TextStyle(
                                 color: context.textColor,
-                                fontSize: 17,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -335,9 +365,9 @@ class _ProfilePhotoPicker extends StatelessWidget {
                 color: TayarColors.primary,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.camera_alt,
-                color: Colors.white,
+                color: context.onPrimaryColor,
                 size: 16,
               ),
             ),

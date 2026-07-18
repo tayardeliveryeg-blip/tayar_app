@@ -232,7 +232,7 @@ class _SupportActionButton extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               label,
-              style: TextStyle(color: context.textColor, fontSize: 13),
+              style: TextStyle(color: context.textColor, fontSize: 14),
             ),
           ],
         ),

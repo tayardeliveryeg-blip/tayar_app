@@ -148,7 +148,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                   loc.rateTripArrivedSafelyTitle,
                   style: TextStyle(
                     color: context.textColor,
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -172,12 +172,12 @@ class _RateTripScreenState extends State<RateTripScreen> {
                   ),
                   child: Row(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 28,
                         backgroundColor: TayarColors.primary,
                         child: Icon(
                           Icons.person,
-                          color: Colors.white,
+                          color: context.onPrimaryColor,
                           size: 30,
                         ),
                       ),
@@ -199,7 +199,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                               loc.currencyEGP(widget.fare.toStringAsFixed(0)),
                               style:  TextStyle(
                                 color: context.textGreyColor,
-                                fontSize: 13,
+                                fontSize: 14,
                               ),
                             ),
                           ],
@@ -234,7 +234,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                   _starsLabel(context),
                   style:  TextStyle(
                     color: context.textGreyColor,
-                    fontSize: 13,
+                    fontSize: 14,
                   ),
                 ),
 
@@ -284,7 +284,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                             loc.submitRatingButton,
                             style:  TextStyle(
                               color: context.textColor,
-                              fontSize: 17,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

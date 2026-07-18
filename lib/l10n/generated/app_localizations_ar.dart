@@ -16,14 +16,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية';
 
   @override
-  String get driverNoOrders => 'مفيش طلبات متاحة دلوقتي.. خليك مستعد!';
+  String get driverNoOrders => 'مفيش طلبات متاحة';
 
   @override
   String get driverOfflineHint =>
-      'أنت غير متاح دلوقتي.. دوس \"اونلاين\" عشان تشوف الطلبات المتاحة';
+      'أنت غير متاح دوس \"اونلاين\" عشان تشوف الطلبات المتاحة';
 
   @override
-  String get driverNoRatings => 'لسه مفيش تقييمات من الركاب.. شد حيلك';
+  String get driverNoRatings => 'مفيش تقييمات';
 
   @override
   String get newDriverLabel => 'طيار جديد';
@@ -41,35 +41,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tabWallet => 'محفظتي';
 
   @override
-  String get errorLoadingOrders => 'حصل خطأ في تحميل الطلبات';
+  String get errorLoadingOrders => 'خطأ في تحميل الطلبات';
 
   @override
   String get defaultDriverName => 'طيار';
 
   @override
-  String get statusAvailable => 'متاح دلوقتي';
+  String get statusAvailable => 'متاح';
 
   @override
   String get statusUnavailable => 'غير متاح';
 
   @override
   String get permissionLocationRequired =>
-      'محتاج تسمح بصلاحية الموقع الأول عشان تبقى متاح';
+      'لازم تسمح بصلاحية الوصول للموقع الأول عشان تظهر أونلاين';
 
   @override
-  String get offerSentWaitingPassenger => 'تم إرسال عرضك، بننتظر رد الراكب';
+  String get offerSentWaitingPassenger => 'تم إرسال عرضك، في انتظار رد الراكب';
 
   @override
   String get offerSendFailed => 'تعذر إرسال العرض، حاول تاني';
 
   @override
-  String get arrivedAtDestination => '🎉 وصلت لوجهة الرحلة';
+  String get arrivedAtDestination => 'وصلت وجهتك';
 
   @override
-  String get endTrip => 'إنهاء الرحلة';
+  String get endTrip => 'إنهي الرحلة';
 
   @override
-  String get startTrip => 'بدء الرحلة';
+  String get startTrip => 'ابدأ الرحلة';
 
   @override
   String get driverToggleOnline => 'متاح';
@@ -78,13 +78,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverToggleOffline => 'غير متاح';
 
   @override
-  String get mustSignInFirst => 'لازم تسجل دخول الأول';
+  String get mustSignInFirst => 'لازم تسجل الدخول الأول';
 
   @override
-  String get paymentMethodCash => 'كاش';
+  String get paymentMethodCash => 'نقدي';
 
   @override
-  String get navProfile => 'البروفايل';
+  String get navProfile => 'الملف الشخصي';
 
   @override
   String get navIncome => 'الدخل';
@@ -111,7 +111,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get offerSentAlreadyLabel => 'تم إرسال عرضك، في انتظار الراكب';
+  String get offerSentAlreadyLabel => 'تم إرسال عرضك، في انتظار رد الراكب';
 
   @override
   String get offerCustomButton => 'عرض سعر مختلف';
@@ -120,7 +120,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get acceptProposedPrice => 'قبول بالسعر المقترح';
 
   @override
-  String get setYourPriceLabel => 'حدد السعر اللي تقدمه';
+  String get setYourPriceLabel => 'حدد سعرك';
 
   @override
   String get submitOfferButton => 'إرسال العرض';
@@ -155,7 +155,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get companyCommission => 'عمولة الشركة (10%)';
 
   @override
-  String get motorcycleInfoTitle => 'بيانات الموتوسيكل';
+  String get motorcycleInfoTitle => 'بيانات الدراجة النارية';
 
   @override
   String get bikeModelLabel => 'الموديل';
@@ -188,7 +188,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cancel => 'إلغاء';
 
   @override
-  String get confirmLogoutMessage => 'متأكد إنك عايز تسجل خروج من حسابك؟';
+  String get confirmLogoutMessage => 'تأكيد تسجيل الخروج؟';
 
   @override
   String get languageToggleTooltip => 'العربية / English';
@@ -266,10 +266,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get birthDateHint => 'تاريخ الميلاد';
 
   @override
-  String get phoneNumberLabel => 'رقم الموبايل';
+  String get phoneNumberLabel => 'رقم الهاتف';
 
   @override
-  String get addressLabel => 'العنوان';
+  String get addressLabel => 'المدينة';
 
   @override
   String get saveButton => 'حفظ';
@@ -281,7 +281,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get saveFailedError => 'تعذر الحفظ، حاول تاني';
 
   @override
-  String get profileUpdatedSuccess => 'تم تحديث البروفايل بنجاح';
+  String get profileUpdatedSuccess => 'تم تحديث الملف الشخصي بنجاح';
 
   @override
   String get changePhotoLabel => 'تغيير الصورة';
@@ -289,6 +289,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get photoTooLargeError =>
       'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر';
+
+  @override
+  String get invalidPhoneNumberError =>
+      'رقم الهاتف غير صحيح، لازم يكون رقم مصري صحيح';
 
   @override
   String get locatingAddress => 'جاري تحديد الموقع...';
@@ -309,10 +313,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get choosePaymentMethodTitle => 'اختار طريقة الدفع';
 
   @override
-  String get fromLabel => 'من أين';
+  String get fromLabel => 'من';
 
   @override
-  String get chooseDestinationHint => 'اختار الواجهة اللي عايز تروحها';
+  String get chooseDestinationHint => 'إلى';
 
   @override
   String get serviceRideMe => 'وصلني';
@@ -345,10 +349,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deliveryAddressDetailsHint => 'مثال: الدور التاني، جنب الصيدلية';
 
   @override
-  String get senderPhoneLabel => 'رقم موبايل المُرسل';
+  String get senderPhoneLabel => 'رقم هاتف المُرسل';
 
   @override
-  String get receiverPhoneLabel => 'رقم موبايل المُستلم';
+  String get receiverPhoneLabel => 'رقم هاتف المُستلم';
 
   @override
   String get phoneNumberHint => '01xxxxxxxxx';
@@ -381,7 +385,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get defaultUserName => 'محمد';
+  String get defaultUserName => 'مستخدم';
 
   @override
   String get driverModeButton => 'وضع الطيار';
@@ -396,7 +400,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get closeButton => 'إغلاق';
 
   @override
-  String get submitApplicationSuccessTitle => 'تم إرسال طلبك!';
+  String get submitApplicationSuccessTitle => 'تم إرسال طلبك';
 
   @override
   String get submitApplicationSuccessBody =>
@@ -423,7 +427,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sectionPersonalDocuments => 'المستندات الشخصية';
 
   @override
-  String get sectionBikeInfo => 'معلومات الموتوسيكل';
+  String get sectionBikeInfo => 'معلومات الدراجة النارية';
 
   @override
   String get applicationUnderReviewButton => 'طلبك قيد المراجعة';
@@ -464,22 +468,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get idNumberHint => 'رقم الهوية';
 
   @override
-  String get bikeInfoRequiredError => 'من فضلك أكمل بيانات الموتوسيكل الأساسية';
+  String get bikeInfoRequiredError =>
+      'من فضلك أكمل بيانات الدراجة النارية الأساسية';
 
   @override
-  String get bikePhotoLabel => 'صورة الموتوسيكل';
+  String get bikePhotoLabel => 'صورة الدراجة النارية';
 
   @override
-  String get bikeLicensePhotoLabel => 'رخصة الموتوسيكل';
+  String get bikeLicensePhotoLabel => 'رخصة الدراجة النارية';
 
   @override
-  String get bikeBrandHint => 'العلامة التجارية للموتوسيكل';
+  String get bikeBrandHint => 'العلامة التجارية للدراجة نارية';
 
   @override
-  String get bikeModelHint => 'طراز الموتوسيكل';
+  String get bikeModelHint => 'طراز الدراجة النارية';
 
   @override
-  String get bikeColorHint => 'لون الموتوسيكل';
+  String get bikeColorHint => 'لون الدراجة النارية';
 
   @override
   String get bikeYearHint => 'سنة الانتاج';
@@ -506,7 +511,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqPaymentMethodsAnswer =>
-      'تقدر تدفع كاش للطيار مباشرة، أو من خلال المحفظة الإلكترونية، أو عن طريق إنستاباي. تقدر تختار وسيلة الدفع وانت بتأكد الطلب.';
+      'تقدر تدفع نقدي للطيار مباشرة، أو من خلال المحفظة الإلكترونية، أو عن طريق إنستاباي. تقدر تختار وسيلة الدفع وانت بتأكد الطلب.';
 
   @override
   String get faqNoAcceptQuestion => 'مفيش حد بيقبل طلبي، أعمل إيه؟';
@@ -520,7 +525,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqBecomeDriverAnswer =>
-      'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الموتوسيكل)، وبعد المراجعة هتقدر تستقبل طلبات.';
+      'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة النارية)، وبعد المراجعة هتقدر تستقبل طلبات.';
 
   @override
   String get faqDriverEarningsQuestion => 'إزاي بتتحسب أرباح الطيار؟';
@@ -531,7 +536,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqDeliverPackageQuestion =>
-      'تقدر أوصّل طرد بدل ما أعمل رحلة راكب؟';
+      'اقدر أوصّل طرد بدل ما أعمل رحلة راكب؟';
 
   @override
   String get faqDeliverPackageAnswer =>
@@ -545,7 +550,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'تقدر تتواصل مع فريق الدعم مباشرة من شاشة \"الدعم\" في القايمة الجانبية، وهنساعدك تحل المشكلة أول بأول.';
 
   @override
-  String get chooseYourRideSubtitle => 'اختار المشوار المناسب ليك';
+  String get chooseYourRideSubtitle => 'اختار الرحلة المناسبة ليك';
 
   @override
   String get continueWithGoogleButton => 'المتابعة باستخدام Google';
@@ -635,7 +640,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchForDriversButton => 'البحث عن طيارين';
 
   @override
-  String get invalidPhoneNumberError => 'من فضلك اكتب رقم موبايل صحيح';
+  String get phoneNumberFormatError => 'من فضلك اكتب رقم هاتف صحيح';
 
   @override
   String get tryAgainLabel => 'حاول تاني';
@@ -675,7 +680,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get doneButton => 'تم';
 
   @override
-  String get rateTripArrivedSafelyTitle => 'وصلت لوجهتك بأمان!';
+  String get rateTripArrivedSafelyTitle => 'وصلت وجهتك بأمان';
 
   @override
   String get rateTripSubtitle => 'قيّم رحلتك مع الطيار';
@@ -687,7 +692,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failedToSaveRatingError => 'تعذر حفظ التقييم، حاول تاني';
 
   @override
-  String get thankYouForRatingLabel => 'شكرًا لتقييمك! 🌟';
+  String get thankYouForRatingLabel => 'شكراً لتقييمك';
 
   @override
   String get ratingVeryBadLabel => 'سيء جدًا';
@@ -720,7 +725,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get failedToAcceptOfferError => 'تعذر قبول العرض، حاول تاني';
 
   @override
-  String get offerAcceptedTitle => 'تم قبول العرض!';
+  String get offerAcceptedTitle => 'تم قبول العرض';
 
   @override
   String driverOnWayWithFareLabel(String driverName, String price) {
@@ -764,7 +769,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tryRaisingFareTitle => 'جرب تزود السعر';
 
   @override
-  String get raiseFareHintBody => 'ممكن تزود فرصك للحصول علي مشوارك بسرعة';
+  String get raiseFareHintBody => 'زود فرصتك للحصول علي الرحلة بسرعة';
 
   @override
   String searchWithFareLabel(String amount) {
@@ -832,7 +837,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unknownPlaceLabel => 'مكان غير معروف';
 
   @override
-  String get whereDoYouWantToGoTitle => 'عايز تروح فين؟';
+  String get whereDoYouWantToGoTitle => 'حدد مسارك';
 
   @override
   String get searchPlaceHint => 'اكتب اسم الشارع أو المكان...';
@@ -884,23 +889,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sendButton => 'إرسال';
 
   @override
-  String get tripCompletedTitle => 'وصلت لوجهتك!';
+  String get tripCompletedTitle => 'وصلت وجهتك';
 
   @override
   String get tripCancelledTitle => 'تم إلغاء الرحلة';
 
   @override
-  String get thankYouForUsingTayarLabel => 'شكرا لاستخدامك طيار!';
+  String get thankYouForUsingTayarLabel => 'شكرا لاستخدامك طيار';
 
   @override
   String get tripCancelledByDriverOrSystemLabel =>
       'الرحلة اتلغت من الطيار أو من النظام';
 
   @override
-  String get arrivedAtYourDestinationStatusLabel => 'وصلتوا لوجهتكم 🎉';
+  String get driverOnWayToYouLabel => 'الطيار في الطريق ليك';
 
   @override
-  String get driverOnWayToYouLabel => 'الطيار في الطريق ليك';
+  String get driverArrivedAtPickupLabel => 'الطيار وصلك';
+
+  @override
+  String get arrivedAtYourDestinationStatusLabel => 'وصلت وجهتك';
 
   @override
   String get tripStartedOnWayToDestinationLabel =>
@@ -911,20 +919,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get arrivedWaitingDriverToEndTripLabel =>
-      'وصلتوا لوجهتكم! في انتظار الطيار ينهي الرحلة';
+      'وصلت وجهتك، اطلب من الطيار ينهي الرحلة';
 
   @override
   String get waitingDriverShareLocationLabel =>
-      'في انتظار بدء الطيار مشاركة موقعه...';
+      'في انتظار مشاركة موقع الطيار...';
 
   @override
-  String get noOrdersYetTitle => 'مفيش طلبات لسه';
+  String get noOrdersYetTitle => 'مفيش طلبات';
 
   @override
   String get noOrdersYetSubtitle => 'طلباتك اللي هتعملها هتظهر هنا';
 
   @override
-  String get orderStatusSearchingLabel => 'بيدور على سائق';
+  String get orderStatusSearchingLabel => 'بيدور على طيار';
 
   @override
   String get orderStatusAcceptedLabel => 'مقبول';
@@ -950,13 +958,13 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get chatWithDriverLabel => 'شات';
+  String get chatWithDriverLabel => 'محادثة';
 
   @override
   String get callDriverLabel => 'مكالمة';
 
   @override
-  String get chatWithPassengerLabel => 'شات';
+  String get chatWithPassengerLabel => 'محادثة';
 
   @override
   String get callPassengerLabel => 'مكالمة';
@@ -967,10 +975,10 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get chatErrorLoadingMessages => 'حصل خطأ في تحميل الرسائل';
+  String get chatErrorLoadingMessages => 'خطأ في تحميل الرسائل';
 
   @override
-  String get chatNoMessagesYet => 'مفيش رسائل لسه، ابدأ المحادثة';
+  String get chatNoMessagesYet => 'ابدأ المحادثة';
 
   @override
   String get chatTypeMessageHint => 'اكتب رسالة...';

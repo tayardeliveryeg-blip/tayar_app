@@ -11,21 +11,51 @@ import 'package:crypto/crypto.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'phone_auth_screen.dart';
 import 'passenger_home.dart';
+import 'google_signin_web_button_stub.dart'
+    if (dart.library.js_interop) 'google_signin_web_button_web.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   // ====== تسجيل الدخول بجوجل ======
+  static bool _googleSignInInitialized = false;
+
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return; // المستخدم أغلق النافذة
+      // ====== نتأكد إن GoogleSignIn.instance اتعمله initialize مرة واحدة بس ======
+      // ملاحظة: على Flutter Web وقت الـ Hot Restart، الـ Dart state بيتصفّر
+      // لكن سكريبت Google Identity Services جوه المتصفح لأ، فبيرمي "Bad state:
+      // init() has already been called" حتى لو الـ flag بتاعنا قايل لأ.
+      // الـ try/catch ده بيتعامل مع الحالة دي كأنها نجاح عادي.
+      if (!_googleSignInInitialized) {
+        try {
+          // ====== على الويب: لازم نستخدم clientId مش serverClientId ======
+          // (google_sign_in_web بيرفض serverClientId خالص ويرمي assertion error)
+          // على الموبايل (أندرويد/آيفون): بنستخدم serverClientId عشان الـ ID
+          // Token اللي بيرجع يبقى الـ audience بتاعه هو الـ Web Client ID،
+          // وده اللي فايربيز محتاجاه عشان يتحقق من التوكن.
+          const webClientId =
+              '354477388400-ir73gp12hplk11kfkim9je588dp0gema.apps.googleusercontent.com';
+          if (kIsWeb) {
+            await GoogleSignIn.instance.initialize(clientId: webClientId);
+          } else {
+            await GoogleSignIn.instance.initialize(
+              serverClientId: webClientId,
+            );
+          }
+        } catch (e) {
+          final msg = e.toString();
+          if (!msg.contains('has already been called')) rethrow;
+        }
+        _googleSignInInitialized = true;
+      }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance
+          .authenticate();
+
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
@@ -35,6 +65,19 @@ class LoginScreen extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const PassengerHomeScreen()),
+        );
+      }
+    } on GoogleSignInException catch (e) {
+      // ====== المستخدم لغى العملية بنفسه، مش لازم نظهرله رسالة خطأ ======
+      if (e.code == GoogleSignInExceptionCode.canceled) return;
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.signInFailedError(e.toString()),
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } catch (e) {
@@ -152,7 +195,7 @@ class LoginScreen extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.appName,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: context.textColor,
               ),
@@ -165,13 +208,39 @@ class LoginScreen extends StatelessWidget {
             const Spacer(),
 
             // زر المتابعة باستخدام Google
-            _buildCustomButton(
-              text: AppLocalizations.of(context)!.continueWithGoogleButton,
-              icon: Icons.g_mobiledata,
-              color: Colors.white,
-              textColor: Colors.black,
-              onPressed: () => _signInWithGoogle(context),
-            ),
+            // ====== على الويب: لازم نعرض زرار جوجل الرسمي (renderButton)
+            // لأن authenticate() برمجيًا مش مدعوم على الويب أصلًا ======
+            if (kIsWeb)
+              GoogleSignInWebButton(
+                onSignedIn: (ctx) {
+                  Navigator.pushReplacement(
+                    ctx,
+                    MaterialPageRoute(
+                      builder: (context) => const PassengerHomeScreen(),
+                    ),
+                  );
+                },
+                onError: (ctx, e) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(ctx)!.signInFailedError(
+                          e.toString(),
+                        ),
+                      ),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                },
+              )
+            else
+              _buildCustomButton(
+                text: AppLocalizations.of(context)!.continueWithGoogleButton,
+                icon: Icons.g_mobiledata,
+                color: Colors.white,
+                textColor: Colors.black,
+                onPressed: () => _signInWithGoogle(context),
+              ),
             const SizedBox(height: 15),
 
             // زر المتابعة باستخدام Apple (يظهر بس على iOS، حسب متطلبات آبل)

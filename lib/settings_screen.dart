@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'main.dart';
-import 'passenger_home.dart';
 
 // ====== شاشة الإعدادات: اللغة، الإشعارات، ونبذة عن التطبيق ======
 class SettingsScreen extends StatefulWidget {
@@ -57,10 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(title, style: TextStyle(color: context.textColor)),
         content: SingleChildScrollView(
-          child: Text(
-            body,
-            style: TextStyle(color: context.textGreyColor),
-          ),
+          child: Text(body, style: TextStyle(color: context.textGreyColor)),
         ),
         actions: [
           TextButton(
@@ -335,7 +331,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SwitchListTile(
                       value: _pushEnabled,
                       onChanged: _togglePush,
-                      activeColor: TayarColors.primary,
+                      activeThumbColor: TayarColors.primary,
                       secondary: const Icon(
                         Icons.notifications_active_outlined,
                         color: TayarColors.primary,
