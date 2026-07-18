@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'passenger_home.dart';
+import 'passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'auth_flow_helpers.dart';
 
 // ====================================================
 // ====== شاشة إدخال رقم الموبايل ======
@@ -37,8 +38,13 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       phoneNumber: formattedPhone,
       timeout: const Duration(seconds: 60),
       verificationCompleted: (PhoneAuthCredential credential) async {
-        await FirebaseAuth.instance.signInWithCredential(credential);
-        _navigateToHome();
+        final userCredential = await FirebaseAuth.instance
+            .signInWithCredential(credential);
+        if (!mounted) return;
+        navigateAfterAuth(
+          context,
+          isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
+        );
       },
       verificationFailed: (FirebaseAuthException e) {
         setState(() => _isLoading = false);
@@ -67,13 +73,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
-  }
-
-  void _navigateToHome() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const PassengerHomeScreen()),
     );
   }
 
@@ -217,13 +216,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         verificationId: widget.verificationId,
         smsCode: otp,
       );
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
 
       if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
+      navigateAfterAuth(
         context,
-        MaterialPageRoute(builder: (context) => const PassengerHomeScreen()),
-        (route) => false,
+        isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
       );
     } on FirebaseAuthException catch (e) {
       setState(() => _isLoading = false);

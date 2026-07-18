@@ -10,7 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_web/web_only.dart' as web_gsi;
 
 class GoogleSignInWebButton extends StatefulWidget {
-  final void Function(BuildContext context) onSignedIn;
+  final void Function(BuildContext context, bool isNewUser) onSignedIn;
   final void Function(BuildContext context, Object error) onError;
 
   const GoogleSignInWebButton({
@@ -61,8 +61,14 @@ class _GoogleSignInWebButtonState extends State<GoogleSignInWebButton> {
           final credential = GoogleAuthProvider.credential(
             idToken: auth.idToken,
           );
-          await FirebaseAuth.instance.signInWithCredential(credential);
-          if (mounted) widget.onSignedIn(context);
+          final userCredential = await FirebaseAuth.instance
+              .signInWithCredential(credential);
+          if (mounted) {
+            widget.onSignedIn(
+              context,
+              userCredential.additionalUserInfo?.isNewUser ?? false,
+            );
+          }
         } catch (e) {
           if (mounted) widget.onError(context, e);
         }

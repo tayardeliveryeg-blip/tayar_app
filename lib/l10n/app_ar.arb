@@ -512,5 +512,14 @@
   },
   "chatErrorLoadingMessages": "خطأ في تحميل الرسائل",
   "chatNoMessagesYet": "ابدأ المحادثة",
-  "chatTypeMessageHint": "اكتب رسالة..."
+  "chatTypeMessageHint": "اكتب رسالة...",
+
+  "chooseAccountTypeTitle": "اختار نوع حسابك",
+  "chooseAccountTypeSubtitle": "تقدر تبدأ كراكب أو كطيار",
+  "passengerRoleTitle": "راكب",
+  "passengerRoleDescription": "اطلب رحلتك بسهولة وسرعة",
+  "driverRoleTitle": "طيار",
+  "driverRoleDescription": "اشتغل واكسب فلوس بموتوسيكلك",
+  "completeProfileTitle": "كمّل بياناتك",
+  "completeProfileSubtitle": "هنستخدم اسمك عشان الناس تتعرف عليك"
 }

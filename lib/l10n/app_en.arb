@@ -512,5 +512,14 @@
   },
   "chatErrorLoadingMessages": "Failed to load messages",
   "chatNoMessagesYet": "No messages yet, start the conversation",
-  "chatTypeMessageHint": "Type a message..."
+  "chatTypeMessageHint": "Type a message...",
+
+  "chooseAccountTypeTitle": "Choose your account type",
+  "chooseAccountTypeSubtitle": "You can start as a passenger or a driver",
+  "passengerRoleTitle": "Passenger",
+  "passengerRoleDescription": "Order your ride easily and quickly",
+  "driverRoleTitle": "Driver",
+  "driverRoleDescription": "Work and earn money with your motorcycle",
+  "completeProfileTitle": "Complete your profile",
+  "completeProfileSubtitle": "We'll use your name so people can recognize you"
 }

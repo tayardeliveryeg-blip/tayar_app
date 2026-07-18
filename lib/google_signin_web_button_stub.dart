@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 
 class GoogleSignInWebButton extends StatelessWidget {
-  final void Function(BuildContext context) onSignedIn;
+  final void Function(BuildContext context, bool isNewUser) onSignedIn;
   final void Function(BuildContext context, Object error) onError;
 
   const GoogleSignInWebButton({

@@ -10,11 +10,15 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:crypto/crypto.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'phone_auth_screen.dart';
-import 'passenger_home.dart';
-import 'register_screen.dart';
+import 'auth_flow_helpers.dart';
+import 'theme_extensions.dart';
 import 'google_signin_web_button_stub.dart'
     if (dart.library.js_interop) 'google_signin_web_button_web.dart';
 
+// ====================================================
+// ====== شاشة تسجيل الدخول: جوجل + الموبايل بس ======
+// (الشكل القديم، من غير إيميل/باسورد ومن غير إنشاء حساب منفصل) ======
+// ====================================================
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -25,73 +29,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   // ====== تسجيل الدخول بجوجل ======
   static bool _googleSignInInitialized = false;
-
-  // ====== حقول تسجيل الدخول بالإيميل وكلمة السر ======
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _isEmailLoading = false;
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  // ====== تسجيل الدخول بالإيميل وكلمة السر ======
-  Future<void> _signInWithEmail() async {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.requiredFieldError),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    setState(() => _isEmailLoading = true);
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      if (context.mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const PassengerHomeScreen()),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(
-              context,
-            )!.signInFailedError(e.message ?? e.code),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.signInFailedError(e.toString()),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => _isEmailLoading = false);
-    }
-  }
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
@@ -112,7 +49,9 @@ class _LoginScreenState extends State<LoginScreen> {
           if (kIsWeb) {
             await GoogleSignIn.instance.initialize(clientId: webClientId);
           } else {
-            await GoogleSignIn.instance.initialize(serverClientId: webClientId);
+            await GoogleSignIn.instance.initialize(
+              serverClientId: webClientId,
+            );
           }
         } catch (e) {
           final msg = e.toString();
@@ -130,12 +69,14 @@ class _LoginScreenState extends State<LoginScreen> {
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
 
       if (context.mounted) {
-        Navigator.pushReplacement(
+        navigateAfterAuth(
           context,
-          MaterialPageRoute(builder: (context) => const PassengerHomeScreen()),
+          isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
         );
       }
     } on GoogleSignInException catch (e) {
@@ -198,9 +139,9 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (context.mounted) {
-        Navigator.pushReplacement(
+        navigateAfterAuth(
           context,
-          MaterialPageRoute(builder: (context) => const PassengerHomeScreen()),
+          isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
         );
       }
     } on SignInWithAppleAuthorizationException catch (e) {
@@ -249,6 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // ====== آبل بيوجب إظهار زرارها لأي تطبيق فيه تسجيل دخول بجهة خارجية على iOS ======
+  // بتظهر بس على أجهزة آيفون، ومختفية تمامًا على أندرويد وعلى الويب ======
   bool get _showAppleButton => !kIsWeb && Platform.isIOS;
 
   @override
@@ -260,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 60),
               // لوجو التطبيق
               Image.asset('assets/icon/app_icon.png', width: 120, height: 120),
               const SizedBox(height: 20),
@@ -277,124 +219,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 AppLocalizations.of(context)!.chooseYourRideSubtitle,
                 style: TextStyle(color: context.textGreyColor),
               ),
-              const SizedBox(height: 40),
-
-              // ====== حقل الإيميل ======
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                style: TextStyle(color: context.textColor),
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.emailLabel,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // ====== حقل كلمة السر ======
-              TextField(
-                controller: _passwordController,
-                obscureText: _obscurePassword,
-                style: TextStyle(color: context.textColor),
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.passwordLabel,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () =>
-                        setState(() => _obscurePassword = !_obscurePassword),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // ====== زرار تسجيل الدخول بالإيميل ======
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[800],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: _isEmailLoading ? null : _signInWithEmail,
-                  child: _isEmailLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Text(
-                          AppLocalizations.of(context)!.loginButton,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // ====== رابط إنشاء حساب جديد ======
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterScreen(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.dontHaveAccountLink,
-                    style: TextStyle(color: context.textGreyColor),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // ====== خط فاصل "أو" ======
-              Row(
-                children: [
-                  Expanded(child: Divider(color: context.textGreyColor)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      AppLocalizations.of(context)!.orContinueWithLabel,
-                      style: TextStyle(color: context.textGreyColor),
-                    ),
-                  ),
-                  Expanded(child: Divider(color: context.textGreyColor)),
-                ],
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 60),
 
               // زر المتابعة باستخدام Google
               // ====== على الويب: لازم نعرض زرار جوجل الرسمي (renderButton)
               // لأن authenticate() برمجيًا مش مدعوم على الويب أصلًا ======
               if (kIsWeb)
                 GoogleSignInWebButton(
-                  onSignedIn: (ctx) {
-                    Navigator.pushReplacement(
-                      ctx,
-                      MaterialPageRoute(
-                        builder: (context) => const PassengerHomeScreen(),
-                      ),
-                    );
+                  onSignedIn: (ctx, isNewUser) {
+                    navigateAfterAuth(ctx, isNewUser: isNewUser);
                   },
                   onError: (ctx, e) {
                     ScaffoldMessenger.of(ctx).showSnackBar(
