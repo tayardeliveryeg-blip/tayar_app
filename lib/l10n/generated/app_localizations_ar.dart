@@ -12,6 +12,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'طيار - وصلك في لحظة';
 
   @override
+  String get splashTagline => 'وصلك في لحظة';
+
+  @override
   String get clientOrderPriority =>
       'طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية';
 
