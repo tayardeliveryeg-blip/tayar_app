@@ -275,8 +275,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       Position position;
       try {
         position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium,
-          timeLimit: const Duration(seconds: 8),
+          locationSettings: LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: const Duration(seconds: 8),
+          ),
         );
       } on TimeoutException {
         debugPrint(
