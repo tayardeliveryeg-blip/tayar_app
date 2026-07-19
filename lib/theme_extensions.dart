@@ -66,6 +66,12 @@ extension TayarThemeColors on BuildContext {
   // أبيض في الوضع الغامق / أسود في الوضع الفاتح. لا يُستخدم فوق التدرّجات
   // البرتقالية الشفافة (withValues alpha) لأن المحتوى هناك بيفضل برتقالي ======
   Color get onPrimaryColor => isDarkMode ? Colors.white : Colors.black;
+
+  // ====== لون خط السحب (Drag Handle) فوق الـ Bottom Sheets. كان مكتوب
+  // Colors.grey.shade700 يدويًا في أكتر من شاشة، وده كان بيبان غريب في
+  // الوضع الفاتح لأنه لون غامق ثابت. دلوقتي بيتغيّر حسب الوضع الحالي ======
+  Color get handleColor =>
+      isDarkMode ? Colors.grey.shade700 : Colors.grey.shade400;
 }
 
 // ====== قيم الاستدارة الموحّدة (Border Radius Scale) ======
@@ -80,6 +86,11 @@ class AppRadius {
   static const double xl = 16; // الكروت الرئيسية (متطابقة مع cardTheme)
   static const double xxl = 20; // كروت/حاويات بارزة (زي كارت طلب جديد)
   static const double pill = 30; // شارات/أزرار بيضاوية الشكل بالكامل
+
+  // القيمة دي مش جزء من الـ scale العام، هي نص ارتفاع خط السحب (Drag Handle)
+  // اللي حجمه 40×4 فوق الـ Bottom Sheets، عشان شكله يبقى pill كامل من طرفيه.
+  // موجودة هنا بس للتوثيق ومنع تكرار الرقم 2 يدويًا في كل شاشة.
+  static const double handle = 2;
 }
 
 // ====== قيم المسافات الموحّدة (Spacing Scale) ======
