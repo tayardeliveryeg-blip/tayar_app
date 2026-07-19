@@ -821,7 +821,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                           color: context.textGreyColor,
                           size: 40,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AppSpacing.md),
                         Text(
                           AppLocalizations.of(context)!.driverOfflineHint,
                           textAlign: TextAlign.center,
@@ -866,7 +866,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     return ListView.separated(
                       padding: const EdgeInsets.all(AppSpacing.lg),
                       itemCount: orders.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 12),
+                      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
                       itemBuilder: (context, index) {
                         final order = orders[index];
                         final data = order.data();
@@ -1028,7 +1028,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                                 )
                               : null,
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AppSpacing.md),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1043,7 +1043,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: AppSpacing.xs),
                               Text(
                                 _isOnline
                                     ? AppLocalizations.of(
@@ -1223,7 +1223,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
             // ====== أيقونات السوشيال ميديا ======
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1232,13 +1232,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.facebook),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.xl),
                   _DriverSocialIcon(
                     icon: Icons.camera_alt_outlined, // إنستجرام
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.instagram),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.xl),
                   _DriverSocialIcon(
                     icon: Icons.chat_bubble_outline, // واتساب
                     onTap: () =>
@@ -1304,7 +1304,7 @@ class _OrderRequestCard extends StatelessWidget {
                   color: TayarColors.primary,
                   size: 16,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
                     pickupAddress,
@@ -1333,7 +1333,7 @@ class _OrderRequestCard extends StatelessWidget {
             Row(
               children: [
                 const Icon(Icons.flag, color: TayarColors.primary, size: 16),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
                     destinationAddress,
@@ -1344,7 +1344,7 @@ class _OrderRequestCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -1386,7 +1386,7 @@ class _OrderRequestCard extends StatelessWidget {
                             color: context.textGreyColor,
                             size: 12,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
                             paymentMethodDisplay(context, paymentMethod),
                             style: TextStyle(
@@ -1401,7 +1401,7 @@ class _OrderRequestCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             if (alreadyOffered)
               Center(
                 child: Padding(
@@ -1498,10 +1498,10 @@ class _OfferSheetState extends State<_OfferSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        left: AppSpacing.xl,
+        right: AppSpacing.xl,
+        top: AppSpacing.xl,
+        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1510,29 +1510,29 @@ class _OfferSheetState extends State<_OfferSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade700,
-              borderRadius: BorderRadius.circular(2),
+              color: context.handleColor,
+              borderRadius: BorderRadius.circular(AppRadius.handle),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           Text(
             '${widget.pickupAddress} ← ${widget.destinationAddress}',
             style: TextStyle(color: context.textColor, fontSize: 14),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             AppLocalizations.of(
               context,
             )!.distanceKmLabel(widget.distanceKm.toStringAsFixed(1)),
             style: TextStyle(color: context.textGreyColor, fontSize: 12),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.xl),
           Text(
             AppLocalizations.of(context)!.setYourPriceLabel,
             style: TextStyle(color: context.textColor, fontSize: 14),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -1558,7 +1558,7 @@ class _OfferSheetState extends State<_OfferSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.xl),
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -1639,7 +1639,7 @@ class _ActiveTripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      margin: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
       decoration: BoxDecoration(
         color: TayarColors.primary.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -1653,7 +1653,7 @@ class _ActiveTripCard extends StatelessWidget {
           InkWell(
             onTap: onOpenTracking,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -1682,12 +1682,12 @@ class _ActiveTripCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Text(
                     '$pickupAddress ← $destinationAddress',
                     style: TextStyle(color: context.textColor, fontSize: 14),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   Row(
                     children: [
                       Text(
@@ -1700,13 +1700,13 @@ class _ActiveTripCard extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.sm),
                       Icon(
                         Icons.payments_outlined,
                         color: context.textColor.withValues(alpha: 0.7),
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.xs),
                       Text(
                         paymentMethodDisplay(context, paymentMethod),
                         style: TextStyle(
@@ -1721,7 +1721,7 @@ class _ActiveTripCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -1772,7 +1772,7 @@ class _ActiveTripCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
 
                 SizedBox(
                   width: double.infinity,
@@ -1962,13 +1962,13 @@ class _DriverIncomeTab extends StatelessWidget {
               value: todayTotal,
               icon: Icons.today,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             _IncomeSummaryCard(
               title: AppLocalizations.of(context)!.totalIncome,
               value: total,
               icon: Icons.payments,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             _IncomeSummaryCard(
               title: AppLocalizations.of(context)!.completedTripsCount,
               value: docs.length.toDouble(),
@@ -2070,7 +2070,7 @@ class _DriverRatingTabState extends State<_DriverRatingTab> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(avg.toStringAsFixed(2), style: TayarStatTextStyles.statHuge),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: List.generate(5, (i) {
@@ -2082,7 +2082,7 @@ class _DriverRatingTabState extends State<_DriverRatingTab> {
                   );
                 }),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 AppLocalizations.of(context)!.ratingCountLabel(count),
                 style: TextStyle(color: context.textGreyColor, fontSize: 14),
@@ -2139,7 +2139,7 @@ class _DriverWalletTab extends StatelessWidget {
                       fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Text(
                     loc.currencyEGP(balance.toStringAsFixed(0)),
                     style: TayarStatTextStyles.statMedium.copyWith(
@@ -2160,7 +2160,7 @@ class _DriverWalletTab extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
 
             // ====== زرار شحن المحفظة ======
             SizedBox(
@@ -2193,7 +2193,7 @@ class _DriverWalletTab extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xxl),
 
             // ====== سجل المعاملات ======
             Text(
@@ -2204,7 +2204,7 @@ class _DriverWalletTab extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: FirebaseFirestore.instance
                   .collection('drivers')
@@ -2217,7 +2217,7 @@ class _DriverWalletTab extends StatelessWidget {
                 if (!txnSnapshot.hasData) {
                   return const Center(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
                       child: CircularProgressIndicator(
                         color: TayarColors.primary,
                       ),
@@ -2227,7 +2227,7 @@ class _DriverWalletTab extends StatelessWidget {
                 final docs = txnSnapshot.data!.docs;
                 if (docs.isEmpty) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
                     child: Center(
                       child: Text(
                         loc.noWalletTransactionsLabel,
@@ -2546,7 +2546,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               color: TayarColors.primary,
                               size: 16,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: Text(
                                 widget.pickupAddress,
@@ -2572,7 +2572,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               color: TayarColors.primary,
                               size: 16,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: Text(
                                 widget.destinationAddress,
@@ -2612,7 +2612,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.lg),
 
                   // ====== واجهة المزايدة (زيادة/نقصان السعر) ======
                   if (!widget.alreadyOffered) ...[
@@ -2643,7 +2643,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.lg),
                     Row(
                       children: [
                         Expanded(
