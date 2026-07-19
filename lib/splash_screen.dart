@@ -113,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen>
             isArabic
                 ? 'assets/splash/tagline_ar.png'
                 : 'assets/splash/tagline_en.png',
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
         ),
       );
