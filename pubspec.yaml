@@ -128,14 +128,11 @@ flutter_icons:
 flutter_native_splash:
   color: "#FF6B00"
   color_dark: "#FF6B00"
-  image: assets/splash/moto_icon.png
-  android_gravity: bottom
-  ios_content_mode: bottom
-  web_image_mode: bottom
+  image: assets/splash/blank_icon.png
   android_12:
     color: "#FF6B00"
     color_dark: "#FF6B00"
-    image: assets/splash/moto_icon.png
+    image: assets/splash/blank_icon.png
     icon_background_color: "#FF6B00"
     icon_background_color_dark: "#FF6B00"
   fullscreen: true
