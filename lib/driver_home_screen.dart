@@ -648,7 +648,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           onTap: _isTogglingOnline ? null : _toggleOnline,
           child: Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: 14,
+              horizontal: AppSpacing.lg,
               vertical: AppSpacing.sm,
             ),
             decoration: BoxDecoration(
@@ -678,7 +678,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     size: 10,
                     color: _isOnline ? TayarColors.primary : Colors.grey,
                   ),
-                const SizedBox(width: 6),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   _isOnline
                       ? AppLocalizations.of(context)!.driverToggleOnline
@@ -1316,10 +1316,10 @@ class _OrderRequestCard extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 2),
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xxs),
               child: Row(
                 children: [
-                  SizedBox(width: 7),
+                  SizedBox(width: AppSpacing.sm),
                   SizedBox(
                     height: 14,
                     child: VerticalDivider(
@@ -1368,11 +1368,11 @@ class _OrderRequestCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xxs,
                       ),
                       decoration: BoxDecoration(
                         color: context.textColor.withValues(alpha: 0.08),
@@ -1436,7 +1436,7 @@ class _OrderRequestCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: onQuickAccept,
@@ -1747,7 +1747,7 @@ class _ActiveTripCard extends StatelessWidget {
                         },
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: _DriverContactButton(
                         icon: Icons.call_outlined,
@@ -1822,7 +1822,7 @@ class _DriverContactButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         decoration: BoxDecoration(
           color: TayarColors.primary.withValues(alpha: 0.18),
           borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -1832,7 +1832,7 @@ class _DriverContactButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: TayarColors.primary, size: 18),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.sm),
             Text(
               label,
               style: const TextStyle(
@@ -2147,7 +2147,7 @@ class _DriverWalletTab extends StatelessWidget {
                     ),
                   ),
                   if (isNegative) ...[
-                    const SizedBox(height: 10),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
                       loc.negativeWalletBalanceNote,
                       textAlign: TextAlign.center,
@@ -2337,7 +2337,7 @@ class _IncomeSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         color: context.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -2345,7 +2345,7 @@ class _IncomeSummaryCard extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: TayarColors.primary, size: 28),
-          const SizedBox(width: 14),
+          const SizedBox(width: AppSpacing.lg),
           Expanded(
             child: Text(
               title,
@@ -2531,7 +2531,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(AppSpacing.lg),
                     decoration: BoxDecoration(
                       color: context.cardColor,
                       borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -2556,7 +2556,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 6),
+                          padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
                           child: SizedBox(
                             height: 14,
                             child: VerticalDivider(
@@ -2581,7 +2581,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: AppSpacing.md),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -2653,7 +2653,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               Navigator.pop(context);
                             },
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                               side: const BorderSide(
                                 color: TayarColors.primary,
                               ),
@@ -2671,7 +2671,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: AppSpacing.md),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
@@ -2680,7 +2680,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: TayarColors.primary,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                   AppRadius.sm,
