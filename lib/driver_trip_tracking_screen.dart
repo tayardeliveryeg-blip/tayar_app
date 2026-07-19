@@ -697,7 +697,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                                   calleeName: _customerName,
                                 );
                               } catch (e) {
-                                if (mounted) {
+                                if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('تعذر بدء المكالمة: $e'),
