@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Tayar - Instantly There';
 
   @override
+  String get splashTagline => 'Instantly There';
+
+  @override
   String get clientOrderPriority =>
       'Sent to nearby drivers; best price gets priority';
 
