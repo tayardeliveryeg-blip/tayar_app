@@ -4,13 +4,12 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'main.dart' show AuthGate;
 import 'passenger_home.dart' show TayarColors;
 
-/// ====== شاشة السبلاش: مرحلتين ======
-/// المرحلة 1: خلفية برتقالية كاملة الشاشة + نص "وصلك في لحظة" بالأبيض،
-/// بيتحدد تلقائيًا عربي أو إنجليزي حسب لغة التطبيق الحالية.
-/// المرحلة 2: نفس هوية اللوجو (خلفية برتقالية + شعار موتوسيكل أبيض)
-/// بيدخل من برا الشاشة بحركة فيها ارتداد بسيط (overshoot) مع صوت
-/// "زن" قصير مصاحب للحركة عشان يدي إحساس احترافي، وبعدين اسم TAYAR
-/// بيفضح تحته.
+/// ====== شاشة السبلاش ======
+/// خلفية برتقالية كاملة الشاشة طول الوقت، وعليها نص "وصلك في لحظة"
+/// بالأبيض بيتحدد تلقائيًا عربي أو إنجليزي حسب لغة التطبيق الحالية.
+/// النص بيدخل بحركة فيد + سكيل بسيطة مصحوبة بصوت قصير، يفضل ظاهر
+/// لحظة، وبعدين بيروح على شاشة تسجيل الدخول / الهوم.
+/// ملحوظة: مفيش شعار موتوسيكل ولا اسم TAYAR في الشاشة دي عمدًا.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -19,83 +18,56 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
-  // ====== المرحلة 1: شاشة التاجلاين البرتقالية ======
-  late final AnimationController _taglineController;
-  late final Animation<double> _taglineOpacity;
-
-  // ====== المرحلة 2: أنيميشن دخول الشعار ======
-  late final AnimationController _logoController;
-  late final Animation<double> _motoProgress;
-  late final Animation<double> _motoOpacity;
-  late final Animation<double> _titleOpacity;
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+  late final Animation<double> _scale;
 
   final AudioPlayer _sfxPlayer = AudioPlayer();
-  bool _showLogoStage = false;
 
   @override
   void initState() {
     super.initState();
 
-    // ---- المرحلة 1: التاجلاين (فيد إن -> ثبات -> فيد آوت) ----
-    _taglineController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1100),
+      duration: const Duration(milliseconds: 1900),
     );
-    _taglineOpacity = TweenSequence<double>([
+
+    // ====== فيد إن سريع -> ثبات -> فيد آوت خفيف قبل الانتقال ======
+    _opacity = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(
           begin: 0.0,
           end: 1.0,
         ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 25,
+        weight: 20,
       ),
-      TweenSequenceItem(tween: ConstantTween(1.0), weight: 45),
+      TweenSequenceItem(tween: ConstantTween(1.0), weight: 60),
       TweenSequenceItem(
         tween: Tween(
           begin: 1.0,
           end: 0.0,
         ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 30,
+        weight: 20,
       ),
-    ]).animate(_taglineController);
+    ]).animate(_controller);
 
-    // ---- المرحلة 2: دخول شعار الموتوسيكل ----
-    _logoController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1300),
-    );
-    _motoProgress = Tween<double>(begin: 1.0, end: 0.0).animate(
+    _scale = Tween<double>(begin: 0.9, end: 1.0).animate(
       CurvedAnimation(
-        parent: _logoController,
-        curve: const Interval(0.0, 0.7, curve: Curves.easeOutBack),
+        parent: _controller,
+        curve: const Interval(0.0, 0.2, curve: Curves.easeOutBack),
       ),
-    );
-    _motoOpacity = CurvedAnimation(
-      parent: _logoController,
-      curve: const Interval(0.0, 0.25, curve: Curves.easeIn),
-    );
-    _titleOpacity = CurvedAnimation(
-      parent: _logoController,
-      curve: const Interval(0.65, 1.0, curve: Curves.easeIn),
     );
 
     _runSequence();
   }
 
   Future<void> _runSequence() async {
-    // ====== المرحلة 1: التاجلاين البرتقالي ======
-    await _taglineController.forward();
-    if (!mounted) return;
-
-    setState(() => _showLogoStage = true);
-
-    // ====== المرحلة 2: دخول الشعار + الصوت المصاحب ======
+    // ====== صوت قصير مصاحب للحظة ظهور النص ======
     _sfxPlayer.play(AssetSource('sounds/splash_moto.wav'), volume: 0.6);
-    await _logoController.forward();
-    if (!mounted) return;
 
-    await Future.delayed(const Duration(milliseconds: 400));
+    await _controller.forward();
     if (!mounted) return;
 
     Navigator.of(context).pushReplacement(
@@ -110,93 +82,42 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _taglineController.dispose();
-    _logoController.dispose();
+    _controller.dispose();
     _sfxPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    const motoWidth = 150.0;
-    final travelDistance = (screenWidth / 2) + motoWidth;
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      // ====== الخلفية برتقالي طول الوقت، من أول لحظة فتح للسبلاش ======
+      // ====== الخلفية برتقالي طول الوقت ======
       backgroundColor: TayarColors.primary,
       body: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // ====== المرحلة 1: نص "وصلك في لحظة" ======
-            AnimatedBuilder(
-              animation: _taglineController,
-              builder: (context, child) {
-                if (_taglineOpacity.value <= 0) return const SizedBox.shrink();
-                return Opacity(
-                  opacity: _taglineOpacity.value,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 36),
-                    child: Text(
-                      l10n.splashTagline,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Arial',
-                      ),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _opacity.value,
+              child: Transform.scale(
+                scale: _scale.value,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 36),
+                  child: Text(
+                    l10n.splashTagline,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Arial',
                     ),
                   ),
-                );
-              },
-            ),
-
-            // ====== المرحلة 2: شعار الموتوسيكل + اسم TAYAR ======
-            if (_showLogoStage)
-              AnimatedBuilder(
-                animation: _logoController,
-                builder: (context, child) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ClipRect(
-                        child: Transform.translate(
-                          offset: Offset(
-                            -(_motoProgress.value * travelDistance),
-                            0,
-                          ),
-                          child: Opacity(
-                            opacity: _motoOpacity.value,
-                            child: Image.asset(
-                              'assets/splash/moto_icon.png',
-                              width: motoWidth,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      Opacity(
-                        opacity: _titleOpacity.value,
-                        child: const Text(
-                          'TAYAR',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Arial',
-                            letterSpacing: 4,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                ),
               ),
-          ],
+            );
+          },
         ),
       ),
     );
