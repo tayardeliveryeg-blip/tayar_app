@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'طيار - وصلك في لحظة'**
   String get appName;
 
+  /// No description provided for @splashTagline.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلك في لحظة'**
+  String get splashTagline;
+
   /// No description provided for @clientOrderPriority.
   ///
   /// In ar, this message translates to:
