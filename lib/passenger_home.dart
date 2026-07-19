@@ -782,8 +782,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       opacity: _isDraggingMap ? 0 : 1,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
+                          horizontal: AppSpacing.lg,
+                          vertical: AppSpacing.md,
                         ),
                         decoration: BoxDecoration(
                           color: context.cardColor,
@@ -888,7 +888,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                                 ? TayarColors.primary
                                 : context.textGreyColor,
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: AppSpacing.md),
                           Expanded(
                             child: Text(
                               _destinationAddress ??
@@ -1175,7 +1175,7 @@ class _TripSummaryCard extends StatelessWidget {
           GestureDetector(
             onTap: onTapPaymentMethod,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
               decoration: BoxDecoration(
                 color: context.bgColor,
                 borderRadius: BorderRadius.circular(AppRadius.md),
@@ -1183,7 +1183,7 @@ class _TripSummaryCard extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(_paymentIcon, color: TayarColors.primary, size: 20),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.md),
                   Text(
                     AppLocalizations.of(context)!.paymentMethodLabel,
                     style: TextStyle(
@@ -1218,7 +1218,7 @@ class _TripSummaryCard extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: onCancel,
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     side: BorderSide(color: context.textGreyColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
@@ -1237,7 +1237,7 @@ class _TripSummaryCard extends StatelessWidget {
                   onPressed: onConfirm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
