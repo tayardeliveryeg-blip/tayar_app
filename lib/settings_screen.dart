@@ -112,44 +112,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              RadioListTile<Locale?>(
-                value: null,
+              RadioGroup<Locale?>(
                 groupValue: manualLocale,
-                activeColor: TayarColors.primary,
-                title: Text(
-                  AppLocalizations.of(context)!.useDeviceLanguageLabel,
-                  style: TextStyle(color: context.textColor),
-                ),
                 onChanged: (value) {
                   TayarApp.setLocale(context, value);
                   Navigator.pop(sheetContext);
                 },
-              ),
-              RadioListTile<Locale?>(
-                value: const Locale('ar'),
-                groupValue: manualLocale,
-                activeColor: TayarColors.primary,
-                title: Text(
-                  'العربية',
-                  style: TextStyle(color: context.textColor),
+                child: Column(
+                  children: [
+                    RadioListTile<Locale?>(
+                      value: null,
+                      activeColor: TayarColors.primary,
+                      title: Text(
+                        AppLocalizations.of(context)!.useDeviceLanguageLabel,
+                        style: TextStyle(color: context.textColor),
+                      ),
+                    ),
+                    RadioListTile<Locale?>(
+                      value: const Locale('ar'),
+                      activeColor: TayarColors.primary,
+                      title: Text(
+                        'العربية',
+                        style: TextStyle(color: context.textColor),
+                      ),
+                    ),
+                    RadioListTile<Locale?>(
+                      value: const Locale('en'),
+                      activeColor: TayarColors.primary,
+                      title: Text(
+                        'English',
+                        style: TextStyle(color: context.textColor),
+                      ),
+                    ),
+                  ],
                 ),
-                onChanged: (value) {
-                  TayarApp.setLocale(context, value);
-                  Navigator.pop(sheetContext);
-                },
-              ),
-              RadioListTile<Locale?>(
-                value: const Locale('en'),
-                groupValue: manualLocale,
-                activeColor: TayarColors.primary,
-                title: Text(
-                  'English',
-                  style: TextStyle(color: context.textColor),
-                ),
-                onChanged: (value) {
-                  TayarApp.setLocale(context, value);
-                  Navigator.pop(sheetContext);
-                },
               ),
               const SizedBox(height: 8),
             ],
@@ -199,44 +195,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.dark,
+              RadioGroup<ThemeMode>(
                 groupValue: currentMode,
-                activeColor: TayarColors.primary,
-                title: Text(
-                  AppLocalizations.of(context)!.darkModeLabel,
-                  style: TextStyle(color: context.textColor),
-                ),
                 onChanged: (value) {
                   TayarApp.setThemeMode(context, value!);
                   Navigator.pop(sheetContext);
                 },
-              ),
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.light,
-                groupValue: currentMode,
-                activeColor: TayarColors.primary,
-                title: Text(
-                  AppLocalizations.of(context)!.lightModeLabel,
-                  style: TextStyle(color: context.textColor),
+                child: Column(
+                  children: [
+                    RadioListTile<ThemeMode>(
+                      value: ThemeMode.dark,
+                      activeColor: TayarColors.primary,
+                      title: Text(
+                        AppLocalizations.of(context)!.darkModeLabel,
+                        style: TextStyle(color: context.textColor),
+                      ),
+                    ),
+                    RadioListTile<ThemeMode>(
+                      value: ThemeMode.light,
+                      activeColor: TayarColors.primary,
+                      title: Text(
+                        AppLocalizations.of(context)!.lightModeLabel,
+                        style: TextStyle(color: context.textColor),
+                      ),
+                    ),
+                    RadioListTile<ThemeMode>(
+                      value: ThemeMode.system,
+                      activeColor: TayarColors.primary,
+                      title: Text(
+                        AppLocalizations.of(context)!.useDeviceThemeLabel,
+                        style: TextStyle(color: context.textColor),
+                      ),
+                    ),
+                  ],
                 ),
-                onChanged: (value) {
-                  TayarApp.setThemeMode(context, value!);
-                  Navigator.pop(sheetContext);
-                },
-              ),
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.system,
-                groupValue: currentMode,
-                activeColor: TayarColors.primary,
-                title: Text(
-                  AppLocalizations.of(context)!.useDeviceThemeLabel,
-                  style: TextStyle(color: context.textColor),
-                ),
-                onChanged: (value) {
-                  TayarApp.setThemeMode(context, value!);
-                  Navigator.pop(sheetContext);
-                },
               ),
               const SizedBox(height: 8),
             ],
