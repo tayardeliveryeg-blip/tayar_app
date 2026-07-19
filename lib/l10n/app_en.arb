@@ -1,5 +1,6 @@
 {
   "appName": "Tayar - Instantly There",
+  "splashTagline": "Instantly There",
   "clientOrderPriority": "Sent to nearby drivers; best price gets priority",
   "driverNoOrders": "No orders available",
   "driverOfflineHint": "You're offline. Tap \"Online\" to see orders",
