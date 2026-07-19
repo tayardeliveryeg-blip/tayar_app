@@ -198,98 +198,132 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: context.bgColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 60),
-              // لوجو التطبيق
-              Image.asset('assets/icon/app_icon.png', width: 120, height: 120),
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.of(context)!.appName,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: context.textColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                AppLocalizations.of(context)!.chooseYourRideSubtitle,
-                style: TextStyle(color: context.textGreyColor),
-              ),
-              const SizedBox(height: 60),
-
-              // زر المتابعة باستخدام Google
-              // ====== على الويب: لازم نعرض زرار جوجل الرسمي (renderButton)
-              // لأن authenticate() برمجيًا مش مدعوم على الويب أصلًا ======
-              if (kIsWeb)
-                GoogleSignInWebButton(
-                  onSignedIn: (ctx, isNewUser) {
-                    navigateAfterAuth(ctx, isNewUser: isNewUser);
-                  },
-                  onError: (ctx, e) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(
-                            ctx,
-                          )!.signInFailedError(e.toString()),
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  },
-                )
-              else
-                _buildCustomButton(
-                  text: AppLocalizations.of(context)!.continueWithGoogleButton,
-                  icon: Icons.g_mobiledata,
-                  color: Colors.white,
-                  textColor: Colors.black,
-                  onPressed: () => _signInWithGoogle(context),
-                ),
-              const SizedBox(height: 15),
-
-              // زر المتابعة باستخدام Apple (يظهر بس على iOS، حسب متطلبات آبل)
-              if (_showAppleButton) ...[
-                _buildCustomButton(
-                  text: AppLocalizations.of(context)!.continueWithAppleButton,
-                  icon: Icons.apple,
-                  color: Colors.black,
-                  textColor: Colors.white,
-                  onPressed: () => _signInWithApple(context),
-                ),
-                const SizedBox(height: 15),
-              ],
-
-              // زر المتابعة عبر الهاتف
-              _buildCustomButton(
-                text: AppLocalizations.of(context)!.continueWithPhoneButton,
-                icon: Icons.phone,
-                color: Colors.grey[800]!,
-                textColor: Colors.white,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PhoneAuthScreen(),
+        child: Column(
+          children: [
+            // ====== الجزء العلوي: اللوجو + الاسم + الوصف ======
+            // بياخد المساحة المتاحة كلها، ولو المحتوى طويل بيبقى قابل للسكرول،
+            // من غير ما يأثر على مكان الأزرار تحت.
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 40),
+                    Image.asset(
+                      'assets/icon/app_icon.png',
+                      width: 120,
+                      height: 120,
                     ),
-                  );
-                },
+                    const SizedBox(height: 20),
+                    Text(
+                      AppLocalizations.of(context)!.appName,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: context.textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      AppLocalizations.of(context)!.chooseYourRideSubtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: context.textGreyColor),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
-              const SizedBox(height: 30),
+            ),
 
-              // النصوص القانونية في الأسفل
-              Text(
-                AppLocalizations.of(context)!.loginTermsAgreementNotice,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: context.textGreyColor),
+            // ====== الجزء السفلي: أزرار تسجيل الدخول + النص القانوني ======
+            // ثابت دايمًا في أسفل الشاشة (مش بيسكرول مع المحتوى فوق)
+            // في كل الحالات: أندرويد، آيفون، أو الويب.
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 16.0,
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // زر المتابعة باستخدام Google
+                  // ====== على الويب: لازم نعرض زرار جوجل الرسمي (renderButton)
+                  // لأن authenticate() برمجيًا مش مدعوم على الويب أصلًا ======
+                  if (kIsWeb)
+                    GoogleSignInWebButton(
+                      onSignedIn: (ctx, isNewUser) {
+                        navigateAfterAuth(ctx, isNewUser: isNewUser);
+                      },
+                      onError: (ctx, e) {
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(
+                                ctx,
+                              )!.signInFailedError(e.toString()),
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      },
+                    )
+                  else
+                    _buildCustomButton(
+                      text: AppLocalizations.of(
+                        context,
+                      )!.continueWithGoogleButton,
+                      icon: Icons.g_mobiledata,
+                      color: Colors.white,
+                      textColor: Colors.black,
+                      onPressed: () => _signInWithGoogle(context),
+                    ),
+                  const SizedBox(height: 15),
+
+                  // زر المتابعة باستخدام Apple (يظهر بس على iOS، حسب متطلبات آبل)
+                  if (_showAppleButton) ...[
+                    _buildCustomButton(
+                      text: AppLocalizations.of(
+                        context,
+                      )!.continueWithAppleButton,
+                      icon: Icons.apple,
+                      color: Colors.black,
+                      textColor: Colors.white,
+                      onPressed: () => _signInWithApple(context),
+                    ),
+                    const SizedBox(height: 15),
+                  ],
+
+                  // زر المتابعة عبر الهاتف
+                  _buildCustomButton(
+                    text: AppLocalizations.of(
+                      context,
+                    )!.continueWithPhoneButton,
+                    icon: Icons.phone,
+                    color: Colors.grey[800]!,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PhoneAuthScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // النصوص القانونية في الأسفل
+                  Text(
+                    AppLocalizations.of(context)!.loginTermsAgreementNotice,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: context.textGreyColor),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
