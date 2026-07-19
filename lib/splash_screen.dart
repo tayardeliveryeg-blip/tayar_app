@@ -142,6 +142,7 @@ class _SplashScreenState extends State<SplashScreen>
                       height: boxSize,
                       decoration: BoxDecoration(
                         color: TayarColors.primary,
+                        // قيمة خاصة بصندوق اللوجو في splash فقط، مش من AppRadius scale العام
                         borderRadius: BorderRadius.circular(34),
                         boxShadow: [
                           BoxShadow(
