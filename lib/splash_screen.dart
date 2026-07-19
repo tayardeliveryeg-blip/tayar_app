@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'main.dart' show AuthGate;
 import 'passenger_home.dart' show TayarColors;
 
 /// ====== شاشة السبلاش: مرحلتين ======
-/// المرحلة 1: خلفية برتقالية كاملة الشاشة + نص "وصلك في لحظة" بالأبيض
-/// بيتحدد تلقائيًا عربي أو إنجليزي حسب لغة التطبيق الحالية.
-/// المرحلة 2: شعار الموتوسيكل الأبيض بيدخل متحركًا من الشمال لليمين
-/// (مش واقف ثابت) لحد ما يستقر في النص، مصحوبًا بصوت محرك موتوسيكل
-/// حقيقي بيتزامن مع الحركة، وبعدين اسم TAYAR بيفضح تحته.
+/// المرحلة 1: نفس تصميم "وصلك في لحظة" (صورة جاهزة بالكامل) - بتتحدد
+/// تلقائيًا عربي أو إنجليزي حسب لغة التطبيق الحالية.
+/// المرحلة 2: نفس أنيميشن المربع البرتقالي الأصلي - شعار الموتوسيكل
+/// بيدخل من برا الشاشة (الشمال) لجوه المربع بحركة فيها ارتداد بسيط،
+/// مصحوبة بصوت محرك موتوسيكل، وبعدين اسم TAYAR بيفضح تحت المربع.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -18,13 +17,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
-  // ====== المرحلة 1: شاشة التاجلاين البرتقالية ======
-  late final AnimationController _taglineController;
-  late final Animation<double> _taglineOpacity;
+    with SingleTickerProviderStateMixin {
+  // ====== مدة ظهور شاشة "وصلك في لحظة" قبل ما تنتقل للأنيميشن ======
+  static const _taglineDuration = Duration(milliseconds: 1600);
 
-  // ====== المرحلة 2: دخول شعار الموتوسيكل ======
-  late final AnimationController _logoController;
+  // ====== المرحلة 2: نفس أنيميشن المربع البرتقالي الأصلي بالظبط ======
+  late final AnimationController _controller;
+  late final Animation<double> _boxScale;
+  late final Animation<double> _boxOpacity;
   late final Animation<double> _motoProgress;
   late final Animation<double> _motoOpacity;
   late final Animation<double> _titleOpacity;
@@ -36,67 +36,52 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // ---- المرحلة 1: التاجلاين (فيد إن -> ثبات -> فيد آوت) ----
-    _taglineController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1500),
     );
-    _taglineOpacity = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(
-          begin: 0.0,
-          end: 1.0,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 25,
-      ),
-      TweenSequenceItem(tween: ConstantTween(1.0), weight: 45),
-      TweenSequenceItem(
-        tween: Tween(
-          begin: 1.0,
-          end: 0.0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 30,
-      ),
-    ]).animate(_taglineController);
 
-    // ---- المرحلة 2: دخول شعار الموتوسيكل (من الشمال لليمين) ----
-    _logoController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1300),
+    _boxOpacity = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.25, curve: Curves.easeOut),
     );
-    // ====== يبدأ من برا الشاشة شمال (progress=1) ويوصل لنص الشاشة (progress=0) ======
-    // الحركة بتترجم فعليًا لدخول من الشمال متجه لليمين (Translate بالسالب بيقل تدريجيًا)
+    _boxScale = Tween<double>(begin: 0.82, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.35, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    // ====== دخول الموتوسيكل من برا الشاشة مع ارتداد بسيط ======
     _motoProgress = Tween<double>(begin: 1.0, end: 0.0).animate(
       CurvedAnimation(
-        parent: _logoController,
-        curve: const Interval(0.0, 0.72, curve: Curves.easeOutBack),
+        parent: _controller,
+        curve: const Interval(0.28, 0.85, curve: Curves.easeOutBack),
       ),
     );
     _motoOpacity = CurvedAnimation(
-      parent: _logoController,
-      curve: const Interval(0.0, 0.22, curve: Curves.easeIn),
+      parent: _controller,
+      curve: const Interval(0.28, 0.45, curve: Curves.easeIn),
     );
     _titleOpacity = CurvedAnimation(
-      parent: _logoController,
-      curve: const Interval(0.68, 1.0, curve: Curves.easeIn),
+      parent: _controller,
+      curve: const Interval(0.75, 1.0, curve: Curves.easeIn),
     );
 
     _runSequence();
   }
 
   Future<void> _runSequence() async {
-    // ====== المرحلة 1: التاجلاين البرتقالي ======
-    await _taglineController.forward();
+    // ====== المرحلة 1: شاشة "وصلك في لحظة" ======
+    await Future.delayed(_taglineDuration);
     if (!mounted) return;
-
     setState(() => _showLogoStage = true);
 
-    // ====== المرحلة 2: دخول الشعار + صوت محرك الموتوسيكل بالتزامن ======
+    // ====== المرحلة 2: صوت محرك الموتوسيكل بالتزامن مع دخوله للمربع ======
     _sfxPlayer.play(AssetSource('sounds/splash_moto.wav'), volume: 0.7);
-    await _logoController.forward();
-    if (!mounted) return;
+    _controller.forward();
 
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: 2400));
     if (!mounted) return;
 
     Navigator.of(context).pushReplacement(
@@ -111,98 +96,105 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _taglineController.dispose();
-    _logoController.dispose();
+    _controller.dispose();
     _sfxPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // ====== المرحلة 1: صورة "وصلك في لحظة" الجاهزة، عربي أو إنجليزي ======
+    if (!_showLogoStage) {
+      final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+      return Scaffold(
+        backgroundColor: TayarColors.primary,
+        body: SizedBox.expand(
+          child: Image.asset(
+            isArabic
+                ? 'assets/splash/tagline_ar.png'
+                : 'assets/splash/tagline_en.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+
+    // ====== المرحلة 2: المربع البرتقالي الأصلي + دخول الموتوسيكل ======
     final screenWidth = MediaQuery.of(context).size.width;
-    const motoWidth = 150.0;
-    final travelDistance = (screenWidth / 2) + motoWidth;
-    final l10n = AppLocalizations.of(context)!;
+    const boxSize = 150.0;
+    final travelDistance = (screenWidth / 2) + boxSize;
 
     return Scaffold(
-      // ====== الخلفية برتقالي طول الوقت، من أول لحظة فتح للسبلاش ======
-      backgroundColor: TayarColors.primary,
+      backgroundColor: TayarColors.background,
       body: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // ====== المرحلة 1: نص "وصلك في لحظة" ======
-            AnimatedBuilder(
-              animation: _taglineController,
-              builder: (context, child) {
-                if (_taglineOpacity.value <= 0) {
-                  return const SizedBox.shrink();
-                }
-                return Opacity(
-                  opacity: _taglineOpacity.value,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 36),
-                    child: Text(
-                      l10n.splashTagline,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Arial',
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Opacity(
+                  opacity: _boxOpacity.value,
+                  child: Transform.scale(
+                    scale: _boxScale.value,
+                    child: Container(
+                      width: boxSize,
+                      height: boxSize,
+                      decoration: BoxDecoration(
+                        color: TayarColors.primary,
+                        borderRadius: BorderRadius.circular(34),
+                        boxShadow: [
+                          BoxShadow(
+                            color: TayarColors.primary.withValues(
+                              alpha: 0.35,
+                            ),
+                            blurRadius: 36,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(34),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Transform.translate(
+                              offset: Offset(
+                                -(_motoProgress.value * travelDistance),
+                                0,
+                              ),
+                              child: Opacity(
+                                opacity: _motoOpacity.value,
+                                child: Image.asset(
+                                  'assets/splash/moto_icon.png',
+                                  width: 96,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-
-            // ====== المرحلة 2: شعار الموتوسيكل المتحرك + اسم TAYAR ======
-            if (_showLogoStage)
-              AnimatedBuilder(
-                animation: _logoController,
-                builder: (context, child) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ClipRect(
-                        child: Transform.translate(
-                          // ====== الترجمة بالسالب: تبدأ برا الشاشة شمال
-                          // وتقل تدريجيًا لحد الصفر (وسط الشاشة) = حركة
-                          // فعلية من الشمال لليمين، مش ظهور ثابت ======
-                          offset: Offset(
-                            -(_motoProgress.value * travelDistance),
-                            0,
-                          ),
-                          child: Opacity(
-                            opacity: _motoOpacity.value,
-                            child: Image.asset(
-                              'assets/splash/moto_icon.png',
-                              width: motoWidth,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      Opacity(
-                        opacity: _titleOpacity.value,
-                        child: const Text(
-                          'TAYAR',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Arial',
-                            letterSpacing: 4,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-          ],
+                ),
+                const SizedBox(height: 22),
+                Opacity(
+                  opacity: _titleOpacity.value,
+                  child: const Text(
+                    'TAYAR',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Arial',
+                      letterSpacing: 4,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
