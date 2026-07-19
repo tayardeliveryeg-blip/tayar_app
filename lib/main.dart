@@ -83,13 +83,11 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
   // ====== حالة القفل: بتتفعّل عند بدء التطبيق لو appLockEnabled محفوظة،
   // وبترجع تتفعّل تلقائيًا كل مرة التطبيق يرجع من الخلفية ======
   late bool _isLocked;
-  bool _appLockEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _isLocked = widget.initiallyLocked;
-    _appLockEnabled = widget.initiallyLocked;
     WidgetsBinding.instance.addObserver(this);
     _loadSavedLocale();
     _loadSavedThemeMode();
@@ -114,7 +112,6 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
   Future<void> _recheckAppLock() async {
     final prefs = await SharedPreferences.getInstance();
     final enabled = prefs.getBool('appLockEnabled') ?? false;
-    _appLockEnabled = enabled;
     if (enabled && mounted) {
       setState(() => _isLocked = true);
     }
