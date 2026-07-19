@@ -99,6 +99,7 @@ class AppRadius {
 //   padding: const EdgeInsets.all(AppSpacing.lg)
 //   const SizedBox(height: AppSpacing.md)
 class AppSpacing {
+  static const double xxs = 2; // مسافات ضيقة جدًا (badges/chips صغيرة)
   static const double xs = 4;
   static const double sm = 8;
   static const double md = 12;
