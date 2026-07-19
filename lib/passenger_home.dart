@@ -544,11 +544,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade700,
-                  borderRadius: BorderRadius.circular(2),
+                  color: context.handleColor,
+                  borderRadius: BorderRadius.circular(AppRadius.handle),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 child: Align(
@@ -563,7 +563,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               ...options.map((option) {
                 final value = option['value'] as String;
                 final label = paymentMethodDisplay(sheetContext, value);
@@ -803,7 +803,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                               color: context.textGreyColor,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AppSpacing.sm),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -831,7 +831,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xs),
                     // أيقونة الماركر
                     const PinMarker(type: PinType.pickup),
                     // الخط الواصل
@@ -872,7 +872,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                       decoration: BoxDecoration(
                         color: context.bgColor.withValues(alpha: 0.9),
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.3),
@@ -1063,7 +1063,7 @@ class TayarBottomSheet extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Container(
         margin: const EdgeInsets.only(bottom: 0),
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xxl),
         decoration: BoxDecoration(
           color: context.bgColor,
           borderRadius: const BorderRadius.only(
@@ -1079,11 +1079,11 @@ class TayarBottomSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade700,
-                borderRadius: BorderRadius.circular(2),
+                color: context.handleColor,
+                borderRadius: BorderRadius.circular(AppRadius.handle),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
 
             // ملخص الرحلة + زرار الطلب
             _TripSummaryCard(
@@ -1169,7 +1169,7 @@ class _TripSummaryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
 
           // ====== طريقة الدفع: بتفتح شاشة اختيار لما تتدوس ======
           GestureDetector(
@@ -1200,7 +1200,7 @@ class _TripSummaryCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppSpacing.xs),
                   Icon(
                     Icons.keyboard_arrow_left,
                     color: context.textGreyColor,
@@ -1210,7 +1210,7 @@ class _TripSummaryCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
 
           Row(
             children: [
@@ -1230,7 +1230,7 @@ class _TripSummaryCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
@@ -1280,7 +1280,7 @@ class _TripStat extends StatelessWidget {
           color: highlight ? TayarColors.primary : context.textGreyColor,
           size: 22,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           label,
           style: TextStyle(
@@ -1435,7 +1435,7 @@ class TayarDrawer extends StatelessWidget {
                                 )
                               : null,
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AppSpacing.md),
                         Expanded(
                           child: Text(
                             displayName,
@@ -1603,7 +1603,7 @@ class TayarDrawer extends StatelessWidget {
 
             // ====== أيقونات السوشيال ميديا ======
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1612,13 +1612,13 @@ class TayarDrawer extends StatelessWidget {
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.facebook),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.xl),
                   _SocialIcon(
                     icon: Icons.camera_alt_outlined, // إنستجرام
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.instagram),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.xl),
                   _SocialIcon(
                     icon: Icons.chat_bubble_outline, // واتساب
                     onTap: () =>
