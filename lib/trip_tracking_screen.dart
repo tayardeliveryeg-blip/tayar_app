@@ -828,7 +828,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                                 calleeName: _driverName,
                               );
                             } catch (e) {
-                              if (mounted) {
+                              if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('تعذر بدء المكالمة: $e'),
