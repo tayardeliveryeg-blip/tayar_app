@@ -1035,4 +1035,81 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chatTypeMessageHint => 'اكتب رسالة...';
+
+  @override
+  String get chooseAccountTypeTitle => 'اختار نوع حسابك';
+
+  @override
+  String get chooseAccountTypeSubtitle => 'تقدر تبدأ كراكب أو كطيار';
+
+  @override
+  String get passengerRoleTitle => 'راكب';
+
+  @override
+  String get passengerRoleDescription => 'اطلب رحلتك بسهولة وسرعة';
+
+  @override
+  String get driverRoleTitle => 'طيار';
+
+  @override
+  String get driverRoleDescription => 'اشتغل واكسب فلوس بموتوسيكلك';
+
+  @override
+  String get completeProfileTitle => 'كمّل بياناتك';
+
+  @override
+  String get completeProfileSubtitle => 'هنستخدم اسمك عشان الناس تتعرف عليك';
+
+  @override
+  String get topUpWalletButton => 'اشحن محفظتك';
+
+  @override
+  String get topUpWalletTitle => 'شحن رصيد المحفظة';
+
+  @override
+  String get topUpWalletSubtitle =>
+      'حوّل المبلغ إنستاباي وارفع صورة إيصال التحويل، وهنراجع طلبك ونضيفه لرصيدك أول بأول';
+
+  @override
+  String get topUpAmountLabel => 'المبلغ (جنيه)';
+
+  @override
+  String get topUpProofLabel => 'صورة إثبات التحويل';
+
+  @override
+  String get topUpProofRequiredError => 'لازم ترفع صورة إثبات التحويل';
+
+  @override
+  String get invalidAmountError => 'أدخل مبلغ صحيح';
+
+  @override
+  String get topUpSubmitButton => 'إرسال الطلب';
+
+  @override
+  String get topUpSubmittedTitle => 'تم إرسال طلبك';
+
+  @override
+  String get topUpSubmittedBody => 'هنراجع طلب الشحن ونضيفه لرصيدك في أقرب وقت';
+
+  @override
+  String get walletTransactionsTitle => 'سجل المعاملات';
+
+  @override
+  String get noWalletTransactionsLabel => 'مفيش معاملات لسه';
+
+  @override
+  String get walletCommissionTransactionLabel => 'عمولة رحلة';
+
+  @override
+  String get walletTopupPendingLabel => 'طلب شحن - في انتظار المراجعة';
+
+  @override
+  String get walletTopupApprovedLabel => 'طلب شحن - تم القبول';
+
+  @override
+  String get walletTopupRejectedLabel => 'طلب شحن - مرفوض';
+
+  @override
+  String get negativeWalletBalanceNote =>
+      'رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة';
 }

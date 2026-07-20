@@ -1042,4 +1042,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatTypeMessageHint => 'Type a message...';
+
+  @override
+  String get chooseAccountTypeTitle => 'Choose your account type';
+
+  @override
+  String get chooseAccountTypeSubtitle =>
+      'You can start as a passenger or a driver';
+
+  @override
+  String get passengerRoleTitle => 'Passenger';
+
+  @override
+  String get passengerRoleDescription => 'Order your ride easily and quickly';
+
+  @override
+  String get driverRoleTitle => 'Driver';
+
+  @override
+  String get driverRoleDescription =>
+      'Work and earn money with your motorcycle';
+
+  @override
+  String get completeProfileTitle => 'Complete your profile';
+
+  @override
+  String get completeProfileSubtitle =>
+      'We\'ll use your name so people can recognize you';
+
+  @override
+  String get topUpWalletButton => 'Top up wallet';
+
+  @override
+  String get topUpWalletTitle => 'Top up wallet balance';
+
+  @override
+  String get topUpWalletSubtitle =>
+      'Transfer the amount via InstaPay and upload the receipt screenshot, we\'ll review your request and add it to your balance shortly';
+
+  @override
+  String get topUpAmountLabel => 'Amount (EGP)';
+
+  @override
+  String get topUpProofLabel => 'Transfer proof screenshot';
+
+  @override
+  String get topUpProofRequiredError =>
+      'You need to upload a transfer proof screenshot';
+
+  @override
+  String get invalidAmountError => 'Enter a valid amount';
+
+  @override
+  String get topUpSubmitButton => 'Submit request';
+
+  @override
+  String get topUpSubmittedTitle => 'Request submitted';
+
+  @override
+  String get topUpSubmittedBody =>
+      'We\'ll review your top-up request and add it to your balance soon';
+
+  @override
+  String get walletTransactionsTitle => 'Transaction history';
+
+  @override
+  String get noWalletTransactionsLabel => 'No transactions yet';
+
+  @override
+  String get walletCommissionTransactionLabel => 'Trip commission';
+
+  @override
+  String get walletTopupPendingLabel => 'Top-up request - pending review';
+
+  @override
+  String get walletTopupApprovedLabel => 'Top-up request - approved';
+
+  @override
+  String get walletTopupRejectedLabel => 'Top-up request - rejected';
+
+  @override
+  String get negativeWalletBalanceNote =>
+      'Your balance is negative, top up your wallet to keep receiving new orders';
 }

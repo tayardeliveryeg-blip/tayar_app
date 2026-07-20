@@ -1993,6 +1993,156 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اكتب رسالة...'**
   String get chatTypeMessageHint;
+
+  /// No description provided for @chooseAccountTypeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار نوع حسابك'**
+  String get chooseAccountTypeTitle;
+
+  /// No description provided for @chooseAccountTypeSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تبدأ كراكب أو كطيار'**
+  String get chooseAccountTypeSubtitle;
+
+  /// No description provided for @passengerRoleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'راكب'**
+  String get passengerRoleTitle;
+
+  /// No description provided for @passengerRoleDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'اطلب رحلتك بسهولة وسرعة'**
+  String get passengerRoleDescription;
+
+  /// No description provided for @driverRoleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيار'**
+  String get driverRoleTitle;
+
+  /// No description provided for @driverRoleDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتغل واكسب فلوس بموتوسيكلك'**
+  String get driverRoleDescription;
+
+  /// No description provided for @completeProfileTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كمّل بياناتك'**
+  String get completeProfileTitle;
+
+  /// No description provided for @completeProfileSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنستخدم اسمك عشان الناس تتعرف عليك'**
+  String get completeProfileSubtitle;
+
+  /// No description provided for @topUpWalletButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن محفظتك'**
+  String get topUpWalletButton;
+
+  /// No description provided for @topUpWalletTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شحن رصيد المحفظة'**
+  String get topUpWalletTitle;
+
+  /// No description provided for @topUpWalletSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حوّل المبلغ إنستاباي وارفع صورة إيصال التحويل، وهنراجع طلبك ونضيفه لرصيدك أول بأول'**
+  String get topUpWalletSubtitle;
+
+  /// No description provided for @topUpAmountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ (جنيه)'**
+  String get topUpAmountLabel;
+
+  /// No description provided for @topUpProofLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة إثبات التحويل'**
+  String get topUpProofLabel;
+
+  /// No description provided for @topUpProofRequiredError.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم ترفع صورة إثبات التحويل'**
+  String get topUpProofRequiredError;
+
+  /// No description provided for @invalidAmountError.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل مبلغ صحيح'**
+  String get invalidAmountError;
+
+  /// No description provided for @topUpSubmitButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال الطلب'**
+  String get topUpSubmitButton;
+
+  /// No description provided for @topUpSubmittedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طلبك'**
+  String get topUpSubmittedTitle;
+
+  /// No description provided for @topUpSubmittedBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنراجع طلب الشحن ونضيفه لرصيدك في أقرب وقت'**
+  String get topUpSubmittedBody;
+
+  /// No description provided for @walletTransactionsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل المعاملات'**
+  String get walletTransactionsTitle;
+
+  /// No description provided for @noWalletTransactionsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش معاملات لسه'**
+  String get noWalletTransactionsLabel;
+
+  /// No description provided for @walletCommissionTransactionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'عمولة رحلة'**
+  String get walletCommissionTransactionLabel;
+
+  /// No description provided for @walletTopupPendingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب شحن - في انتظار المراجعة'**
+  String get walletTopupPendingLabel;
+
+  /// No description provided for @walletTopupApprovedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب شحن - تم القبول'**
+  String get walletTopupApprovedLabel;
+
+  /// No description provided for @walletTopupRejectedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب شحن - مرفوض'**
+  String get walletTopupRejectedLabel;
+
+  /// No description provided for @negativeWalletBalanceNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة'**
+  String get negativeWalletBalanceNote;
 }
 
 class _AppLocalizationsDelegate
