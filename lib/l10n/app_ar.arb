@@ -525,6 +525,11 @@
   "chatErrorLoadingMessages": "خطأ في تحميل الرسائل",
   "chatNoMessagesYet": "ابدأ المحادثة",
   "chatTypeMessageHint": "اكتب رسالة...",
+  "chatTypingIndicator": "بيكتب الآن...",
+  "chatQuickReplyOnMyWay": "أنا في الطريق",
+  "chatQuickReplyArrived": "وصلت المكان",
+  "chatQuickReplyWaitPlease": "استنى شوية لو سمحت",
+  "chatQuickReplyOk": "تمام",
 
   "chooseAccountTypeTitle": "اختار نوع حسابك",
   "chooseAccountTypeSubtitle": "تقدر تبدأ كراكب أو كطيار",

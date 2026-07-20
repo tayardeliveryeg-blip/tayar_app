@@ -525,6 +525,11 @@
   "chatErrorLoadingMessages": "Failed to load messages",
   "chatNoMessagesYet": "No messages yet, start the conversation",
   "chatTypeMessageHint": "Type a message...",
+  "chatTypingIndicator": "Typing...",
+  "chatQuickReplyOnMyWay": "I'm on my way",
+  "chatQuickReplyArrived": "I've arrived",
+  "chatQuickReplyWaitPlease": "Please wait a moment",
+  "chatQuickReplyOk": "OK",
 
   "chooseAccountTypeTitle": "Choose your account type",
   "chooseAccountTypeSubtitle": "You can start as a passenger or a driver",
