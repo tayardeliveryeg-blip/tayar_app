@@ -343,6 +343,17 @@
       }
     }
   },
+  "resendCodeButton": "Resend code",
+  "resendCodeCountdown": "You can resend the code in {seconds}s",
+  "@resendCodeCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "didntReceiveCodeLabel": "Didn't receive the code?",
+  "codeResentMessage": "Code resent",
 
   "determiningAddressLabel": "Determining address...",
   "customLocationLabel": "Custom Location",

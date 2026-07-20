@@ -343,6 +343,17 @@
       }
     }
   },
+  "resendCodeButton": "إعادة إرسال الكود",
+  "resendCodeCountdown": "تقدر تطلب الكود تاني بعد {seconds} ثانية",
+  "@resendCodeCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "didntReceiveCodeLabel": "لسه مبعتلكش الكود؟",
+  "codeResentMessage": "اتبعت الكود تاني",
 
   "determiningAddressLabel": "جاري تحديد العنوان...",
   "customLocationLabel": "موقع مخصص",
