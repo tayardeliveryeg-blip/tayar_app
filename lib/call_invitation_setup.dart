@@ -36,13 +36,24 @@ Future<void> setupCallInvitationService({
     userID: user.uid,
     userName: myName,
     plugins: [ZegoUIKitSignalingPlugin()],
-    // ====== إعدادات إشعار المكالمة الواردة على أندرويد (اسم القناة) ======
-    // القيم دي لازم تتأكد إنها متطابقة مع أي إعداد Offline Push في كونسول
-    // Zego (Project → Push Notification) عشان الرنين يشتغل حتى لو التطبيق
-    // مقفول تمامًا. من غير ده، الرنين هيشتغل بس والتطبيق شغال (foreground
-    // أو background لكن العملية لسه شغالة).
+    // ====== إعدادات إشعار المكالمة الواردة على أندرويد ======
+    // showOnFullScreen: يخلي الإشعار يظهر full-screen (زي مكالمة تليفون
+    // حقيقية) حتى لو الموبايل مقفول أو التطبيق في الخلفية تمامًا.
+    // showOnLockedScreen: يخلي الإشعار يظهر فوق شاشة القفل.
+    // channelID/channelName لازم يتطابقوا مع Push Resource ID المسجّل في
+    // كونسول Zego (Project → Push Notification) عشان الرنين يشتغل والتطبيق مقفول.
+    notificationConfig: ZegoCallInvitationNotificationConfig(
+      androidNotificationConfig: ZegoCallAndroidNotificationConfig(
+        showOnFullScreen: true,
+        showOnLockedScreen: true,
+        channelID: 'zegouikit_call',
+        channelName: 'مكالمات طيار',
+      ),
+    ),
     requireConfig: (ZegoCallInvitationData data) {
-      return ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
+      return ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
+        ..avatarBuilder = ZegoCallConfig.avatarBuilder
+        ..duration.isVisible = true;
     },
   );
 

@@ -37,13 +37,17 @@ class CallScreen extends StatelessWidget {
       );
     }
 
+    final config = ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
+      ..avatarBuilder = ZegoCallConfig.avatarBuilder
+      ..duration.isVisible = true; // ====== إظهار مدة المكالمة أعلى الشاشة ======
+
     return ZegoUIKitPrebuiltCall(
       appID: ZegoCallConfig.appId,
       appSign: ZegoCallConfig.appSign,
       userID: myUserId,
       userName: myUserName,
       callID: 'trip_$orderId', // نفس الـ ID للطرفين = نفس المكالمة
-      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall(),
+      config: config,
       events: ZegoUIKitPrebuiltCallEvents(
         onCallEnd: (event, defaultAction) {
           // ====== أي سبب لانتهاء المكالمة (شخص واحد فاضل، أو حد قفل): نرجع للشاشة السابقة ======
