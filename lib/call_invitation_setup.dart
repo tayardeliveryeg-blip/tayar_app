@@ -46,6 +46,10 @@ Future<void> setupCallInvitationService({
       androidNotificationConfig: ZegoCallAndroidNotificationConfig(
         showOnFullScreen: true,
         showOnLockedScreen: true,
+        // ملحوظة: channelID/channelName بقوا deprecated من نسخة 4.15.0
+        // (البديل callChannel.channelID/channelName) لكن لسه شغالين ومش
+        // هيتشالوا غير في 4.20.0+. سبتهم كده دلوقتي عشان أتأكد من الاسم
+        // الدقيق للكلاس البديل قبل ما أغيّرهم.
         channelID: 'zegouikit_call',
         channelName: 'مكالمات طيار',
       ),

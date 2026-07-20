@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit/zego_uikit.dart';
 import 'passenger_home.dart' show TayarColors;
 
 /// ====== إعدادات ZegoCloud لخدمة المكالمات الصوتية داخل التطبيق ======
