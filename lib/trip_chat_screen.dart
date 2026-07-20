@@ -317,7 +317,8 @@ class _TripChatScreenState extends State<TripChatScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               itemCount: _quickReplyKeys.length,
-              separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+              separatorBuilder: (context, index) =>
+                  const SizedBox(width: AppSpacing.sm),
               itemBuilder: (context, index) {
                 final label = _quickReplyLabel(loc, _quickReplyKeys[index]);
                 return ActionChip(
