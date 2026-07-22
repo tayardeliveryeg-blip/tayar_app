@@ -1418,6 +1418,30 @@ abstract class AppLocalizations {
   /// **'بعتنالك كود تحقق على {phone}'**
   String otpSentToNumberLabel(String phone);
 
+  /// No description provided for @resendCodeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة إرسال الكود'**
+  String get resendCodeButton;
+
+  /// No description provided for @resendCodeCountdown.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تطلب الكود تاني بعد {seconds} ثانية'**
+  String resendCodeCountdown(int seconds);
+
+  /// No description provided for @didntReceiveCodeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه مبعتلكش الكود؟'**
+  String get didntReceiveCodeLabel;
+
+  /// No description provided for @codeResentMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتبعت الكود تاني'**
+  String get codeResentMessage;
+
   /// No description provided for @determiningAddressLabel.
   ///
   /// In ar, this message translates to:
@@ -1993,6 +2017,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اكتب رسالة...'**
   String get chatTypeMessageHint;
+
+  /// No description provided for @chatTypingIndicator.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيكتب الآن...'**
+  String get chatTypingIndicator;
+
+  /// No description provided for @chatQuickReplyOnMyWay.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنا في الطريق'**
+  String get chatQuickReplyOnMyWay;
+
+  /// No description provided for @chatQuickReplyArrived.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت المكان'**
+  String get chatQuickReplyArrived;
+
+  /// No description provided for @chatQuickReplyWaitPlease.
+  ///
+  /// In ar, this message translates to:
+  /// **'استنى شوية لو سمحت'**
+  String get chatQuickReplyWaitPlease;
+
+  /// No description provided for @chatQuickReplyOk.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمام'**
+  String get chatQuickReplyOk;
 
   /// No description provided for @chooseAccountTypeTitle.
   ///

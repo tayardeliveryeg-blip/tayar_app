@@ -724,6 +724,20 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get resendCodeButton => 'إعادة إرسال الكود';
+
+  @override
+  String resendCodeCountdown(int seconds) {
+    return 'تقدر تطلب الكود تاني بعد $seconds ثانية';
+  }
+
+  @override
+  String get didntReceiveCodeLabel => 'لسه مبعتلكش الكود؟';
+
+  @override
+  String get codeResentMessage => 'اتبعت الكود تاني';
+
+  @override
   String get determiningAddressLabel => 'جاري تحديد العنوان...';
 
   @override
@@ -1035,6 +1049,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chatTypeMessageHint => 'اكتب رسالة...';
+
+  @override
+  String get chatTypingIndicator => 'بيكتب الآن...';
+
+  @override
+  String get chatQuickReplyOnMyWay => 'أنا في الطريق';
+
+  @override
+  String get chatQuickReplyArrived => 'وصلت المكان';
+
+  @override
+  String get chatQuickReplyWaitPlease => 'استنى شوية لو سمحت';
+
+  @override
+  String get chatQuickReplyOk => 'تمام';
 
   @override
   String get chooseAccountTypeTitle => 'اختار نوع حسابك';

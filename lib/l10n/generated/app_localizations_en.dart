@@ -728,6 +728,20 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get resendCodeButton => 'Resend code';
+
+  @override
+  String resendCodeCountdown(int seconds) {
+    return 'You can resend the code in ${seconds}s';
+  }
+
+  @override
+  String get didntReceiveCodeLabel => 'Didn\'t receive the code?';
+
+  @override
+  String get codeResentMessage => 'Code resent';
+
+  @override
   String get determiningAddressLabel => 'Determining address...';
 
   @override
@@ -1042,6 +1056,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatTypeMessageHint => 'Type a message...';
+
+  @override
+  String get chatTypingIndicator => 'Typing...';
+
+  @override
+  String get chatQuickReplyOnMyWay => 'I\'m on my way';
+
+  @override
+  String get chatQuickReplyArrived => 'I\'ve arrived';
+
+  @override
+  String get chatQuickReplyWaitPlease => 'Please wait a moment';
+
+  @override
+  String get chatQuickReplyOk => 'OK';
 
   @override
   String get chooseAccountTypeTitle => 'Choose your account type';
