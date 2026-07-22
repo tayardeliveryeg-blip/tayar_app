@@ -13,8 +13,10 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- ====== لازمة عشان إشعار المكالمة الواردة يظهر full-screen (زي مكالمة حقيقية) على أندرويد 14+ ====== -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
     <application
-        android:label="tayay_app"
+        android:label="Tayar"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true">

@@ -10,6 +10,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'select_destination_screen.dart' show SelectDestinationScreen, PlaceResult;
+import 'pin_marker.dart' show PinType;
 import 'searching_offers_screen.dart';
 
 /// ====== شاشة إنشاء طلب "وصل طلباتي" (توصيل طرد/بضاعة) ======
@@ -83,6 +84,7 @@ class _CreateDeliveryOrderScreenState
         builder: (_) => SelectDestinationScreen(
           initialLocation: _pickupLocation ?? _dropoffLocation,
           title: AppLocalizations.of(context)!.selectPickupLocationTitle,
+          pinType: PinType.pickup,
         ),
       ),
     );
@@ -102,6 +104,7 @@ class _CreateDeliveryOrderScreenState
         builder: (_) => SelectDestinationScreen(
           initialLocation: _dropoffLocation ?? _pickupLocation,
           title: AppLocalizations.of(context)!.selectDeliveryLocationTitle,
+          pinType: PinType.destination,
         ),
       ),
     );
@@ -204,7 +207,7 @@ class _CreateDeliveryOrderScreenState
                     loc.choosePaymentMethodTitle,
                     style:  TextStyle(
                       color: context.textColor,
-                      fontSize: 17,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -364,7 +367,7 @@ class _CreateDeliveryOrderScreenState
               child: Column(
                 children: [
                   _LocationPickRow(
-                    icon: Icons.radio_button_checked,
+                    icon: Icons.location_on,
                     iconColor: TayarColors.primary,
                     label: loc.pickupLocationLabel,
                     address: _pickupAddress,
@@ -380,8 +383,8 @@ class _CreateDeliveryOrderScreenState
                     ),
                   ),
                   _LocationPickRow(
-                    icon: Icons.location_on,
-                    iconColor: Colors.redAccent,
+                    icon: Icons.flag,
+                    iconColor: TayarColors.primary,
                     label: loc.deliveryLocationLabel,
                     address: _dropoffAddress,
                     onTap: _selectDropoffLocation,
@@ -531,7 +534,7 @@ class _CreateDeliveryOrderScreenState
                           loc.currencyEGP(_estimatedFare.toStringAsFixed(0)),
                           style: const TextStyle(
                             color: TayarColors.primary,
-                            fontSize: 20,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

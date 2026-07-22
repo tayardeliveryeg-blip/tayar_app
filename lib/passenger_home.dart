@@ -25,6 +25,12 @@ import 'settings_screen.dart';
 import 'help_screen.dart';
 import 'support_screen.dart';
 
+import 'theme_extensions.dart';
+import 'pin_marker.dart';
+import 'map_tile_layer.dart';
+import 'main.dart' show navigatorKey;
+import 'call_invitation_setup.dart';
+import 'push_notification_service.dart';
 export 'theme_extensions.dart'; // مصدر TayarColors / TayarTheme / TayarThemeColors الوحيد
 
 // ====== القيمة الداخلية لطريقة الدفع بتفضل ثابتة (عربي) عشان التوافق مع
@@ -56,7 +62,9 @@ Future<void> launchSocialUrl(BuildContext context, String url) async {
   );
   if (!ok && context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.failedToOpenAppError)),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
+      ),
     );
   }
 }
@@ -112,6 +120,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     super.initState();
     _getCurrentLocation();
     _startLiveLocationTracking();
+    // ====== تفعيل استقبال إشعارات الشات + دعوات المكالمات (لازم بعد تسجيل الدخول) ======
+    PushNotificationService.instance.init(isDriver: false);
+    setupCallInvitationService(navigatorKey: navigatorKey);
 
     // ====== أنيميشن رسم المسار تدريجيًا من نقطة الانطلاق للوجهة ======
     _routeAnimController =
@@ -327,8 +338,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       Position position;
       try {
         position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium,
-          timeLimit: const Duration(seconds: 8),
+          locationSettings: LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: const Duration(seconds: 8),
+          ),
         );
       } on TimeoutException {
         debugPrint(
@@ -490,19 +503,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     }
   }
 
-  // ====== فتح شاشة "وصل طلباتي" (طلب توصيل طرد/بضاعة) ======
-  Future<void> _openDeliveryOrder() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CreateDeliveryOrderScreen(
-          initialPickupLocation: _currentLocation,
-          initialPickupAddress: _currentAddress,
-        ),
-      ),
-    );
-  }
-
   void _clearDestination() {
     _routeAnimController.stop();
     setState(() {
@@ -538,7 +538,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       ),
       builder: (sheetContext) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -546,26 +546,26 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade700,
-                  borderRadius: BorderRadius.circular(2),
+                  color: context.handleColor,
+                  borderRadius: BorderRadius.circular(AppRadius.handle),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     loc.choosePaymentMethodTitle,
                     style: TextStyle(
                       color: context.textColor,
-                      fontSize: 17,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               ...options.map((option) {
                 final value = option['value'] as String;
                 final label = paymentMethodDisplay(sheetContext, value);
@@ -665,11 +665,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 ),
               ),
               children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.tayar.app',
-                ),
+                const TayarTileLayer(),
                 if (_routePoints.isNotEmpty)
                   PolylineLayer(
                     polylines: [
@@ -687,23 +683,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                         point: _destinationLocation!,
                         width: 44,
                         height: 44,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.25),
-                                blurRadius: 6,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.flag,
-                            color: TayarColors.primary,
-                            size: 28,
-                          ),
-                        ),
+                        child: const PinMarker(type: PinType.destination),
                       ),
                     ],
                   ),
@@ -722,23 +702,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                         point: _currentLocation,
                         width: 44,
                         height: 44,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.25),
-                                blurRadius: 6,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.person,
-                            color: TayarColors.primary,
-                            size: 26,
-                          ),
-                        ),
+                        child: const PinMarker(type: PinType.pickup),
                       ),
                     ],
                   ),
@@ -820,12 +784,12 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       opacity: _isDraggingMap ? 0 : 1,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
+                          horizontal: AppSpacing.lg,
+                          vertical: AppSpacing.md,
                         ),
                         decoration: BoxDecoration(
                           color: context.cardColor,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(AppRadius.lg),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.3),
@@ -841,7 +805,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                               color: context.textGreyColor,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AppSpacing.sm),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -850,7 +814,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                                   AppLocalizations.of(context)!.fromLabel,
                                   style: TextStyle(
                                     color: context.textGreyColor,
-                                    fontSize: 13,
+                                    fontSize: 14,
                                   ),
                                 ),
                                 Text(
@@ -869,27 +833,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xs),
                     // أيقونة الماركر
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.person,
-                        color: TayarColors.primary,
-                        size: 26,
-                      ),
-                    ),
+                    const PinMarker(type: PinType.pickup),
                     // الخط الواصل
                     Container(width: 2, height: 14, color: Colors.white54),
                     // نقطة صغيرة حمرا: دي رأس الدبوس الثابت اللي بيأشر فعليًا على المكان
@@ -907,35 +853,117 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
             ),
 
-          // ====== زرار القايمة الجانبية ======
+          // ====== شريط البحث "عايز تروح فين؟" (فوق جنب زرار القايمة - بيختفي لفوق وقت سحب الخريطة) ======
           Positioned(
             top: 50,
-            right: 16,
-            child: Builder(
-              builder: (context) => GestureDetector(
-                onTap: () => Scaffold.of(context).openDrawer(),
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: context.bgColor.withValues(alpha: 0.9),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
-                        blurRadius: 8,
+            right: 76,
+            left: 16,
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              offset: _isDraggingMap ? const Offset(0, -2) : Offset.zero,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _isDraggingMap ? 0 : 1,
+                child: IgnorePointer(
+                  ignoring: _isDraggingMap,
+                  child: GestureDetector(
+                    onTap: _openDestinationSearch,
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                      decoration: BoxDecoration(
+                        color: context.bgColor.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                          ),
+                        ],
                       ),
-                    ],
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.search,
+                            color: _destinationAddress != null
+                                ? TayarColors.primary
+                                : context.textGreyColor,
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Text(
+                              _destinationAddress ??
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.chooseDestinationHint,
+                              style: TextStyle(
+                                color: _destinationAddress != null
+                                    ? context.textColor
+                                    : context.textGreyColor,
+                                fontSize: 15,
+                                fontWeight: _destinationAddress != null
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  child: Icon(Icons.menu, color: context.textColor),
                 ),
               ),
             ),
           ),
 
-          // ====== زرار تحديد الموقع (بيختفي لتحت مع الشريط السفلي وقت سحب الخريطة) ======
+          // ====== زرار القايمة الجانبية (بيختفي لفوق وقت سحب الخريطة) ======
           Positioned(
-            bottom: 280,
+            top: 50,
+            right: 16,
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              offset: _isDraggingMap ? const Offset(0, -2) : Offset.zero,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _isDraggingMap ? 0 : 1,
+                child: IgnorePointer(
+                  ignoring: _isDraggingMap,
+                  child: Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: context.bgColor.withValues(alpha: 0.9),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Icon(Icons.menu, color: context.textColor),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // ====== زرار تحديد الموقع (بيتحرك بسلاسة حسب ظهور الشريط السفلي، وبيختفي وقت سحب الخريطة) ======
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            bottom: (_destinationAddress != null && _routeDistanceKm != null)
+                ? 296
+                : 28 + MediaQuery.of(context).padding.bottom,
             left: 16,
             child: AnimatedSlide(
               duration: const Duration(milliseconds: 250),
@@ -952,18 +980,24 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: context.bgColor.withValues(alpha: 0.9),
+                        color: context.bgColor.withValues(alpha: 0.95),
                         shape: BoxShape.circle,
+                        border: Border.all(
+                          color: context.dividerColor2,
+                          width: 1,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 8,
+                            color: Colors.black.withValues(alpha: 0.25),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
                       child: Icon(
-                        Icons.navigation_outlined,
-                        color: context.textColor,
+                        Icons.my_location,
+                        color: TayarColors.primary,
+                        size: 22,
                       ),
                     ),
                   ),
@@ -979,7 +1013,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
             offset: _isDraggingMap ? const Offset(0, 1) : Offset.zero,
             child: TayarBottomSheet(
               destinationAddress: _destinationAddress,
-              onTapSearch: _openDestinationSearch,
               distanceKm: _routeDistanceKm,
               durationMin: _routeDurationMin,
               fare: _estimatedFare,
@@ -987,8 +1020,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               onTapPaymentMethod: _showPaymentMethodSheet,
               onCancelDestination: _clearDestination,
               onConfirmOrder: _openOrderConfirmation,
-              onTapRideMe: _openDestinationSearch,
-              onTapDeliverOrders: _openDeliveryOrder,
             ),
           ),
         ],
@@ -1002,7 +1033,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 // ====================================================
 class TayarBottomSheet extends StatelessWidget {
   final String? destinationAddress;
-  final VoidCallback onTapSearch;
   final double? distanceKm;
   final int? durationMin;
   final double fare;
@@ -1010,13 +1040,10 @@ class TayarBottomSheet extends StatelessWidget {
   final VoidCallback onTapPaymentMethod;
   final VoidCallback onCancelDestination;
   final VoidCallback onConfirmOrder;
-  final VoidCallback onTapRideMe;
-  final VoidCallback onTapDeliverOrders;
 
   const TayarBottomSheet({
     super.key,
     required this.destinationAddress,
-    required this.onTapSearch,
     required this.distanceKm,
     required this.durationMin,
     required this.fare,
@@ -1024,17 +1051,21 @@ class TayarBottomSheet extends StatelessWidget {
     required this.onTapPaymentMethod,
     required this.onCancelDestination,
     required this.onConfirmOrder,
-    required this.onTapRideMe,
-    required this.onTapDeliverOrders,
   });
 
   @override
   Widget build(BuildContext context) {
+    // ====== لو لسه مفيش وجهة متحددة، مفيش حاجة نعرضها تحت ======
+    // (البحث بقى فوق جنب زرار القايمة، وخدمات "وصلني/وصل طلباتي" بقت في القايمة الجانبية بس)
+    if (destinationAddress == null || distanceKm == null) {
+      return const SizedBox.shrink();
+    }
+
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
         margin: const EdgeInsets.only(bottom: 0),
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xxl),
         decoration: BoxDecoration(
           color: context.bgColor,
           borderRadius: const BorderRadius.only(
@@ -1050,88 +1081,22 @@ class TayarBottomSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade700,
-                borderRadius: BorderRadius.circular(2),
+                color: context.handleColor,
+                borderRadius: BorderRadius.circular(AppRadius.handle),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
 
-            // شريط البحث "عايز تروح فين؟"
-            GestureDetector(
-              onTap: onTapSearch,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: context.cardColor,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.search,
-                      color: destinationAddress != null
-                          ? TayarColors.primary
-                          : context.textGreyColor,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        destinationAddress ??
-                            AppLocalizations.of(context)!.chooseDestinationHint,
-                        style: TextStyle(
-                          color: destinationAddress != null
-                              ? context.textColor
-                              : context.textGreyColor,
-                          fontSize: 16,
-                          fontWeight: destinationAddress != null
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // ملخص الرحلة + زرار الطلب
+            _TripSummaryCard(
+              distanceKm: distanceKm!,
+              durationMin: durationMin ?? 0,
+              fare: fare,
+              paymentMethod: paymentMethod,
+              onTapPaymentMethod: onTapPaymentMethod,
+              onCancel: onCancelDestination,
+              onConfirm: onConfirmOrder,
             ),
-            const SizedBox(height: 16),
-
-            // لو فيه وجهة متحددة، نعرض ملخص الرحلة + زرار الطلب
-            // لو لسه مفيش وجهة، نعرض كارتين الخدمات الأساسيين
-            if (destinationAddress != null && distanceKm != null)
-              _TripSummaryCard(
-                distanceKm: distanceKm!,
-                durationMin: durationMin ?? 0,
-                fare: fare,
-                paymentMethod: paymentMethod,
-                onTapPaymentMethod: onTapPaymentMethod,
-                onCancel: onCancelDestination,
-                onConfirm: onConfirmOrder,
-              )
-            else
-              Row(
-                children: [
-                  Expanded(
-                    child: ServiceCard(
-                      title: AppLocalizations.of(context)!.serviceRideMe,
-                      icon: Icons.two_wheeler,
-                      onTap: onTapRideMe,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ServiceCard(
-                      title: AppLocalizations.of(context)!.serviceDeliverOrders,
-                      icon: Icons.inventory_2_outlined,
-                      onTap: onTapDeliverOrders,
-                    ),
-                  ),
-                ],
-              ),
           ],
         ),
       ),
@@ -1174,10 +1139,10 @@ class _TripSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         border: Border.all(color: TayarColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
@@ -1206,21 +1171,21 @@ class _TripSummaryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
 
           // ====== طريقة الدفع: بتفتح شاشة اختيار لما تتدوس ======
           GestureDetector(
             onTap: onTapPaymentMethod,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
               decoration: BoxDecoration(
                 color: context.bgColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Row(
                 children: [
                   Icon(_paymentIcon, color: TayarColors.primary, size: 20),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.md),
                   Text(
                     AppLocalizations.of(context)!.paymentMethodLabel,
                     style: TextStyle(
@@ -1237,7 +1202,7 @@ class _TripSummaryCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppSpacing.xs),
                   Icon(
                     Icons.keyboard_arrow_left,
                     color: context.textGreyColor,
@@ -1247,7 +1212,7 @@ class _TripSummaryCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
 
           Row(
             children: [
@@ -1255,10 +1220,10 @@ class _TripSummaryCard extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: onCancel,
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     side: BorderSide(color: context.textGreyColor),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
                   child: Text(
@@ -1267,22 +1232,22 @@ class _TripSummaryCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
                   onPressed: onConfirm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.confirmButton,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: context.onPrimaryColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -1317,7 +1282,7 @@ class _TripStat extends StatelessWidget {
           color: highlight ? TayarColors.primary : context.textGreyColor,
           size: 22,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           label,
           style: TextStyle(
@@ -1327,54 +1292,6 @@ class _TripStat extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// ====== كارت الخدمة الواحدة ======
-class ServiceCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const ServiceCard({
-    super.key,
-    required this.title,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 130,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: context.cardColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: TayarColors.primary.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: context.textColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Icon(icon, color: TayarColors.primary, size: 42),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -1392,7 +1309,7 @@ class TayarDrawer extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
         title: Text(loc.logout, style: TextStyle(color: context.textColor)),
         content: Text(
           loc.confirmLogoutMessage,
@@ -1421,10 +1338,9 @@ class TayarDrawer extends StatelessWidget {
 
     try {
       // ====== نسجل خروج من Google لو المستخدم داخل بيه، وبعدين من Firebase ======
-      final googleSignIn = GoogleSignIn();
-      if (await googleSignIn.isSignedIn()) {
-        await googleSignIn.signOut();
-      }
+      try {
+        await GoogleSignIn.instance.signOut();
+      } catch (_) {}
       await FirebaseAuth.instance.signOut();
       // ====== نمسح آخر وضع محفوظ عشان أي حساب تاني يسجل دخول من نفس الجهاز ما يفتحش غلط ======
       final prefs = await SharedPreferences.getInstance();
@@ -1461,82 +1377,83 @@ class TayarDrawer extends StatelessWidget {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                      stream: FirebaseAuth.instance.currentUser == null
-                          ? null
-                          : FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(FirebaseAuth.instance.currentUser!.uid)
-                                .snapshots(),
-                      builder: (context, snapshot) {
-                        final photoBase64 =
-                            (snapshot.data?.data()?['personalInfo']
-                                    as Map<String, dynamic>?)?['photoBase64']
-                                as String?;
-                        ImageProvider? photo;
-                        if (photoBase64 != null && photoBase64.isNotEmpty) {
-                          try {
-                            photo = MemoryImage(base64Decode(photoBase64));
-                          } catch (_) {
-                            photo = null;
-                          }
-                        }
-                        return CircleAvatar(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseAuth.instance.currentUser == null
+                      ? null
+                      : FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .snapshots(),
+                  builder: (context, snapshot) {
+                    final personalInfo =
+                        snapshot.data?.data()?['personalInfo']
+                            as Map<String, dynamic>?;
+
+                    final photoBase64 = personalInfo?['photoBase64'] as String?;
+                    ImageProvider? photo;
+                    if (photoBase64 != null && photoBase64.isNotEmpty) {
+                      try {
+                        photo = MemoryImage(base64Decode(photoBase64));
+                      } catch (_) {
+                        photo = null;
+                      }
+                    }
+
+                    // ====== اسم المستخدم الحقيقي: من بيانات Firestore أولًا
+                    // (firstName + lastName اللي المستخدم كتبهم في البروفايل)،
+                    // وإلا اسم حساب Google المسجل بيه، وإلا اسم افتراضي
+                    // كـ fallback أخير لو معندناش أي مصدر ======
+                    final firstName = (personalInfo?['firstName'] as String?)
+                        ?.trim();
+                    final lastName = (personalInfo?['lastName'] as String?)
+                        ?.trim();
+                    final firestoreName = [
+                      firstName,
+                      lastName,
+                    ].where((s) => s != null && s.isNotEmpty).join(' ');
+                    final googleName = FirebaseAuth
+                        .instance
+                        .currentUser
+                        ?.displayName
+                        ?.trim();
+                    final displayName = firestoreName.isNotEmpty
+                        ? firestoreName
+                        : (googleName != null && googleName.isNotEmpty)
+                        ? googleName
+                        : AppLocalizations.of(context)!.defaultUserName;
+
+                    return Row(
+                      children: [
+                        CircleAvatar(
                           radius: 28,
                           backgroundColor: TayarColors.primary,
                           backgroundImage: photo,
                           child: photo == null
-                              ? const Icon(
+                              ? Icon(
                                   Icons.person,
-                                  color: Colors.white,
+                                  color: context.onPrimaryColor,
                                   size: 30,
                                 )
                               : null,
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.defaultUserName,
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Text(
+                            displayName,
                             style: TextStyle(
                               color: context.textColor,
-                              fontSize: 20,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              ...List.generate(
-                                5,
-                                (i) => const Icon(
-                                  Icons.star,
-                                  color: TayarColors.primary,
-                                  size: 16,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                '4.75 (5)',
-                                style: TextStyle(
-                                  color: context.textGreyColor,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.chevron_right, color: context.textColor),
-                  ],
+                        ),
+                        Icon(Icons.chevron_right, color: context.textColor),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -1655,7 +1572,7 @@ class TayarDrawer extends StatelessWidget {
 
             // ====== زرار وضع الطيار ======
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -1671,14 +1588,14 @@ class TayarDrawer extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                     ),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.driverModeButton,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
+                    style: TextStyle(
+                      color: context.onPrimaryColor,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1688,7 +1605,7 @@ class TayarDrawer extends StatelessWidget {
 
             // ====== أيقونات السوشيال ميديا ======
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1697,13 +1614,13 @@ class TayarDrawer extends StatelessWidget {
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.facebook),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.xl),
                   _SocialIcon(
                     icon: Icons.camera_alt_outlined, // إنستجرام
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.instagram),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.xl),
                   _SocialIcon(
                     icon: Icons.chat_bubble_outline, // واتساب
                     onTap: () =>

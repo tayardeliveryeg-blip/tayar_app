@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'zego_call_config.dart';
+import 'passenger_home.dart' show TayarThemeColors;
 
 /// ====== شاشة مكالمة صوتية داخل التطبيق بين الراكب والطيار ======
 /// بتستخدم orderId كـ callID موحّد، فلما الطرفين يفتحوا نفس الشاشة
@@ -21,20 +22,24 @@ class CallScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     if (ZegoCallConfig.appId == 0 || ZegoCallConfig.appSign.isEmpty) {
       return Scaffold(
-        backgroundColor: const Color(0xFF1A1816),
-        body: const Center(
+        backgroundColor: context.bgColor,
+        body: Center(
           child: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Text(
               'لازم الأول تضيف App ID و App Sign بتوع ZegoCloud في ملف\n'
               'lib/zego_call_config.dart عشان المكالمة تشتغل.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: context.textColor),
             ),
           ),
         ),
       );
     }
+
+    final config = ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
+      ..avatarBuilder = ZegoCallConfig.avatarBuilder
+      ..duration.isVisible = true; // ====== إظهار مدة المكالمة أعلى الشاشة ======
 
     return ZegoUIKitPrebuiltCall(
       appID: ZegoCallConfig.appId,
@@ -42,7 +47,7 @@ class CallScreen extends StatelessWidget {
       userID: myUserId,
       userName: myUserName,
       callID: 'trip_$orderId', // نفس الـ ID للطرفين = نفس المكالمة
-      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall(),
+      config: config,
       events: ZegoUIKitPrebuiltCallEvents(
         onCallEnd: (event, defaultAction) {
           // ====== أي سبب لانتهاء المكالمة (شخص واحد فاضل، أو حد قفل): نرجع للشاشة السابقة ======

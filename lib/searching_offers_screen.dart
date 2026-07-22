@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'map_tile_layer.dart';
 import 'trip_tracking_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
@@ -63,6 +64,11 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _nearbyDriversSub;
   late final AnimationController _driversMoveController;
 
+  // ====== نبضة خفيفة مستمرة (تكبير/تصغير بسيط) على أيقونة كل موتوسيكل، عشان
+  // تحس إن الطيارين "شغالين" حتى في اللحظات اللي مفيش فيها تحديث موقع جديد
+  // من Firestore، بدل ما يفضلوا واقفين ثابتين خالص بين تحديث وتاني ======
+  late final AnimationController _idlePulseController;
+
   final MapController _mapController = MapController();
   static const double _initialMapZoom = 16;
 
@@ -84,18 +90,31 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       duration: const Duration(milliseconds: 1800),
     )..repeat();
 
-    // ====== أنيميشن حركة الطيارين القريبين على الخريطة ======
-    _driversMoveController =
-        AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 400),
-        )..addListener(() {
-          final t = _driversMoveController.value;
-          for (final marker in _nearbyDrivers.values) {
-            marker.displayed = _lerpLatLng(marker.prev, marker.target, t);
-          }
-          if (mounted) setState(() {});
-        });
+    // ====== أنيميشن حركة الطيارين القريبين على الخريطة: بنستخدم منحنى
+    // easeOutCubic بدل الحركة الخطية عشان الانتقال يحس بسرعة في البداية
+    // ويهدى في النهاية، فيبقى شكله "قفزة سريعة" مش انزلاق بطيء ممل ======
+    final driversMoveCurve = CurvedAnimation(
+      parent: _driversMoveController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 320),
+      ),
+      curve: Curves.easeOutCubic,
+    );
+    _driversMoveController.addListener(() {
+      final t = driversMoveCurve.value;
+      for (final marker in _nearbyDrivers.values) {
+        marker.displayed = _lerpLatLng(marker.prev, marker.target, t);
+      }
+      if (mounted) setState(() {});
+    });
+
+    // ====== نبضة مستمرة بتلف من غير توقف، شغالة طول الوقت بغض النظر عن
+    // تحديثات الموقع ======
+    _idlePulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1100),
+    )..repeat(reverse: true);
+
     _watchNearbyDrivers();
 
     _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -167,6 +186,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
     _elapsedTimer?.cancel();
     _radarController.dispose();
     _driversMoveController.dispose();
+    _idlePulseController.dispose();
     _nearbyDriversSub?.cancel();
     super.dispose();
   }
@@ -269,7 +289,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
         content: Text(
           loc.driverOnWayWithFareLabel(driverName, price.toStringAsFixed(0)),
           textAlign: TextAlign.center,
-          style:  TextStyle(color: context.textGreyColor),
+          style: TextStyle(color: context.textGreyColor),
         ),
         actions: [
           Center(
@@ -313,18 +333,18 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           loc.cancelSearchTitle,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
         content: Text(
           loc.cancelSearchBody,
-          style:  TextStyle(color: context.textGreyColor),
+          style: TextStyle(color: context.textGreyColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               loc.goBackButton,
-              style:  TextStyle(color: context.textGreyColor),
+              style: TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
@@ -475,6 +495,16 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                 !_dismissedRaiseFarePrompt &&
                 _elapsedSeconds >= _raiseFareThresholdSeconds;
 
+            // ====== خريطة driverId -> السعر المقترح، عشان نعرف نربط كل عرض
+            // بموتوسيكل الطيار بتاعه على الخريطة ونعرض السعر فوقه ======
+            final Map<String, double> offerPriceByDriverId = {
+              for (final offer in offers)
+                if (offer.data()['driverId'] is String)
+                  offer.data()['driverId'] as String:
+                      (offer.data()['price'] as num?)?.toDouble() ??
+                      _proposedFare,
+            };
+
             // بنسجل أي عروض جديدة (لإشعار القبول/الرفض) وبنعيد حساب موضع
             // الدبوس فوق الشيت بعد كل تحديث، لأن ارتفاع الشيت بيتغير مع ظهور
             // شارة العروض أو كارت رفع السعر أو قائمة العروض نفسها
@@ -502,11 +532,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                       },
                     ),
                     children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName: 'com.tayar.app',
-                      ),
+                      const TayarTileLayer(),
                       // ====== الدبوس + دوائر الرادار مربوطين بإحداثيات نقطة
                       // الانطلاق الحقيقية (widget.pickupLocation) ======
                       MarkerLayer(
@@ -545,7 +571,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                           ],
                                         ),
                                         child: const Icon(
-                                          Icons.person_pin_circle,
+                                          Icons.location_on,
                                           color: TayarColors.primary,
                                           size: 34,
                                         ),
@@ -558,17 +584,25 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                           ),
                         ],
                       ),
-                      // ====== الطيارين المتاحين القريبين: إيموجي موتوسيكل بيتحرك لايف ======
+                      // ====== الطيارين المتاحين القريبين: إيموجي موتوسيكل بيتحرك
+                      // لايف، ولو حد منهم عمل عرض سعر على الطلب ده يظهر عليه
+                      // بابل السعر وهالة مضيئة تميّزه عن باقي اللي لسه بيدوروا ======
                       if (_nearbyDrivers.isNotEmpty)
                         MarkerLayer(
-                          markers: _nearbyDrivers.values.map((driver) {
+                          markers: _nearbyDrivers.entries.map((entry) {
+                            final driverId = entry.key;
+                            final driver = entry.value;
+                            final offerPrice = offerPriceByDriverId[driverId];
                             return Marker(
                               point: driver.displayed,
-                              width: 34,
-                              height: 34,
-                              child: const Text(
-                                '🏍️',
-                                style: TextStyle(fontSize: 26),
+                              width: 64,
+                              height: 64,
+                              alignment: Alignment.center,
+                              child: _DriverMotoMarker(
+                                key: ValueKey(driverId),
+                                pulse: _idlePulseController,
+                                hasOffer: offerPrice != null,
+                                price: offerPrice,
                               ),
                             );
                           }).toList(),
@@ -587,7 +621,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                       if (offers.isNotEmpty) _buildOffersBadge(offers),
                       Container(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-                        decoration:  BoxDecoration(
+                        decoration: BoxDecoration(
                           color: context.bgColor,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(24),
@@ -622,16 +656,16 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 children: [
                                   Text(
                                     _formattedElapsed,
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       color: context.textGreyColor,
-                                      fontSize: 13,
+                                      fontSize: 14,
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       loc.clientOrderPriority,
-                                      style:  TextStyle(
+                                      style: TextStyle(
                                         color: context.textGreyColor,
                                         fontSize: 12,
                                       ),
@@ -668,7 +702,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                         _proposedFare.toStringAsFixed(0),
                                       ),
                                       textAlign: TextAlign.center,
-                                      style:  TextStyle(
+                                      style: TextStyle(
                                         color: context.textColor,
                                         fontSize: 26,
                                         fontWeight: FontWeight.bold,
@@ -721,15 +755,15 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                         loc.autoAcceptNearestDriverLabel(
                                           _proposedFare.toStringAsFixed(0),
                                         ),
-                                        style:  TextStyle(
+                                        style: TextStyle(
                                           color: context.textColor,
-                                          fontSize: 13,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
                                     Switch(
                                       value: _autoAccept,
-                                      activeColor: TayarColors.primary,
+                                      activeThumbColor: TayarColors.primary,
                                       onChanged: _toggleAutoAccept,
                                     ),
                                   ],
@@ -760,9 +794,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                     loc.cashAmountLabel(
                                       _proposedFare.toStringAsFixed(0),
                                     ),
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       color: context.textColor,
-                                      fontSize: 13,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -786,7 +820,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                   Row(
                                     children: [
                                       const Icon(
-                                        Icons.radio_button_checked,
+                                        Icons.location_on,
                                         color: TayarColors.primary,
                                         size: 16,
                                       ),
@@ -794,9 +828,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                       Expanded(
                                         child: Text(
                                           widget.pickupAddress,
-                                          style:  TextStyle(
+                                          style: TextStyle(
                                             color: context.textColor,
-                                            fontSize: 13,
+                                            fontSize: 14,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -804,7 +838,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                       ),
                                     ],
                                   ),
-                                   Padding(
+                                  Padding(
                                     padding: EdgeInsets.symmetric(vertical: 2),
                                     child: Row(
                                       children: [
@@ -822,17 +856,17 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                   Row(
                                     children: [
                                       const Icon(
-                                        Icons.location_on,
-                                        color: Colors.redAccent,
+                                        Icons.flag,
+                                        color: TayarColors.primary,
                                         size: 16,
                                       ),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           widget.destinationAddress,
-                                          style:  TextStyle(
+                                          style: TextStyle(
                                             color: context.textColor,
-                                            fontSize: 13,
+                                            fontSize: 14,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -854,7 +888,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 child: ListView.separated(
                                   shrinkWrap: true,
                                   itemCount: offers.length,
-                                  separatorBuilder: (_, __) =>
+                                  separatorBuilder: (_, _) =>
                                       const SizedBox(height: 8),
                                   itemBuilder: (context, index) {
                                     final offer = offers[index];
@@ -883,7 +917,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                               child: OutlinedButton(
                                 onPressed: _confirmCancel,
                                 style: OutlinedButton.styleFrom(
-                                  side:  BorderSide(
+                                  side: BorderSide(
                                     color: context.textGreyColor,
                                   ),
                                   shape: RoundedRectangleBorder(
@@ -892,7 +926,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 ),
                                 child: Text(
                                   loc.cancelOrderButton,
-                                  style:  TextStyle(
+                                  style: TextStyle(
                                     color: context.textGreyColor,
                                   ),
                                 ),
@@ -954,9 +988,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                         context,
                       )!.multipleDriversViewingOrderLabel(offers.length),
                 textDirection: TextDirection.rtl,
-                style:  TextStyle(
+                style: TextStyle(
                   color: context.textColor,
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1031,7 +1065,7 @@ class _RaiseFareCard extends StatelessWidget {
               child: Text(
                 loc.tryRaisingFareTitle,
                 textAlign: TextAlign.center,
-                style:  TextStyle(
+                style: TextStyle(
                   color: context.textColor,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -1039,11 +1073,7 @@ class _RaiseFareCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon:  Icon(
-                Icons.close,
-                color: context.textGreyColor,
-                size: 20,
-              ),
+              icon: Icon(Icons.close, color: context.textGreyColor, size: 20),
               onPressed: onDismiss,
             ),
           ],
@@ -1051,7 +1081,7 @@ class _RaiseFareCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           loc.raiseFareHintBody,
-          style:  TextStyle(color: context.textGreyColor, fontSize: 13),
+          style: TextStyle(color: context.textGreyColor, fontSize: 14),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
@@ -1068,8 +1098,8 @@ class _RaiseFareCard extends StatelessWidget {
             ),
             child: Text(
               loc.searchWithFareLabel(suggestedFare.toStringAsFixed(0)),
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: context.onPrimaryColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -1138,10 +1168,10 @@ class _OfferCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 20,
             backgroundColor: TayarColors.primary,
-            child: Icon(Icons.person, color: Colors.white, size: 20),
+            child: Icon(Icons.person, color: context.onPrimaryColor, size: 20),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -1168,9 +1198,9 @@ class _OfferCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         rating!.toStringAsFixed(1),
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: context.textGreyColor,
-                          fontSize: 11,
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -1178,9 +1208,9 @@ class _OfferCard extends StatelessWidget {
                 else
                   Text(
                     AppLocalizations.of(context)!.newDriverLabel,
-                    style:  TextStyle(
+                    style: TextStyle(
                       color: context.textGreyColor,
-                      fontSize: 11,
+                      fontSize: 12,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -1209,7 +1239,7 @@ class _OfferCard extends StatelessWidget {
               ),
               child: Text(
                 AppLocalizations.of(context)!.acceptButton,
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+                style: TextStyle(color: context.onPrimaryColor, fontSize: 12),
               ),
             ),
           ),
@@ -1252,7 +1282,7 @@ class _OfferAvatarPop extends StatelessWidget {
               ? NetworkImage(photoUrl!)
               : null,
           child: (photoUrl == null || photoUrl!.isEmpty)
-              ? const Icon(Icons.person, color: Colors.white, size: 16)
+              ? Icon(Icons.person, color: context.onPrimaryColor, size: 16)
               : null,
         ),
       ),
@@ -1322,7 +1352,7 @@ class _OfferNotificationSheet extends StatelessWidget {
                           ? NetworkImage(photoUrl!)
                           : null,
                       child: (photoUrl == null || photoUrl!.isEmpty)
-                          ?  Icon(
+                          ? Icon(
                               Icons.person,
                               color: context.textColor,
                               size: 26,
@@ -1336,7 +1366,7 @@ class _OfferNotificationSheet extends StatelessWidget {
                         children: [
                           Text(
                             loc.newOfferFromDriverLabel(driverName),
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: context.textColor,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -1354,7 +1384,7 @@ class _OfferNotificationSheet extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   rating!.toStringAsFixed(1),
-                                  style:  TextStyle(
+                                  style: TextStyle(
                                     color: context.textGreyColor,
                                     fontSize: 12,
                                   ),
@@ -1364,7 +1394,7 @@ class _OfferNotificationSheet extends StatelessWidget {
                           else
                             Text(
                               AppLocalizations.of(context)!.newDriverLabel,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textGreyColor,
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
@@ -1377,7 +1407,7 @@ class _OfferNotificationSheet extends StatelessWidget {
                       loc.currencyEGP(price.toStringAsFixed(0)),
                       style: const TextStyle(
                         color: TayarColors.primary,
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -1392,14 +1422,14 @@ class _OfferNotificationSheet extends StatelessWidget {
                         child: OutlinedButton(
                           onPressed: onReject,
                           style: OutlinedButton.styleFrom(
-                            side:  BorderSide(color: context.textGreyColor),
+                            side: BorderSide(color: context.textGreyColor),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: Text(
                             loc.rejectButton,
-                            style:  TextStyle(color: context.textGreyColor),
+                            style: TextStyle(color: context.textGreyColor),
                           ),
                         ),
                       ),
@@ -1418,8 +1448,8 @@ class _OfferNotificationSheet extends StatelessWidget {
                           ),
                           child: Text(
                             loc.acceptButton,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: context.onPrimaryColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -1432,6 +1462,99 @@ class _OfferNotificationSheet extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ====== أيقونة موتوسيكل طيار واحد على الخريطة: بتنبض باستمرار عشان تحس إنها
+// "شغالة" حتى وهي مش بتتحرك، ولو الطيار عمل عرض سعر على الطلب ده بتظهر
+// بابل السعر فوقها مع هالة مضيئة تفرقها عن باقي الطيارين ======
+class _DriverMotoMarker extends StatelessWidget {
+  final Animation<double> pulse;
+  final bool hasOffer;
+  final double? price;
+
+  const _DriverMotoMarker({
+    super.key,
+    required this.pulse,
+    required this.hasOffer,
+    required this.price,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: pulse,
+      builder: (context, child) {
+        // ====== لسه بيدور بس (من غير عرض): نبضة خفيفة جدًا (0.94 - 1.0)
+        // عمل عرض سعر: نبضة أوضح شوية (1.0 - 1.12) عشان يلفت النظر ======
+        final scale = hasOffer
+            ? 1.0 + (pulse.value * 0.12)
+            : 0.94 + (pulse.value * 0.06);
+        return Transform.scale(scale: scale, child: child);
+      },
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          if (hasOffer)
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: TayarColors.primary.withValues(alpha: 0.22),
+                border: Border.all(color: TayarColors.primary, width: 1.5),
+              ),
+            ),
+          const Text('🏍️', style: TextStyle(fontSize: 26)),
+          if (hasOffer && price != null)
+            Positioned(
+              top: -6,
+              child: TweenAnimationBuilder<double>(
+                // ====== المفتاح مربوط بالسعر عشان لو الطيار غيّر عرضه، البابل
+                // تعمل "bounce" تاني وتلفت النظر إن فيه تحديث ======
+                key: ValueKey(price),
+                tween: Tween(begin: 0, end: 1),
+                duration: const Duration(milliseconds: 320),
+                curve: Curves.easeOutBack,
+                builder: (context, value, child) {
+                  return Transform.translate(
+                    offset: Offset(0, -34 * value),
+                    child: Opacity(
+                      opacity: value.clamp(0.0, 1.0),
+                      child: child,
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: TayarColors.primary,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.35),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    price!.toStringAsFixed(0),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

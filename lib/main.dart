@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'firebase_options.dart';
@@ -8,17 +9,29 @@ import 'login_screen.dart';
 import 'passenger_home.dart';
 import 'driver_home_screen.dart';
 import 'splash_screen.dart';
+import 'app_lock_screen.dart';
+import 'push_notification_service.dart';
 
 export 'passenger_home.dart' show TayarColors, TayarTheme, TayarThemeColors;
+
+// ====== مفتاح Navigator عام: محتاجه خدمة دعوة المكالمات (ZegoCloud) عشان
+// تقدر تعرض واجهة "مكالمة واردة" فوق أي شاشة في التطبيق، حتى لو
+// المستخدم مش في شاشة معينة بالذات وقت وصول الدعوة ======
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const TayarApp());
+  // ====== لازم تتسجل قبل runApp عشان تشتغل حتى لو التطبيق مقفول تمامًا ======
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  final prefs = await SharedPreferences.getInstance();
+  final lockEnabled = prefs.getBool('appLockEnabled') ?? false;
+  runApp(TayarApp(initiallyLocked: lockEnabled));
 }
 
 class TayarApp extends StatefulWidget {
-  const TayarApp({super.key});
+  final bool initiallyLocked;
+  const TayarApp({super.key, this.initiallyLocked = false});
 
   // ====== بيدور على أقرب TayarApp في الشجرة عشان أي شاشة تقدر تغيّر اللغة ======
   // الاستخدام من أي مكان:
@@ -58,7 +71,7 @@ class TayarApp extends StatefulWidget {
   State<TayarApp> createState() => _TayarAppState();
 }
 
-class _TayarAppState extends State<TayarApp> {
+class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
   // ====== اللغة المختارة يدويًا من المستخدم. لو null، معناها التطبيق
   // بيتبع لغة الجهاز تلقائيًا (السلوك الافتراضي) ======
   Locale? _locale;
@@ -67,11 +80,41 @@ class _TayarAppState extends State<TayarApp> {
   // كان قبل إضافة الوضع الفاتح، لحد ما المستخدم يغيّره بنفسه من الإعدادات ======
   ThemeMode _themeMode = ThemeMode.dark;
 
+  // ====== حالة القفل: بتتفعّل عند بدء التطبيق لو appLockEnabled محفوظة،
+  // وبترجع تتفعّل تلقائيًا كل مرة التطبيق يرجع من الخلفية ======
+  late bool _isLocked;
+
   @override
   void initState() {
     super.initState();
+    _isLocked = widget.initiallyLocked;
+    WidgetsBinding.instance.addObserver(this);
     _loadSavedLocale();
     _loadSavedThemeMode();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _recheckAppLock();
+    }
+  }
+
+  // ====== بتقرأ حالة القفل "فريش" من التخزين كل مرة التطبيق يرجع من
+  // الخلفية، بدل ما تعتمد على القيمة القديمة المحفوظة في الذاكرة وقت
+  // الفتح الأول (عشان لو المستخدم عطّل القفل وهو شغال، تتحدث فورًا) ======
+  Future<void> _recheckAppLock() async {
+    final prefs = await SharedPreferences.getInstance();
+    final enabled = prefs.getBool('appLockEnabled') ?? false;
+    if (enabled && mounted) {
+      setState(() => _isLocked = true);
+    }
   }
 
   Future<void> _loadSavedLocale() async {
@@ -120,6 +163,7 @@ class _TayarAppState extends State<TayarApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'طيار',
       debugShowCheckedModeBanner: false,
       theme: TayarTheme.lightTheme,
@@ -131,6 +175,19 @@ class _TayarAppState extends State<TayarApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: const SplashScreen(),
+      // ====== بيعرض شاشة قفل الرقم السري فوق كل حاجة لو _isLocked = true،
+      // من غير ما يأثر على الـ Navigator أو الشاشة الحالية تحته ======
+      builder: (context, child) {
+        return Stack(
+          children: [
+            ?child,
+            if (_isLocked)
+              AppLockScreen(
+                onUnlocked: () => setState(() => _isLocked = false),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -147,10 +204,10 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         // لسه بيتأكد من حالة تسجيل الدخول (بياخد أجزاء من الثانية)
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            backgroundColor: Color(0xFF1A1816),
-            body: Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF6B00)),
+          return Scaffold(
+            backgroundColor: context.bgColor,
+            body: const Center(
+              child: CircularProgressIndicator(color: TayarColors.primary),
             ),
           );
         }
@@ -161,10 +218,10 @@ class AuthGate extends StatelessWidget {
             future: SharedPreferences.getInstance(),
             builder: (context, prefsSnapshot) {
               if (!prefsSnapshot.hasData) {
-                return const Scaffold(
-                  backgroundColor: Color(0xFF1A1816),
-                  body: Center(
-                    child: CircularProgressIndicator(color: Color(0xFFFF6B00)),
+                return Scaffold(
+                  backgroundColor: context.bgColor,
+                  body: const Center(
+                    child: CircularProgressIndicator(color: TayarColors.primary),
                   ),
                 );
               }

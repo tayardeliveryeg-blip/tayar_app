@@ -41,6 +41,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
       await prefs.setString('appLockPin', pin);
       await prefs.setBool('appLockEnabled', true);
     } else {
+      // ====== قبل إلغاء القفل، لازم نتأكد من الرقم السري الحالي أولًا ======
+      final verified = await _promptVerifyPin();
+      if (verified != true) return;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('appLockEnabled', false);
       await prefs.remove('appLockPin');
@@ -59,14 +62,14 @@ class _SecurityScreenState extends State<SecurityScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           loc.setPinTitle,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
           maxLength: 4,
           obscureText: true,
-          style:  TextStyle(color: context.textColor, letterSpacing: 8),
+          style: TextStyle(color: context.textColor, letterSpacing: 8),
           decoration: const InputDecoration(counterText: ''),
         ),
         actions: [
@@ -74,7 +77,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text(
               loc.cancel,
-              style:  TextStyle(color: context.textGreyColor),
+              style: TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
@@ -85,6 +88,74 @@ class _SecurityScreenState extends State<SecurityScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ====== بتطلب من المستخدم يدخل الرقم السري الحالي ويتحقق منه، مستخدمة
+  // قبل إلغاء تفعيل القفل عشان محدش غير صاحب التطبيق يقدر يلغيه ======
+  Future<bool?> _promptVerifyPin() async {
+    final controller = TextEditingController();
+    final loc = AppLocalizations.of(context)!;
+    final prefs = await SharedPreferences.getInstance();
+    final savedPin = prefs.getString('appLockPin');
+    if (!mounted) return null;
+
+    String? errorText;
+
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          backgroundColor: context.cardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            loc.setPinTitle,
+            style: TextStyle(color: context.textColor),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                obscureText: true,
+                autofocus: true,
+                style: TextStyle(color: context.textColor, letterSpacing: 8),
+                decoration: InputDecoration(
+                  counterText: '',
+                  errorText: errorText,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(
+                loc.cancel,
+                style: TextStyle(color: context.textGreyColor),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                if (controller.text == savedPin) {
+                  Navigator.pop(dialogContext, true);
+                } else {
+                  setDialogState(() => errorText = 'الرقم السري غير صحيح');
+                  controller.clear();
+                }
+              },
+              child: Text(
+                loc.saveButton,
+                style: const TextStyle(color: TayarColors.primary),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -111,18 +182,18 @@ class _SecurityScreenState extends State<SecurityScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           loc.deleteAccountPermanentlyTitle,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
         content: Text(
           loc.deleteAccountConfirmBody,
-          style:  TextStyle(color: context.textGreyColor),
+          style: TextStyle(color: context.textGreyColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               loc.cancel,
-              style:  TextStyle(color: context.textGreyColor),
+              style: TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
@@ -149,10 +220,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
           .delete()
           .catchError((_) {});
 
-      final googleSignIn = GoogleSignIn();
-      if (await googleSignIn.isSignedIn()) {
-        await googleSignIn.signOut();
-      }
+      try {
+        await GoogleSignIn.instance.signOut();
+      } catch (_) {}
 
       // ====== حذف حساب الأوث نفسه ======
       await user.delete();
@@ -189,10 +259,10 @@ class _SecurityScreenState extends State<SecurityScreen> {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme:  IconThemeData(color: context.textColor),
+        iconTheme: IconThemeData(color: context.textColor),
         title: Text(
           loc.navSecurity,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: _loading
@@ -215,7 +285,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                       ),
                       subtitle: Text(
                         _providerLabel(),
-                        style:  TextStyle(color: context.textGreyColor),
+                        style: TextStyle(color: context.textGreyColor),
                       ),
                     ),
                   ],
@@ -226,7 +296,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     SwitchListTile(
                       value: _appLockEnabled,
                       onChanged: _toggleAppLock,
-                      activeColor: TayarColors.primary,
+                      activeThumbColor: TayarColors.primary,
                       secondary: const Icon(
                         Icons.lock_outline,
                         color: TayarColors.primary,
@@ -237,7 +307,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                       ),
                       subtitle: Text(
                         loc.appLockSubtitle,
-                        style:  TextStyle(color: context.textGreyColor),
+                        style: TextStyle(color: context.textGreyColor),
                       ),
                     ),
                   ],

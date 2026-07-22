@@ -82,7 +82,7 @@ class NotificationsScreen extends StatelessWidget {
                     l10n.markAllAsReadButton,
                     style: const TextStyle(
                       color: TayarColors.primary,
-                      fontSize: 13,
+                      fontSize: 14,
                     ),
                   ),
                 );
@@ -104,10 +104,29 @@ class NotificationsScreen extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
+                  // ignore: avoid_print
+                  print('TAYAR_NOTIF_ERROR: ${snapshot.error}');
                   return Center(
-                    child: Text(
-                      l10n.errorLoadingNotifications,
-                      style:  TextStyle(color: context.textGreyColor),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            l10n.errorLoadingNotifications,
+                            style: TextStyle(color: context.textGreyColor),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            '${snapshot.error}',
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
@@ -143,7 +162,7 @@ class NotificationsScreen extends StatelessWidget {
                 return ListView.separated(
                   padding: const EdgeInsets.all(12),
                   itemCount: docs.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final doc = docs[index];
                     final data = doc.data();
@@ -207,7 +226,7 @@ class NotificationsScreen extends StatelessWidget {
                                     body,
                                     style:  TextStyle(
                                       color: context.textGreyColor,
-                                      fontSize: 13,
+                                      fontSize: 14,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
@@ -215,7 +234,7 @@ class NotificationsScreen extends StatelessWidget {
                                     _timeAgo(createdAt, l10n),
                                     style:  TextStyle(
                                       color: context.textGreyColor,
-                                      fontSize: 11,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ],

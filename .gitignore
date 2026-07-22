@@ -48,11 +48,6 @@ app.*.map.json
 build_log.txt
 flutter_build_log.txt
 *.zip
-# Local machine-specific config (differs between devices)
-android/local.properties
-
-# Legacy Flutter plugin registry
-.flutter-plugins
 
 # Signing keys (never commit these)
 *.jks

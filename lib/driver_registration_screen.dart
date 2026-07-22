@@ -214,7 +214,7 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                                   : AppLocalizations.of(context)!.continueButton,
                               style:  TextStyle(
                                 color: context.textColor,
-                                fontSize: 17,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -246,7 +246,7 @@ class _SectionTile extends StatelessWidget {
             : AppLocalizations.of(context)!.sectionIncompleteLabel,
         style: TextStyle(
           color: isComplete ? TayarColors.primary : context.textGreyColor,
-          fontSize: 13,
+          fontSize: 14,
         ),
       ),
       leading: CircleAvatar(
@@ -341,7 +341,7 @@ class _PhotoUploadTile extends StatelessWidget {
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Text(AppLocalizations.of(context)!.optionalLabel, style: const TextStyle(color: Colors.white, fontSize: 10)),
+                    child: Text(AppLocalizations.of(context)!.optionalLabel, style: const TextStyle(color: Colors.white, fontSize: 12)),
                   ),
                 ),
             ],
@@ -781,14 +781,14 @@ class _SectionScaffold extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
                 child: isSaving
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 22,
                         height: 22,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        child: CircularProgressIndicator(color: context.onPrimaryColor, strokeWidth: 2),
                       )
                     : Text(
                         AppLocalizations.of(context)!.saveButton,
-                        style:  TextStyle(color: context.textColor, fontSize: 17, fontWeight: FontWeight.bold),
+                        style:  TextStyle(color: context.textColor, fontSize: 18, fontWeight: FontWeight.bold),
                       ),
               ),
             ),

@@ -21,8 +21,14 @@ import 'support_screen.dart';
 import 'driver_profile_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'trip_chat_screen.dart';
-import 'call_screen.dart';
+import 'call_invitation_setup.dart';
+import 'call_invitation_helper.dart';
+import 'push_notification_service.dart';
 import 'driver_trip_tracking_screen.dart';
+import 'pin_marker.dart';
+import 'map_tile_layer.dart';
+import 'wallet_service.dart';
+import 'driver_wallet_topup_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -73,6 +79,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     // ====== بدء بث الموقع المستمر طول ما شاشة الطيار مفتوحة ======
     // (سواء الطيار "متاح" وبيدور على طلبات، أو في رحلة فعلية)
     _startLocationBroadcast();
+    // ====== تفعيل استقبال إشعارات الشات + دعوات المكالمات (لازم بعد تسجيل الدخول) ======
+    PushNotificationService.instance.init(isDriver: true);
+    setupCallInvitationService(navigatorKey: navigatorKey);
   }
 
   Future<void> _saveLastMode(String mode) async {
@@ -86,28 +95,30 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+        ),
         title: Text(
           AppLocalizations.of(context)!.logout,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
         content: Text(
           AppLocalizations.of(context)!.confirmLogoutMessage,
-          style:  TextStyle(color: context.textGreyColor),
+          style: TextStyle(color: context.textGreyColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               AppLocalizations.of(context)!.cancel,
-              style:  TextStyle(color: context.textGreyColor),
+              style: TextStyle(color: context.textGreyColor),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               AppLocalizations.of(context)!.logout,
-              style: const TextStyle(color: Colors.redAccent),
+              style: const TextStyle(color: TayarColors.error),
             ),
           ),
         ],
@@ -118,10 +129,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
     try {
       // ====== نسجل خروج من Google لو المستخدم داخل بيه، وبعدين من Firebase ======
-      final googleSignIn = GoogleSignIn();
-      if (await googleSignIn.isSignedIn()) {
-        await googleSignIn.signOut();
-      }
+      try {
+        await GoogleSignIn.instance.signOut();
+      } catch (_) {}
       await FirebaseAuth.instance.signOut();
       // ====== نمسح آخر وضع محفوظ عشان أي حساب تاني يسجل دخول من نفس الجهاز ما يفتحش غلط ======
       final prefs = await SharedPreferences.getInstance();
@@ -265,8 +275,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       Position position;
       try {
         position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium,
-          timeLimit: const Duration(seconds: 8),
+          locationSettings: LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: const Duration(seconds: 8),
+          ),
         );
       } on TimeoutException {
         debugPrint(
@@ -481,6 +493,33 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     }
   }
 
+  // ====== جلب اسم السائق الحقيقي من بروفايله في Firestore ======
+  // بنفس الأولوية المستخدمة في باقي الشاشة: الاسم اللي السائق كتبه في بياناته
+  // الشخصية (firstName + lastName) أولًا، وإلا اسم حساب Google، وإلا اسم
+  // افتراضي كـ fallback أخير. من غير كده كان بيتسجّل اسم حساب المصادقة بس،
+  // فلو السائق غيّر اسمه في البروفايل ما كانش بيظهر للراكب في الرحلة.
+  Future<String> _getDriverDisplayName(String driverId, String fallback) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('drivers')
+          .doc(driverId)
+          .get();
+      final personalInfo = doc.data()?['personalInfo'] as Map<String, dynamic>?;
+      final firstName = (personalInfo?['firstName'] as String?)?.trim();
+      final lastName = (personalInfo?['lastName'] as String?)?.trim();
+      final firestoreName = [
+        firstName,
+        lastName,
+      ].where((s) => s != null && s.isNotEmpty).join(' ');
+      if (firestoreName.isNotEmpty) return firestoreName;
+    } catch (e) {
+      debugPrint('⚠️ تعذر جلب اسم بروفايل السائق: $e');
+    }
+    final googleName = _currentUser?.displayName?.trim();
+    if (googleName != null && googleName.isNotEmpty) return googleName;
+    return fallback;
+  }
+
   // ====== إرسال عرض سعر على طلب معين ======
   Future<void> _submitOffer(String orderId, double price) async {
     final user = _currentUser;
@@ -492,10 +531,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
     try {
       final averageRating = await _getDriverAverageRating(user.uid);
+      final driverName = await _getDriverDisplayName(
+        user.uid,
+        defaultDriverName,
+      );
 
       await _ordersRef.doc(orderId).collection('offers').add({
         'driverId': user.uid,
-        'driverName': user.displayName ?? defaultDriverName,
+        'driverName': driverName,
         // لو السائق لسه معندوش تقييمات، بنبعت null بدل رقم وهمي؛
         // شاشة الراكب لازم تتعامل مع null كـ "سائق جديد" بدل ما تعرض نجوم فاضية
         'driverRating': averageRating,
@@ -551,10 +594,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
   // ====== إنهاء الرحلة ======
   Future<void> _completeTrip(String orderId) async {
-    await _ordersRef.doc(orderId).update({
-      'status': 'completed',
-      'completedAt': FieldValue.serverTimestamp(),
-    });
+    final driverId = _currentUser?.uid;
+    if (driverId == null) return;
+    await completeTripAndDeductCommission(
+      orderId: orderId,
+      driverId: driverId,
+    );
   }
 
   // ====== إشعار للطيار لحظة وصوله فعليًا لنقطة الوجهة، مع زرار سريع
@@ -567,11 +612,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         duration: const Duration(seconds: 12),
         backgroundColor: TayarColors.primary,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
         content: Text(
           AppLocalizations.of(context)!.arrivedAtDestination,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: context.onPrimaryColor,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -595,19 +642,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
-            icon:  Icon(Icons.menu, color: context.textColor),
+            icon: Icon(Icons.menu, color: context.textColor),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
         title: GestureDetector(
           onTap: _isTogglingOnline ? null : _toggleOnline,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.sm,
+            ),
             decoration: BoxDecoration(
               color: _isOnline
                   ? TayarColors.primary.withValues(alpha: 0.15)
-                  : (context.isDarkMode ? Colors.white : Colors.black).withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(20),
+                  : context.textColor.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(AppRadius.xxl),
               border: Border.all(
                 color: _isOnline ? TayarColors.primary : context.dividerColor2,
               ),
@@ -616,7 +666,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (_isTogglingOnline)
-                   SizedBox(
+                  SizedBox(
                     width: 14,
                     height: 14,
                     child: CircularProgressIndicator(
@@ -630,13 +680,15 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     size: 10,
                     color: _isOnline ? TayarColors.primary : Colors.grey,
                   ),
-                const SizedBox(width: 6),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   _isOnline
                       ? AppLocalizations.of(context)!.driverToggleOnline
                       : AppLocalizations.of(context)!.driverToggleOffline,
                   style: TextStyle(
-                    color: _isOnline ? TayarColors.primary : context.textGreyColor,
+                    color: _isOnline
+                        ? TayarColors.primary
+                        : context.textGreyColor,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -650,7 +702,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           // ====== زرار تبديل اللغة اتشال من هنا؛ التحكم في اللغة بقى
           // من شاشة الإعدادات فقط (مكان واحد موحّد لكل التطبيق) ======
           IconButton(
-            icon:  Icon(Icons.person, color: context.textColor),
+            icon: Icon(Icons.person, color: context.textColor),
             onPressed: () async {
               // ====== نحفظ إن آخر وضع بقى "راكب" عشان يفتح عليه المرة الجاية ======
               await _saveLastMode('passenger');
@@ -734,6 +786,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
             return _ActiveTripCard(
               orderId: trip.id,
+              customerId: (data['customerId'] as String?) ?? '',
               customerName:
                   (data['customerName'] as String?) ??
                   AppLocalizations.of(context)!.defaultCustomerName,
@@ -761,7 +814,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           child: !_isOnline
               ? Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(AppSpacing.xxl),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -770,7 +823,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                           color: context.textGreyColor,
                           size: 40,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AppSpacing.md),
                         Text(
                           AppLocalizations.of(context)!.driverOfflineHint,
                           textAlign: TextAlign.center,
@@ -781,82 +834,53 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   ),
                 )
               : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: _ordersRef
-                .where('status', isEqualTo: 'searching')
-                .orderBy('createdAt', descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.errorLoadingOrders,
-                    style: TextStyle(color: context.textGreyColor),
-                  ),
-                );
-              }
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(color: TayarColors.primary),
-                );
-              }
+                  stream: _ordersRef
+                      .where('status', isEqualTo: 'searching')
+                      .orderBy('createdAt', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.errorLoadingOrders,
+                          style: TextStyle(color: context.textGreyColor),
+                        ),
+                      );
+                    }
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: TayarColors.primary,
+                        ),
+                      );
+                    }
 
-              final orders = snapshot.data!.docs;
-              if (orders.isEmpty) {
-                return Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.driverNoOrders,
-                    style:  TextStyle(color: context.textGreyColor),
-                  ),
-                );
-              }
+                    final orders = snapshot.data!.docs;
+                    if (orders.isEmpty) {
+                      return Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.driverNoOrders,
+                          style: TextStyle(color: context.textGreyColor),
+                        ),
+                      );
+                    }
 
-              return ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: orders.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final order = orders[index];
-                  final data = order.data();
-                  final bool alreadyOffered = _offeredOrderIds.contains(
-                    order.id,
-                  );
+                    return ListView.separated(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      itemCount: orders.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
+                      itemBuilder: (context, index) {
+                        final order = orders[index];
+                        final data = order.data();
+                        final bool alreadyOffered = _offeredOrderIds.contains(
+                          order.id,
+                        );
 
-                  return _OrderRequestCard(
-                    pickupAddress: (data['pickupAddress'] as String?) ?? '',
-                    destinationAddress:
-                        (data['destinationAddress'] as String?) ?? '',
-                    distanceKm: (data['distanceKm'] as num?)?.toDouble() ?? 0,
-                    durationMin: (data['durationMin'] as num?)?.toInt() ?? 0,
-                    proposedFare:
-                        (data['proposedFare'] as num?)?.toDouble() ?? 0,
-                    paymentMethod:
-                        (data['paymentMethod'] as String?) ??
-                        AppLocalizations.of(context)!.paymentMethodCash,
-                    alreadyOffered: alreadyOffered,
-                    onQuickAccept: alreadyOffered
-                        ? null
-                        : () => _submitOffer(
-                            order.id,
-                            (data['proposedFare'] as num?)?.toDouble() ?? 0,
-                          ),
-                    onCustomOffer: alreadyOffered
-                        ? null
-                        : () => _openOfferSheet(order),
-                    onOpenDetails: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => _TripRequestDetailScreen(
-                          orderId: order.id,
+                        return _OrderRequestCard(
                           pickupAddress:
                               (data['pickupAddress'] as String?) ?? '',
                           destinationAddress:
                               (data['destinationAddress'] as String?) ?? '',
-                          pickupLocation: _extractGeoPoint(
-                            data['pickupLocation'],
-                          ),
-                          destinationLocation: _extractGeoPoint(
-                            data['destinationLocation'],
-                          ),
                           distanceKm:
                               (data['distanceKm'] as num?)?.toDouble() ?? 0,
                           durationMin:
@@ -876,15 +900,57 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                                 ),
                           onCustomOffer: alreadyOffered
                               ? null
-                              : (price) => _submitOffer(order.id, price),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
+                              : () => _openOfferSheet(order),
+                          onOpenDetails: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => _TripRequestDetailScreen(
+                                orderId: order.id,
+                                pickupAddress:
+                                    (data['pickupAddress'] as String?) ?? '',
+                                destinationAddress:
+                                    (data['destinationAddress'] as String?) ??
+                                    '',
+                                pickupLocation: _extractGeoPoint(
+                                  data['pickupLocation'],
+                                ),
+                                destinationLocation: _extractGeoPoint(
+                                  data['destinationLocation'],
+                                ),
+                                distanceKm:
+                                    (data['distanceKm'] as num?)?.toDouble() ??
+                                    0,
+                                durationMin:
+                                    (data['durationMin'] as num?)?.toInt() ?? 0,
+                                proposedFare:
+                                    (data['proposedFare'] as num?)
+                                        ?.toDouble() ??
+                                    0,
+                                paymentMethod:
+                                    (data['paymentMethod'] as String?) ??
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.paymentMethodCash,
+                                alreadyOffered: alreadyOffered,
+                                onQuickAccept: alreadyOffered
+                                    ? null
+                                    : () => _submitOffer(
+                                        order.id,
+                                        (data['proposedFare'] as num?)
+                                                ?.toDouble() ??
+                                            0,
+                                      ),
+                                onCustomOffer: alreadyOffered
+                                    ? null
+                                    : (price) => _submitOffer(order.id, price),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
         ),
       ],
     );
@@ -908,80 +974,104 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                      stream: _currentUser == null
-                          ? null
-                          : FirebaseFirestore.instance
-                                .collection('drivers')
-                                .doc(_currentUser!.uid)
-                                .snapshots(),
-                      builder: (context, snapshot) {
-                        final photoBase64 =
-                            (snapshot.data?.data()?['personalInfo']
-                                    as Map<String, dynamic>?)?['photoBase64']
-                                as String?;
-                        ImageProvider? photo;
-                        if (photoBase64 != null && photoBase64.isNotEmpty) {
-                          try {
-                            photo = MemoryImage(base64Decode(photoBase64));
-                          } catch (_) {
-                            photo = null;
-                          }
-                        }
-                        return CircleAvatar(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream: _currentUser == null
+                      ? null
+                      : FirebaseFirestore.instance
+                            .collection('drivers')
+                            .doc(_currentUser!.uid)
+                            .snapshots(),
+                  builder: (context, snapshot) {
+                    final personalInfo =
+                        snapshot.data?.data()?['personalInfo']
+                            as Map<String, dynamic>?;
+
+                    final photoBase64 = personalInfo?['photoBase64'] as String?;
+                    ImageProvider? photo;
+                    if (photoBase64 != null && photoBase64.isNotEmpty) {
+                      try {
+                        photo = MemoryImage(base64Decode(photoBase64));
+                      } catch (_) {
+                        photo = null;
+                      }
+                    }
+
+                    // ====== اسم السائق الحقيقي: من بيانات Firestore أولًا
+                    // (firstName + lastName اللي السائق كتبهم في البروفايل)،
+                    // وإلا اسم حساب Google المسجل بيه، وإلا اسم افتراضي
+                    // كـ fallback أخير — بنفس منطق شاشة الراكب بالظبط ======
+                    final firstName = (personalInfo?['firstName'] as String?)
+                        ?.trim();
+                    final lastName = (personalInfo?['lastName'] as String?)
+                        ?.trim();
+                    final firestoreName = [
+                      firstName,
+                      lastName,
+                    ].where((s) => s != null && s.isNotEmpty).join(' ');
+                    final googleName = _currentUser?.displayName?.trim();
+                    final displayName = firestoreName.isNotEmpty
+                        ? firestoreName
+                        : (googleName != null && googleName.isNotEmpty)
+                        ? googleName
+                        : AppLocalizations.of(context)!.defaultDriverName;
+
+                    return Row(
+                      children: [
+                        CircleAvatar(
                           radius: 28,
                           backgroundColor: TayarColors.primary,
                           backgroundImage: photo,
                           child: photo == null
-                              ? const Icon(
+                              ? Icon(
                                   Icons.two_wheeler,
-                                  color: Colors.white,
+                                  color: context.onPrimaryColor,
                                   size: 30,
                                 )
                               : null,
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _currentUser?.displayName ??
-                                AppLocalizations.of(context)!.defaultDriverName,
-                            style:  TextStyle(
-                              color: context.textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                displayName,
+                                style: TextStyle(
+                                  color: context.textColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              Text(
+                                _isOnline
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!.statusAvailable
+                                    : AppLocalizations.of(
+                                        context,
+                                      )!.statusUnavailable,
+                                style: TextStyle(
+                                  color: _isOnline
+                                      ? TayarColors.primary
+                                      : context.textGreyColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            _isOnline
-                                ? AppLocalizations.of(context)!.statusAvailable
-                                : AppLocalizations.of(
-                                    context,
-                                  )!.statusUnavailable,
-                            style: TextStyle(
-                              color: _isOnline
-                                  ? TayarColors.primary
-                                  : context.textGreyColor,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.chevron_right, color: context.textGreyColor),
-                  ],
+                        ),
+                        Icon(Icons.chevron_right, color: context.textGreyColor),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
-             Divider(color: context.dividerColor2, height: 1),
+            Divider(color: context.dividerColor2, height: 1),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -1022,7 +1112,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       Navigator.pop(context);
                     },
                   ),
-                   Divider(color: context.dividerColor2, height: 24),
+                  Divider(color: context.dividerColor2, height: 24),
                   _DriverDrawerItem(
                     icon: Icons.notifications_none,
                     label: AppLocalizations.of(context)!.navNotifications,
@@ -1086,7 +1176,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       );
                     },
                   ),
-                   Divider(color: context.dividerColor2, height: 24),
+                  Divider(color: context.dividerColor2, height: 24),
                   _DriverDrawerItem(
                     icon: Icons.logout,
                     label: AppLocalizations.of(context)!.logout,
@@ -1099,7 +1189,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
             // ====== زرار الرجوع لوضع الركاب ======
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -1118,14 +1208,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                     ),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.backToPassengerModeButton,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
+                    style: TextStyle(
+                      color: context.onPrimaryColor,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1135,7 +1225,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
             // ====== أيقونات السوشيال ميديا ======
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1144,13 +1234,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.facebook),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.xl),
                   _DriverSocialIcon(
                     icon: Icons.camera_alt_outlined, // إنستجرام
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.instagram),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.xl),
                   _DriverSocialIcon(
                     icon: Icons.chat_bubble_outline, // واتساب
                     onTap: () =>
@@ -1195,13 +1285,13 @@ class _OrderRequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(AppRadius.xl),
       onTap: onOpenDetails,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
           color: context.cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppRadius.xl),
           border: Border.all(
             color: TayarColors.primary.withValues(alpha: 0.25),
           ),
@@ -1212,52 +1302,51 @@ class _OrderRequestCard extends StatelessWidget {
             Row(
               children: [
                 const Icon(
-                  Icons.radio_button_checked,
+                  Icons.location_on,
                   color: TayarColors.primary,
                   size: 16,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
                     pickupAddress,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: context.textColor, fontSize: 14),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-             Padding(
-              padding: EdgeInsets.symmetric(vertical: 2),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xxs),
               child: Row(
                 children: [
-                  SizedBox(width: 7),
+                  SizedBox(width: AppSpacing.sm),
                   SizedBox(
                     height: 14,
-                    child: VerticalDivider(color: context.dividerColor2, thickness: 2),
+                    child: VerticalDivider(
+                      color: context.dividerColor2,
+                      thickness: 2,
+                    ),
                   ),
                 ],
               ),
             ),
             Row(
               children: [
-                const Icon(
-                  Icons.location_on,
-                  color: Colors.redAccent,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
+                const Icon(Icons.flag, color: TayarColors.primary, size: 16),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
                     destinationAddress,
-                    style:  TextStyle(color: context.textColor, fontSize: 14),
+                    style: TextStyle(color: context.textColor, fontSize: 14),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -1266,10 +1355,7 @@ class _OrderRequestCard extends StatelessWidget {
                     distanceKm.toStringAsFixed(1),
                     durationMin,
                   ),
-                  style:  TextStyle(
-                    color: context.textGreyColor,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: context.textGreyColor, fontSize: 12),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -1284,30 +1370,30 @@ class _OrderRequestCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xxs,
                       ),
                       decoration: BoxDecoration(
-                        color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(20),
+                        color: context.textColor.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(AppRadius.xxl),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                           Icon(
+                          Icon(
                             Icons.payments_outlined,
                             color: context.textGreyColor,
                             size: 12,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
                             paymentMethodDisplay(context, paymentMethod),
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: context.textGreyColor,
-                              fontSize: 11,
+                              fontSize: 12,
                             ),
                           ),
                         ],
@@ -1317,14 +1403,17 @@ class _OrderRequestCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             if (alreadyOffered)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                   child: Text(
                     AppLocalizations.of(context)!.offerSentAlreadyLabel,
-                    style: TextStyle(color: context.textGreyColor, fontSize: 13),
+                    style: TextStyle(
+                      color: context.textGreyColor,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               )
@@ -1335,10 +1424,12 @@ class _OrderRequestCard extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: onCustomOffer,
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.md,
+                        ),
                         side: const BorderSide(color: TayarColors.primary),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                       ),
                       child: Text(
@@ -1347,20 +1438,22 @@ class _OrderRequestCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: onQuickAccept,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TayarColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.md,
+                        ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.acceptProposedPrice,
-                        style:  TextStyle(color: context.textColor),
+                        style: TextStyle(color: context.textColor),
                       ),
                     ),
                   ),
@@ -1407,10 +1500,10 @@ class _OfferSheetState extends State<_OfferSheet> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        left: AppSpacing.xl,
+        right: AppSpacing.xl,
+        top: AppSpacing.xl,
+        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1419,29 +1512,29 @@ class _OfferSheetState extends State<_OfferSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade700,
-              borderRadius: BorderRadius.circular(2),
+              color: context.handleColor,
+              borderRadius: BorderRadius.circular(AppRadius.handle),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           Text(
             '${widget.pickupAddress} ← ${widget.destinationAddress}',
-            style:  TextStyle(color: context.textColor, fontSize: 14),
+            style: TextStyle(color: context.textColor, fontSize: 14),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             AppLocalizations.of(
               context,
             )!.distanceKmLabel(widget.distanceKm.toStringAsFixed(1)),
-            style:  TextStyle(color: context.textGreyColor, fontSize: 12),
+            style: TextStyle(color: context.textGreyColor, fontSize: 12),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.xl),
           Text(
             AppLocalizations.of(context)!.setYourPriceLabel,
             style: TextStyle(color: context.textColor, fontSize: 14),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -1458,11 +1551,7 @@ class _OfferSheetState extends State<_OfferSheet> {
                     context,
                   )!.currencyEGP(_price.toStringAsFixed(0)),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: TayarColors.primary,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TayarStatTextStyles.statSmall,
                 ),
               ),
               _StepButton(
@@ -1471,7 +1560,7 @@ class _OfferSheetState extends State<_OfferSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.xl),
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -1480,13 +1569,13 @@ class _OfferSheetState extends State<_OfferSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: TayarColors.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
               ),
               child: Text(
                 AppLocalizations.of(context)!.submitOfferButton,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: context.onPrimaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1507,7 +1596,7 @@ class _StepButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(30),
+      borderRadius: BorderRadius.circular(AppRadius.pill),
       child: Container(
         width: 40,
         height: 40,
@@ -1515,7 +1604,7 @@ class _StepButton extends StatelessWidget {
           color: TayarColors.primary,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: Colors.white, size: 20),
+        child: Icon(icon, color: context.onPrimaryColor, size: 20),
       ),
     );
   }
@@ -1524,6 +1613,7 @@ class _StepButton extends StatelessWidget {
 // ====== كارت الرحلة النشطة فوق قائمة الطلبات ======
 class _ActiveTripCard extends StatelessWidget {
   final String orderId;
+  final String customerId;
   final String customerName;
   final String pickupAddress;
   final String destinationAddress;
@@ -1536,6 +1626,7 @@ class _ActiveTripCard extends StatelessWidget {
 
   const _ActiveTripCard({
     required this.orderId,
+    required this.customerId,
     required this.customerName,
     required this.pickupAddress,
     required this.destinationAddress,
@@ -1550,10 +1641,10 @@ class _ActiveTripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      margin: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
       decoration: BoxDecoration(
         color: TayarColors.primary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
       ),
       clipBehavior: Clip.antiAlias,
@@ -1564,7 +1655,7 @@ class _ActiveTripCard extends StatelessWidget {
           InkWell(
             onTap: onOpenTracking,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -1573,7 +1664,9 @@ class _ActiveTripCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           inProgress
-                              ? AppLocalizations.of(context)!.tripInProgressLabel
+                              ? AppLocalizations.of(
+                                  context,
+                                )!.tripInProgressLabel
                               : AppLocalizations.of(
                                   context,
                                 )!.tripAcceptedWaitingLabel,
@@ -1591,36 +1684,36 @@ class _ActiveTripCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Text(
                     '$pickupAddress ← $destinationAddress',
-                    style: TextStyle(color: context.textColor, fontSize: 13),
+                    style: TextStyle(color: context.textColor, fontSize: 14),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   Row(
                     children: [
                       Text(
                         AppLocalizations.of(
                           context,
                         )!.currencyEGP(fare.toStringAsFixed(0)),
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: context.textColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.sm),
                       Icon(
                         Icons.payments_outlined,
-                        color: (context.isDarkMode ? context.textColor : Colors.black).withValues(alpha: 0.7),
+                        color: context.textColor.withValues(alpha: 0.7),
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.xs),
                       Text(
                         paymentMethodDisplay(context, paymentMethod),
                         style: TextStyle(
-                          color: (context.isDarkMode ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                          fontSize: 13,
+                          color: context.textColor.withValues(alpha: 0.7),
+                          fontSize: 14,
                         ),
                       ),
                     ],
@@ -1630,79 +1723,81 @@ class _ActiveTripCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-
-          // ====== زرارين التواصل مع الراكب: شات ومكالمة صوتية ======
-          Row(
-            children: [
-              Expanded(
-                child: _DriverContactButton(
-                  icon: Icons.chat_bubble_outline,
-                  label: AppLocalizations.of(context)!.chatWithPassengerLabel,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => TripChatScreen(
-                          orderId: orderId,
-                          otherPartyName: customerName,
-                        ),
+                // ====== زرارين التواصل مع الراكب: شات ومكالمة صوتية ======
+                Row(
+                  children: [
+                    Expanded(
+                      child: _DriverContactButton(
+                        icon: Icons.chat_bubble_outline,
+                        label: AppLocalizations.of(
+                          context,
+                        )!.chatWithPassengerLabel,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => TripChatScreen(
+                                orderId: orderId,
+                                otherPartyName: customerName,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _DriverContactButton(
-                  icon: Icons.call_outlined,
-                  label: AppLocalizations.of(context)!.callPassengerLabel,
-                  onTap: () {
-                    final user = FirebaseAuth.instance.currentUser;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CallScreen(
-                          orderId: orderId,
-                          myUserId: user?.uid ?? '',
-                          myUserName:
-                              user?.displayName ??
-                              AppLocalizations.of(context)!.defaultDriverName,
-                        ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: _DriverContactButton(
+                        icon: Icons.call_outlined,
+                        label: AppLocalizations.of(context)!.callPassengerLabel,
+                        onTap: () async {
+                          try {
+                            await sendCallInvitation(
+                              calleeId: customerId,
+                              calleeName: customerName,
+                            );
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('تعذر بدء المكالمة: $e'),
+                                ),
+                              );
+                            }
+                          }
+                        },
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
 
-          SizedBox(
-            width: double.infinity,
-            height: 44,
-            child: ElevatedButton(
-              onPressed: inProgress ? onComplete : onStart,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TayarColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: inProgress ? onComplete : onStart,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TayarColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      ),
+                    ),
+                    child: Text(
+                      inProgress
+                          ? AppLocalizations.of(context)!.endTrip
+                          : AppLocalizations.of(context)!.startTrip,
+                      style: TextStyle(
+                        color: context.textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              child: Text(
-                inProgress
-                    ? AppLocalizations.of(context)!.endTrip
-                    : AppLocalizations.of(context)!.startTrip,
-                style:  TextStyle(
-                  color: context.textColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
               ],
             ),
           ),
@@ -1729,23 +1824,23 @@ class _DriverContactButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         decoration: BoxDecoration(
           color: TayarColors.primary.withValues(alpha: 0.18),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           border: Border.all(color: TayarColors.primary.withValues(alpha: 0.5)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: TayarColors.primary, size: 18),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.sm),
             Text(
               label,
               style: const TextStyle(
                 color: TayarColors.primary,
                 fontWeight: FontWeight.bold,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
           ],
@@ -1774,14 +1869,14 @@ class _DriverDrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color itemColor = isDestructive
-        ? Colors.redAccent
+        ? TayarColors.error
         : (selected ? TayarColors.primary : context.textColor);
 
     return ListTile(
       leading: Icon(
         icon,
         color: isDestructive
-            ? Colors.redAccent
+            ? TayarColors.error
             : (selected ? TayarColors.primary : context.textGreyColor),
       ),
       title: Text(
@@ -1862,20 +1957,20 @@ class _DriverIncomeTab extends StatelessWidget {
         }
 
         return ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           children: [
             _IncomeSummaryCard(
               title: AppLocalizations.of(context)!.todayIncome,
               value: todayTotal,
               icon: Icons.today,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             _IncomeSummaryCard(
               title: AppLocalizations.of(context)!.totalIncome,
               value: total,
               icon: Icons.payments,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             _IncomeSummaryCard(
               title: AppLocalizations.of(context)!.completedTripsCount,
               value: docs.length.toDouble(),
@@ -1976,15 +2071,8 @@ class _DriverRatingTabState extends State<_DriverRatingTab> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                avg.toStringAsFixed(2),
-                style: const TextStyle(
-                  color: TayarColors.primary,
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
+              Text(avg.toStringAsFixed(2), style: TayarStatTextStyles.statHuge),
+              const SizedBox(height: AppSpacing.sm),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: List.generate(5, (i) {
@@ -1996,13 +2084,10 @@ class _DriverRatingTabState extends State<_DriverRatingTab> {
                   );
                 }),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 AppLocalizations.of(context)!.ratingCountLabel(count),
-                style:  TextStyle(
-                  color: context.textGreyColor,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: context.textGreyColor, fontSize: 14),
               ),
             ],
           ),
@@ -2017,79 +2102,222 @@ class _DriverWalletTab extends StatelessWidget {
   final String driverId;
   const _DriverWalletTab({required this.driverId});
 
-  static const double _driverShare = 0.9; // نسبة الطيار من كل رحلة (90%)
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+    final loc = AppLocalizations.of(context)!;
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
-          .collection('orders')
-          .where('driverId', isEqualTo: driverId)
-          .where('status', isEqualTo: 'completed')
+          .collection('drivers')
+          .doc(driverId)
           .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(color: TayarColors.primary),
-          );
-        }
-
-        double total = 0;
-        for (final doc in snapshot.data!.docs) {
-          total += (doc.data()['acceptedFare'] as num?)?.toDouble() ?? 0;
-        }
-        final netBalance = total * _driverShare;
-        final commission = total - netBalance;
+      builder: (context, driverSnapshot) {
+        final balance =
+            (driverSnapshot.data?.data()?['walletBalance'] as num?)
+                ?.toDouble() ??
+            0;
+        final isNegative = balance < 0;
 
         return ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           children: [
+            // ====== كارت الرصيد الحالي ======
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AppSpacing.xxl),
               decoration: BoxDecoration(
-                color: TayarColors.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(20),
+                color: (isNegative ? TayarColors.error : TayarColors.primary)
+                    .withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(AppRadius.xxl),
                 border: Border.all(
-                  color: TayarColors.primary.withValues(alpha: 0.4),
+                  color: (isNegative ? TayarColors.error : TayarColors.primary)
+                      .withValues(alpha: 0.4),
                 ),
               ),
               child: Column(
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.availableBalance,
-                    style: TextStyle(color: context.textGreyColor, fontSize: 14),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    AppLocalizations.of(
-                      context,
-                    )!.currencyEGP(netBalance.toStringAsFixed(0)),
-                    style: const TextStyle(
-                      color: TayarColors.primary,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
+                    loc.availableBalance,
+                    style: TextStyle(
+                      color: context.textGreyColor,
+                      fontSize: 14,
                     ),
                   ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    loc.currencyEGP(balance.toStringAsFixed(0)),
+                    style: TayarStatTextStyles.statMedium.copyWith(
+                      color: isNegative ? TayarColors.error : TayarColors.primary,
+                    ),
+                  ),
+                  if (isNegative) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    Text(
+                      loc.negativeWalletBalanceNote,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: TayarColors.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            _IncomeSummaryCard(
-              title: AppLocalizations.of(
-                context,
-              )!.totalEarningsBeforeCommission,
-              value: total,
-              icon: Icons.summarize,
+            const SizedBox(height: AppSpacing.lg),
+
+            // ====== زرار شحن المحفظة ======
+            SizedBox(
+              height: 50,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TayarColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                  ),
+                ),
+                icon: Icon(
+                  Icons.add_card_outlined,
+                  color: context.onPrimaryColor,
+                ),
+                label: Text(
+                  loc.topUpWalletButton,
+                  style: TextStyle(
+                    color: context.onPrimaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const DriverWalletTopupScreen(),
+                    ),
+                  );
+                },
+              ),
             ),
-            const SizedBox(height: 16),
-            _IncomeSummaryCard(
-              title: AppLocalizations.of(context)!.companyCommission,
-              value: commission,
-              icon: Icons.percent,
+            const SizedBox(height: AppSpacing.xxl),
+
+            // ====== سجل المعاملات ======
+            Text(
+              loc.walletTransactionsTitle,
+              style: TextStyle(
+                color: context.textColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: FirebaseFirestore.instance
+                  .collection('drivers')
+                  .doc(driverId)
+                  .collection('walletTransactions')
+                  .orderBy('createdAt', descending: true)
+                  .limit(50)
+                  .snapshots(),
+              builder: (context, txnSnapshot) {
+                if (!txnSnapshot.hasData) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                      child: CircularProgressIndicator(
+                        color: TayarColors.primary,
+                      ),
+                    ),
+                  );
+                }
+                final docs = txnSnapshot.data!.docs;
+                if (docs.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                    child: Center(
+                      child: Text(
+                        loc.noWalletTransactionsLabel,
+                        style: TextStyle(color: context.textGreyColor),
+                      ),
+                    ),
+                  );
+                }
+                return Column(
+                  children: docs
+                      .map((doc) => _WalletTransactionTile(data: doc.data()))
+                      .toList(),
+                );
+              },
             ),
           ],
         );
       },
+    );
+  }
+}
+
+// ====== سطر واحد في سجل معاملات المحفظة (عمولة رحلة أو طلب شحن) ======
+class _WalletTransactionTile extends StatelessWidget {
+  final Map<String, dynamic> data;
+  const _WalletTransactionTile({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final type = data['type'] as String? ?? '';
+    final status = data['status'] as String? ?? '';
+    final amount = (data['amount'] as num?)?.toDouble() ?? 0;
+
+    late final String label;
+    late final IconData icon;
+    late final Color color;
+
+    if (type == 'commission') {
+      label = loc.walletCommissionTransactionLabel;
+      icon = Icons.percent;
+      color = TayarColors.error;
+    } else if (status == 'approved') {
+      label = loc.walletTopupApprovedLabel;
+      icon = Icons.check_circle_outline;
+      color = TayarColors.success;
+    } else if (status == 'rejected') {
+      label = loc.walletTopupRejectedLabel;
+      icon = Icons.cancel_outlined;
+      color = TayarColors.error;
+    } else {
+      label = loc.walletTopupPendingLabel;
+      icon = Icons.hourglass_top_outlined;
+      color = TayarColors.warning;
+    }
+
+    final displayAmount = type == 'commission'
+        ? amount // من الأساس بالسالب في الداتا
+        : amount.abs();
+    final sign = displayAmount < 0 || type == 'commission' ? '' : '+';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(color: context.textColor, fontSize: 14),
+            ),
+          ),
+          Text(
+            '$sign${loc.currencyEGP(displayAmount.abs().toStringAsFixed(0))}',
+            style: TextStyle(
+              color: color,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -2111,15 +2339,15 @@ class _IncomeSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
       ),
       child: Row(
         children: [
           Icon(icon, color: TayarColors.primary, size: 28),
-          const SizedBox(width: 14),
+          const SizedBox(width: AppSpacing.lg),
           Expanded(
             child: Text(
               title,
@@ -2132,7 +2360,7 @@ class _IncomeSummaryCard extends StatelessWidget {
                     context,
                   )!.currencyEGP(value.toStringAsFixed(0))
                 : value.toStringAsFixed(0),
-            style:  TextStyle(
+            style: TextStyle(
               color: context.textColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -2238,10 +2466,10 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme:  IconThemeData(color: context.textColor),
+        iconTheme: IconThemeData(color: context.textColor),
         title: Text(
           AppLocalizations.of(context)!.orderDetailsTitle,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: Column(
@@ -2253,11 +2481,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                 ? FlutterMap(
                     options: MapOptions(initialCenter: center, initialZoom: 13),
                     children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName: 'com.tayar.app',
-                      ),
+                      const TayarTileLayer(),
                       if (_routePoints.isNotEmpty)
                         PolylineLayer(
                           polylines: [
@@ -2274,20 +2498,18 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             point: LatLng(pickup.latitude, pickup.longitude),
                             width: 40,
                             height: 40,
-                            child: const Icon(
-                              Icons.radio_button_checked,
-                              color: TayarColors.primary,
-                              size: 32,
+                            child: const PinMarker(
+                              type: PinType.pickup,
+                              size: 40,
                             ),
                           ),
                           Marker(
                             point: LatLng(dest.latitude, dest.longitude),
                             width: 40,
                             height: 40,
-                            child: const Icon(
-                              Icons.location_on,
-                              color: Colors.redAccent,
-                              size: 36,
+                            child: const PinMarker(
+                              type: PinType.destination,
+                              size: 40,
                             ),
                           ),
                         ],
@@ -2306,15 +2528,15 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
           Expanded(
             flex: 2,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(AppSpacing.lg),
                     decoration: BoxDecoration(
                       color: context.cardColor,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2322,21 +2544,21 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                         Row(
                           children: [
                             const Icon(
-                              Icons.radio_button_checked,
+                              Icons.location_on,
                               color: TayarColors.primary,
                               size: 16,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: Text(
                                 widget.pickupAddress,
-                                style: const TextStyle(color: Colors.white),
+                                style: TextStyle(color: context.textColor),
                               ),
                             ),
                           ],
                         ),
-                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 6),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
                           child: SizedBox(
                             height: 14,
                             child: VerticalDivider(
@@ -2348,20 +2570,20 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                         Row(
                           children: [
                             const Icon(
-                              Icons.location_on,
-                              color: Colors.redAccent,
+                              Icons.flag,
+                              color: TayarColors.primary,
                               size: 16,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: Text(
                                 widget.destinationAddress,
-                                style:  TextStyle(color: context.textColor),
+                                style: TextStyle(color: context.textColor),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: AppSpacing.md),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -2372,9 +2594,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                                 widget.distanceKm.toStringAsFixed(1),
                                 widget.durationMin,
                               ),
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textGreyColor,
-                                fontSize: 13,
+                                fontSize: 14,
                               ),
                             ),
                             Text(
@@ -2382,9 +2604,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                                 context,
                                 widget.paymentMethod,
                               ),
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textGreyColor,
-                                fontSize: 13,
+                                fontSize: 14,
                               ),
                             ),
                           ],
@@ -2392,7 +2614,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.lg),
 
                   // ====== واجهة المزايدة (زيادة/نقصان السعر) ======
                   if (!widget.alreadyOffered) ...[
@@ -2414,11 +2636,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               context,
                             )!.currencyEGP(_price.toStringAsFixed(0)),
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: TayarColors.primary,
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TayarStatTextStyles.statSmall,
                           ),
                         ),
                         _StepButton(
@@ -2427,7 +2645,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.lg),
                     Row(
                       children: [
                         Expanded(
@@ -2437,12 +2655,14 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               Navigator.pop(context);
                             },
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                               side: const BorderSide(
                                 color: TayarColors.primary,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.sm,
+                                ),
                               ),
                             ),
                             child: Text(
@@ -2453,7 +2673,7 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: AppSpacing.md),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
@@ -2462,9 +2682,11 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: TayarColors.primary,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.sm,
+                                ),
                               ),
                             ),
                             child: Text(
@@ -2478,7 +2700,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                   ] else
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.md,
+                        ),
                         child: Text(
                           AppLocalizations.of(context)!.alreadyOfferedOnOrder,
                           style: TextStyle(color: context.textGreyColor),
@@ -2494,4 +2718,3 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
     );
   }
 }
-

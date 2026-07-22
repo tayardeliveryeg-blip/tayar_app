@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
+import 'passenger_home.dart'
+    show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'searching_offers_screen.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
@@ -69,44 +68,29 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
     setState(() => _isSubmitting = true);
 
     try {
-      final user = FirebaseAuth.instance.currentUser;
+      // ====== إنشاء الطلب بالكامل بيحصل دلوقتي على السيرفر (Cloud Function
+      // اسمها createOrder). السيرفر هو اللي بيحسب المسافة والسعر المقترح
+      // الحقيقيين من إحداثيات نقطة الانطلاق والوجهة بس، وبيتأكد إن السعر
+      // اللي الراكب حدده (proposedFare) منطقي قبل ما يكتب أي حاجة في
+      // Firestore - عشان محدش يقدر يتلاعب بالمسافة أو السعر عن طريق تعديل
+      // الموبايل نفسه. اسم ورقم الراكب كمان بيتجابوا من السيرفر مباشرة. ======
+      final callable = FirebaseFunctions.instanceFor(
+        region: 'europe-west1',
+      ).httpsCallable('createOrder');
 
-      // ====== بناء GeoFirePoint لكل من نقطة الالتقاط والوجهة ======
-      final pickupGeoFirePoint = GeoFirePoint(
-        GeoPoint(
-          widget.pickupLocation.latitude,
-          widget.pickupLocation.longitude,
-        ),
-      );
-      final destinationGeoFirePoint = GeoFirePoint(
-        GeoPoint(
-          widget.destinationLocation.latitude,
-          widget.destinationLocation.longitude,
-        ),
-      );
-
-      final orderRef = await FirebaseFirestore.instance.collection('orders').add({
-        'customerId': user?.uid,
-        'customerName':
-            user?.displayName ??
-            AppLocalizations.of(context)!.defaultCustomerName,
-        'customerPhone': user?.phoneNumber,
+      final result = await callable.call<Map<String, dynamic>>({
         'pickupAddress': widget.pickupAddress,
-        'pickupLocation': pickupGeoFirePoint.data,
+        'pickupLat': widget.pickupLocation.latitude,
+        'pickupLng': widget.pickupLocation.longitude,
         'destinationAddress': widget.destinationAddress,
-        'destinationLocation': destinationGeoFirePoint.data,
-        'distanceKm': widget.distanceKm,
-        'durationMin': widget.durationMin,
-        'suggestedFare': widget.fare, // السعر المقترح الأصلي (من حساب المسافة)
-        'proposedFare': _proposedFare, // السعر اللي الراكب حدده فعليًا
-        'autoAccept': _autoAccept, // هل يقبل تلقائيًا عرض بنفس السعر المقترح؟
+        'destinationLat': widget.destinationLocation.latitude,
+        'destinationLng': widget.destinationLocation.longitude,
+        'proposedFare': _proposedFare,
+        'autoAccept': _autoAccept,
         'paymentMethod': widget.paymentMethod,
-        'serviceType': 'passenger',
-        'status':
-            'searching', // searching → accepted → in_progress → completed / cancelled
-        'driverId': null,
-        'createdAt': FieldValue.serverTimestamp(),
       });
+
+      final orderId = result.data['orderId'] as String;
 
       if (!mounted) return;
       setState(() => _isSubmitting = false);
@@ -116,12 +100,24 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => SearchingOffersScreen(
-            orderId: orderRef.id,
+            orderId: orderId,
             proposedFare: _proposedFare,
             autoAccept: _autoAccept,
             pickupAddress: widget.pickupAddress,
             pickupLocation: widget.pickupLocation,
             destinationAddress: widget.destinationAddress,
+          ),
+        ),
+      );
+    } on FirebaseFunctionsException catch (e) {
+      // ====== رسالة السيرفر بتوصل هنا لو السعر غير منطقي مثلًا (invalid-argument) ======
+      debugPrint('❌ خطأ من createOrder: ${e.code} - ${e.message}');
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.message ?? AppLocalizations.of(context)!.submitFailedError,
           ),
         ),
       );
@@ -146,12 +142,12 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
         backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon:  Icon(Icons.arrow_forward, color: context.textColor),
+          icon: Icon(Icons.arrow_forward, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           l10n.setYourFareTitle,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: Padding(
@@ -169,7 +165,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
               child: Column(
                 children: [
                   _RouteRow(
-                    icon: Icons.radio_button_checked,
+                    icon: Icons.location_on,
                     iconColor: TayarColors.primary,
                     label: l10n.routeFromLabel,
                     address: widget.pickupAddress,
@@ -179,13 +175,17 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     child: Row(
                       children: [
                         const SizedBox(width: 10),
-                        Container(width: 2, height: 24, color: context.dividerColor2),
+                        Container(
+                          width: 2,
+                          height: 24,
+                          color: context.dividerColor2,
+                        ),
                       ],
                     ),
                   ),
                   _RouteRow(
-                    icon: Icons.location_on,
-                    iconColor: Colors.redAccent,
+                    icon: Icons.flag,
+                    iconColor: TayarColors.primary,
                     label: l10n.routeToLabel,
                     address: widget.destinationAddress,
                   ),
@@ -209,12 +209,12 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       widget.distanceKm.toStringAsFixed(1),
                     ),
                   ),
-                   Divider(color: context.dividerColor2),
+                  Divider(color: context.dividerColor2),
                   _DetailRow(
                     label: l10n.estimatedTimeLabel,
                     value: l10n.durationMinLabel(widget.durationMin),
                   ),
-                   Divider(color: context.dividerColor2),
+                  Divider(color: context.dividerColor2),
                   _DetailRow(
                     label: l10n.paymentMethodLabel,
                     value: paymentMethodDisplay(context, widget.paymentMethod),
@@ -268,7 +268,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                   const SizedBox(height: 6),
                   Text(
                     l10n.autoSuggestedFareLabel(widget.fare.toStringAsFixed(0)),
-                    style:  TextStyle(
+                    style: TextStyle(
                       color: context.textGreyColor,
                       fontSize: 12,
                     ),
@@ -321,9 +321,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                 ),
                 icon: _isSubmitting
                     ? const SizedBox.shrink()
-                    : const Icon(Icons.search, color: Colors.white),
+                    : Icon(Icons.search, color: context.onPrimaryColor),
                 label: _isSubmitting
-                    ?  SizedBox(
+                    ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
@@ -333,7 +333,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       )
                     : Text(
                         l10n.searchForDriversButton,
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: context.textColor,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -402,14 +402,11 @@ class _RouteRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style:  TextStyle(
-                  color: context.textGreyColor,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: context.textGreyColor, fontSize: 12),
               ),
               Text(
                 address,
-                style:  TextStyle(
+                style: TextStyle(
                   color: context.textColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -438,11 +435,11 @@ class _DetailRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style:  TextStyle(color: context.textGreyColor, fontSize: 14),
+            style: TextStyle(color: context.textGreyColor, fontSize: 14),
           ),
           Text(
             value,
-            style:  TextStyle(
+            style: TextStyle(
               color: context.textColor,
               fontSize: 14,
               fontWeight: FontWeight.w600,

@@ -8,6 +8,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'select_destination_screen.dart' show PlaceResult;
+import 'pin_marker.dart';
+import 'map_tile_layer.dart';
 
 /// ====== شاشة اختيار الوجهة من الخريطة ======
 /// خريطة كاملة الشاشة فيها دبوس ثابت في النص، المستخدم بيحرك الخريطة لحد
@@ -18,7 +20,14 @@ class PickOnMapScreen extends StatefulWidget {
   // الانطلاق الحالية)، ولو مفيش هنستخدم مركز مدينة العاشر من رمضان.
   final LatLng? initialLocation;
 
-  const PickOnMapScreen({super.key, this.initialLocation});
+  // نوع الدبوس المعروض: انطلاق أو وجهة (بيحدد شكل الأيقونة جوه المربع)
+  final PinType pinType;
+
+  const PickOnMapScreen({
+    super.key,
+    this.initialLocation,
+    this.pinType = PinType.destination,
+  });
 
   @override
   State<PickOnMapScreen> createState() => _PickOnMapScreenState();
@@ -159,11 +168,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
               ),
             ),
             children: [
-              TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.tayar.app',
-              ),
+              const TayarTileLayer(),
             ],
           ),
 
@@ -234,25 +239,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: context.textColor,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.25),
-                          blurRadius: 6,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.flag,
-                      color: TayarColors.primary,
-                      size: 26,
-                    ),
-                  ),
+                  PinMarker(type: widget.pinType),
                   Container(width: 2, height: 14, color: Colors.white54),
                   Container(
                     width: 8,
