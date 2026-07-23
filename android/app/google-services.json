@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "354477388400-4tu07gbvoogur43e7d7s0usaenbsorc5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tayay_app",
+            "certificate_hash": "bf1354ec64338db18969abd34df2dd709381d425"
+          }
+        },
+        {
           "client_id": "354477388400-iqlcifpim513n35umrlti63q013i732t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
