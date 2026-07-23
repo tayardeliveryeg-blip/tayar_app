@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
@@ -212,12 +213,13 @@ class AuthGate extends StatelessWidget {
           );
         }
 
-        // فيه مستخدم مسجل دخول بالفعل → نتأكد آخر وضع كان فاتحه (راكب/طيار)
+        // فيه مستخدم مسجل دخول بالفعل → أول حاجة نتأكد إن حسابه مش محظور
         if (snapshot.hasData) {
-          return FutureBuilder<SharedPreferences>(
-            future: SharedPreferences.getInstance(),
-            builder: (context, prefsSnapshot) {
-              if (!prefsSnapshot.hasData) {
+          final uid = snapshot.data!.uid;
+          return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+            future: FirebaseFirestore.instance.collection('users').doc(uid).get(),
+            builder: (context, userDocSnap) {
+              if (userDocSnap.connectionState == ConnectionState.waiting) {
                 return Scaffold(
                   backgroundColor: context.bgColor,
                   body: const Center(
@@ -225,11 +227,28 @@ class AuthGate extends StatelessWidget {
                   ),
                 );
               }
-              final lastMode = prefsSnapshot.data!.getString('lastMode');
-              if (lastMode == 'driver') {
-                return const DriverHomeScreen();
+              final status = userDocSnap.data?.data()?['status'] as String?;
+              if (status == 'banned') {
+                return const _BannedAccountScreen();
               }
-              return const PassengerHomeScreen();
+              return FutureBuilder<SharedPreferences>(
+                future: SharedPreferences.getInstance(),
+                builder: (context, prefsSnapshot) {
+                  if (!prefsSnapshot.hasData) {
+                    return Scaffold(
+                      backgroundColor: context.bgColor,
+                      body: const Center(
+                        child: CircularProgressIndicator(color: TayarColors.primary),
+                      ),
+                    );
+                  }
+                  final lastMode = prefsSnapshot.data!.getString('lastMode');
+                  if (lastMode == 'driver') {
+                    return const DriverHomeScreen();
+                  }
+                  return const PassengerHomeScreen();
+                },
+              );
             },
           );
         }
@@ -237,6 +256,57 @@ class AuthGate extends StatelessWidget {
         // مفيش مستخدم مسجل → اعرض شاشة تسجيل الدخول
         return const LoginScreen();
       },
+    );
+  }
+}
+
+// ====== شاشة بسيطة تظهر للحساب المحظور بدل ما يدخل التطبيق، وتسجّله خروج تلقائيًا ======
+class _BannedAccountScreen extends StatefulWidget {
+  const _BannedAccountScreen();
+
+  @override
+  State<_BannedAccountScreen> createState() => _BannedAccountScreenState();
+}
+
+class _BannedAccountScreenState extends State<_BannedAccountScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // نسجله خروج فورًا عشان لو رجع فتح التطبيق تاني يوصله لشاشة تسجيل الدخول العادية
+    FirebaseAuth.instance.signOut();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: context.bgColor,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.block, color: Colors.redAccent, size: 56),
+              const SizedBox(height: 16),
+              Text(
+                'تم تعليق هذا الحساب',
+                style: TextStyle(
+                  color: context.textColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'لو حاسس إن ده حصل بالغلط، تواصل مع الدعم.',
+                style: TextStyle(color: context.textColor.withValues(alpha: 0.7)),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
