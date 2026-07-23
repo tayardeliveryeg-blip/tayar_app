@@ -82,6 +82,27 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     // ====== تفعيل استقبال إشعارات الشات + دعوات المكالمات (لازم بعد تسجيل الدخول) ======
     PushNotificationService.instance.init(isDriver: true);
     setupCallInvitationService(navigatorKey: navigatorKey);
+    // ====== تعبئة رقم التليفون تلقائيًا لو السائق سجل قبل إضافة هذا الحقل ======
+    _backfillPhoneNumber();
+  }
+
+  // ====== لوحة التحكم محتاجة رقم تليفون السائق؛ السائقين اللي سجلوا قبل ما نضيف
+  // الحقل ده هيتملّه تلقائيًا من رقم تسجيل الدخول أول ما يفتحوا الشاشة دي ======
+  Future<void> _backfillPhoneNumber() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final phone = FirebaseAuth.instance.currentUser?.phoneNumber;
+    if (uid == null || phone == null || phone.isEmpty) return;
+    try {
+      final doc = await FirebaseFirestore.instance.collection('drivers').doc(uid).get();
+      final existingPhone = (doc.data()?['personalInfo'] as Map?)?['phone'] as String?;
+      if (existingPhone == null || existingPhone.isEmpty) {
+        await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
+          'personalInfo': {'phone': phone},
+        }, SetOptions(merge: true));
+      }
+    } catch (_) {
+      // صامت: مجرد تعبئة اختيارية، لا داعي لإزعاج السائق لو فشلت
+    }
   }
 
   Future<void> _saveLastMode(String mode) async {

@@ -408,6 +408,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           'lastName': _lastNameController.text.trim(),
           'birthDate': _birthDateController.text.trim(),
           'hasPhoto': _photoBytes != null,
+          'phone': FirebaseAuth.instance.currentUser?.phoneNumber ?? '',
           'complete': true,
         },
       }, SetOptions(merge: true));
