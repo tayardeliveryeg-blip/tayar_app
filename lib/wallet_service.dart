@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'app_settings.dart';
 
 // ====================================================
 // ====== منطق محفظة الطيار: نسبة الشركة بتتخصم تلقائي ======
@@ -7,7 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // للشركة). الرصيد ممكن يبقى بالسالب لو الطيار متأخر عن الشحن ======
 // ====================================================
 
-/// نسبة عمولة الشركة من كل رحلة (10%)
+/// نسبة عمولة الشركة من كل رحلة — القيمة الافتراضية (10%)، بتتغير فعليًا
+/// من خلال إعدادات لوحة الأدمن (AppSettings.instance.commissionRate)
 const double kDriverCommissionRate = 0.10;
 
 /// ====== إنهاء الرحلة + خصم نسبة الشركة من محفظة الطيار في نفس الوقت ======
@@ -28,7 +30,7 @@ Future<void> completeTripAndDeductCommission({
   await FirebaseFirestore.instance.runTransaction((txn) async {
     final orderSnap = await txn.get(orderRef);
     final fare = (orderSnap.data()?['acceptedFare'] as num?)?.toDouble() ?? 0;
-    final commission = fare * kDriverCommissionRate;
+    final commission = fare * AppSettings.instance.commissionRate;
 
     final driverSnap = await txn.get(driverRef);
     final currentBalance =

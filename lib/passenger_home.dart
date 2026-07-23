@@ -31,6 +31,7 @@ import 'map_tile_layer.dart';
 import 'main.dart' show navigatorKey;
 import 'call_invitation_setup.dart';
 import 'push_notification_service.dart';
+import 'app_settings.dart';
 export 'theme_extensions.dart'; // مصدر TayarColors / TayarTheme / TayarThemeColors الوحيد
 
 // ====== القيمة الداخلية لطريقة الدفع بتفضل ثابتة (عربي) عشان التوافق مع
@@ -481,7 +482,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   // ====== حساب سعر الرحلة: 10 جنيه أساسي + 5 جنيه لكل كيلومتر ======
   double get _estimatedFare {
     if (_routeDistanceKm == null) return 0;
-    return 10 + (5 * _routeDistanceKm!);
+    return AppSettings.instance.estimateFare(_routeDistanceKm!);
   }
 
   Future<void> _openDestinationSearch() async {

@@ -12,6 +12,7 @@ import 'passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDi
 import 'select_destination_screen.dart' show SelectDestinationScreen, PlaceResult;
 import 'pin_marker.dart' show PinType;
 import 'searching_offers_screen.dart';
+import 'app_settings.dart';
 
 /// ====== شاشة إنشاء طلب "وصل طلباتي" (توصيل طرد/بضاعة) ======
 /// بتاخد مكان استلام + مكان تسليم + تفاصيل العناوين + أرقام موبايل
@@ -57,7 +58,7 @@ class _CreateDeliveryOrderScreenState
 
   double get _estimatedFare {
     if (_distanceKm == null) return 0;
-    return 10 + (5 * _distanceKm!);
+    return AppSettings.instance.estimateFare(_distanceKm!);
   }
 
   @override

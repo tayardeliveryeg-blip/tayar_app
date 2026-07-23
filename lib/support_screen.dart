@@ -4,9 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'passenger_home.dart';
+import 'app_settings.dart';
 
 // ====== شاشة الدعم: تواصل مباشر (واتساب/اتصال/إيميل) + إرسال شكوى/استفسار ======
-// عدّل رقم الواتساب والإيميل تحت لبيانات الدعم الفعلية بتاعتك
+// رقم الواتساب/الاتصال بييجي من إعدادات لوحة الأدمن (AppSettings)، والإيميل ثابت تحت
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
 
@@ -15,7 +16,7 @@ class SupportScreen extends StatefulWidget {
 }
 
 class _SupportScreenState extends State<SupportScreen> {
-  static const String _supportPhone = '+201142263460';
+  String get _supportPhone => AppSettings.instance.supportPhone;
   static const String _supportEmail = 'tayardeliveryeg@gmail.com';
 
   final _messageController = TextEditingController();

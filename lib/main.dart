@@ -12,6 +12,7 @@ import 'driver_home_screen.dart';
 import 'splash_screen.dart';
 import 'app_lock_screen.dart';
 import 'push_notification_service.dart';
+import 'app_settings.dart';
 
 export 'passenger_home.dart' show TayarColors, TayarTheme, TayarThemeColors;
 
@@ -25,6 +26,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // ====== لازم تتسجل قبل runApp عشان تشتغل حتى لو التطبيق مقفول تمامًا ======
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  // ====== تحميل إعدادات التطبيق (الأسعار، العمولة، تليفون الدعم) من لوحة الأدمن ======
+  await AppSettings.instance.load();
   final prefs = await SharedPreferences.getInstance();
   final lockEnabled = prefs.getBool('appLockEnabled') ?? false;
   runApp(TayarApp(initiallyLocked: lockEnabled));
