@@ -927,11 +927,20 @@ function openAddModal(mode){
   document.getElementById('modalFields').innerHTML = `
     <div class="field"><label>First name</label><input id="f_first" placeholder="e.g. Amr"></div>
     <div class="field"><label>Last name</label><input id="f_last" placeholder="e.g. Fathy"></div>
-    <div class="field"><label>Phone</label><input id="f_phone" placeholder="01000000000"></div>
+    <div class="field"><label>Phone *</label><input id="f_phone" placeholder="01000000000"></div>
     <div class="field"><label>Bike (brand &amp; model)</label><input id="f_bike" placeholder="e.g. Honda 125"></div>
     <div class="field"><label>Plate number</label><input id="f_plate" placeholder="e.g. س ص ع 1234"></div>`;
 }
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+// ====== بيحوّل أي شكل لرقم موبايل مصري لصيغة موحّدة (آخر 10 أرقام)
+// عشان يتقارن صح مع رقم الموبايل بتاع Firebase Auth وقت الربط
+// التلقائي في التطبيق (lib/driver_invite_link_helper.dart) ======
+function normalizeEgyptPhone(raw){
+  const digits = (raw||'').replace(/[^0-9]/g,'');
+  if(!digits) return null;
+  return digits.length > 10 ? digits.slice(-10) : digits;
+}
+
 function submitModal(){
   const first = document.getElementById('f_first').value.trim();
   const last = document.getElementById('f_last').value.trim();
@@ -939,14 +948,24 @@ function submitModal(){
   const bikeParts = document.getElementById('f_bike').value.trim().split(' ');
   const plate = document.getElementById('f_plate').value.trim() || '—';
   const phone = document.getElementById('f_phone').value.trim() || '';
+  const phoneNormalized = normalizeEgyptPhone(phone);
+  // ====== الرقم إجباري: من غيره مفيش طريقة نربط السائق بحسابه
+  // الحقيقي أول ما يسجل دخول (شوف driver_invite_link_helper.dart) ======
+  if(!phoneNormalized){ toast('Please enter a valid phone number'); return; }
   db.collection(COLLECTIONS.drivers).add({
     personalInfo: { firstName: first, lastName: last, phone: phone, complete: true },
     bikeInfo: { brand: bikeParts[0]||'', model: bikeParts.slice(1).join(' ')||'', plateNumber: plate, complete: true },
     rating: 5.0,
     isAvailable: false,
     status: 'approved',
+    // ====== الفلاجين دول هما اللي بيخلّوا التطبيق يعرف يربط السائق
+    // بحسابه الحقيقي (UID) أول ما يسجل دخول برقم الموبايل ده،
+    // ويترحّلوا/يتشالوا تلقائيًا بعد الربط — لو فضلوا موجودين يبقى
+    // السائق لسه ما سجّلش دخول بعد ======
+    isPreInvited: true,
+    phoneNormalized: phoneNormalized,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(()=>toast(`Driver ${first} ${last} added`))
+  }).then(()=>toast(`Driver ${first} ${last} added — will auto-link on first login`))
     .catch(err=>toast('Failed: ' + err.message));
   closeModal();
 }

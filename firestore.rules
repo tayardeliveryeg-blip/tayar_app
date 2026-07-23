@@ -85,11 +85,26 @@ service cloud.firestore {
     }
 
     // ====== بيانات الطيارين (تسجيل، مستندات، إلخ) ======
+    // ====== isPreInvitedMatch: سجل مُضاف يدويًا من لوحة التحكم
+    // (+ Add driver، ID عشوائي) بنفس رقم موبايل اليوزر الحالي —
+    // ده اللي بيسمح لـ driver_invite_link_helper.dart إنه يدور
+    // على السجل ده ويربطه بالـ UID الحقيقي أول ما السائق يسجل
+    // دخول برقم الموبايل ده تحديدًا، ومفيش حد تاني يقدر يقراه ======
+    function isPreInvitedMatch() {
+      return resource.data.isPreInvited == true &&
+        request.auth.token.phone_number != null &&
+        resource.data.phoneNormalized != null &&
+        request.auth.token.phone_number.matches('.*' + resource.data.phoneNormalized + '$');
+    }
+
     match /drivers/{driverId} {
-      allow read: if request.auth != null && (request.auth.uid == driverId || isAdmin());
-      allow write: if request.auth != null && (request.auth.uid == driverId || isAdmin());
+      allow read: if request.auth != null &&
+        (request.auth.uid == driverId || isAdmin() || isPreInvitedMatch());
+      allow create, update: if request.auth != null &&
+        (request.auth.uid == driverId || isAdmin());
       allow update: if request.auth != null &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount']);
+      allow delete: if request.auth != null && (isAdmin() || isPreInvitedMatch());
     }
 
     match /driver_locations/{driverId} {

@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (context.mounted) {
-        navigateAfterAuth(
+        await navigateAfterAuth(
           context,
           isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
         );
@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (context.mounted) {
-        navigateAfterAuth(
+        await navigateAfterAuth(
           context,
           isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
         );
@@ -265,8 +265,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   // لأن authenticate() برمجيًا مش مدعوم على الويب أصلًا ======
                   if (kIsWeb)
                     GoogleSignInWebButton(
-                      onSignedIn: (ctx, isNewUser) {
-                        navigateAfterAuth(ctx, isNewUser: isNewUser);
+                      onSignedIn: (ctx, isNewUser) async {
+                        await navigateAfterAuth(ctx, isNewUser: isNewUser);
                       },
                       onError: (ctx, e) {
                         ScaffoldMessenger.of(ctx).showSnackBar(

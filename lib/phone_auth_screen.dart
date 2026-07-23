@@ -44,7 +44,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
         final userCredential = await FirebaseAuth.instance
             .signInWithCredential(credential);
         if (!mounted) return;
-        navigateAfterAuth(
+        await navigateAfterAuth(
           context,
           isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
         );
@@ -323,7 +323,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       );
 
       if (!mounted) return;
-      navigateAfterAuth(
+      await navigateAfterAuth(
         context,
         isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
       );
@@ -366,7 +366,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
         final userCredential = await FirebaseAuth.instance
             .signInWithCredential(credential);
         if (!mounted) return;
-        navigateAfterAuth(
+        await navigateAfterAuth(
           context,
           isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
         );
