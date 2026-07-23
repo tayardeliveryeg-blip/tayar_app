@@ -123,15 +123,15 @@ flutter_icons:
   remove_alpha_ios: true
 
 flutter_native_splash:
-  color: "#F7F5F3" # نفس TayarColors.backgroundLight
-  color_dark: "#1A1816" # نفس TayarColors.backgroundDark
-  image: assets/icon/app_icon.png # المربع البرتقالي + شعار الموتوسيكل
-  image_dark: assets/icon/app_icon.png
+  color: "#F7F5F3"
+  color_dark: "#1A1816"
+  image: assets/splash/app_icon_android12_safe.png
+  image_dark: assets/splash/app_icon_android12_safe.png
   android_12:
     color: "#F7F5F3"
     color_dark: "#1A1816"
-    image: assets/icon/app_icon.png
-    image_dark: assets/icon/app_icon.png
+    image: assets/splash/app_icon_android12_safe.png
+    image_dark: assets/splash/app_icon_android12_safe.png
   fullscreen: true
 
 dependency_overrides:
