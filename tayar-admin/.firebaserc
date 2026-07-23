@@ -1,5 +1,12 @@
 {
   "projects": {
     "default": "b10-app-1e682"
+  },
+  "targets": {
+    "b10-app-1e682": {
+      "hosting": {
+        "admin": ["b10-app-1e682"]
+      }
+    }
   }
 }

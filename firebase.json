@@ -25,6 +25,15 @@
   "firestore": {
     "rules": "firestore.rules"
   },
+  "hosting": {
+    "target": "admin",
+    "public": "tayar-admin/public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
   "functions": [
     {
       "source": "functions",
