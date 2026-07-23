@@ -49,9 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (kIsWeb) {
             await GoogleSignIn.instance.initialize(clientId: webClientId);
           } else {
-            await GoogleSignIn.instance.initialize(
-              serverClientId: webClientId,
-            );
+            await GoogleSignIn.instance.initialize(serverClientId: webClientId);
           }
         } catch (e) {
           final msg = e.toString();
@@ -204,36 +202,50 @@ class _LoginScreenState extends State<LoginScreen> {
             // بياخد المساحة المتاحة كلها، ولو المحتوى طويل بيبقى قابل للسكرول،
             // من غير ما يأثر على مكان الأزرار تحت.
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 40),
-                    Image.asset(
-                      'assets/icon/app_icon.png',
-                      width: 120,
-                      height: 120,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      AppLocalizations.of(context)!.appName,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: context.textColor,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: ConstrainedBox(
+                      // ====== بيضمن إن الـ Column ياخد أقل ارتفاع = المساحة
+                      // المتاحة كاملة، عشان الـ centering يشتغل فعليًا، وبرضه
+                      // يفضل قابل للسكرول لو المحتوى طويل على شاشة صغيرة ======
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 40),
+                          Image.asset(
+                            'assets/icon/app_icon.png',
+                            width: 120,
+                            height: 120,
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            AppLocalizations.of(context)!.appName,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: context.textColor,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.chooseYourRideSubtitle,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: context.textGreyColor),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      AppLocalizations.of(context)!.chooseYourRideSubtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: context.textGreyColor),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
 
@@ -297,9 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // زر المتابعة عبر الهاتف
                   _buildCustomButton(
-                    text: AppLocalizations.of(
-                      context,
-                    )!.continueWithPhoneButton,
+                    text: AppLocalizations.of(context)!.continueWithPhoneButton,
                     icon: Icons.phone,
                     color: Colors.grey[800]!,
                     textColor: Colors.white,
@@ -318,7 +328,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     AppLocalizations.of(context)!.loginTermsAgreementNotice,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: context.textGreyColor),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.textGreyColor,
+                    ),
                   ),
                 ],
               ),
