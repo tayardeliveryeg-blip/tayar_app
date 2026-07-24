@@ -1629,25 +1629,41 @@ class TayarDrawer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _SocialIcon(
-                    icon: Icons.facebook,
+                    icon: Icon(
+                      Icons.facebook,
+                      color: context.textColor,
+                      size: 20,
+                    ),
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.facebook),
                   ),
                   const SizedBox(width: AppSpacing.xl),
                   _SocialIcon(
-                    icon: Icons.camera_alt_outlined, // إنستجرام
+                    icon: Icon(
+                      Icons.camera_alt_outlined,
+                      color: context.textColor,
+                      size: 20,
+                    ), // إنستجرام
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.instagram),
                   ),
                   const SizedBox(width: AppSpacing.xl),
                   _SocialIcon(
-                    icon: Icons.chat_bubble_outline, // واتساب
+                    icon: Icon(
+                      Icons.chat_bubble_outline,
+                      color: context.textColor,
+                      size: 20,
+                    ), // واتساب
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.whatsapp),
                   ),
                   const SizedBox(width: AppSpacing.xl),
                   _SocialIcon(
-                    icon: FontAwesomeIcons.tiktok,
+                    icon: FaIcon(
+                      FontAwesomeIcons.tiktok,
+                      color: context.textColor,
+                      size: 20,
+                    ),
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.tiktok),
                   ),
@@ -1713,7 +1729,7 @@ class _DrawerItem extends StatelessWidget {
 }
 
 class _SocialIcon extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final VoidCallback? onTap;
   const _SocialIcon({required this.icon, this.onTap});
 
@@ -1728,7 +1744,7 @@ class _SocialIcon extends StatelessWidget {
           border: Border.all(color: context.dividerColor2),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: context.textColor, size: 20),
+        child: Center(child: icon),
       ),
     );
   }
