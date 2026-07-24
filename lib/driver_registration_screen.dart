@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'driver_home_screen.dart';
+import 'driver_invite_link_helper.dart';
 import 'l10n/generated/app_localizations.dart';
 
 // ====================================================
@@ -368,8 +369,21 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _birthDateController = TextEditingController();
+  final _mobileController = TextEditingController();
   Uint8List? _photoBytes;
   bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // ====== لو دخل بالموبايل أصلاً، منعبيش الحقل تلقائيًا عشان نضمن
+    // إنه يراجع الرقم بنفسه (مهم خصوصًا لمستخدمي جوجل اللي معندهمش
+    // رقم موبايل مسجل في الـ Auth) ======
+    final authPhone = FirebaseAuth.instance.currentUser?.phoneNumber;
+    if (authPhone != null && authPhone.isNotEmpty) {
+      _mobileController.text = authPhone;
+    }
+  }
 
   Future<void> _pickPhoto() async {
     final picker = ImagePicker();
@@ -400,18 +414,37 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       );
       return;
     }
+    final mobile = _mobileController.text.trim();
+    if (normalizeEgyptPhone(mobile) == null || normalizeEgyptPhone(mobile)!.length < 9) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.phoneNumberFormatError)),
+      );
+      return;
+    }
     setState(() => _isSaving = true);
     try {
+      // ====== خطوة احتياطية: نحاول نربط بسجل "مُضاف يدويًا" من لوحة
+      // التحكم بالرقم اللي دخله السائق هنا، تغطية للحالة اللي فيها
+      // Firebase Auth مش راجع رقم موبايل (تسجيل دخول بجوجل مثلًا)
+      // فمحاولة الربط وقت تسجيل الدخول (navigateAfterAuth) بتكون
+      // فشلت. آمنة تتنادى حتى لو الربط حصل قبل كده ======
+      await linkPreInvitedDriverIfNeeded(uid: uid, phoneNumber: mobile);
+
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
         'personalInfo': {
           'firstName': _firstNameController.text.trim(),
           'lastName': _lastNameController.text.trim(),
           'birthDate': _birthDateController.text.trim(),
           'hasPhoto': _photoBytes != null,
-          'phone': FirebaseAuth.instance.currentUser?.phoneNumber ?? '',
+          'phone': mobile,
           'complete': true,
         },
+        // ====== بنخزنه هنا كمان (مش بس جوه personalInfo) عشان يطابق
+        // نفس الحقل اللي بيدور عليه linkPreInvitedDriverIfNeeded وبيكتبه
+        // الأدمن وقت إضافة سائق يدويًا، فالربط شغال في الاتجاهين ======
+        'phoneNormalized': normalizeEgyptPhone(mobile),
       }, SetOptions(merge: true));
+
       if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
@@ -443,6 +476,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           child: AbsorbPointer(
             child: _FormTextField(controller: _birthDateController, hint: AppLocalizations.of(context)!.birthDateHint),
           ),
+        ),
+        _FormTextField(
+          controller: _mobileController,
+          hint: AppLocalizations.of(context)!.phoneNumberLabel,
+          keyboardType: TextInputType.phone,
         ),
       ],
     );
