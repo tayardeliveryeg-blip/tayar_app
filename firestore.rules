@@ -32,13 +32,6 @@ service cloud.firestore {
         );
     }
 
-    // ====== الأدمن نفسه: كل أدمن يقدر يقرا الدوكيومنت بتاعه بس (للتأكد إنه أدمن)
-    // الكتابة/الإضافة بتتم يدوي من Firebase Console بس - مفيش حد يضيف نفسه أدمن ======
-    match /admins/{adminId} {
-      allow read: if request.auth != null && request.auth.uid == adminId;
-      allow write: if false;
-    }
-
     // ====== الطلبات/الرحلات ======
     match /orders/{orderId} {
       allow read: if request.auth != null && (
