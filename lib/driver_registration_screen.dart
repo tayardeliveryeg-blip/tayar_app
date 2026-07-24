@@ -482,6 +482,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           hint: AppLocalizations.of(context)!.phoneNumberLabel,
           keyboardType: TextInputType.phone,
         ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 12),
+          child: Text(
+            AppLocalizations.of(context)!.mobileNumberMatchHint,
+            style: TextStyle(color: context.textGreyColor, fontSize: 12),
+            textAlign: TextAlign.right,
+          ),
+        ),
       ],
     );
   }

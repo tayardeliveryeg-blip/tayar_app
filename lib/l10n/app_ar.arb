@@ -321,6 +321,7 @@
   "searchForDriversButton": "البحث عن طيارين",
 
   "phoneNumberFormatError": "من فضلك اكتب رقم هاتف صحيح",
+  "mobileNumberMatchHint": "لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه",
   "tryAgainLabel": "حاول تاني",
   "errorOccurredWithMessage": "حصل خطأ: {message}",
   "@errorOccurredWithMessage": {

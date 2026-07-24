@@ -321,6 +321,7 @@
   "searchForDriversButton": "Search for Drivers",
 
   "phoneNumberFormatError": "Please enter a valid phone number",
+  "mobileNumberMatchHint": "If an admin already added you, enter the exact same mobile number they used",
   "tryAgainLabel": "Try Again",
   "errorOccurredWithMessage": "An error occurred: {message}",
   "@errorOccurredWithMessage": {
