@@ -323,6 +323,7 @@
   "phoneNumberFormatError": "Please enter a valid phone number",
   "mobileNumberMatchHint": "If an admin already added you, enter the exact same mobile number they used",
   "credentialAlreadyInUseError": "This mobile number is already linked to another account. Please use a different number",
+  "otpSendFailedGenericError": "An error occurred while sending the verification code. Please try again later",
   "tryAgainLabel": "Try Again",
   "errorOccurredWithMessage": "An error occurred: {message}",
   "@errorOccurredWithMessage": {

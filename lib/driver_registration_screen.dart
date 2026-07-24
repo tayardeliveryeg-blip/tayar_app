@@ -16,10 +16,12 @@ class DriverRegistrationScreen extends StatefulWidget {
   const DriverRegistrationScreen({super.key});
 
   @override
-  State<DriverRegistrationScreen> createState() => _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8();
+  State<DriverRegistrationScreen> createState() =>
+      _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8();
 }
 
-class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScreen> {
+class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
+    extends State<DriverRegistrationScreen> {
   Map<String, dynamic>? _driverData;
   bool _isLoading = true;
   bool _isSubmitting = false;
@@ -35,7 +37,10 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
   Future<void> _loadDriverData() async {
     if (_uid == null) return;
     try {
-      final doc = await FirebaseFirestore.instance.collection('drivers').doc(_uid).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('drivers')
+          .doc(_uid)
+          .get();
       setState(() {
         _driverData = doc.data();
         _isLoading = false;
@@ -77,18 +82,27 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
         barrierDismissible: false,
         builder: (_) => AlertDialog(
           backgroundColor: context.cardColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Column(
             children: [
-              const Icon(Icons.hourglass_top, color: TayarColors.primary, size: 56),
+              const Icon(
+                Icons.hourglass_top,
+                color: TayarColors.primary,
+                size: 56,
+              ),
               const SizedBox(height: 12),
-              Text(loc.submitApplicationSuccessTitle, style: TextStyle(color: context.textColor)),
+              Text(
+                loc.submitApplicationSuccessTitle,
+                style: TextStyle(color: context.textColor),
+              ),
             ],
           ),
           content: Text(
             loc.submitApplicationSuccessBody,
             textAlign: TextAlign.center,
-            style:  TextStyle(color: context.textGreyColor),
+            style: TextStyle(color: context.textGreyColor),
           ),
           actions: [
             Center(
@@ -97,7 +111,10 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                   Navigator.of(context).pop(); // يقفل الـ dialog
                   Navigator.of(context).pop(); // يرجع لشاشة الراكب
                 },
-                child: Text(loc.ok, style: const TextStyle(color: TayarColors.primary)),
+                child: Text(
+                  loc.ok,
+                  style: const TextStyle(color: TayarColors.primary),
+                ),
               ),
             ),
           ],
@@ -107,7 +124,9 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
       debugPrint('❌ خطأ في إرسال طلب التسجيل: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.submitFailedError)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.submitFailedError),
+        ),
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -131,16 +150,24 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        title: Text(AppLocalizations.of(context)!.driverRegistrationTitle, style:  TextStyle(color: context.textColor)),
+        title: Text(
+          AppLocalizations.of(context)!.driverRegistrationTitle,
+          style: TextStyle(color: context.textColor),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.closeButton, style:  TextStyle(color: context.textGreyColor)),
+            child: Text(
+              AppLocalizations.of(context)!.closeButton,
+              style: TextStyle(color: context.textGreyColor),
+            ),
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: TayarColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: TayarColors.primary),
+            )
           : Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -153,10 +180,14 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                       decoration: BoxDecoration(
                         color: TayarColors.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
+                        border: Border.all(
+                          color: TayarColors.primary.withValues(alpha: 0.4),
+                        ),
                       ),
                       child: Text(
-                        AppLocalizations.of(context)!.applicationUnderReviewBanner,
+                        AppLocalizations.of(
+                          context,
+                        )!.applicationUnderReviewBanner,
                         style: TextStyle(color: context.textColor),
                         textAlign: TextAlign.center,
                       ),
@@ -164,26 +195,37 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                   else
                     Text(
                       AppLocalizations.of(context)!.registrationIntroText,
-                      style:  TextStyle(color: context.textGreyColor, fontSize: 14),
+                      style: TextStyle(
+                        color: context.textGreyColor,
+                        fontSize: 14,
+                      ),
                     ),
                   const SizedBox(height: 20),
                   Expanded(
                     child: ListView(
                       children: [
                         _SectionTile(
-                          title: AppLocalizations.of(context)!.sectionPersonalInfo,
+                          title: AppLocalizations.of(
+                            context,
+                          )!.sectionPersonalInfo,
                           isComplete: _isSectionComplete('personalInfo'),
                           onTap: () => _openSection(const PersonalInfoScreen()),
                         ),
                         _SectionTile(
-                          title: AppLocalizations.of(context)!.sectionDrivingLicense,
+                          title: AppLocalizations.of(
+                            context,
+                          )!.sectionDrivingLicense,
                           isComplete: _isSectionComplete('drivingLicense'),
-                          onTap: () => _openSection(const DrivingLicenseScreen()),
+                          onTap: () =>
+                              _openSection(const DrivingLicenseScreen()),
                         ),
                         _SectionTile(
-                          title: AppLocalizations.of(context)!.sectionPersonalDocuments,
+                          title: AppLocalizations.of(
+                            context,
+                          )!.sectionPersonalDocuments,
                           isComplete: _isSectionComplete('personalDocuments'),
-                          onTap: () => _openSection(const PersonalDocumentsScreen()),
+                          onTap: () =>
+                              _openSection(const PersonalDocumentsScreen()),
                         ),
                         _SectionTile(
                           title: AppLocalizations.of(context)!.sectionBikeInfo,
@@ -196,25 +238,37 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8 extends State<DriverRegistrationScree
                   SizedBox(
                     height: 54,
                     child: ElevatedButton(
-                      onPressed: (_allSectionsComplete && !_isSubmitting && status != 'pending_review')
+                      onPressed:
+                          (_allSectionsComplete &&
+                              !_isSubmitting &&
+                              status != 'pending_review')
                           ? _submitRegistration
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TayarColors.primary,
                         disabledBackgroundColor: context.cardColor,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                       child: _isSubmitting
-                          ?  SizedBox(
+                          ? SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(color: context.textColor, strokeWidth: 2),
+                              child: CircularProgressIndicator(
+                                color: context.textColor,
+                                strokeWidth: 2,
+                              ),
                             )
                           : Text(
                               status == 'pending_review'
-                                  ? AppLocalizations.of(context)!.applicationUnderReviewButton
-                                  : AppLocalizations.of(context)!.continueButton,
-                              style:  TextStyle(
+                                  ? AppLocalizations.of(
+                                      context,
+                                    )!.applicationUnderReviewButton
+                                  : AppLocalizations.of(
+                                      context,
+                                    )!.continueButton,
+                              style: TextStyle(
                                 color: context.textColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -234,14 +288,21 @@ class _SectionTile extends StatelessWidget {
   final bool isComplete;
   final VoidCallback onTap;
 
-  const _SectionTile({required this.title, required this.isComplete, required this.onTap});
+  const _SectionTile({
+    required this.title,
+    required this.isComplete,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(vertical: 4),
-      title: Text(title, style:  TextStyle(color: context.textColor, fontSize: 16)),
+      title: Text(
+        title,
+        style: TextStyle(color: context.textColor, fontSize: 16),
+      ),
       subtitle: Text(
         isComplete
             ? AppLocalizations.of(context)!.sectionCompleteLabel
@@ -252,13 +313,15 @@ class _SectionTile extends StatelessWidget {
         ),
       ),
       leading: CircleAvatar(
-        backgroundColor: isComplete ? TayarColors.primary.withValues(alpha: 0.15) : context.cardColor,
+        backgroundColor: isComplete
+            ? TayarColors.primary.withValues(alpha: 0.15)
+            : context.cardColor,
         child: Icon(
           isComplete ? Icons.check : Icons.description_outlined,
           color: isComplete ? TayarColors.primary : context.textGreyColor,
         ),
       ),
-      trailing:  Icon(Icons.chevron_left, color: context.textGreyColor),
+      trailing: Icon(Icons.chevron_left, color: context.textGreyColor),
     );
   }
 }
@@ -271,7 +334,11 @@ class _FormTextField extends StatelessWidget {
   final String hint;
   final TextInputType? keyboardType;
 
-  const _FormTextField({required this.controller, required this.hint, this.keyboardType});
+  const _FormTextField({
+    required this.controller,
+    required this.hint,
+    this.keyboardType,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -280,18 +347,21 @@ class _FormTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
-        style:  TextStyle(color: context.textColor),
+        style: TextStyle(color: context.textColor),
         textAlign: TextAlign.right,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle:  TextStyle(color: context.textGreyColor),
+          hintStyle: TextStyle(color: context.textGreyColor),
           filled: true,
           fillColor: context.cardColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
         ),
       ),
     );
@@ -326,11 +396,14 @@ class _PhotoUploadTile extends StatelessWidget {
                   color: context.cardColor,
                   borderRadius: BorderRadius.circular(14),
                   image: imageBytes != null
-                      ? DecorationImage(image: MemoryImage(imageBytes!), fit: BoxFit.cover)
+                      ? DecorationImage(
+                          image: MemoryImage(imageBytes!),
+                          fit: BoxFit.cover,
+                        )
                       : null,
                 ),
                 child: imageBytes == null
-                    ?  Icon(Icons.add, color: context.textGreyColor, size: 30)
+                    ? Icon(Icons.add, color: context.textGreyColor, size: 30)
                     : null,
               ),
               if (optional)
@@ -338,19 +411,29 @@ class _PhotoUploadTile extends StatelessWidget {
                   top: 6,
                   right: 6,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Text(AppLocalizations.of(context)!.optionalLabel, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                    child: Text(
+                      AppLocalizations.of(context)!.optionalLabel,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
                   ),
                 ),
             ],
           ),
         ),
         const SizedBox(height: 8),
-        Text(label, style:  TextStyle(color: context.textColor, fontSize: 12), textAlign: TextAlign.center),
+        Text(
+          label,
+          style: TextStyle(color: context.textColor, fontSize: 12),
+          textAlign: TextAlign.center,
+        ),
       ],
     );
   }
@@ -388,7 +471,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   Future<void> _pickPhoto() async {
     final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    final file = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
     if (file == null) return;
     final bytes = await file.readAsBytes();
     setState(() => _photoBytes = bytes);
@@ -402,16 +488,20 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       lastDate: DateTime.now(),
     );
     if (picked != null) {
-      _birthDateController.text = '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      _birthDateController.text =
+          '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
     }
   }
 
   Future<void> _save() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    if (_firstNameController.text.trim().isEmpty || _lastNameController.text.trim().isEmpty) {
+    if (_firstNameController.text.trim().isEmpty ||
+        _lastNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.fullNameRequiredError)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.fullNameRequiredError),
+        ),
       );
       return;
     }
@@ -419,7 +509,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     final normalizedMobile = normalizeEgyptPhone(mobile);
     if (normalizedMobile == null || normalizedMobile.length < 9) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.phoneNumberFormatError)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.phoneNumberFormatError),
+        ),
       );
       return;
     }
@@ -429,7 +521,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     // نطلب منه OTP تاني. غير كده (تسجيل دخول بجوجل مثلًا، أو غيّر الرقم)
     // لازم يوثّق الرقم الجديد أولًا عشان الـ Auth token يبقى فيه
     // phone_number claim حقيقي — ده اللي قاعدة isPreInvitedMatch محتاجاه ======
-    final authNormalized = normalizeEgyptPhone(FirebaseAuth.instance.currentUser?.phoneNumber);
+    final authNormalized = normalizeEgyptPhone(
+      FirebaseAuth.instance.currentUser?.phoneNumber,
+    );
     if (authNormalized != normalizedMobile) {
       await _verifyAndLinkMobile(mobile);
       return;
@@ -453,7 +547,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       timeout: const Duration(seconds: 60),
       verificationCompleted: (PhoneAuthCredential credential) async {
         try {
-          await FirebaseAuth.instance.currentUser!.linkWithCredential(credential);
+          await FirebaseAuth.instance.currentUser!.linkWithCredential(
+            credential,
+          );
           await FirebaseAuth.instance.currentUser?.getIdToken(true);
           if (!mounted) return;
           await _completeSave(mobile);
@@ -465,7 +561,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               content: Text(
                 e.code == 'credential-already-in-use'
                     ? l10n.credentialAlreadyInUseError
-                    : l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel),
+                    : l10n.errorOccurredWithMessage(
+                        e.message ?? l10n.tryAgainLabel,
+                      ),
               ),
             ),
           );
@@ -474,8 +572,18 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       verificationFailed: (FirebaseAuthException e) {
         if (!mounted) return;
         setState(() => _isSaving = false);
+        // ====== لما Firebase يرجّع خطأ من غير رسالة واضحة (زي حالة
+        // reCAPTCHA/billing مش مظبوطة على مشروع لسه Spark)، بنعرض رسالة
+        // مفهومة للمستخدم بدل "Error" الفاضية دي ======
+        final hasUsableMessage =
+            e.message != null && e.message!.trim().isNotEmpty;
+        final displayMessage = hasUsableMessage
+            ? e.message!
+            : l10n.otpSendFailedGenericError;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel))),
+          SnackBar(
+            content: Text(l10n.errorOccurredWithMessage(displayMessage)),
+          ),
         );
       },
       codeSent: (String verificationId, int? resendToken) async {
@@ -547,15 +655,28 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       onSave: _save,
       children: [
         Center(
-          child: _PhotoUploadTile(label: AppLocalizations.of(context)!.personalPhotoLabel, imageBytes: _photoBytes, onTap: _pickPhoto),
+          child: _PhotoUploadTile(
+            label: AppLocalizations.of(context)!.personalPhotoLabel,
+            imageBytes: _photoBytes,
+            onTap: _pickPhoto,
+          ),
         ),
         const SizedBox(height: 24),
-        _FormTextField(controller: _firstNameController, hint: AppLocalizations.of(context)!.firstNameHint),
-        _FormTextField(controller: _lastNameController, hint: AppLocalizations.of(context)!.lastNameHint),
+        _FormTextField(
+          controller: _firstNameController,
+          hint: AppLocalizations.of(context)!.firstNameHint,
+        ),
+        _FormTextField(
+          controller: _lastNameController,
+          hint: AppLocalizations.of(context)!.lastNameHint,
+        ),
         GestureDetector(
           onTap: _pickDate,
           child: AbsorbPointer(
-            child: _FormTextField(controller: _birthDateController, hint: AppLocalizations.of(context)!.birthDateHint),
+            child: _FormTextField(
+              controller: _birthDateController,
+              hint: AppLocalizations.of(context)!.birthDateHint,
+            ),
           ),
         ),
         _FormTextField(
@@ -593,7 +714,10 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
 
   Future<void> _pickPhoto() async {
     final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    final file = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
     if (file == null) return;
     final bytes = await file.readAsBytes();
     setState(() => _licensePhoto = bytes);
@@ -607,7 +731,8 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
       lastDate: DateTime(2050),
     );
     if (picked != null) {
-      _expiryController.text = '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      _expiryController.text =
+          '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
     }
   }
 
@@ -616,7 +741,11 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
     if (uid == null) return;
     if (_licensePhoto == null || _expiryController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.licensePhotoUploadRequired)),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.licensePhotoUploadRequired,
+          ),
+        ),
       );
       return;
     }
@@ -650,13 +779,20 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
       onSave: _save,
       children: [
         Center(
-          child: _PhotoUploadTile(label: AppLocalizations.of(context)!.sectionDrivingLicense, imageBytes: _licensePhoto, onTap: _pickPhoto),
+          child: _PhotoUploadTile(
+            label: AppLocalizations.of(context)!.sectionDrivingLicense,
+            imageBytes: _licensePhoto,
+            onTap: _pickPhoto,
+          ),
         ),
         const SizedBox(height: 24),
         GestureDetector(
           onTap: _pickDate,
           child: AbsorbPointer(
-            child: _FormTextField(controller: _expiryController, hint: AppLocalizations.of(context)!.licenseExpiryHint),
+            child: _FormTextField(
+              controller: _expiryController,
+              hint: AppLocalizations.of(context)!.licenseExpiryHint,
+            ),
           ),
         ),
       ],
@@ -671,7 +807,8 @@ class PersonalDocumentsScreen extends StatefulWidget {
   const PersonalDocumentsScreen({super.key});
 
   @override
-  State<PersonalDocumentsScreen> createState() => _PersonalDocumentsScreenState();
+  State<PersonalDocumentsScreen> createState() =>
+      _PersonalDocumentsScreenState();
 }
 
 class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
@@ -682,7 +819,10 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
 
   Future<void> _pickPhoto(bool isFront) async {
     final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    final file = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
     if (file == null) return;
     final bytes = await file.readAsBytes();
     setState(() {
@@ -697,9 +837,14 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
   Future<void> _save() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    if (_criminalRecordFront == null || _idNumberController.text.trim().isEmpty) {
+    if (_criminalRecordFront == null ||
+        _idNumberController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.criminalRecordUploadRequired)),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.criminalRecordUploadRequired,
+          ),
+        ),
       );
       return;
     }
@@ -782,7 +927,10 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
 
   Future<void> _pickPhoto(bool isBikePhoto) async {
     final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    final file = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
     if (file == null) return;
     final bytes = await file.readAsBytes();
     setState(() {
@@ -797,9 +945,13 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
   Future<void> _save() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    if (_bikePhoto == null || _brandController.text.trim().isEmpty || _plateController.text.trim().isEmpty) {
+    if (_bikePhoto == null ||
+        _brandController.text.trim().isEmpty ||
+        _plateController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.bikeInfoRequiredError)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.bikeInfoRequiredError),
+        ),
       );
       return;
     }
@@ -840,15 +992,35 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _PhotoUploadTile(label: AppLocalizations.of(context)!.bikePhotoLabel, imageBytes: _bikePhoto, onTap: () => _pickPhoto(true)),
-            _PhotoUploadTile(label: AppLocalizations.of(context)!.bikeLicensePhotoLabel, imageBytes: _licensePhoto, onTap: () => _pickPhoto(false)),
+            _PhotoUploadTile(
+              label: AppLocalizations.of(context)!.bikePhotoLabel,
+              imageBytes: _bikePhoto,
+              onTap: () => _pickPhoto(true),
+            ),
+            _PhotoUploadTile(
+              label: AppLocalizations.of(context)!.bikeLicensePhotoLabel,
+              imageBytes: _licensePhoto,
+              onTap: () => _pickPhoto(false),
+            ),
           ],
         ),
         const SizedBox(height: 24),
-        _FormTextField(controller: _brandController, hint: AppLocalizations.of(context)!.bikeBrandHint),
-        _FormTextField(controller: _modelController, hint: AppLocalizations.of(context)!.bikeModelHint),
-        _FormTextField(controller: _colorController, hint: AppLocalizations.of(context)!.bikeColorHint),
-        _FormTextField(controller: _plateController, hint: AppLocalizations.of(context)!.bikePlateLabel),
+        _FormTextField(
+          controller: _brandController,
+          hint: AppLocalizations.of(context)!.bikeBrandHint,
+        ),
+        _FormTextField(
+          controller: _modelController,
+          hint: AppLocalizations.of(context)!.bikeModelHint,
+        ),
+        _FormTextField(
+          controller: _colorController,
+          hint: AppLocalizations.of(context)!.bikeColorHint,
+        ),
+        _FormTextField(
+          controller: _plateController,
+          hint: AppLocalizations.of(context)!.bikePlateLabel,
+        ),
         _FormTextField(
           controller: _yearController,
           hint: AppLocalizations.of(context)!.bikeYearHint,
@@ -883,14 +1055,17 @@ class _SectionScaffold extends StatelessWidget {
         backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon:  Icon(Icons.arrow_forward, color: context.textColor),
+          icon: Icon(Icons.arrow_forward, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(title, style:  TextStyle(color: context.textColor)),
+        title: Text(title, style: TextStyle(color: context.textColor)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.closeButton, style:  TextStyle(color: context.textGreyColor)),
+            child: Text(
+              AppLocalizations.of(context)!.closeButton,
+              style: TextStyle(color: context.textGreyColor),
+            ),
           ),
         ],
       ),
@@ -906,17 +1081,26 @@ class _SectionScaffold extends StatelessWidget {
                 onPressed: isSaving ? null : onSave,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 child: isSaving
                     ? SizedBox(
                         width: 22,
                         height: 22,
-                        child: CircularProgressIndicator(color: context.onPrimaryColor, strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          color: context.onPrimaryColor,
+                          strokeWidth: 2,
+                        ),
                       )
                     : Text(
                         AppLocalizations.of(context)!.saveButton,
-                        style:  TextStyle(color: context.textColor, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: context.textColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
             ),

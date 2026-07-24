@@ -696,6 +696,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneNumberFormatError => 'من فضلك اكتب رقم هاتف صحيح';
 
   @override
+  String get mobileNumberMatchHint =>
+      'لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه';
+
+  @override
+  String get credentialAlreadyInUseError =>
+      'رقم الموبايل ده متسجل بحساب تاني بالفعل. من فضلك اكتب رقم مختلف';
+
+  @override
+  String get otpSendFailedGenericError =>
+      'حدث خطأ أثناء إرسال كود التحقق، برجاء المحاولة مرة أخرى لاحقًا';
+
+  @override
   String get tryAgainLabel => 'حاول تاني';
 
   @override

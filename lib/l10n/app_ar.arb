@@ -323,6 +323,7 @@
   "phoneNumberFormatError": "من فضلك اكتب رقم هاتف صحيح",
   "mobileNumberMatchHint": "لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه",
   "credentialAlreadyInUseError": "رقم الموبايل ده متسجل بحساب تاني بالفعل. من فضلك اكتب رقم مختلف",
+  "otpSendFailedGenericError": "حدث خطأ أثناء إرسال كود التحقق، برجاء المحاولة مرة أخرى لاحقًا",
   "tryAgainLabel": "حاول تاني",
   "errorOccurredWithMessage": "حصل خطأ: {message}",
   "@errorOccurredWithMessage": {

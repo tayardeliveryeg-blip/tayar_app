@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
@@ -53,6 +54,7 @@ class TayarSocialLinks {
   static const String facebook = 'https://www.facebook.com/tayardelivery/';
   static const String instagram = 'https://www.instagram.com/gotayar/';
   static const String whatsapp = 'https://wa.me/201142263460';
+  static const String tiktok = 'https://www.tiktok.com/@go.tayar';
 }
 
 // ====== فتح رابط خارجي (سوشيال ميديا/واتساب) في تطبيق خارجي ======
@@ -872,7 +874,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     onTap: _openDestinationSearch,
                     child: Container(
                       height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                      ),
                       decoration: BoxDecoration(
                         color: context.bgColor.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -1066,7 +1070,12 @@ class TayarBottomSheet extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Container(
         margin: const EdgeInsets.only(bottom: 0),
-        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xxl),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.md,
+          AppSpacing.lg,
+          AppSpacing.xxl,
+        ),
         decoration: BoxDecoration(
           color: context.bgColor,
           borderRadius: const BorderRadius.only(
@@ -1178,7 +1187,10 @@ class _TripSummaryCard extends StatelessWidget {
           GestureDetector(
             onTap: onTapPaymentMethod,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
               decoration: BoxDecoration(
                 color: context.bgColor,
                 borderRadius: BorderRadius.circular(AppRadius.md),
@@ -1221,7 +1233,9 @@ class _TripSummaryCard extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: onCancel,
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.lg,
+                    ),
                     side: BorderSide(color: context.textGreyColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
@@ -1240,7 +1254,9 @@ class _TripSummaryCard extends StatelessWidget {
                   onPressed: onConfirm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.lg,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
@@ -1310,7 +1326,9 @@ class TayarDrawer extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+        ),
         title: Text(loc.logout, style: TextStyle(color: context.textColor)),
         content: Text(
           loc.confirmLogoutMessage,
@@ -1626,6 +1644,12 @@ class TayarDrawer extends StatelessWidget {
                     icon: Icons.chat_bubble_outline, // واتساب
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.whatsapp),
+                  ),
+                  const SizedBox(width: AppSpacing.xl),
+                  _SocialIcon(
+                    icon: FontAwesomeIcons.tiktok,
+                    onTap: () =>
+                        launchSocialUrl(context, TayarSocialLinks.tiktok),
                   ),
                 ],
               ),

@@ -1370,6 +1370,24 @@ abstract class AppLocalizations {
   /// **'من فضلك اكتب رقم هاتف صحيح'**
   String get phoneNumberFormatError;
 
+  /// No description provided for @mobileNumberMatchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه'**
+  String get mobileNumberMatchHint;
+
+  /// No description provided for @credentialAlreadyInUseError.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الموبايل ده متسجل بحساب تاني بالفعل. من فضلك اكتب رقم مختلف'**
+  String get credentialAlreadyInUseError;
+
+  /// No description provided for @otpSendFailedGenericError.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء إرسال كود التحقق، برجاء المحاولة مرة أخرى لاحقًا'**
+  String get otpSendFailedGenericError;
+
   /// No description provided for @tryAgainLabel.
   ///
   /// In ar, this message translates to:

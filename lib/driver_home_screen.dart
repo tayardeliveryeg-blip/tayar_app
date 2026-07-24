@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,8 +94,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     final phone = FirebaseAuth.instance.currentUser?.phoneNumber;
     if (uid == null || phone == null || phone.isEmpty) return;
     try {
-      final doc = await FirebaseFirestore.instance.collection('drivers').doc(uid).get();
-      final existingPhone = (doc.data()?['personalInfo'] as Map?)?['phone'] as String?;
+      final doc = await FirebaseFirestore.instance
+          .collection('drivers')
+          .doc(uid)
+          .get();
+      final existingPhone =
+          (doc.data()?['personalInfo'] as Map?)?['phone'] as String?;
       if (existingPhone == null || existingPhone.isEmpty) {
         await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
           'personalInfo': {'phone': phone},
@@ -617,10 +622,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   Future<void> _completeTrip(String orderId) async {
     final driverId = _currentUser?.uid;
     if (driverId == null) return;
-    await completeTripAndDeductCommission(
-      orderId: orderId,
-      driverId: driverId,
-    );
+    await completeTripAndDeductCommission(orderId: orderId, driverId: driverId);
   }
 
   // ====== إشعار للطيار لحظة وصوله فعليًا لنقطة الوجهة، مع زرار سريع
@@ -889,7 +891,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     return ListView.separated(
                       padding: const EdgeInsets.all(AppSpacing.lg),
                       itemCount: orders.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: AppSpacing.md),
                       itemBuilder: (context, index) {
                         final order = orders[index];
                         final data = order.data();
@@ -1266,6 +1269,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     icon: Icons.chat_bubble_outline, // واتساب
                     onTap: () =>
                         launchSocialUrl(context, TayarSocialLinks.whatsapp),
+                  ),
+                  const SizedBox(width: AppSpacing.xl),
+                  _DriverSocialIcon(
+                    icon: FontAwesomeIcons.tiktok,
+                    onTap: () =>
+                        launchSocialUrl(context, TayarSocialLinks.tiktok),
                   ),
                 ],
               ),
@@ -1662,7 +1671,12 @@ class _ActiveTripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
+      margin: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
+        0,
+      ),
       decoration: BoxDecoration(
         color: TayarColors.primary.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -1676,7 +1690,12 @@ class _ActiveTripCard extends StatelessWidget {
           InkWell(
             onTap: onOpenTracking,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 0),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -1744,7 +1763,12 @@ class _ActiveTripCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.md,
+              AppSpacing.lg,
+              AppSpacing.lg,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -2166,7 +2190,9 @@ class _DriverWalletTab extends StatelessWidget {
                   Text(
                     loc.currencyEGP(balance.toStringAsFixed(0)),
                     style: TayarStatTextStyles.statMedium.copyWith(
-                      color: isNegative ? TayarColors.error : TayarColors.primary,
+                      color: isNegative
+                          ? TayarColors.error
+                          : TayarColors.primary,
                     ),
                   ),
                   if (isNegative) ...[
@@ -2174,10 +2200,7 @@ class _DriverWalletTab extends StatelessWidget {
                     Text(
                       loc.negativeWalletBalanceNote,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: TayarColors.error,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: TayarColors.error, fontSize: 12),
                     ),
                   ],
                 ],
@@ -2250,7 +2273,9 @@ class _DriverWalletTab extends StatelessWidget {
                 final docs = txnSnapshot.data!.docs;
                 if (docs.isEmpty) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xl,
+                    ),
                     child: Center(
                       child: Text(
                         loc.noWalletTransactionsLabel,
@@ -2579,7 +2604,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                          padding: EdgeInsets.symmetric(
+                            vertical: AppSpacing.sm,
+                          ),
                           child: SizedBox(
                             height: 14,
                             child: VerticalDivider(
@@ -2676,7 +2703,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                               Navigator.pop(context);
                             },
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AppSpacing.lg,
+                              ),
                               side: const BorderSide(
                                 color: TayarColors.primary,
                               ),
@@ -2703,7 +2732,9 @@ class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: TayarColors.primary,
-                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AppSpacing.lg,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                   AppRadius.sm,

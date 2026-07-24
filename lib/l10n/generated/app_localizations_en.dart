@@ -699,6 +699,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneNumberFormatError => 'Please enter a valid phone number';
 
   @override
+  String get mobileNumberMatchHint =>
+      'If an admin already added you, enter the exact same mobile number they used';
+
+  @override
+  String get credentialAlreadyInUseError =>
+      'This mobile number is already linked to another account. Please use a different number';
+
+  @override
+  String get otpSendFailedGenericError =>
+      'An error occurred while sending the verification code. Please try again later';
+
+  @override
   String get tryAgainLabel => 'Try Again';
 
   @override
