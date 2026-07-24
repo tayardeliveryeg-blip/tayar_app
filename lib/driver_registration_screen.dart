@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'driver_home_screen.dart';
 import 'driver_invite_link_helper.dart';
+import 'mobile_link_otp_screen.dart';
 import 'l10n/generated/app_localizations.dart';
 
 // ====================================================
@@ -415,19 +416,99 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       return;
     }
     final mobile = _mobileController.text.trim();
-    if (normalizeEgyptPhone(mobile) == null || normalizeEgyptPhone(mobile)!.length < 9) {
+    final normalizedMobile = normalizeEgyptPhone(mobile);
+    if (normalizedMobile == null || normalizedMobile.length < 9) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.phoneNumberFormatError)),
       );
       return;
     }
+
+    // ====== لو الرقم اللي كتبه هنا نفس رقم الـ Auth المُوثّق بالفعل
+    // (يعني دخل بالموبايل أصلاً، أو سبق وربط نفس الرقم)، معندناش داعي
+    // نطلب منه OTP تاني. غير كده (تسجيل دخول بجوجل مثلًا، أو غيّر الرقم)
+    // لازم يوثّق الرقم الجديد أولًا عشان الـ Auth token يبقى فيه
+    // phone_number claim حقيقي — ده اللي قاعدة isPreInvitedMatch محتاجاه ======
+    final authNormalized = normalizeEgyptPhone(FirebaseAuth.instance.currentUser?.phoneNumber);
+    if (authNormalized != normalizedMobile) {
+      await _verifyAndLinkMobile(mobile);
+      return;
+    }
+
+    await _completeSave(mobile);
+  }
+
+  Future<void> _verifyAndLinkMobile(String mobile) async {
+    setState(() => _isSaving = true);
+    final l10n = AppLocalizations.of(context)!;
+
+    String formattedPhone = mobile;
+    if (formattedPhone.startsWith('0')) {
+      formattedPhone = formattedPhone.substring(1);
+    }
+    formattedPhone = '+20$formattedPhone';
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: formattedPhone,
+      timeout: const Duration(seconds: 60),
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        try {
+          await FirebaseAuth.instance.currentUser!.linkWithCredential(credential);
+          await FirebaseAuth.instance.currentUser?.getIdToken(true);
+          if (!mounted) return;
+          await _completeSave(mobile);
+        } on FirebaseAuthException catch (e) {
+          if (!mounted) return;
+          setState(() => _isSaving = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                e.code == 'credential-already-in-use'
+                    ? l10n.credentialAlreadyInUseError
+                    : l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel),
+              ),
+            ),
+          );
+        }
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        if (!mounted) return;
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel))),
+        );
+      },
+      codeSent: (String verificationId, int? resendToken) async {
+        if (!mounted) return;
+        setState(() => _isSaving = false);
+        final linked = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MobileLinkOtpScreen(
+              verificationId: verificationId,
+              phoneNumber: formattedPhone,
+              resendToken: resendToken,
+            ),
+          ),
+        );
+        if (linked == true && mounted) {
+          await _completeSave(mobile);
+        }
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+  }
+
+  Future<void> _completeSave(String mobile) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
     setState(() => _isSaving = true);
     try {
       // ====== خطوة احتياطية: نحاول نربط بسجل "مُضاف يدويًا" من لوحة
-      // التحكم بالرقم اللي دخله السائق هنا، تغطية للحالة اللي فيها
-      // Firebase Auth مش راجع رقم موبايل (تسجيل دخول بجوجل مثلًا)
-      // فمحاولة الربط وقت تسجيل الدخول (navigateAfterAuth) بتكون
-      // فشلت. آمنة تتنادى حتى لو الربط حصل قبل كده ======
+      // التحكم بالرقم اللي دخله السائق ووثّقه هنا، تغطية للحالة اللي
+      // فيها Firebase Auth مش راجع رقم موبايل وقت اللوجين (تسجيل دخول
+      // بجوجل مثلًا) فمحاولة الربط وقت navigateAfterAuth بتكون فشلت.
+      // آمنة تتنادى حتى لو الربط حصل قبل كده ======
       await linkPreInvitedDriverIfNeeded(uid: uid, phoneNumber: mobile);
 
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
