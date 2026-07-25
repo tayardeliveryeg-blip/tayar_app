@@ -108,6 +108,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   String _paymentMethod = 'كاش'; // طريقة الدفع الحالية المختارة
   bool _isDraggingMap = false; // بنستخدمها لإخفاء الشريط السفلي وقت سحب الخريطة
 
+  // ====== بانر العرض الترويجي فوق الخريطة: بيقفل محليًا بس (مش متخزن)،
+  // يرجع يظهر تاني لو المستخدم قفل وفتح التطبيق من جديد ======
+  bool _promoDismissed = false;
+
   LatLng? _liveUserLocation; // موقعك الحقيقي الفعلي، بيتحدث لايف مع تحركك
   StreamSubscription<Position>? _liveLocationSub;
 
@@ -858,7 +862,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
           // ====== شريط البحث "عايز تروح فين؟" (فوق جنب زرار القايمة - بيختفي لفوق وقت سحب الخريطة) ======
           Positioned(
-            top: 50,
+            top: 60,
             right: 76,
             left: 16,
             child: AnimatedSlide(
@@ -924,9 +928,215 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
             ),
           ),
 
+          // ====== صف الترحيب + جرس الإشعارات (أعلى الشاشة، فوق شريط البحث) ======
+          Positioned(
+            top: 8,
+            right: 70,
+            left: 16,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: _isDraggingMap ? 0 : 1,
+              child: IgnorePointer(
+                ignoring: _isDraggingMap,
+                child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseAuth.instance.currentUser == null
+                      ? null
+                      : FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .snapshots(),
+                  builder: (context, snapshot) {
+                    final personalInfo =
+                        snapshot.data?.data()?['personalInfo']
+                            as Map<String, dynamic>?;
+                    final firstName = (personalInfo?['firstName'] as String?)
+                        ?.trim();
+                    final googleName = FirebaseAuth
+                        .instance
+                        .currentUser
+                        ?.displayName
+                        ?.trim();
+                    final displayName =
+                        (firstName != null && firstName.isNotEmpty)
+                        ? firstName
+                        : (googleName != null && googleName.isNotEmpty)
+                        ? googleName.split(' ').first
+                        : AppLocalizations.of(context)!.defaultUserName;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.homeGreeting(displayName),
+                          style: TextStyle(
+                            color: context.textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          AppLocalizations.of(context)!.homeGreetingSubtitle,
+                          style: TextStyle(
+                            color: context.textGreyColor,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          // ====== زرار جرس الإشعارات (أعلى الشاشة، شمال) ======
+          Positioned(
+            top: 8,
+            left: 16,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: _isDraggingMap ? 0 : 1,
+              child: IgnorePointer(
+                ignoring: _isDraggingMap,
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  ),
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: context.cardColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: context.dividerColor2),
+                    ),
+                    child: Icon(
+                      Icons.notifications_none,
+                      color: context.textColor,
+                      size: 19,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // ====== بانر عرض ترويجي (قابل للإغلاق) — تحت صف الترحيب مباشرة ======
+          if (!_promoDismissed)
+            Positioned(
+              top: 118,
+              right: 16,
+              left: 16,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _isDraggingMap ? 0 : 1,
+                child: IgnorePointer(
+                  ignoring: _isDraggingMap,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
+                    decoration: BoxDecoration(
+                      color: TayarColors.primary,
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.25),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.local_offer_outlined,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            AppLocalizations.of(context)!.homePromoBannerText,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () =>
+                              setState(() => _promoDismissed = true),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white70,
+                            size: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+          // ====== زرارين "وصلني" و"وصل طلباتي" (نفس تسمية وأيقونات القايمة
+          // الجانبية) — وصول سريع للخدمتين من غير ما يفتح القايمة ======
+          Positioned(
+            top: _promoDismissed ? 118 : 176,
+            right: 16,
+            left: 16,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: _isDraggingMap ? 0 : 1,
+              child: IgnorePointer(
+                ignoring: _isDraggingMap,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _QuickServiceButton(
+                        icon: Icons.two_wheeler,
+                        label: AppLocalizations.of(context)!.serviceRideMe,
+                        onTap: _openDestinationSearch,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: _QuickServiceButton(
+                        icon: Icons.delivery_dining,
+                        label: AppLocalizations.of(
+                          context,
+                        )!.serviceDeliverOrders,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CreateDeliveryOrderScreen(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
           // ====== زرار القايمة الجانبية (بيختفي لفوق وقت سحب الخريطة) ======
           Positioned(
-            top: 50,
+            top: 60,
             right: 16,
             child: AnimatedSlide(
               duration: const Duration(milliseconds: 250),
@@ -1106,6 +1316,55 @@ class TayarBottomSheet extends StatelessWidget {
               onTapPaymentMethod: onTapPaymentMethod,
               onCancel: onCancelDestination,
               onConfirm: onConfirmOrder,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ====== زرار خدمة سريعة فوق الخريطة (وصلني / وصل طلباتي) — أيقونة ونص بس،
+// نفس الأيقونات المستخدمة في القايمة الجانبية ======
+class _QuickServiceButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _QuickServiceButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.md,
+          horizontal: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: context.cardColor,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          border: Border.all(color: context.dividerColor2),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: TayarColors.primary, size: 24),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              label,
+              style: TextStyle(
+                color: context.textColor,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

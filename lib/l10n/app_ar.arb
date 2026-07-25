@@ -559,5 +559,15 @@
   "walletTopupPendingLabel": "طلب شحن - في انتظار المراجعة",
   "walletTopupApprovedLabel": "طلب شحن - تم القبول",
   "walletTopupRejectedLabel": "طلب شحن - مرفوض",
-  "negativeWalletBalanceNote": "رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة"
+  "negativeWalletBalanceNote": "رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة",
+  "homeGreeting": "أهلًا يا {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingSubtitle": "فين نوصّلك النهاردة؟",
+  "homePromoBannerText": "خصم 20% على أول رحلة معانا"
 }

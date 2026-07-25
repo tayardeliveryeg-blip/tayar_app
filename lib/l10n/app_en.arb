@@ -559,5 +559,15 @@
   "walletTopupPendingLabel": "Top-up request - pending review",
   "walletTopupApprovedLabel": "Top-up request - approved",
   "walletTopupRejectedLabel": "Top-up request - rejected",
-  "negativeWalletBalanceNote": "Your balance is negative, top up your wallet to keep receiving new orders"
+  "negativeWalletBalanceNote": "Your balance is negative, top up your wallet to keep receiving new orders",
+  "homeGreeting": "Hi {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreetingSubtitle": "Where can we take you today?",
+  "homePromoBannerText": "20% off your first ride with us"
 }
