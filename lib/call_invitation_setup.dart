@@ -40,18 +40,16 @@ Future<void> setupCallInvitationService({
     // showOnFullScreen: يخلي الإشعار يظهر full-screen (زي مكالمة تليفون
     // حقيقية) حتى لو الموبايل مقفول أو التطبيق في الخلفية تمامًا.
     // showOnLockedScreen: يخلي الإشعار يظهر فوق شاشة القفل.
-    // channelID/channelName لازم يتطابقوا مع Push Resource ID المسجّل في
-    // كونسول Zego (Project → Push Notification) عشان الرنين يشتغل والتطبيق مقفول.
     notificationConfig: ZegoCallInvitationNotificationConfig(
       androidNotificationConfig: ZegoCallAndroidNotificationConfig(
         showOnFullScreen: true,
         showOnLockedScreen: true,
-        // ملحوظة: channelID/channelName بقوا deprecated من نسخة 4.15.0
-        // (البديل callChannel.channelID/channelName) لكن لسه شغالين ومش
-        // هيتشالوا غير في 4.20.0+. سبتهم كده دلوقتي عشان أتأكد من الاسم
-        // الدقيق للكلاس البديل قبل ما أغيّرهم.
-        channelID: 'zegouikit_call',
-        channelName: 'مكالمات طيار',
+        // channelID/channelName لازم يتطابقوا مع Push Resource ID المسجّل في
+        // كونسول Zego (Project → Push Notification) عشان الرنين يشتغل والتطبيق مقفول.
+        callChannel: ZegoCallAndroidNotificationChannelConfig(
+          channelID: 'zegouikit_call',
+          channelName: 'مكالمات طيار',
+        ),
       ),
     ),
     requireConfig: (ZegoCallInvitationData data) {
