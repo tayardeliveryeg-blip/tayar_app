@@ -2231,7 +2231,7 @@ abstract class AppLocalizations {
   /// No description provided for @homePromoBannerText.
   ///
   /// In ar, this message translates to:
-  /// **'خصم 20% على أول رحلة معانا'**
+  /// **'احصل على أول توصيل مجانًا'**
   String get homePromoBannerText;
 
   /// No description provided for @homeSearchHint.

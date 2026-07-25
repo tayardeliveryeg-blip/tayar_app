@@ -1175,7 +1175,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeGreetingSubtitle => 'Where can we take you today?';
 
   @override
-  String get homePromoBannerText => '20% off your first ride with us';
+  String get homePromoBannerText => 'Get your first delivery for free';
 
   @override
   String get homeSearchHint => 'Where would you like to go?';

@@ -1163,7 +1163,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeGreetingSubtitle => 'فين نوصّلك النهاردة؟';
 
   @override
-  String get homePromoBannerText => 'خصم 20% على أول رحلة معانا';
+  String get homePromoBannerText => 'احصل على أول توصيل مجانًا';
 
   @override
   String get homeSearchHint => 'عايز تروح فين؟';
