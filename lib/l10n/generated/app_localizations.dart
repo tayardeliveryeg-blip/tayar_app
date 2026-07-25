@@ -2215,6 +2215,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة'**
   String get negativeWalletBalanceNote;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلًا يا {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeGreetingSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فين نوصّلك النهاردة؟'**
+  String get homeGreetingSubtitle;
+
+  /// No description provided for @homePromoBannerText.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصم 20% على أول رحلة معانا'**
+  String get homePromoBannerText;
 }
 
 class _AppLocalizationsDelegate

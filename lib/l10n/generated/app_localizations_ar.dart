@@ -1153,4 +1153,15 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get negativeWalletBalanceNote =>
       'رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة';
+
+  @override
+  String homeGreeting(String name) {
+    return 'أهلًا يا $name';
+  }
+
+  @override
+  String get homeGreetingSubtitle => 'فين نوصّلك النهاردة؟';
+
+  @override
+  String get homePromoBannerText => 'خصم 20% على أول رحلة معانا';
 }

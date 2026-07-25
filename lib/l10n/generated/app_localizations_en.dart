@@ -1165,4 +1165,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get negativeWalletBalanceNote =>
       'Your balance is negative, top up your wallet to keep receiving new orders';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Hi $name';
+  }
+
+  @override
+  String get homeGreetingSubtitle => 'Where can we take you today?';
+
+  @override
+  String get homePromoBannerText => '20% off your first ride with us';
 }
