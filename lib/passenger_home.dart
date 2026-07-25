@@ -122,6 +122,12 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   late final AnimationController _routeAnimController;
 
+  // ====== أنيميشن توسيع/تصغير الشريط السفلي: 0 = الوضع الطبيعي (Collapsed)،
+  // 1 = وضع ملء الشاشة (Expanded) بعد السحب لفوق. بيتشارك بين TayarIdleBottomSheet
+  // و TayarBottomSheet، وبيترجع لـ 0 تلقائيًا كل ما الوجهة تتحدد أو تتلغي ======
+  late final AnimationController _sheetAnimController;
+  double _sheetDragRange = 300; // بيتحسب فعليًا وقت بداية السحب (فرق الارتفاعين)
+
   @override
   void initState() {
     super.initState();
@@ -130,6 +136,13 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     // ====== تفعيل استقبال إشعارات الشات + دعوات المكالمات (لازم بعد تسجيل الدخول) ======
     PushNotificationService.instance.init(isDriver: false);
     setupCallInvitationService(navigatorKey: navigatorKey);
+
+    // ====== أنيميشن توسيع الشريط السفلي (يبدأ دايمًا من الوضع الطبيعي) ======
+    _sheetAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+      value: 0,
+    );
 
     // ====== أنيميشن رسم المسار تدريجيًا من نقطة الانطلاق للوجهة ======
     _routeAnimController =
@@ -196,6 +209,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   void dispose() {
     _debounce?.cancel();
     _routeAnimController.dispose();
+    _sheetAnimController.dispose();
     _driversMoveController.dispose();
     _liveLocationSub?.cancel();
     _nearbyDriversSub?.cancel();
@@ -485,6 +499,36 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       ..forward();
   }
 
+  // ====== بداية سحب الشريط السفلي: بنحسب مدى السحب (الفرق بين الوضع
+  // الطبيعي ووضع ملء الشاشة) عشان نحول حركة الإصبع بالبكسل لنسبة 0-1 ======
+  void _onSheetDragStart(double collapsedHeight, double expandedHeight) {
+    _sheetDragRange = (expandedHeight - collapsedHeight).abs();
+    if (_sheetDragRange < 1) _sheetDragRange = 1;
+  }
+
+  void _onSheetDragUpdate(DragUpdateDetails details) {
+    final delta = -details.delta.dy / _sheetDragRange;
+    _sheetAnimController.value = (_sheetAnimController.value + delta).clamp(
+      0.0,
+      1.0,
+    );
+  }
+
+  // ====== نهاية السحب: بنقرر نكمل لفوق (ملء الشاشة) أو نرجع تحت (الوضع
+  // الطبيعي) حسب سرعة السحب، أو حسب أقرب نقطة لو السحب كان بطيء ======
+  void _onSheetDragEnd(DragEndDetails details) {
+    final velocity = details.velocity.pixelsPerSecond.dy;
+    if (velocity < -250) {
+      _sheetAnimController.animateTo(1.0, curve: Curves.easeOutCubic);
+    } else if (velocity > 250) {
+      _sheetAnimController.animateTo(0.0, curve: Curves.easeOutCubic);
+    } else if (_sheetAnimController.value > 0.5) {
+      _sheetAnimController.animateTo(1.0, curve: Curves.easeOutCubic);
+    } else {
+      _sheetAnimController.animateTo(0.0, curve: Curves.easeOutCubic);
+    }
+  }
+
   // ====== حساب سعر الرحلة: 10 جنيه أساسي + 5 جنيه لكل كيلومتر ======
   double get _estimatedFare {
     if (_routeDistanceKm == null) return 0;
@@ -505,6 +549,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
         _destinationLocation = result.location;
         _destinationAddress = result.title;
       });
+      _sheetAnimController.animateTo(0, curve: Curves.easeOutCubic);
       // الزوم على المسار وبداية رسمه بالأنيميشن بيحصلوا مع بعض جوه _fetchRoute
       await _fetchRoute(_currentLocation, result.location);
     }
@@ -517,6 +562,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       _destinationLocation = location;
       _destinationAddress = address;
     });
+    _sheetAnimController.animateTo(0, curve: Curves.easeOutCubic);
     await _fetchRoute(_currentLocation, location);
   }
 
@@ -583,6 +629,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   void _clearDestination() {
     _routeAnimController.stop();
+    _sheetAnimController.animateTo(0, curve: Curves.easeOutCubic);
     setState(() {
       _destinationLocation = null;
       _destinationAddress = null;
@@ -934,66 +981,43 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
             ),
 
-          // ====== شريط البحث "عايز تروح فين؟" (فوق جنب زرار القايمة - بيختفي لفوق وقت سحب الخريطة) ======
+          // ====== زرار جرس الإشعارات (أعلى الشاشة، شمال) ======
           Positioned(
-            top: 60,
-            right: 76,
+            top: 8 + topSafeArea,
             left: 16,
-            child: AnimatedSlide(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              offset: _isDraggingMap ? const Offset(0, -2) : Offset.zero,
+            child: AnimatedBuilder(
+              animation: _sheetAnimController,
+              builder: (context, child) => Opacity(
+                opacity: 1 - _sheetAnimController.value,
+                child: IgnorePointer(
+                  ignoring: _sheetAnimController.value > 0.5,
+                  child: child,
+                ),
+              ),
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 200),
                 opacity: _isDraggingMap ? 0 : 1,
                 child: IgnorePointer(
                   ignoring: _isDraggingMap,
                   child: GestureDetector(
-                    onTap: _openDestinationSearch,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const NotificationsScreen(),
+                      ),
+                    ),
                     child: Container(
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                      ),
+                      width: 38,
+                      height: 38,
                       decoration: BoxDecoration(
-                        color: context.bgColor.withValues(alpha: 0.9),
-                        borderRadius: BorderRadius.circular(AppRadius.pill),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 8,
-                          ),
-                        ],
+                        color: context.cardColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: context.dividerColor2),
                       ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.search,
-                            color: _destinationAddress != null
-                                ? TayarColors.primary
-                                : context.textGreyColor,
-                          ),
-                          const SizedBox(width: AppSpacing.md),
-                          Expanded(
-                            child: Text(
-                              _destinationAddress ??
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.chooseDestinationHint,
-                              style: TextStyle(
-                                color: _destinationAddress != null
-                                    ? context.textColor
-                                    : context.textGreyColor,
-                                fontSize: 15,
-                                fontWeight: _destinationAddress != null
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                      child: Icon(
+                        Icons.notifications_none,
+                        color: context.textColor,
+                        size: 19,
                       ),
                     ),
                   ),
@@ -1002,241 +1026,76 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
             ),
           ),
 
-          // ====== صف الترحيب + جرس الإشعارات (أعلى الشاشة، فوق شريط البحث) ======
-          Positioned(
-            top: 8 + topSafeArea,
-            right: 70,
-            left: 16,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
-              opacity: _isDraggingMap ? 0 : 1,
-              child: IgnorePointer(
-                ignoring: _isDraggingMap,
-                child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                  stream: FirebaseAuth.instance.currentUser == null
-                      ? null
-                      : FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(FirebaseAuth.instance.currentUser!.uid)
-                            .snapshots(),
-                  builder: (context, snapshot) {
-                    final personalInfo =
-                        snapshot.data?.data()?['personalInfo']
-                            as Map<String, dynamic>?;
-                    final firstName = (personalInfo?['firstName'] as String?)
-                        ?.trim();
-                    final googleName = FirebaseAuth
-                        .instance
-                        .currentUser
-                        ?.displayName
-                        ?.trim();
-                    final displayName =
-                        (firstName != null && firstName.isNotEmpty)
-                        ? firstName
-                        : (googleName != null && googleName.isNotEmpty)
-                        ? googleName.split(' ').first
-                        : AppLocalizations.of(context)!.defaultUserName;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.homeGreeting(displayName),
-                          style: TextStyle(
-                            color: context.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.homeGreetingSubtitle,
-                          style: TextStyle(
-                            color: context.textGreyColor,
-                            fontSize: 12,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-
-          // ====== زرار جرس الإشعارات (أعلى الشاشة، شمال) ======
-          Positioned(
-            top: 8 + topSafeArea,
-            left: 16,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
-              opacity: _isDraggingMap ? 0 : 1,
-              child: IgnorePointer(
-                ignoring: _isDraggingMap,
-                child: GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const NotificationsScreen(),
-                    ),
-                  ),
-                  child: Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: context.cardColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: context.dividerColor2),
-                    ),
-                    child: Icon(
-                      Icons.notifications_none,
-                      color: context.textColor,
-                      size: 19,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // ====== بانر عرض ترويجي (قابل للإغلاق) — تحت صف الترحيب مباشرة ======
+          // ====== بانر "أول توصيل مجانًا" (للعميل الجديد بس، وبيختفي
+          // نهائيًا بمجرد ما يكمل أول رحلة، مش مجرد إغلاق مؤقت) ======
           if (!_promoDismissed)
             Positioned(
-              top: 118 + topSafeArea,
+              top: 60 + topSafeArea,
               right: 16,
               left: 16,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: _isDraggingMap ? 0 : 1,
-                child: IgnorePointer(
-                  ignoring: _isDraggingMap,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.sm,
-                    ),
-                    decoration: BoxDecoration(
-                      color: TayarColors.primary,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.25),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.local_offer_outlined,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: Text(
-                            AppLocalizations.of(context)!.homePromoBannerText,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => setState(() => _promoDismissed = true),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.white70,
-                            size: 16,
-                          ),
-                        ),
-                      ],
+              child: AnimatedBuilder(
+                animation: _sheetAnimController,
+                builder: (context, child) => Opacity(
+                  opacity: 1 - _sheetAnimController.value,
+                  child: IgnorePointer(
+                    ignoring: _sheetAnimController.value > 0.5,
+                    child: child,
+                  ),
+                ),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: _isDraggingMap ? 0 : 1,
+                  child: IgnorePointer(
+                    ignoring: _isDraggingMap,
+                    child: _NewCustomerPromoBanner(
+                      onDismiss: () =>
+                          setState(() => _promoDismissed = true),
                     ),
                   ),
                 ),
               ),
             ),
-
-          // ====== زرارين "وصلني" و"وصل طلباتي" (نفس تسمية وأيقونات القايمة
-          // الجانبية) — وصول سريع للخدمتين من غير ما يفتح القايمة ======
-          Positioned(
-            top: (_promoDismissed ? 118 : 176) + topSafeArea,
-            right: 16,
-            left: 16,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
-              opacity: _isDraggingMap ? 0 : 1,
-              child: IgnorePointer(
-                ignoring: _isDraggingMap,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _QuickServiceButton(
-                        icon: Icons.two_wheeler,
-                        label: AppLocalizations.of(context)!.serviceRideMe,
-                        onTap: _openDestinationSearch,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: _QuickServiceButton(
-                        icon: Icons.delivery_dining,
-                        label: AppLocalizations.of(
-                          context,
-                        )!.serviceDeliverOrders,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const CreateDeliveryOrderScreen(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
 
           // ====== زرار القايمة الجانبية (بيختفي لفوق وقت سحب الخريطة) ======
           Positioned(
-            top: 60 + topSafeArea,
+            top: 8 + topSafeArea,
             right: 16,
-            child: AnimatedSlide(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              offset: _isDraggingMap ? const Offset(0, -2) : Offset.zero,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: _isDraggingMap ? 0 : 1,
+            child: AnimatedBuilder(
+              animation: _sheetAnimController,
+              builder: (context, child) => Opacity(
+                opacity: 1 - _sheetAnimController.value,
                 child: IgnorePointer(
-                  ignoring: _isDraggingMap,
-                  child: Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () => Scaffold.of(context).openDrawer(),
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: context.bgColor.withValues(alpha: 0.9),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              blurRadius: 8,
-                            ),
-                          ],
+                  ignoring: _sheetAnimController.value > 0.5,
+                  child: child,
+                ),
+              ),
+              child: AnimatedSlide(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                offset: _isDraggingMap ? const Offset(0, -2) : Offset.zero,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: _isDraggingMap ? 0 : 1,
+                  child: IgnorePointer(
+                    ignoring: _isDraggingMap,
+                    child: Builder(
+                      builder: (context) => GestureDetector(
+                        onTap: () => Scaffold.of(context).openDrawer(),
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: context.bgColor.withValues(alpha: 0.9),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                          child: Icon(Icons.menu, color: context.textColor),
                         ),
-                        child: Icon(Icons.menu, color: context.textColor),
                       ),
                     ),
                   ),
@@ -1253,39 +1112,49 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 ? 296
                 : 28 + MediaQuery.of(context).padding.bottom,
             left: 16,
-            child: AnimatedSlide(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              offset: _isDraggingMap ? const Offset(0, 2) : Offset.zero,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: _isDraggingMap ? 0 : 1,
+            child: AnimatedBuilder(
+              animation: _sheetAnimController,
+              builder: (context, child) => Opacity(
+                opacity: 1 - _sheetAnimController.value,
                 child: IgnorePointer(
-                  ignoring: _isDraggingMap,
-                  child: GestureDetector(
-                    onTap: _getCurrentLocation,
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: context.bgColor.withValues(alpha: 0.95),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: context.dividerColor2,
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
+                  ignoring: _sheetAnimController.value > 0.5,
+                  child: child,
+                ),
+              ),
+              child: AnimatedSlide(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                offset: _isDraggingMap ? const Offset(0, 2) : Offset.zero,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: _isDraggingMap ? 0 : 1,
+                  child: IgnorePointer(
+                    ignoring: _isDraggingMap,
+                    child: GestureDetector(
+                      onTap: _getCurrentLocation,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: context.bgColor.withValues(alpha: 0.95),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: context.dividerColor2,
+                            width: 1,
                           ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.my_location,
-                        color: TayarColors.primary,
-                        size: 22,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.25),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.my_location,
+                          color: TayarColors.primary,
+                          size: 22,
+                        ),
                       ),
                     ),
                   ),
@@ -1294,30 +1163,70 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
             ),
           ),
 
-          // ====== الـ Bottom Sheet (بيختفي بحركة انزلاق وقت سحب الخريطة) ======
-          // قبل ما تتحدد وجهة: كارت البحث + الأماكن المحفوظة + آخر رحلة.
-          // بعد ما تتحدد وجهة: كارت ملخص الرحلة (المسافة/الوقت/السعر).
+          // ====== الـ Bottom Sheet (بيختفي بحركة انزلاق وقت سحب الخريطة،
+          // وقابل للسحب لفوق لوضع ملء الشاشة وللسحب لتحت للرجوع تاني) ======
+          // قبل ما تتحدد وجهة: كارت البحث + الأماكن المحفوظة + الخدمات
+          // السريعة + آخر رحلة. بعد ما تتحدد وجهة: كارت ملخص الرحلة.
           AnimatedSlide(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeInOut,
             offset: _isDraggingMap ? const Offset(0, 1) : Offset.zero,
-            child: _destinationAddress == null
-                ? TayarIdleBottomSheet(
-                    onTapSearch: _openDestinationSearch,
-                    onTapSavedPlace: _showSavedPlacesComingSoon,
-                    onSaveAddress: _pickAndSaveAddress,
-                    onReorderTrip: _reorderLastTrip,
-                  )
-                : TayarBottomSheet(
-                    destinationAddress: _destinationAddress,
-                    distanceKm: _routeDistanceKm,
-                    durationMin: _routeDurationMin,
-                    fare: _estimatedFare,
-                    paymentMethod: _paymentMethod,
-                    onTapPaymentMethod: _showPaymentMethodSheet,
-                    onCancelDestination: _clearDestination,
-                    onConfirmOrder: _openOrderConfirmation,
-                  ),
+            child: AnimatedBuilder(
+              animation: _sheetAnimController,
+              builder: (context, _) {
+                final screenHeight = MediaQuery.of(context).size.height;
+                final expandedHeight =
+                    screenHeight - topSafeArea - AppSpacing.xxl;
+                // ====== الوضع الطبيعي: كارت ملخص الرحلة أقصر من كارت
+                // البحث/الأماكن المحفوظة، فبنديله نسبة أصغر من الشاشة ======
+                final collapsedHeight = screenHeight *
+                    (_destinationAddress == null ? 0.5 : 0.38);
+                final t = _sheetAnimController.value;
+                final currentHeight =
+                    collapsedHeight + (expandedHeight - collapsedHeight) * t;
+
+                return ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: currentHeight),
+                  child: _destinationAddress == null
+                      ? TayarIdleBottomSheet(
+                          onTapSearch: _openDestinationSearch,
+                          onTapSavedPlace: _showSavedPlacesComingSoon,
+                          onSaveAddress: _pickAndSaveAddress,
+                          onReorderTrip: _reorderLastTrip,
+                          onTapRideService: _openDestinationSearch,
+                          onTapDeliveryService: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const CreateDeliveryOrderScreen(),
+                            ),
+                          ),
+                          onDragStart: () => _onSheetDragStart(
+                            collapsedHeight,
+                            expandedHeight,
+                          ),
+                          onDragUpdate: _onSheetDragUpdate,
+                          onDragEnd: _onSheetDragEnd,
+                        )
+                      : TayarBottomSheet(
+                          destinationAddress: _destinationAddress,
+                          distanceKm: _routeDistanceKm,
+                          durationMin: _routeDurationMin,
+                          fare: _estimatedFare,
+                          paymentMethod: _paymentMethod,
+                          onTapPaymentMethod: _showPaymentMethodSheet,
+                          onCancelDestination: _clearDestination,
+                          onConfirmOrder: _openOrderConfirmation,
+                          onDragStart: () => _onSheetDragStart(
+                            collapsedHeight,
+                            expandedHeight,
+                          ),
+                          onDragUpdate: _onSheetDragUpdate,
+                          onDragEnd: _onSheetDragEnd,
+                        ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -1337,6 +1246,11 @@ class TayarBottomSheet extends StatelessWidget {
   final VoidCallback onTapPaymentMethod;
   final VoidCallback onCancelDestination;
   final VoidCallback onConfirmOrder;
+  // ====== callbacks السحب: بتخلي المقبض العلوي يقدر يوسّع الشريط لملء
+  // الشاشة أو يرجعه للوضع الطبيعي (شوف _onSheetDrag* في الشاشة الأب) ======
+  final void Function()? onDragStart;
+  final void Function(DragUpdateDetails)? onDragUpdate;
+  final void Function(DragEndDetails)? onDragEnd;
 
   const TayarBottomSheet({
     super.key,
@@ -1348,6 +1262,9 @@ class TayarBottomSheet extends StatelessWidget {
     required this.onTapPaymentMethod,
     required this.onCancelDestination,
     required this.onConfirmOrder,
+    this.onDragStart,
+    this.onDragUpdate,
+    this.onDragEnd,
   });
 
   @override
@@ -1362,12 +1279,6 @@ class TayarBottomSheet extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Container(
         margin: const EdgeInsets.only(bottom: 0),
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.md,
-          AppSpacing.lg,
-          AppSpacing.xxl,
-        ),
         decoration: BoxDecoration(
           color: context.bgColor,
           borderRadius: const BorderRadius.only(
@@ -1378,26 +1289,83 @@ class TayarBottomSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // المقبض العلوي
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: context.handleColor,
-                borderRadius: BorderRadius.circular(AppRadius.handle),
+            // ====== المقبض العلوي: منطقة السحب اللي بتوسّع/تصغّر الشريط ======
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onVerticalDragStart: onDragStart == null
+                  ? null
+                  : (_) => onDragStart!(),
+              onVerticalDragUpdate: onDragUpdate,
+              onVerticalDragEnd: onDragEnd,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppSpacing.md,
+                ),
+                child: Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: context.handleColor,
+                      borderRadius: BorderRadius.circular(AppRadius.handle),
+                    ),
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
 
-            // ملخص الرحلة + زرار الطلب
-            _TripSummaryCard(
-              distanceKm: distanceKm!,
-              durationMin: durationMin ?? 0,
-              fare: fare,
-              paymentMethod: paymentMethod,
-              onTapPaymentMethod: onTapPaymentMethod,
-              onCancel: onCancelDestination,
-              onConfirm: onConfirmOrder,
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  0,
+                  AppSpacing.lg,
+                  AppSpacing.xxl,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // ====== الوجهة المختارة: أول مكان بيتعرض فيه العنوان
+                    // دلوقتي بعد ما شريط البحث العلوي اتشال ======
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            color: TayarColors.primary,
+                            size: 18,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              destinationAddress!,
+                              style: TextStyle(
+                                color: context.textColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // ملخص الرحلة + زرار الطلب
+                    _TripSummaryCard(
+                      distanceKm: distanceKm!,
+                      durationMin: durationMin ?? 0,
+                      fare: fare,
+                      paymentMethod: paymentMethod,
+                      onTapPaymentMethod: onTapPaymentMethod,
+                      onCancel: onCancelDestination,
+                      onConfirm: onConfirmOrder,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -1415,6 +1383,13 @@ class TayarIdleBottomSheet extends StatelessWidget {
   final VoidCallback onTapSavedPlace;
   final void Function(String key, String screenTitle) onSaveAddress;
   final void Function(LatLng location, String address) onReorderTrip;
+  final VoidCallback onTapRideService;
+  final VoidCallback onTapDeliveryService;
+  // ====== callbacks السحب: بتخلي المقبض العلوي يقدر يوسّع الشريط لملء
+  // الشاشة أو يرجعه للوضع الطبيعي (شوف _onSheetDrag* في الشاشة الأب) ======
+  final void Function()? onDragStart;
+  final void Function(DragUpdateDetails)? onDragUpdate;
+  final void Function(DragEndDetails)? onDragEnd;
 
   const TayarIdleBottomSheet({
     super.key,
@@ -1422,6 +1397,11 @@ class TayarIdleBottomSheet extends StatelessWidget {
     required this.onTapSavedPlace,
     required this.onSaveAddress,
     required this.onReorderTrip,
+    required this.onTapRideService,
+    required this.onTapDeliveryService,
+    this.onDragStart,
+    this.onDragUpdate,
+    this.onDragEnd,
   });
 
   @override
@@ -1430,12 +1410,6 @@ class TayarIdleBottomSheet extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.md,
-          AppSpacing.lg,
-          AppSpacing.xxl,
-        ),
         decoration: BoxDecoration(
           color: context.bgColor,
           borderRadius: const BorderRadius.only(
@@ -1454,78 +1428,120 @@ class TayarIdleBottomSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // المقبض العلوي
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: context.handleColor,
-                  borderRadius: BorderRadius.circular(AppRadius.handle),
+            // ====== المقبض العلوي: منطقة السحب اللي بتوسّع/تصغّر الشريط ======
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onVerticalDragStart: onDragStart == null
+                  ? null
+                  : (_) => onDragStart!(),
+              onVerticalDragUpdate: onDragUpdate,
+              onVerticalDragEnd: onDragEnd,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                child: Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: context.handleColor,
+                      borderRadius: BorderRadius.circular(AppRadius.handle),
+                    ),
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
 
-            // ====== شريط البحث: بيفتح شاشة اختيار الوجهة الموجودة أصلاً ======
-            GestureDetector(
-              onTap: onTapSearch,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: 13,
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  0,
+                  AppSpacing.lg,
+                  AppSpacing.xxl,
                 ),
-                decoration: BoxDecoration(
-                  color: context.cardColor,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(Icons.search, color: context.textGreyColor, size: 18),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      loc.homeSearchHint,
-                      style: TextStyle(
-                        color: context.textGreyColor,
-                        fontSize: 13,
+                    // ====== شريط البحث: بيفتح شاشة اختيار الوجهة الموجودة أصلاً ======
+                    GestureDetector(
+                      onTap: onTapSearch,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: 13,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.cardColor,
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search,
+                              color: context.textGreyColor,
+                              size: 18,
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(
+                              loc.homeSearchHint,
+                              style: TextStyle(
+                                color: context.textGreyColor,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // ====== أماكن محفوظة: البيت / الشغل / إضافة، بنفس
+                    // المقاس بالظبط (كل واحدة Expanded) ======
+                    Text(
+                      loc.savedPlacesLabel,
+                      style: TextStyle(
+                        color: context.textGreyColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    _SavedPlacesRow(
+                      onUseAddress: onReorderTrip,
+                      onSaveAddress: onSaveAddress,
+                      onAddTap: onTapSavedPlace,
+                      addLabel: loc.savedPlaceAdd,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // ====== الخدمات السريعة: تحت الأماكن المحفوظة مباشرة ======
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _QuickServiceButton(
+                            icon: Icons.two_wheeler,
+                            label: loc.serviceRideMe,
+                            onTap: onTapRideService,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _QuickServiceButton(
+                            icon: Icons.delivery_dining,
+                            label: loc.serviceDeliverOrders,
+                            onTap: onTapDeliveryService,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // ====== آخر رحلة: بتظهر بس لو فيه رحلة سابقة فعلًا في Firestore ======
+                    _LastTripSection(onReorderTrip: onReorderTrip),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
-
-            // ====== أماكن محفوظة ======
-            Text(
-              loc.savedPlacesLabel,
-              style: TextStyle(
-                color: context.textGreyColor,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: [
-                // البيت والشغل: بيقروا/يكتبوا في Firestore فعليًا (شوف _SavedPlacesRow)
-                Expanded(
-                  child: _SavedPlacesRow(
-                    onUseAddress: onReorderTrip,
-                    onSaveAddress: onSaveAddress,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                _SavedPlaceChip(
-                  icon: Icons.add,
-                  label: loc.savedPlaceAdd,
-                  onTap: onTapSavedPlace,
-                ),
-              ],
-            ),
-
-            // ====== آخر رحلة: بتظهر بس لو فيه رحلة سابقة فعلًا في Firestore ======
-            _LastTripSection(onReorderTrip: onReorderTrip),
           ],
         ),
       ),
@@ -1540,10 +1556,14 @@ class TayarIdleBottomSheet extends StatelessWidget {
 class _SavedPlacesRow extends StatelessWidget {
   final void Function(LatLng location, String address) onUseAddress;
   final void Function(String key, String screenTitle) onSaveAddress;
+  final VoidCallback onAddTap;
+  final String addLabel;
 
   const _SavedPlacesRow({
     required this.onUseAddress,
     required this.onSaveAddress,
+    required this.onAddTap,
+    required this.addLabel,
   });
 
   void _handleTap(
@@ -1587,6 +1607,14 @@ class _SavedPlacesRow extends StatelessWidget {
               onTap: () => onSaveAddress('work', loc.selectWorkAddressTitle),
             ),
           ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: _SavedPlaceChip(
+              icon: Icons.add,
+              label: addLabel,
+              onTap: onAddTap,
+            ),
+          ),
         ],
       );
     }
@@ -1623,6 +1651,14 @@ class _SavedPlacesRow extends StatelessWidget {
                     onSaveAddress('work', loc.selectWorkAddressTitle),
               ),
             ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _SavedPlaceChip(
+                icon: Icons.add,
+                label: addLabel,
+                onTap: onAddTap,
+              ),
+            ),
           ],
         );
       },
@@ -1650,23 +1686,26 @@ class _SavedPlaceChip extends StatelessWidget {
       onTap: onTap,
       onLongPress: onLongPress,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: 8,
-        ),
+        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
         decoration: BoxDecoration(
           color: context.cardColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: context.textColor, size: 14),
+            Icon(icon, color: TayarColors.primary, size: 15),
             const SizedBox(width: 6),
             Flexible(
               child: Text(
                 label,
-                style: TextStyle(color: context.textColor, fontSize: 12),
+                style: TextStyle(
+                  color: context.textColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1794,8 +1833,86 @@ class _LastTripSection extends StatelessWidget {
   }
 }
 
-// ====== زرار خدمة سريعة فوق الخريطة (وصلني / وصل طلباتي) — أيقونة ونص بس،
-// نفس الأيقونات المستخدمة في القايمة الجانبية ======
+// ====== بانر "احصل على أول توصيل مجانًا": بيتشيك على Firestore هل الراكب
+// عنده أي رحلة مكتملة قبل كده ولا لأ. لو عنده رحلة مكتملة واحدة على الأقل
+// (يعني مش عميل جديد) بيختفي البانر نهائيًا من غير ما يحتاج زرار إغلاق ======
+class _NewCustomerPromoBanner extends StatelessWidget {
+  final VoidCallback onDismiss;
+
+  const _NewCustomerPromoBanner({required this.onDismiss});
+
+  @override
+  Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const SizedBox.shrink();
+
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('orders')
+          .where('customerId', isEqualTo: uid)
+          .where('serviceType', isEqualTo: 'passenger')
+          .where('status', isEqualTo: 'completed')
+          .limit(1)
+          .snapshots(),
+      builder: (context, snapshot) {
+        // لسه البيانات بتتحمل أو مفيش يوزر: مانوريش حاجة لحد ما نتأكد
+        if (!snapshot.hasData) return const SizedBox.shrink();
+        // عنده رحلة مكتملة واحدة على الأقل: مش عميل جديد، مايظهرش البانر
+        if (snapshot.data!.docs.isNotEmpty) return const SizedBox.shrink();
+
+        return Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: TayarColors.primary,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.local_offer_outlined,
+                color: Colors.white,
+                size: 18,
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.homePromoBannerText,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              GestureDetector(
+                onTap: onDismiss,
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.white70,
+                  size: 16,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ====== زرار خدمة سريعة (وصلني / وصل طلباتي) — أيقونة ونص بس، جوه
+// الشريط السفلي تحت الأماكن المحفوظة ======
 class _QuickServiceButton extends StatelessWidget {
   final IconData icon;
   final String label;
