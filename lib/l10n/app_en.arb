@@ -569,5 +569,13 @@
     }
   },
   "homeGreetingSubtitle": "Where can we take you today?",
-  "homePromoBannerText": "20% off your first ride with us"
+  "homePromoBannerText": "20% off your first ride with us",
+  "homeSearchHint": "Where would you like to go?",
+  "savedPlacesLabel": "Saved places",
+  "savedPlaceHome": "Home",
+  "savedPlaceWork": "Work",
+  "savedPlaceAdd": "Add",
+  "savedPlacesComingSoonMessage": "This feature is coming soon",
+  "lastTripLabel": "Last trip",
+  "reorderTripLabel": "Reorder"
 }

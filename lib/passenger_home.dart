@@ -510,6 +510,28 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     }
   }
 
+  // ====== إعادة طلب رحلة سابقة: بناخد وجهتها القديمة ونحسب المسار
+  // منها زي لو المستخدم اختارها دلوقتي من شاشة البحث ======
+  Future<void> _reorderLastTrip(LatLng location, String address) async {
+    setState(() {
+      _destinationLocation = location;
+      _destinationAddress = address;
+    });
+    await _fetchRoute(_currentLocation, location);
+  }
+
+  // ====== الأماكن المحفوظة (البيت/الشغل) لسه مش متفعّلة، فبنوري المستخدم
+  // إنها هتضاف قريبًا بدل ما الزرار يبقى ميت من غير أي رد فعل ======
+  void _showSavedPlacesComingSoon() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context)!.savedPlacesComingSoonMessage,
+        ),
+      ),
+    );
+  }
+
   void _clearDestination() {
     _routeAnimController.stop();
     setState(() {
@@ -635,6 +657,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    // ارتفاع شريط الحالة (الساعة/البطارية) أو الـ notch، بيتغير حسب الجهاز.
+    // بنضيفه لكل الـ Positioned اللي في أعلى الشاشة عشان محدش يتداخل معاه.
+    final double topSafeArea = MediaQuery.of(context).padding.top;
     return Scaffold(
       backgroundColor: context.bgColor,
       drawer: const TayarDrawer(),
@@ -930,7 +955,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
           // ====== صف الترحيب + جرس الإشعارات (أعلى الشاشة، فوق شريط البحث) ======
           Positioned(
-            top: 8,
+            top: 8 + topSafeArea,
             right: 70,
             left: 16,
             child: AnimatedOpacity(
@@ -998,7 +1023,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
           // ====== زرار جرس الإشعارات (أعلى الشاشة، شمال) ======
           Positioned(
-            top: 8,
+            top: 8 + topSafeArea,
             left: 16,
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 200),
@@ -1034,7 +1059,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           // ====== بانر عرض ترويجي (قابل للإغلاق) — تحت صف الترحيب مباشرة ======
           if (!_promoDismissed)
             Positioned(
-              top: 118,
+              top: 118 + topSafeArea,
               right: 16,
               left: 16,
               child: AnimatedOpacity(
@@ -1078,8 +1103,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           ),
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              setState(() => _promoDismissed = true),
+                          onTap: () => setState(() => _promoDismissed = true),
                           child: const Icon(
                             Icons.close,
                             color: Colors.white70,
@@ -1096,7 +1120,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           // ====== زرارين "وصلني" و"وصل طلباتي" (نفس تسمية وأيقونات القايمة
           // الجانبية) — وصول سريع للخدمتين من غير ما يفتح القايمة ======
           Positioned(
-            top: _promoDismissed ? 118 : 176,
+            top: (_promoDismissed ? 118 : 176) + topSafeArea,
             right: 16,
             left: 16,
             child: AnimatedOpacity(
@@ -1136,7 +1160,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
           // ====== زرار القايمة الجانبية (بيختفي لفوق وقت سحب الخريطة) ======
           Positioned(
-            top: 60,
+            top: 60 + topSafeArea,
             right: 16,
             child: AnimatedSlide(
               duration: const Duration(milliseconds: 250),
@@ -1222,20 +1246,28 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           ),
 
           // ====== الـ Bottom Sheet (بيختفي بحركة انزلاق وقت سحب الخريطة) ======
+          // قبل ما تتحدد وجهة: كارت البحث + الأماكن المحفوظة + آخر رحلة.
+          // بعد ما تتحدد وجهة: كارت ملخص الرحلة (المسافة/الوقت/السعر).
           AnimatedSlide(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeInOut,
             offset: _isDraggingMap ? const Offset(0, 1) : Offset.zero,
-            child: TayarBottomSheet(
-              destinationAddress: _destinationAddress,
-              distanceKm: _routeDistanceKm,
-              durationMin: _routeDurationMin,
-              fare: _estimatedFare,
-              paymentMethod: _paymentMethod,
-              onTapPaymentMethod: _showPaymentMethodSheet,
-              onCancelDestination: _clearDestination,
-              onConfirmOrder: _openOrderConfirmation,
-            ),
+            child: _destinationAddress == null
+                ? TayarIdleBottomSheet(
+                    onTapSearch: _openDestinationSearch,
+                    onTapSavedPlace: _showSavedPlacesComingSoon,
+                    onReorderTrip: _reorderLastTrip,
+                  )
+                : TayarBottomSheet(
+                    destinationAddress: _destinationAddress,
+                    distanceKm: _routeDistanceKm,
+                    durationMin: _routeDurationMin,
+                    fare: _estimatedFare,
+                    paymentMethod: _paymentMethod,
+                    onTapPaymentMethod: _showPaymentMethodSheet,
+                    onCancelDestination: _clearDestination,
+                    onConfirmOrder: _openOrderConfirmation,
+                  ),
           ),
         ],
       ),
@@ -1320,6 +1352,292 @@ class TayarBottomSheet extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ====================================================
+// ====== كارت الشاشة الرئيسية الافتراضي (قبل اختيار وجهة): بحث +
+// أماكن محفوظة + آخر رحلة ======
+// ====================================================
+class TayarIdleBottomSheet extends StatelessWidget {
+  final VoidCallback onTapSearch;
+  final VoidCallback onTapSavedPlace;
+  final void Function(LatLng location, String address) onReorderTrip;
+
+  const TayarIdleBottomSheet({
+    super.key,
+    required this.onTapSearch,
+    required this.onTapSavedPlace,
+    required this.onReorderTrip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.md,
+          AppSpacing.lg,
+          AppSpacing.xxl,
+        ),
+        decoration: BoxDecoration(
+          color: context.bgColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, -1),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // المقبض العلوي
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: context.handleColor,
+                  borderRadius: BorderRadius.circular(AppRadius.handle),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+
+            // ====== شريط البحث: بيفتح شاشة اختيار الوجهة الموجودة أصلاً ======
+            GestureDetector(
+              onTap: onTapSearch,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: 13,
+                ),
+                decoration: BoxDecoration(
+                  color: context.cardColor,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.search, color: context.textGreyColor, size: 18),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      loc.homeSearchHint,
+                      style: TextStyle(
+                        color: context.textGreyColor,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+
+            // ====== أماكن محفوظة ======
+            Text(
+              loc.savedPlacesLabel,
+              style: TextStyle(
+                color: context.textGreyColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              children: [
+                _SavedPlaceChip(
+                  icon: Icons.home_outlined,
+                  label: loc.savedPlaceHome,
+                  onTap: onTapSavedPlace,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                _SavedPlaceChip(
+                  icon: Icons.work_outline,
+                  label: loc.savedPlaceWork,
+                  onTap: onTapSavedPlace,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                _SavedPlaceChip(
+                  icon: Icons.add,
+                  label: loc.savedPlaceAdd,
+                  onTap: onTapSavedPlace,
+                ),
+              ],
+            ),
+
+            // ====== آخر رحلة: بتظهر بس لو فيه رحلة سابقة فعلًا في Firestore ======
+            _LastTripSection(onReorderTrip: onReorderTrip),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ====== شريحة مكان محفوظ (البيت / الشغل / إضافة) ======
+class _SavedPlaceChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _SavedPlaceChip({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: context.cardColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: context.textColor, size: 14),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(color: context.textColor, fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ====== قسم "آخر رحلة": بيجيب آخر طلب رحلة مكتمل للراكب الحالي من
+// collection('orders') على فيرستور، وبيخفي نفسه تمامًا لو مفيش رحلات سابقة ======
+class _LastTripSection extends StatelessWidget {
+  final void Function(LatLng location, String address) onReorderTrip;
+
+  const _LastTripSection({required this.onReorderTrip});
+
+  @override
+  Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const SizedBox.shrink();
+
+    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      // بنجيب كل رحلات الراكب المكتملة ونرتبها ونفلترها محليًا، عشان نتجنب
+      // الحاجة لعمل composite index في Firestore (نفس أسلوب order_history_screen).
+      future: FirebaseFirestore.instance
+          .collection('orders')
+          .where('customerId', isEqualTo: uid)
+          .limit(30)
+          .get(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const SizedBox.shrink();
+
+        final docs =
+            snapshot.data!.docs.where((doc) {
+              final data = doc.data();
+              return data['serviceType'] == 'passenger' &&
+                  data['status'] == 'completed';
+            }).toList()..sort((a, b) {
+              final aTime = a.data()['createdAt'] as Timestamp?;
+              final bTime = b.data()['createdAt'] as Timestamp?;
+              if (aTime == null || bTime == null) return 0;
+              return bTime.compareTo(aTime);
+            });
+
+        if (docs.isEmpty) return const SizedBox.shrink();
+
+        final lastTrip = docs.first.data();
+        final destinationAddress = lastTrip['destinationAddress'] as String?;
+        final destinationGeoPoint =
+            lastTrip['destinationLocation'] as GeoPoint?;
+        final pickupAddress = lastTrip['pickupAddress'] as String?;
+        if (destinationAddress == null || destinationGeoPoint == null) {
+          return const SizedBox.shrink();
+        }
+
+        final loc = AppLocalizations.of(context)!;
+        final routeLabel = pickupAddress != null
+            ? '$pickupAddress ← $destinationAddress'
+            : destinationAddress;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  loc.lastTripLabel,
+                  style: TextStyle(
+                    color: context.textGreyColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => onReorderTrip(
+                    LatLng(
+                      destinationGeoPoint.latitude,
+                      destinationGeoPoint.longitude,
+                    ),
+                    destinationAddress,
+                  ),
+                  child: Text(
+                    loc.reorderTripLabel,
+                    style: const TextStyle(
+                      color: TayarColors.primary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            GestureDetector(
+              onTap: () => onReorderTrip(
+                LatLng(
+                  destinationGeoPoint.latitude,
+                  destinationGeoPoint.longitude,
+                ),
+                destinationAddress,
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.history, color: context.textGreyColor, size: 16),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      routeLabel,
+                      style: TextStyle(color: context.textColor, fontSize: 12),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

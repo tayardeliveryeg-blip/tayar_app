@@ -2233,6 +2233,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'خصم 20% على أول رحلة معانا'**
   String get homePromoBannerText;
+
+  /// No description provided for @homeSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'عايز تروح فين؟'**
+  String get homeSearchHint;
+
+  /// No description provided for @savedPlacesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أماكن محفوظة'**
+  String get savedPlacesLabel;
+
+  /// No description provided for @savedPlaceHome.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيت'**
+  String get savedPlaceHome;
+
+  /// No description provided for @savedPlaceWork.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشغل'**
+  String get savedPlaceWork;
+
+  /// No description provided for @savedPlaceAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة'**
+  String get savedPlaceAdd;
+
+  /// No description provided for @savedPlacesComingSoonMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'الميزة دي هتضاف قريبًا'**
+  String get savedPlacesComingSoonMessage;
+
+  /// No description provided for @lastTripLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر رحلة'**
+  String get lastTripLabel;
+
+  /// No description provided for @reorderTripLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الطلب'**
+  String get reorderTripLabel;
 }
 
 class _AppLocalizationsDelegate

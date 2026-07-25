@@ -569,5 +569,13 @@
     }
   },
   "homeGreetingSubtitle": "فين نوصّلك النهاردة؟",
-  "homePromoBannerText": "خصم 20% على أول رحلة معانا"
+  "homePromoBannerText": "خصم 20% على أول رحلة معانا",
+  "homeSearchHint": "عايز تروح فين؟",
+  "savedPlacesLabel": "أماكن محفوظة",
+  "savedPlaceHome": "البيت",
+  "savedPlaceWork": "الشغل",
+  "savedPlaceAdd": "إضافة",
+  "savedPlacesComingSoonMessage": "الميزة دي هتضاف قريبًا",
+  "lastTripLabel": "آخر رحلة",
+  "reorderTripLabel": "إعادة الطلب"
 }

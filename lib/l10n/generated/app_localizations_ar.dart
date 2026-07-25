@@ -1164,4 +1164,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homePromoBannerText => 'خصم 20% على أول رحلة معانا';
+
+  @override
+  String get homeSearchHint => 'عايز تروح فين؟';
+
+  @override
+  String get savedPlacesLabel => 'أماكن محفوظة';
+
+  @override
+  String get savedPlaceHome => 'البيت';
+
+  @override
+  String get savedPlaceWork => 'الشغل';
+
+  @override
+  String get savedPlaceAdd => 'إضافة';
+
+  @override
+  String get savedPlacesComingSoonMessage => 'الميزة دي هتضاف قريبًا';
+
+  @override
+  String get lastTripLabel => 'آخر رحلة';
+
+  @override
+  String get reorderTripLabel => 'إعادة الطلب';
 }

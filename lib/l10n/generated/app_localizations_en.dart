@@ -1176,4 +1176,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homePromoBannerText => '20% off your first ride with us';
+
+  @override
+  String get homeSearchHint => 'Where would you like to go?';
+
+  @override
+  String get savedPlacesLabel => 'Saved places';
+
+  @override
+  String get savedPlaceHome => 'Home';
+
+  @override
+  String get savedPlaceWork => 'Work';
+
+  @override
+  String get savedPlaceAdd => 'Add';
+
+  @override
+  String get savedPlacesComingSoonMessage => 'This feature is coming soon';
+
+  @override
+  String get lastTripLabel => 'Last trip';
+
+  @override
+  String get reorderTripLabel => 'Reorder';
 }
