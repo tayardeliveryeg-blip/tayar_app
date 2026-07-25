@@ -55,6 +55,7 @@ dependencies:
   url_launcher: ^6.3.1
   zego_uikit_prebuilt_call: 4.24.2
   zego_uikit: ^2.29.1 # مطلوبة صراحةً عشان استيراد ZegoUIKitUser مباشرة (بيستخدمها call_invitation_helper.dart)
+  google_mlkit_face_detection: ^0.12.0
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2

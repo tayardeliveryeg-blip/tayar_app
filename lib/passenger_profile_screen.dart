@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'services/profile_photo_validator.dart';
 
 // ====================================================
 // ====== شاشة بروفايل الراكب: قابلة للتعديل ======
@@ -17,8 +18,7 @@ class PassengerProfileScreen extends StatefulWidget {
   const PassengerProfileScreen({super.key});
 
   @override
-  State<PassengerProfileScreen> createState() =>
-      _PassengerProfileScreenState();
+  State<PassengerProfileScreen> createState() => _PassengerProfileScreenState();
 }
 
 class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
@@ -35,6 +35,8 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
 
   bool _isLoading = true;
   bool _isSaving = false;
+  // ====== true أثناء تشغيل فحص الوجه على الصورة المختارة قبل قبولها ======
+  bool _isCheckingPhoto = false;
 
   String? get _uid => FirebaseAuth.instance.currentUser?.uid;
 
@@ -79,6 +81,27 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
     );
     if (file == null) return;
     final bytes = await file.readAsBytes();
+
+    // ====== قبل قبول الصورة، نتأكد إنها صورة وجه قريبة وواضحة زي متطلبات
+    // التحقق الأمني (نفس فكرة InDrive)، وده بيشتغل على الموبايل بس ======
+    setState(() => _isCheckingPhoto = true);
+    final result = await ProfilePhotoValidator.validate(
+      imagePath: file.path,
+      bytes: bytes,
+    );
+    if (!mounted) return;
+    setState(() => _isCheckingPhoto = false);
+
+    if (!result.isValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.errorMessageAr!),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     setState(() => _newPhotoBytes = bytes);
   }
 
@@ -138,9 +161,7 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
     if (phone.isNotEmpty && !egyptianPhoneRegex.hasMatch(phone)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.invalidPhoneNumberError,
-          ),
+          content: Text(AppLocalizations.of(context)!.invalidPhoneNumberError),
         ),
       );
       return;
@@ -214,10 +235,10 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme:  IconThemeData(color: context.textColor),
+        iconTheme: IconThemeData(color: context.textColor),
         title: Text(
           AppLocalizations.of(context)!.navProfile,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: _isLoading
@@ -236,7 +257,8 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
                           child: _ProfilePhotoPicker(
                             existingPhotoBase64: _existingPhotoBase64,
                             newPhotoBytes: _newPhotoBytes,
-                            onTap: _pickPhoto,
+                            isChecking: _isCheckingPhoto,
+                            onTap: _isCheckingPhoto ? null : _pickPhoto,
                           ),
                         ),
                         Center(
@@ -244,7 +266,7 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
                               AppLocalizations.of(context)!.changePhotoLabel,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textGreyColor,
                                 fontSize: 12,
                               ),
@@ -292,7 +314,7 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
                         ),
                       ),
                       child: _isSaving
-                          ?  SizedBox(
+                          ? SizedBox(
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
@@ -302,7 +324,7 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
                             )
                           : Text(
                               AppLocalizations.of(context)!.saveButton,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -323,12 +345,14 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
 class _ProfilePhotoPicker extends StatelessWidget {
   final String? existingPhotoBase64;
   final Uint8List? newPhotoBytes;
-  final VoidCallback onTap;
+  final bool isChecking;
+  final VoidCallback? onTap;
 
   const _ProfilePhotoPicker({
     required this.existingPhotoBase64,
     required this.newPhotoBytes,
     required this.onTap,
+    this.isChecking = false,
   });
 
   @override
@@ -353,9 +377,17 @@ class _ProfilePhotoPicker extends StatelessWidget {
             backgroundColor: context.cardColor,
             backgroundImage: imageProvider,
             child: imageProvider == null
-                ?  Icon(Icons.person, color: context.textGreyColor, size: 48)
+                ? Icon(Icons.person, color: context.textGreyColor, size: 48)
                 : null,
           ),
+          if (isChecking)
+            Positioned.fill(
+              child: CircleAvatar(
+                radius: 56,
+                backgroundColor: Colors.black45,
+                child: const CircularProgressIndicator(color: Colors.white),
+              ),
+            ),
           Positioned(
             bottom: 0,
             right: 0,
@@ -399,11 +431,11 @@ class _ProfileTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
-        style:  TextStyle(color: context.textColor),
+        style: TextStyle(color: context.textColor),
         textAlign: TextAlign.right,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle:  TextStyle(color: context.textGreyColor),
+          hintStyle: TextStyle(color: context.textGreyColor),
           filled: true,
           fillColor: context.cardColor,
           border: OutlineInputBorder(
