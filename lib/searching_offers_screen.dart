@@ -3,9 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'map_tile_layer.dart';
+import 'app_settings.dart';
 import 'trip_tracking_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
@@ -150,10 +152,22 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
         .snapshots()
         .listen((snapshot) {
           final currentIds = <String>{};
+          final radiusMeters = AppSettings.instance.serviceRadiusKm * 1000;
+
           for (final doc in snapshot.docs) {
             final data = doc.data();
             final geo = _extractGeoPoint(data['currentLocation']);
             if (geo == null) continue;
+
+            // ====== نتجاهل أي سائق بعيد عن نقطة الانطلاق (مثلاً في مدينة
+            // تانية) — مهم مع توسع التطبيق لمدن أكتر من العاشر من رمضان ======
+            final distanceMeters = Geolocator.distanceBetween(
+              widget.pickupLocation.latitude,
+              widget.pickupLocation.longitude,
+              geo.latitude,
+              geo.longitude,
+            );
+            if (distanceMeters > radiusMeters) continue;
 
             currentIds.add(doc.id);
             final newPos = LatLng(geo.latitude, geo.longitude);

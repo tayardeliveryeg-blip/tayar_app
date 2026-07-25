@@ -30,6 +30,7 @@ import 'pin_marker.dart';
 import 'map_tile_layer.dart';
 import 'wallet_service.dart';
 import 'driver_wallet_topup_screen.dart';
+import 'app_settings.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -60,6 +61,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   // ====== التبويب المختار في الشريط السفلي ======
   int _selectedTab = 0;
 
+  // ====== آخر موقع معروف للطيار، بنستخدمه لفلترة الطلبات القريبة بس ======
+  // (ضمن نطاق serviceRadiusKm من الإعدادات) بدل ما يشوف طلبات من مدينة تانية
+  LatLng? _driverCurrentPosition;
+
   User? get _currentUser => FirebaseAuth.instance.currentUser;
 
   CollectionReference<Map<String, dynamic>> get _ordersRef =>
@@ -80,6 +85,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     // ====== بدء بث الموقع المستمر طول ما شاشة الطيار مفتوحة ======
     // (سواء الطيار "متاح" وبيدور على طلبات، أو في رحلة فعلية)
     _startLocationBroadcast();
+    // ====== نجيب آخر موقع معروف فورًا (من غير انتظار الـ stream) عشان فلترة
+    // الطلبات القريبة تشتغل من أول لحظة تفتح فيها الشاشة ======
+    _seedInitialDriverPosition();
     // ====== تفعيل استقبال إشعارات الشات + دعوات المكالمات (لازم بعد تسجيل الدخول) ======
     PushNotificationService.instance.init(isDriver: true);
     setupCallInvitationService(navigatorKey: navigatorKey);
@@ -200,6 +208,37 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       return raw;
     }
     return null;
+  }
+
+  // ====== بيفلتر قايمة الطلبات المعروضة للطيار بحيث يشوف بس اللي نقطة
+  // انطلاقها جوه نطاق الخدمة (serviceRadiusKm) من موقعه الحالي — مهم مع
+  // توسع التطبيق لمدن تانية غير العاشر من رمضان، عشان طيار في مدينة معينة
+  // ما يشوفش طلبات من مدينة تانية بعيدة تمامًا. لو موقع الطيار لسه مش معروف
+  // (أول لحظة فتح الشاشة قبل ما GPS يرد) بنسيب القايمة زي ما هي من غير فلترة
+  // عشان مايفضلش شايف قايمة فاضية من غير سبب واضح ======
+  List<QueryDocumentSnapshot<Map<String, dynamic>>>
+  _filterOrdersWithinServiceRadius(
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> orders,
+  ) {
+    final driverPos = _driverCurrentPosition;
+    if (driverPos == null) return orders;
+
+    final radiusMeters = AppSettings.instance.serviceRadiusKm * 1000;
+
+    return orders.where((order) {
+      final pickupGeo = _extractGeoPoint(order.data()['pickupLocation']);
+      // ====== طلب من غير موقع انطلاق محفوظ (حالة قديمة/استثنائية): نوريه
+      // برضه بدل ما يختفي بلا سبب ======
+      if (pickupGeo == null) return true;
+
+      final distanceMeters = Geolocator.distanceBetween(
+        driverPos.latitude,
+        driverPos.longitude,
+        pickupGeo.latitude,
+        pickupGeo.longitude,
+      );
+      return distanceMeters <= radiusMeters;
+    }).toList();
   }
 
   // ====== بيراقب لو فيه رحلة نشطة للطيار الحالي، ويحدّث isAvailable تبعًا لكده ======
@@ -328,6 +367,24 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     }
   }
 
+  // ====== يجيب آخر موقع معروف للطيار (سريع، من غير انتظار GPS دقيق) عشان
+  // فلترة الطلبات القريبة تبدأ فورًا، وهيتحدّث بعد كده أوتوماتيك من بث الموقع ======
+  Future<void> _seedInitialDriverPosition() async {
+    try {
+      final lastKnown = await Geolocator.getLastKnownPosition();
+      if (lastKnown != null && mounted) {
+        setState(() {
+          _driverCurrentPosition = LatLng(
+            lastKnown.latitude,
+            lastKnown.longitude,
+          );
+        });
+      }
+    } catch (_) {
+      // تجاهل: هيتحدّث لاحقًا من بث الموقع لو نجح
+    }
+  }
+
   Future<bool> _ensureLocationPermission() async {
     if (!await Geolocator.isLocationServiceEnabled()) return false;
     LocationPermission permission = await Geolocator.checkPermission();
@@ -359,6 +416,17 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           final geoFirePoint = GeoFirePoint(
             GeoPoint(position.latitude, position.longitude),
           );
+
+          // ====== تحديث آخر موقع معروف للطيار عشان فلترة الطلبات القريبة
+          // تفضل دقيقة مع تحركه ======
+          if (mounted) {
+            setState(() {
+              _driverCurrentPosition = LatLng(
+                position.latitude,
+                position.longitude,
+              );
+            });
+          }
 
           final tripId = _sharingTripId;
           if (tripId != null) {
@@ -878,7 +946,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       );
                     }
 
-                    final orders = snapshot.data!.docs;
+                    final orders = _filterOrdersWithinServiceRadius(
+                      snapshot.data!.docs,
+                    );
                     if (orders.isEmpty) {
                       return Center(
                         child: Text(
