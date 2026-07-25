@@ -8,11 +8,9 @@ let _modelsLoadPromise = null;
 function _loadFaceApiModels() {
   if (_modelsLoadPromise) return _modelsLoadPromise;
 
-  // موديلات مستضافة على jsdelivr (مستودع رسمي شائع الاستخدام لـ face-api.js).
-  // ملحوظة: ده بيحتاج اتصال إنترنت وقت أول استخدام. لو عايز تشيل الاعتماد
-  // على CDN خارجي، نزّل الملفات دي وحطها جوه web/models/ وغيّر المسار هنا.
-  const MODEL_URL =
-    "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js-models@master";
+  // موديلات محلية جوه web/models/ (بدل الاعتماد على CDN خارجي) — بكده
+  // مفيش تأخير أو اعتمادية على جهة تالتة وقت الاستخدام
+  const MODEL_URL = "models";
 
   _modelsLoadPromise = Promise.all([
     faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL + "/tiny_face_detector"),
