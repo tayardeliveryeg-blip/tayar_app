@@ -1200,4 +1200,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reorderTripLabel => 'Reorder';
+
+  @override
+  String get selectHomeAddressTitle => 'Choose your home address';
+
+  @override
+  String get selectWorkAddressTitle => 'Choose your work address';
+
+  @override
+  String get savedAddressSavedConfirmation => 'Address saved';
+
+  @override
+  String get savedAddressSaveError =>
+      'Something went wrong while saving the address, please try again';
 }

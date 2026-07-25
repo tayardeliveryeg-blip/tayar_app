@@ -532,6 +532,55 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     );
   }
 
+  // ====== حفظ عنوان "البيت" أو "الشغل": بيفتح نفس شاشة اختيار الوجهة
+  // الموجودة أصلاً، وبعد ما المستخدم يختار مكان بيحفظه في
+  // users/{uid}.savedAddresses.{key} على فيرستور. بنستخدم dot-notation في
+  // اسم الحقل (savedAddresses.$key) مع merge:true عشان نضمن إننا بنعدّل
+  // المفتاح ده بس من غير ما نمسح باقي بيانات اليوزر أو المفتاح التاني
+  // (home/work) لو موجود بالفعل ======
+  Future<void> _pickAndSaveAddress(String key, String screenTitle) async {
+    final result = await Navigator.push<PlaceResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SelectDestinationScreen(
+          initialLocation: _currentLocation,
+          title: screenTitle,
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'savedAddresses.$key': {
+          'address': result.title,
+          'lat': result.location.latitude,
+          'lng': result.location.longitude,
+        },
+      }, SetOptions(merge: true));
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.savedAddressSavedConfirmation,
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint('❌ خطأ في حفظ العنوان المحفوظ ($key): $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.savedAddressSaveError),
+        ),
+      );
+    }
+  }
+
   void _clearDestination() {
     _routeAnimController.stop();
     setState(() {
@@ -1256,6 +1305,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 ? TayarIdleBottomSheet(
                     onTapSearch: _openDestinationSearch,
                     onTapSavedPlace: _showSavedPlacesComingSoon,
+                    onSaveAddress: _pickAndSaveAddress,
                     onReorderTrip: _reorderLastTrip,
                   )
                 : TayarBottomSheet(
@@ -1363,12 +1413,14 @@ class TayarBottomSheet extends StatelessWidget {
 class TayarIdleBottomSheet extends StatelessWidget {
   final VoidCallback onTapSearch;
   final VoidCallback onTapSavedPlace;
+  final void Function(String key, String screenTitle) onSaveAddress;
   final void Function(LatLng location, String address) onReorderTrip;
 
   const TayarIdleBottomSheet({
     super.key,
     required this.onTapSearch,
     required this.onTapSavedPlace,
+    required this.onSaveAddress,
     required this.onReorderTrip,
   });
 
@@ -1456,16 +1508,12 @@ class TayarIdleBottomSheet extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
-                _SavedPlaceChip(
-                  icon: Icons.home_outlined,
-                  label: loc.savedPlaceHome,
-                  onTap: onTapSavedPlace,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                _SavedPlaceChip(
-                  icon: Icons.work_outline,
-                  label: loc.savedPlaceWork,
-                  onTap: onTapSavedPlace,
+                // البيت والشغل: بيقروا/يكتبوا في Firestore فعليًا (شوف _SavedPlacesRow)
+                Expanded(
+                  child: _SavedPlacesRow(
+                    onUseAddress: onReorderTrip,
+                    onSaveAddress: onSaveAddress,
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 _SavedPlaceChip(
@@ -1485,22 +1533,122 @@ class TayarIdleBottomSheet extends StatelessWidget {
   }
 }
 
+// ====== صف "البيت" و"الشغل": بيسمعوا على users/{uid}.savedAddresses على
+// فيرستور لايف. لو المكان لسه مش محفوظ، دوسة عليه بتفتح شاشة اختيار
+// العنوان وتحفظه. لو محفوظ فعلًا، دوسة عادية بتستخدمه كوجهة على طول،
+// وضغطة مطوّلة (long press) بتفتح شاشة الاختيار تاني عشان يتغيّر ======
+class _SavedPlacesRow extends StatelessWidget {
+  final void Function(LatLng location, String address) onUseAddress;
+  final void Function(String key, String screenTitle) onSaveAddress;
+
+  const _SavedPlacesRow({
+    required this.onUseAddress,
+    required this.onSaveAddress,
+  });
+
+  void _handleTap(
+    String key,
+    Map<String, dynamic>? savedData,
+    String screenTitle,
+  ) {
+    final lat = (savedData?['lat'] as num?)?.toDouble();
+    final lng = (savedData?['lng'] as num?)?.toDouble();
+    final address = savedData?['address'] as String?;
+
+    if (lat == null || lng == null || address == null) {
+      // مفيش عنوان محفوظ لسه: افتح شاشة الاختيار واحفظه
+      onSaveAddress(key, screenTitle);
+    } else {
+      // العنوان محفوظ: استخدمه كوجهة على طول
+      onUseAddress(LatLng(lat, lng), address);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid == null) {
+      return Row(
+        children: [
+          Expanded(
+            child: _SavedPlaceChip(
+              icon: Icons.home_outlined,
+              label: loc.savedPlaceHome,
+              onTap: () => onSaveAddress('home', loc.selectHomeAddressTitle),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: _SavedPlaceChip(
+              icon: Icons.work_outline,
+              label: loc.savedPlaceWork,
+              onTap: () => onSaveAddress('work', loc.selectWorkAddressTitle),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        final savedAddresses =
+            snapshot.data?.data()?['savedAddresses'] as Map<String, dynamic>?;
+        final home = savedAddresses?['home'] as Map<String, dynamic>?;
+        final work = savedAddresses?['work'] as Map<String, dynamic>?;
+
+        return Row(
+          children: [
+            Expanded(
+              child: _SavedPlaceChip(
+                icon: Icons.home_outlined,
+                label: loc.savedPlaceHome,
+                onTap: () => _handleTap('home', home, loc.savedPlaceHome),
+                onLongPress: () =>
+                    onSaveAddress('home', loc.selectHomeAddressTitle),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _SavedPlaceChip(
+                icon: Icons.work_outline,
+                label: loc.savedPlaceWork,
+                onTap: () => _handleTap('work', work, loc.savedPlaceWork),
+                onLongPress: () =>
+                    onSaveAddress('work', loc.selectWorkAddressTitle),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 // ====== شريحة مكان محفوظ (البيت / الشغل / إضافة) ======
 class _SavedPlaceChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   const _SavedPlaceChip({
     required this.icon,
     required this.label,
     required this.onTap,
+    this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
@@ -1515,9 +1663,13 @@ class _SavedPlaceChip extends StatelessWidget {
           children: [
             Icon(icon, color: context.textColor, size: 14),
             const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(color: context.textColor, fontSize: 12),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(color: context.textColor, fontSize: 12),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

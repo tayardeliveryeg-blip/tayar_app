@@ -1188,4 +1188,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reorderTripLabel => 'إعادة الطلب';
+
+  @override
+  String get selectHomeAddressTitle => 'اختار عنوان البيت';
+
+  @override
+  String get selectWorkAddressTitle => 'اختار عنوان الشغل';
+
+  @override
+  String get savedAddressSavedConfirmation => 'تم حفظ العنوان';
+
+  @override
+  String get savedAddressSaveError => 'حصل خطأ أثناء حفظ العنوان، حاول تاني';
 }

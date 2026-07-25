@@ -577,5 +577,9 @@
   "savedPlaceAdd": "إضافة",
   "savedPlacesComingSoonMessage": "الميزة دي هتضاف قريبًا",
   "lastTripLabel": "آخر رحلة",
-  "reorderTripLabel": "إعادة الطلب"
+  "reorderTripLabel": "إعادة الطلب",
+  "selectHomeAddressTitle": "اختار عنوان البيت",
+  "selectWorkAddressTitle": "اختار عنوان الشغل",
+  "savedAddressSavedConfirmation": "تم حفظ العنوان",
+  "savedAddressSaveError": "حصل خطأ أثناء حفظ العنوان، حاول تاني"
 }

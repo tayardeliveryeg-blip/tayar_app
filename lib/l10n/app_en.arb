@@ -577,5 +577,9 @@
   "savedPlaceAdd": "Add",
   "savedPlacesComingSoonMessage": "This feature is coming soon",
   "lastTripLabel": "Last trip",
-  "reorderTripLabel": "Reorder"
+  "reorderTripLabel": "Reorder",
+  "selectHomeAddressTitle": "Choose your home address",
+  "selectWorkAddressTitle": "Choose your work address",
+  "savedAddressSavedConfirmation": "Address saved",
+  "savedAddressSaveError": "Something went wrong while saving the address, please try again"
 }

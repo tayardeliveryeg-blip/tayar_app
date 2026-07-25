@@ -2281,6 +2281,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إعادة الطلب'**
   String get reorderTripLabel;
+
+  /// No description provided for @selectHomeAddressTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار عنوان البيت'**
+  String get selectHomeAddressTitle;
+
+  /// No description provided for @selectWorkAddressTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار عنوان الشغل'**
+  String get selectWorkAddressTitle;
+
+  /// No description provided for @savedAddressSavedConfirmation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ العنوان'**
+  String get savedAddressSavedConfirmation;
+
+  /// No description provided for @savedAddressSaveError.
+  ///
+  /// In ar, this message translates to:
+  /// **'حصل خطأ أثناء حفظ العنوان، حاول تاني'**
+  String get savedAddressSaveError;
 }
 
 class _AppLocalizationsDelegate
