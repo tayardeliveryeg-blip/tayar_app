@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, PassengerHomeScreen;
-import 'package:tayay_app/screens/driver/driver_registration_screen.dart';
+import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
 import 'package:tayay_app/screens/auth/profile_setup_screen.dart';
 
 // ====================================================

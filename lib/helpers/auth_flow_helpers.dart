@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/screens/auth/role_selection_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
-import 'package:tayay_app/screens/driver/driver_registration_screen.dart';
+import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
 import 'package:tayay_app/services/driver_invite_link_helper.dart';
 
 // ====================================================
