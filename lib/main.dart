@@ -5,14 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'firebase_options.dart';
-import 'login_screen.dart';
-import 'passenger_home.dart';
-import 'driver_home_screen.dart';
-import 'splash_screen.dart';
-import 'app_lock_screen.dart';
-import 'push_notification_service.dart';
-import 'app_settings.dart';
+import 'package:tayay_app/firebase_options.dart';
+import 'package:tayay_app/screens/auth/login_screen.dart';
+import 'package:tayay_app/screens/passenger/passenger_home.dart';
+import 'package:tayay_app/screens/driver/driver_home_screen.dart';
+import 'package:tayay_app/screens/shared/splash_screen.dart';
+import 'package:tayay_app/screens/auth/app_lock_screen.dart';
+import 'package:tayay_app/services/push_notification_service.dart';
+import 'package:tayay_app/theme/app_settings.dart';
 
 export 'passenger_home.dart' show TayarColors, TayarTheme, TayarThemeColors;
 

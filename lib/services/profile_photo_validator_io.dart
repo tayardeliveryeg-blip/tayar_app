@@ -3,8 +3,8 @@ import 'dart:ui' as ui;
 
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 
-import 'photo_check_thresholds.dart';
-import 'photo_validation_result.dart';
+import 'package:tayay_app/services/photo_check_thresholds.dart';
+import 'package:tayay_app/services/photo_validation_result.dart';
 
 FaceDetector? _detector;
 

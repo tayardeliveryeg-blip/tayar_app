@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
-import 'photo_validation_result.dart';
+import 'package:tayay_app/services/photo_validation_result.dart';
 export 'photo_validation_result.dart';
 
-import 'profile_photo_validator_stub.dart'
+import 'package:tayay_app/services/profile_photo_validator_stub.dart'
     if (dart.library.io) 'profile_photo_validator_io.dart'
     if (dart.library.html) 'profile_photo_validator_web.dart'
     as impl;

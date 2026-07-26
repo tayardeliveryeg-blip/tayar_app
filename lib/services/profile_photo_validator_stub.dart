@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'photo_validation_result.dart';
+import 'package:tayay_app/services/photo_validation_result.dart';
 
 /// Fallback used only if the target platform is neither dart:io nor
 /// dart:html (shouldn't happen for Flutter mobile/web/desktop). Fails

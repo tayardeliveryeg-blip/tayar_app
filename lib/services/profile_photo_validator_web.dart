@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:typed_data';
 
-import 'photo_check_thresholds.dart';
-import 'photo_validation_result.dart';
+import 'package:tayay_app/services/photo_check_thresholds.dart';
+import 'package:tayay_app/services/photo_validation_result.dart';
 
 // ====== ربط JS interop مع الدالة العامة اللي بيعرّفها web/face_photo_check.js
 // (window.tayarValidateFacePhoto). بترجع Promise<String> فيه JSON.stringify

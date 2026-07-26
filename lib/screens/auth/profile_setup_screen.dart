@@ -1,0 +1,167 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/screens/passenger/passenger_home.dart'
+    show TayarColors, TayarThemeColors, PassengerHomeScreen;
+
+// ====================================================
+// ====== شاشة استكمال بيانات الراكب بعد أول تسجيل دخول ======
+// بتظهر مرة واحدة بس لما يختار "راكب" في شاشة اختيار الدور.
+// الطيار مش بيمر من هنا لأن شاشة تسجيل الطيار نفسها بتجمع
+// بياناته الشخصية كجزء من إجراءات القبول ======
+// ====================================================
+class ProfileSetupScreen extends StatefulWidget {
+  final String role;
+
+  const ProfileSetupScreen({super.key, required this.role});
+
+  @override
+  State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
+}
+
+class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _nameController;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // ====== لو جوجل رجّع اسم جاهز، بنحطه معمور من الأول ======
+    _nameController = TextEditingController(
+      text: FirebaseAuth.instance.currentUser?.displayName ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveAndContinue() async {
+    if (!_formKey.currentState!.validate()) return;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    setState(() => _isSaving = true);
+    final name = _nameController.text.trim();
+
+    try {
+      if (FirebaseAuth.instance.currentUser?.displayName != name) {
+        await FirebaseAuth.instance.currentUser?.updateDisplayName(name);
+      }
+
+      final nameParts = name.split(RegExp(r'\s+'));
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'personalInfo': {
+          'firstName': nameParts.first,
+          'lastName': nameParts.length > 1
+              ? nameParts.sublist(1).join(' ')
+              : '',
+        },
+        'role': widget.role,
+        'createdAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const PassengerHomeScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return Scaffold(
+      backgroundColor: context.bgColor,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 50),
+                Text(
+                  loc.completeProfileTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  loc.completeProfileSubtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: context.textGreyColor),
+                ),
+                const SizedBox(height: 40),
+                TextFormField(
+                  controller: _nameController,
+                  textInputAction: TextInputAction.done,
+                  style: TextStyle(color: context.textColor),
+                  decoration: InputDecoration(
+                    labelText: loc.nameLabel,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return loc.requiredFieldError;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: 55,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TayarColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: _isSaving ? null : _saveAndContinue,
+                    child: _isSaving
+                        ? SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              color: context.onPrimaryColor,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            loc.continueButton,
+                            style: TextStyle(
+                              color: context.onPrimaryColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
