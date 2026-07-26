@@ -1167,65 +1167,73 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           // وقابل للسحب لفوق لوضع ملء الشاشة وللسحب لتحت للرجوع تاني) ======
           // قبل ما تتحدد وجهة: كارت البحث + الأماكن المحفوظة + الخدمات
           // السريعة + آخر رحلة. بعد ما تتحدد وجهة: كارت ملخص الرحلة.
-          AnimatedSlide(
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-            offset: _isDraggingMap ? const Offset(0, 1) : Offset.zero,
-            child: AnimatedBuilder(
-              animation: _sheetAnimController,
-              builder: (context, _) {
-                final screenHeight = MediaQuery.of(context).size.height;
-                final expandedHeight =
-                    screenHeight - topSafeArea - AppSpacing.xxl;
-                // ====== الوضع الطبيعي: كارت ملخص الرحلة أقصر من كارت
-                // البحث/الأماكن المحفوظة، فبنديله نسبة أصغر من الشاشة ======
-                final collapsedHeight = screenHeight *
-                    (_destinationAddress == null ? 0.5 : 0.38);
-                final t = _sheetAnimController.value;
-                final currentHeight =
-                    collapsedHeight + (expandedHeight - collapsedHeight) * t;
+          // ====== لازم Positioned(bottom: 0) عشان الشريط يفضل ملتصق
+          // بأسفل الشاشة، من غير كده الـ Stack بيحطه حسب alignment
+          // الافتراضي (فوق يسار) مش أسفل الشاشة ======
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              offset: _isDraggingMap ? const Offset(0, 1) : Offset.zero,
+              child: AnimatedBuilder(
+                animation: _sheetAnimController,
+                builder: (context, _) {
+                  final screenHeight = MediaQuery.of(context).size.height;
+                  final expandedHeight =
+                      screenHeight - topSafeArea - AppSpacing.xxl;
+                  // ====== الوضع الطبيعي: كارت ملخص الرحلة أقصر من كارت
+                  // البحث/الأماكن المحفوظة، فبنديله نسبة أصغر من الشاشة ======
+                  final collapsedHeight = screenHeight *
+                      (_destinationAddress == null ? 0.5 : 0.38);
+                  final t = _sheetAnimController.value;
+                  final currentHeight = collapsedHeight +
+                      (expandedHeight - collapsedHeight) * t;
 
-                return ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: currentHeight),
-                  child: _destinationAddress == null
-                      ? TayarIdleBottomSheet(
-                          onTapSearch: _openDestinationSearch,
-                          onTapSavedPlace: _showSavedPlacesComingSoon,
-                          onSaveAddress: _pickAndSaveAddress,
-                          onReorderTrip: _reorderLastTrip,
-                          onTapRideService: _openDestinationSearch,
-                          onTapDeliveryService: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  const CreateDeliveryOrderScreen(),
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: currentHeight),
+                    child: _destinationAddress == null
+                        ? TayarIdleBottomSheet(
+                            onTapSearch: _openDestinationSearch,
+                            onTapSavedPlace: _showSavedPlacesComingSoon,
+                            onSaveAddress: _pickAndSaveAddress,
+                            onReorderTrip: _reorderLastTrip,
+                            onTapRideService: _openDestinationSearch,
+                            onTapDeliveryService: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const CreateDeliveryOrderScreen(),
+                              ),
                             ),
+                            onDragStart: () => _onSheetDragStart(
+                              collapsedHeight,
+                              expandedHeight,
+                            ),
+                            onDragUpdate: _onSheetDragUpdate,
+                            onDragEnd: _onSheetDragEnd,
+                          )
+                        : TayarBottomSheet(
+                            destinationAddress: _destinationAddress,
+                            distanceKm: _routeDistanceKm,
+                            durationMin: _routeDurationMin,
+                            fare: _estimatedFare,
+                            paymentMethod: _paymentMethod,
+                            onTapPaymentMethod: _showPaymentMethodSheet,
+                            onCancelDestination: _clearDestination,
+                            onConfirmOrder: _openOrderConfirmation,
+                            onDragStart: () => _onSheetDragStart(
+                              collapsedHeight,
+                              expandedHeight,
+                            ),
+                            onDragUpdate: _onSheetDragUpdate,
+                            onDragEnd: _onSheetDragEnd,
                           ),
-                          onDragStart: () => _onSheetDragStart(
-                            collapsedHeight,
-                            expandedHeight,
-                          ),
-                          onDragUpdate: _onSheetDragUpdate,
-                          onDragEnd: _onSheetDragEnd,
-                        )
-                      : TayarBottomSheet(
-                          destinationAddress: _destinationAddress,
-                          distanceKm: _routeDistanceKm,
-                          durationMin: _routeDurationMin,
-                          fare: _estimatedFare,
-                          paymentMethod: _paymentMethod,
-                          onTapPaymentMethod: _showPaymentMethodSheet,
-                          onCancelDestination: _clearDestination,
-                          onConfirmOrder: _openOrderConfirmation,
-                          onDragStart: () => _onSheetDragStart(
-                            collapsedHeight,
-                            expandedHeight,
-                          ),
-                          onDragUpdate: _onSheetDragUpdate,
-                          onDragEnd: _onSheetDragEnd,
-                        ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ],
