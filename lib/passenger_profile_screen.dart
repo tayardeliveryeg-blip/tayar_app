@@ -71,13 +71,65 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
     }
   }
 
-  Future<void> _pickPhoto() async {
+  // ====== بوتوم شيت بسيط يسيب المستخدم يختار هيجيب الصورة منين:
+  // من معرض الصور، أو يفتح الكاميرا مباشرة ويلتقط صورة جديدة ======
+  Future<void> _showPhotoSourceSheet() async {
+    final l10n = AppLocalizations.of(context)!;
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: context.cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Center(
+                  child: Text(
+                    l10n.choosePhotoSourceTitle,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: sheetContext.textColor,
+                    ),
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library_outlined,
+                    color: TayarColors.primary),
+                title: Text(l10n.chooseFromGalleryLabel,
+                    style: TextStyle(color: sheetContext.textColor)),
+                onTap: () =>
+                    Navigator.of(sheetContext).pop(ImageSource.gallery),
+              ),
+              ListTile(
+                leading:
+                    Icon(Icons.camera_alt_outlined, color: TayarColors.primary),
+                title: Text(l10n.takePhotoLabel,
+                    style: TextStyle(color: sheetContext.textColor)),
+                onTap: () =>
+                    Navigator.of(sheetContext).pop(ImageSource.camera),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (source == null) return;
+    await _pickPhoto(source);
+  }
+
+  Future<void> _pickPhoto(ImageSource source) async {
     final picker = ImagePicker();
     final file = await picker.pickImage(
-      source: ImageSource.gallery,
+      source: source,
       imageQuality: 60,
       maxWidth: 640,
       maxHeight: 640,
+      preferredCameraDevice: CameraDevice.front,
     );
     if (file == null) return;
     final bytes = await file.readAsBytes();
@@ -258,7 +310,8 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
                             existingPhotoBase64: _existingPhotoBase64,
                             newPhotoBytes: _newPhotoBytes,
                             isChecking: _isCheckingPhoto,
-                            onTap: _isCheckingPhoto ? null : _pickPhoto,
+                            onTap:
+                                _isCheckingPhoto ? null : _showPhotoSourceSheet,
                           ),
                         ),
                         Center(

@@ -291,6 +291,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changePhotoLabel => 'Change Photo';
 
   @override
+  String get choosePhotoSourceTitle => 'Choose photo source';
+
+  @override
+  String get chooseFromGalleryLabel => 'Choose from gallery';
+
+  @override
+  String get takePhotoLabel => 'Take a photo';
+
+  @override
   String get photoTooLargeError => 'Photo too large, choose a smaller one';
 
   @override

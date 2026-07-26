@@ -290,6 +290,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePhotoLabel => 'تغيير الصورة';
 
   @override
+  String get choosePhotoSourceTitle => 'اختار مصدر الصورة';
+
+  @override
+  String get chooseFromGalleryLabel => 'اختيار من المعرض';
+
+  @override
+  String get takePhotoLabel => 'التقاط صورة بالكاميرا';
+
+  @override
   String get photoTooLargeError =>
       'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر';
 

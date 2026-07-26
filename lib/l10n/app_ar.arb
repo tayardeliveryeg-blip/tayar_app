@@ -134,6 +134,9 @@
   "saveFailedError": "تعذر الحفظ، حاول تاني",
   "profileUpdatedSuccess": "تم تحديث الملف الشخصي بنجاح",
   "changePhotoLabel": "تغيير الصورة",
+  "choosePhotoSourceTitle": "اختار مصدر الصورة",
+  "chooseFromGalleryLabel": "اختيار من المعرض",
+  "takePhotoLabel": "التقاط صورة بالكاميرا",
   "photoTooLargeError": "الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر",
   "invalidPhoneNumberError": "رقم الهاتف غير صحيح، لازم يكون رقم مصري صحيح",
 

@@ -134,6 +134,9 @@
   "saveFailedError": "Couldn't save, try again",
   "profileUpdatedSuccess": "Profile updated successfully",
   "changePhotoLabel": "Change Photo",
+  "choosePhotoSourceTitle": "Choose photo source",
+  "chooseFromGalleryLabel": "Choose from gallery",
+  "takePhotoLabel": "Take a photo",
   "photoTooLargeError": "Photo too large, choose a smaller one",
   "invalidPhoneNumberError": "Invalid phone number, please enter a valid Egyptian number",
 

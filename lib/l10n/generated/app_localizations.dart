@@ -632,6 +632,24 @@ abstract class AppLocalizations {
   /// **'تغيير الصورة'**
   String get changePhotoLabel;
 
+  /// No description provided for @choosePhotoSourceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار مصدر الصورة'**
+  String get choosePhotoSourceTitle;
+
+  /// No description provided for @chooseFromGalleryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار من المعرض'**
+  String get chooseFromGalleryLabel;
+
+  /// No description provided for @takePhotoLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقاط صورة بالكاميرا'**
+  String get takePhotoLabel;
+
   /// No description provided for @photoTooLargeError.
   ///
   /// In ar, this message translates to:
