@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarThemeColors;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/driver_invite_link_helper.dart';
 import 'package:tayay_app/screens/auth/mobile_link_otp_screen.dart';

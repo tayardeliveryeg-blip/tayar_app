@@ -10,6 +10,7 @@ class FormTextField extends StatelessWidget {
   final TextInputType? keyboardType;
 
   const FormTextField({
+    super.key,
     required this.controller,
     required this.hint,
     this.keyboardType,
@@ -51,6 +52,7 @@ class PhotoUploadTile extends StatelessWidget {
   final bool optional;
 
   const PhotoUploadTile({
+    super.key,
     required this.label,
     required this.imageBytes,
     required this.onTap,
@@ -116,7 +118,7 @@ class PhotoUploadTile extends StatelessWidget {
 }
 
 // ====================================================
-// ====== 1) المعلومات الشخصية ======
+// ====== Scaffold مشترك لكل شاشات الأقسام ======
 // ====================================================
 
 class SectionScaffold extends StatelessWidget {
@@ -126,6 +128,7 @@ class SectionScaffold extends StatelessWidget {
   final VoidCallback onSave;
 
   const SectionScaffold({
+    super.key,
     required this.title,
     required this.children,
     required this.isSaving,
