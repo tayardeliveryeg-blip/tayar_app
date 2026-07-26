@@ -506,6 +506,27 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     if (_sheetDragRange < 1) _sheetDragRange = 1;
   }
 
+  // ====== حساب ارتفاعات الشريط السفلي (طبيعي/ملء شاشة/حالي)، مستخدَمة في
+  // أكتر من مكان (الشريط نفسه + زرار تحديد الموقع اللي بيتتبع حافته
+  // العليا) عشان نتجنب تكرار نفس المعادلة أكتر من مرة ======
+  ({double collapsed, double expanded, double current}) _sheetHeights(
+    BuildContext context,
+    double topSafeArea,
+  ) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final expandedHeight = screenHeight - topSafeArea - AppSpacing.xxl;
+    final collapsedHeight =
+        screenHeight * (_destinationAddress == null ? 0.5 : 0.38);
+    final t = _sheetAnimController.value;
+    final currentHeight =
+        collapsedHeight + (expandedHeight - collapsedHeight) * t;
+    return (
+      collapsed: collapsedHeight,
+      expanded: expandedHeight,
+      current: currentHeight,
+    );
+  }
+
   void _onSheetDragUpdate(DragUpdateDetails details) {
     final delta = -details.delta.dy / _sheetDragRange;
     _sheetAnimController.value = (_sheetAnimController.value + delta).clamp(
@@ -1114,14 +1135,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           AnimatedBuilder(
             animation: _sheetAnimController,
             builder: (context, child) {
-              final screenHeight = MediaQuery.of(context).size.height;
-              final expandedHeight =
-                  screenHeight - topSafeArea - AppSpacing.xxl;
-              final collapsedHeight = screenHeight *
-                  (_destinationAddress == null ? 0.5 : 0.38);
+              final sheetHeight = _sheetHeights(context, topSafeArea).current;
               final t = _sheetAnimController.value;
-              final sheetHeight =
-                  collapsedHeight + (expandedHeight - collapsedHeight) * t;
               return Positioned(
                 left: 16,
                 bottom: sheetHeight + 16,
@@ -1193,16 +1208,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               child: AnimatedBuilder(
                 animation: _sheetAnimController,
                 builder: (context, _) {
-                  final screenHeight = MediaQuery.of(context).size.height;
-                  final expandedHeight =
-                      screenHeight - topSafeArea - AppSpacing.xxl;
-                  // ====== الوضع الطبيعي: كارت ملخص الرحلة أقصر من كارت
-                  // البحث/الأماكن المحفوظة، فبنديله نسبة أصغر من الشاشة ======
-                  final collapsedHeight = screenHeight *
-                      (_destinationAddress == null ? 0.5 : 0.38);
-                  final t = _sheetAnimController.value;
-                  final currentHeight = collapsedHeight +
-                      (expandedHeight - collapsedHeight) * t;
+                  final heights = _sheetHeights(context, topSafeArea);
+                  final collapsedHeight = heights.collapsed;
+                  final expandedHeight = heights.expanded;
+                  final currentHeight = heights.current;
 
                   return ConstrainedBox(
                     constraints: BoxConstraints(maxHeight: currentHeight),
