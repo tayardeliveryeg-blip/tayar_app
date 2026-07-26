@@ -1007,8 +1007,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       ),
                     ),
                     child: Container(
-                      width: 38,
-                      height: 38,
+                      width: 50,
+                      height: 50,
                       decoration: BoxDecoration(
                         color: context.cardColor,
                         shape: BoxShape.circle,
@@ -1017,7 +1017,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       child: Icon(
                         Icons.notifications_none,
                         color: context.textColor,
-                        size: 19,
+                        size: 24,
                       ),
                     ),
                   ),
