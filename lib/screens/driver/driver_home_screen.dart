@@ -7,9 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
@@ -21,16 +19,19 @@ import 'package:tayay_app/screens/shared/help_screen.dart';
 import 'package:tayay_app/screens/shared/support_screen.dart';
 import 'package:tayay_app/screens/driver/driver_profile_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
 import 'package:tayay_app/services/call_invitation_setup.dart';
-import 'package:tayay_app/services/call_invitation_helper.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/screens/driver/driver_trip_tracking_screen.dart';
-import 'package:tayay_app/widgets/pin_marker.dart';
-import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/services/wallet_service.dart';
-import 'package:tayay_app/screens/driver/driver_wallet_topup_screen.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/offer_sheet.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/active_trip_card.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/driver_drawer_item.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/driver_income_tab.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/driver_rating_tab.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/driver_wallet_tab.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/trip_request_detail_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -668,7 +669,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => _OfferSheet(
+      builder: (_) => OfferSheet(
         proposedFare: proposedFare,
         pickupAddress: (data['pickupAddress'] as String?) ?? '',
         destinationAddress: (data['destinationAddress'] as String?) ?? '',
@@ -819,9 +820,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               index: _selectedTab,
               children: [
                 _buildRequestsTab(user),
-                _DriverIncomeTab(driverId: user.uid),
-                _DriverRatingTab(driverId: user.uid),
-                _DriverWalletTab(driverId: user.uid),
+                DriverIncomeTab(driverId: user.uid),
+                DriverRatingTab(driverId: user.uid),
+                DriverWalletTab(driverId: user.uid),
               ],
             ),
       drawer: _buildDriverDrawer(context),
@@ -875,7 +876,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             final data = trip.data();
             final bool inProgress = data['status'] == 'in_progress';
 
-            return _ActiveTripCard(
+            return ActiveTripCard(
               orderId: trip.id,
               customerId: (data['customerId'] as String?) ?? '',
               customerName:
@@ -970,7 +971,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                           order.id,
                         );
 
-                        return _OrderRequestCard(
+                        return OrderRequestCard(
                           pickupAddress:
                               (data['pickupAddress'] as String?) ?? '',
                           destinationAddress:
@@ -998,7 +999,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                           onOpenDetails: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => _TripRequestDetailScreen(
+                              builder: (_) => TripRequestDetailScreen(
                                 orderId: order.id,
                                 pickupAddress:
                                     (data['pickupAddress'] as String?) ?? '',
@@ -1170,7 +1171,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.list_alt,
                     label: AppLocalizations.of(context)!.tabRequests,
                     selected: _selectedTab == 0,
@@ -1179,7 +1180,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       Navigator.pop(context);
                     },
                   ),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.payments_outlined,
                     label: AppLocalizations.of(context)!.navIncome,
                     selected: _selectedTab == 1,
@@ -1188,7 +1189,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       Navigator.pop(context);
                     },
                   ),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.star_outline,
                     label: AppLocalizations.of(context)!.navRatings,
                     selected: _selectedTab == 2,
@@ -1197,7 +1198,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       Navigator.pop(context);
                     },
                   ),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.account_balance_wallet_outlined,
                     label: AppLocalizations.of(context)!.navWallet,
                     selected: _selectedTab == 3,
@@ -1207,7 +1208,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     },
                   ),
                   Divider(color: context.dividerColor2, height: 24),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.notifications_none,
                     label: AppLocalizations.of(context)!.navNotifications,
                     onTap: () {
@@ -1220,7 +1221,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       );
                     },
                   ),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.shield_outlined,
                     label: AppLocalizations.of(context)!.navSecurity,
                     onTap: () {
@@ -1233,7 +1234,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       );
                     },
                   ),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.settings_outlined,
                     label: AppLocalizations.of(context)!.navSettings,
                     onTap: () {
@@ -1246,7 +1247,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       );
                     },
                   ),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.info_outline,
                     label: AppLocalizations.of(context)!.navHelp,
                     onTap: () {
@@ -1257,7 +1258,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       );
                     },
                   ),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.support_agent,
                     label: AppLocalizations.of(context)!.navSupport,
                     onTap: () {
@@ -1271,7 +1272,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     },
                   ),
                   Divider(color: context.dividerColor2, height: 24),
-                  _DriverDrawerItem(
+                  DriverDrawerItem(
                     icon: Icons.logout,
                     label: AppLocalizations.of(context)!.logout,
                     isDestructive: true,
@@ -1323,7 +1324,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _DriverSocialIcon(
+                  DriverSocialIcon(
                     icon: Icon(
                       Icons.facebook,
                       color: context.textColor,
@@ -1333,7 +1334,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         launchSocialUrl(context, TayarSocialLinks.facebook),
                   ),
                   const SizedBox(width: AppSpacing.xl),
-                  _DriverSocialIcon(
+                  DriverSocialIcon(
                     icon: Icon(
                       Icons.camera_alt_outlined,
                       color: context.textColor,
@@ -1343,7 +1344,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         launchSocialUrl(context, TayarSocialLinks.instagram),
                   ),
                   const SizedBox(width: AppSpacing.xl),
-                  _DriverSocialIcon(
+                  DriverSocialIcon(
                     icon: Icon(
                       Icons.chat_bubble_outline,
                       color: context.textColor,
@@ -1353,7 +1354,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         launchSocialUrl(context, TayarSocialLinks.whatsapp),
                   ),
                   const SizedBox(width: AppSpacing.xl),
-                  _DriverSocialIcon(
+                  DriverSocialIcon(
                     icon: FaIcon(
                       FontAwesomeIcons.tiktok,
                       color: context.textColor,
@@ -1367,1491 +1368,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// ====== كارت طلب راكب متاح ======
-class _OrderRequestCard extends StatelessWidget {
-  final String pickupAddress;
-  final String destinationAddress;
-  final double distanceKm;
-  final int durationMin;
-  final double proposedFare;
-  final String paymentMethod;
-  final bool alreadyOffered;
-  final VoidCallback? onQuickAccept;
-  final VoidCallback? onCustomOffer;
-  final VoidCallback? onOpenDetails;
-
-  const _OrderRequestCard({
-    required this.pickupAddress,
-    required this.destinationAddress,
-    required this.distanceKm,
-    required this.durationMin,
-    required this.proposedFare,
-    required this.paymentMethod,
-    required this.alreadyOffered,
-    required this.onQuickAccept,
-    required this.onCustomOffer,
-    this.onOpenDetails,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(AppRadius.xl),
-      onTap: onOpenDetails,
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: BoxDecoration(
-          color: context.cardColor,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(
-            color: TayarColors.primary.withValues(alpha: 0.25),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.location_on,
-                  color: TayarColors.primary,
-                  size: 16,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    pickupAddress,
-                    style: TextStyle(color: context.textColor, fontSize: 14),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-              child: Row(
-                children: [
-                  SizedBox(width: AppSpacing.sm),
-                  SizedBox(
-                    height: 14,
-                    child: VerticalDivider(
-                      color: context.dividerColor2,
-                      thickness: 2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              children: [
-                const Icon(Icons.flag, color: TayarColors.primary, size: 16),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    destinationAddress,
-                    style: TextStyle(color: context.textColor, fontSize: 14),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.distanceDurationLabel(
-                    distanceKm.toStringAsFixed(1),
-                    durationMin,
-                  ),
-                  style: TextStyle(color: context.textGreyColor, fontSize: 12),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      AppLocalizations.of(
-                        context,
-                      )!.currencyEGP(proposedFare.toStringAsFixed(0)),
-                      style: const TextStyle(
-                        color: TayarColors.primary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
-                        vertical: AppSpacing.xxs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: context.textColor.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(AppRadius.xxl),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.payments_outlined,
-                            color: context.textGreyColor,
-                            size: 12,
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Text(
-                            paymentMethodDisplay(context, paymentMethod),
-                            style: TextStyle(
-                              color: context.textGreyColor,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            if (alreadyOffered)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                  child: Text(
-                    AppLocalizations.of(context)!.offerSentAlreadyLabel,
-                    style: TextStyle(
-                      color: context.textGreyColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              )
-            else
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: onCustomOffer,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.md,
-                        ),
-                        side: const BorderSide(color: TayarColors.primary),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.sm),
-                        ),
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.offerCustomButton,
-                        style: TextStyle(color: TayarColors.primary),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: onQuickAccept,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: TayarColors.primary,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.md,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.sm),
-                        ),
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.acceptProposedPrice,
-                        style: TextStyle(color: context.textColor),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ====== شيت تقديم عرض بسعر مخصص ======
-class _OfferSheet extends StatefulWidget {
-  final double proposedFare;
-  final String pickupAddress;
-  final String destinationAddress;
-  final double distanceKm;
-  final ValueChanged<double> onSubmit;
-
-  const _OfferSheet({
-    required this.proposedFare,
-    required this.pickupAddress,
-    required this.destinationAddress,
-    required this.distanceKm,
-    required this.onSubmit,
-  });
-
-  @override
-  State<_OfferSheet> createState() => _OfferSheetState();
-}
-
-class _OfferSheetState extends State<_OfferSheet> {
-  late double _price;
-  static const double _step = 5.0;
-
-  @override
-  void initState() {
-    super.initState();
-    _price = widget.proposedFare;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: AppSpacing.xl,
-        right: AppSpacing.xl,
-        top: AppSpacing.xl,
-        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: context.handleColor,
-              borderRadius: BorderRadius.circular(AppRadius.handle),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text(
-            '${widget.pickupAddress} ← ${widget.destinationAddress}',
-            style: TextStyle(color: context.textColor, fontSize: 14),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            AppLocalizations.of(
-              context,
-            )!.distanceKmLabel(widget.distanceKm.toStringAsFixed(1)),
-            style: TextStyle(color: context.textGreyColor, fontSize: 12),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          Text(
-            AppLocalizations.of(context)!.setYourPriceLabel,
-            style: TextStyle(color: context.textColor, fontSize: 14),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _StepButton(
-                icon: Icons.remove,
-                onTap: () {
-                  if (_price - _step > 0) setState(() => _price -= _step);
-                },
-              ),
-              SizedBox(
-                width: 130,
-                child: Text(
-                  AppLocalizations.of(
-                    context,
-                  )!.currencyEGP(_price.toStringAsFixed(0)),
-                  textAlign: TextAlign.center,
-                  style: TayarStatTextStyles.statSmall,
-                ),
-              ),
-              _StepButton(
-                icon: Icons.add,
-                onTap: () => setState(() => _price += _step),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () => widget.onSubmit(_price),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TayarColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.submitOfferButton,
-                style: TextStyle(
-                  color: context.onPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StepButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  const _StepButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadius.pill),
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: const BoxDecoration(
-          color: TayarColors.primary,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, color: context.onPrimaryColor, size: 20),
-      ),
-    );
-  }
-}
-
-// ====== كارت الرحلة النشطة فوق قائمة الطلبات ======
-class _ActiveTripCard extends StatelessWidget {
-  final String orderId;
-  final String customerId;
-  final String customerName;
-  final String pickupAddress;
-  final String destinationAddress;
-  final double fare;
-  final String paymentMethod;
-  final bool inProgress;
-  final VoidCallback onStart;
-  final VoidCallback onComplete;
-  final VoidCallback onOpenTracking;
-
-  const _ActiveTripCard({
-    required this.orderId,
-    required this.customerId,
-    required this.customerName,
-    required this.pickupAddress,
-    required this.destinationAddress,
-    required this.fare,
-    required this.paymentMethod,
-    required this.inProgress,
-    required this.onStart,
-    required this.onComplete,
-    required this.onOpenTracking,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg,
-        0,
-      ),
-      decoration: BoxDecoration(
-        color: TayarColors.primary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ====== منطقة قابلة للضغط: بتفتح شاشة الخريطة والتتبع اللحظي ======
-          InkWell(
-            onTap: onOpenTracking,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.lg,
-                0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          inProgress
-                              ? AppLocalizations.of(
-                                  context,
-                                )!.tripInProgressLabel
-                              : AppLocalizations.of(
-                                  context,
-                                )!.tripAcceptedWaitingLabel,
-                          style: const TextStyle(
-                            color: TayarColors.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.map_outlined,
-                        color: TayarColors.primary.withValues(alpha: 0.8),
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    '$pickupAddress ← $destinationAddress',
-                    style: TextStyle(color: context.textColor, fontSize: 14),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Row(
-                    children: [
-                      Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.currencyEGP(fare.toStringAsFixed(0)),
-                        style: TextStyle(
-                          color: context.textColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Icon(
-                        Icons.payments_outlined,
-                        color: context.textColor.withValues(alpha: 0.7),
-                        size: 14,
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Text(
-                        paymentMethodDisplay(context, paymentMethod),
-                        style: TextStyle(
-                          color: context.textColor.withValues(alpha: 0.7),
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.lg,
-              AppSpacing.md,
-              AppSpacing.lg,
-              AppSpacing.lg,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // ====== زرارين التواصل مع الراكب: شات ومكالمة صوتية ======
-                Row(
-                  children: [
-                    Expanded(
-                      child: _DriverContactButton(
-                        icon: Icons.chat_bubble_outline,
-                        label: AppLocalizations.of(
-                          context,
-                        )!.chatWithPassengerLabel,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => TripChatScreen(
-                                orderId: orderId,
-                                otherPartyName: customerName,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: _DriverContactButton(
-                        icon: Icons.call_outlined,
-                        label: AppLocalizations.of(context)!.callPassengerLabel,
-                        onTap: () async {
-                          try {
-                            await sendCallInvitation(
-                              calleeId: customerId,
-                              calleeName: customerName,
-                            );
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('تعذر بدء المكالمة: $e'),
-                                ),
-                              );
-                            }
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: ElevatedButton(
-                    onPressed: inProgress ? onComplete : onStart,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TayarColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.sm),
-                      ),
-                    ),
-                    child: Text(
-                      inProgress
-                          ? AppLocalizations.of(context)!.endTrip
-                          : AppLocalizations.of(context)!.startTrip,
-                      style: TextStyle(
-                        color: context.textColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ====== زرار موحّد لأزرار "شات" و"مكالمة" في كارت الرحلة النشطة للطيار ======
-class _DriverContactButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _DriverContactButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-        decoration: BoxDecoration(
-          color: TayarColors.primary.withValues(alpha: 0.18),
-          borderRadius: BorderRadius.circular(AppRadius.sm),
-          border: Border.all(color: TayarColors.primary.withValues(alpha: 0.5)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: TayarColors.primary, size: 18),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              label,
-              style: const TextStyle(
-                color: TayarColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ====== عنصر واحد في القايمة الجانبية لشاشة الطيار ======
-class _DriverDrawerItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool selected;
-  final bool isDestructive;
-  final VoidCallback? onTap;
-
-  const _DriverDrawerItem({
-    required this.icon,
-    required this.label,
-    this.selected = false,
-    this.isDestructive = false,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final Color itemColor = isDestructive
-        ? TayarColors.error
-        : (selected ? TayarColors.primary : context.textColor);
-
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: isDestructive
-            ? TayarColors.error
-            : (selected ? TayarColors.primary : context.textGreyColor),
-      ),
-      title: Text(
-        label,
-        style: TextStyle(
-          color: itemColor,
-          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      onTap: onTap,
-    );
-  }
-}
-
-// ====== أيقونة سوشيال ميديا دايرية في أسفل القايمة الجانبية ======
-class _DriverSocialIcon extends StatelessWidget {
-  final Widget icon;
-  final VoidCallback? onTap;
-  const _DriverSocialIcon({required this.icon, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          border: Border.all(color: context.textGreyColor),
-          shape: BoxShape.circle,
-        ),
-        child: Center(child: icon),
-      ),
-    );
-  }
-}
-
-// ====== تبويب "دخلي": إجمالي الأرباح واليوم الحالي ======
-class _DriverIncomeTab extends StatelessWidget {
-  final String driverId;
-  const _DriverIncomeTab({required this.driverId});
-
-  @override
-  Widget build(BuildContext context) {
-    final startOfToday = DateTime.now();
-    final todayStart = DateTime(
-      startOfToday.year,
-      startOfToday.month,
-      startOfToday.day,
-    );
-
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: FirebaseFirestore.instance
-          .collection('orders')
-          .where('driverId', isEqualTo: driverId)
-          .where('status', isEqualTo: 'completed')
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(color: TayarColors.primary),
-          );
-        }
-
-        final docs = snapshot.data!.docs;
-        double total = 0;
-        double todayTotal = 0;
-        for (final doc in docs) {
-          final data = doc.data();
-          final fare = (data['acceptedFare'] as num?)?.toDouble() ?? 0;
-          total += fare;
-
-          final completedAt = data['completedAt'];
-          if (completedAt is Timestamp &&
-              completedAt.toDate().isAfter(todayStart)) {
-            todayTotal += fare;
-          }
-        }
-
-        return ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          children: [
-            _IncomeSummaryCard(
-              title: AppLocalizations.of(context)!.todayIncome,
-              value: todayTotal,
-              icon: Icons.today,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            _IncomeSummaryCard(
-              title: AppLocalizations.of(context)!.totalIncome,
-              value: total,
-              icon: Icons.payments,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            _IncomeSummaryCard(
-              title: AppLocalizations.of(context)!.completedTripsCount,
-              value: docs.length.toDouble(),
-              icon: Icons.route,
-              isCurrency: false,
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-// ====== يتأكد إن مستند drivers/{uid} فيه ratingSum/ratingCount جاهزين ======
-// لو السائق قديم من قبل إضافة الكاش ده (أو مفيش كاش لأي سبب)، بيحسبها مرة واحدة
-// من كل الطلبات المكتملة القديمة ويخزنها، عشان أي قراءة بعد كده تبقى رخيصة
-// (مستند واحد بدل مسح كل الطلبات في كل مرة). لو الكاش موجود بالفعل، منعملش حاجة.
-// top-level (مش جوه كلاس) عشان يتنادى من أي مكان في الملف: شاشة الطيار وتبويب التقييم.
-Future<void> ensureDriverRatingCacheExists(String driverId) async {
-  final driverRef = FirebaseFirestore.instance
-      .collection('drivers')
-      .doc(driverId);
-  try {
-    final doc = await driverRef.get();
-    if (doc.data()?['ratingCount'] != null) return; // متحسبة بالفعل
-
-    final snapshot = await FirebaseFirestore.instance
-        .collection('orders')
-        .where('driverId', isEqualTo: driverId)
-        .where('status', isEqualTo: 'completed')
-        .get();
-
-    final ratings = <double>[];
-    for (final d in snapshot.docs) {
-      final r = (d.data()['rating'] as num?)?.toDouble();
-      if (r != null) ratings.add(r);
-    }
-    final sum = ratings.fold<double>(0, (a, b) => a + b);
-
-    await driverRef.set({
-      'ratingSum': sum,
-      'ratingCount': ratings.length,
-    }, SetOptions(merge: true));
-  } catch (e) {
-    debugPrint('⚠️ تعذر تجهيز كاش تقييم السائق: $e');
-  }
-}
-
-// ====== تبويب "تقييمي": متوسط تقييمات الركاب ======
-// بيقرا من كاش drivers/{uid} (ratingSum/ratingCount) بدل ما يمسح كل الطلبات
-// المكتملة في كل مرة الشاشة تتفتح. أول مرة (initState) بنتأكد إن الكاش
-// موجود أصلًا (بيتحسب تلقائي لو مفيش) وبعد كده الـ stream بيتحدث لحظيًا.
-class _DriverRatingTab extends StatefulWidget {
-  final String driverId;
-  const _DriverRatingTab({required this.driverId});
-
-  @override
-  State<_DriverRatingTab> createState() => _DriverRatingTabState();
-}
-
-class _DriverRatingTabState extends State<_DriverRatingTab> {
-  @override
-  void initState() {
-    super.initState();
-    ensureDriverRatingCacheExists(widget.driverId);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      stream: FirebaseFirestore.instance
-          .collection('drivers')
-          .doc(widget.driverId)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(color: TayarColors.primary),
-          );
-        }
-
-        final data = snapshot.data!.data();
-        final count = (data?['ratingCount'] as num?)?.toInt() ?? 0;
-
-        if (count <= 0) {
-          return Center(
-            child: Text(
-              AppLocalizations.of(context)!.driverNoRatings,
-              style: TextStyle(color: context.textGreyColor),
-            ),
-          );
-        }
-
-        final sum = (data?['ratingSum'] as num?)?.toDouble() ?? 0.0;
-        final avg = sum / count;
-
-        return Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(avg.toStringAsFixed(2), style: TayarStatTextStyles.statHuge),
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(5, (i) {
-                  final filled = i < avg.round();
-                  return Icon(
-                    filled ? Icons.star : Icons.star_border,
-                    color: TayarColors.primary,
-                    size: 24,
-                  );
-                }),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                AppLocalizations.of(context)!.ratingCountLabel(count),
-                style: TextStyle(color: context.textGreyColor, fontSize: 14),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-// ====== تبويب "محفظتي": الرصيد الصافي بعد عمولة الشركة (10%) ======
-class _DriverWalletTab extends StatelessWidget {
-  final String driverId;
-  const _DriverWalletTab({required this.driverId});
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      stream: FirebaseFirestore.instance
-          .collection('drivers')
-          .doc(driverId)
-          .snapshots(),
-      builder: (context, driverSnapshot) {
-        final balance =
-            (driverSnapshot.data?.data()?['walletBalance'] as num?)
-                ?.toDouble() ??
-            0;
-        final isNegative = balance < 0;
-
-        return ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          children: [
-            // ====== كارت الرصيد الحالي ======
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.xxl),
-              decoration: BoxDecoration(
-                color: (isNegative ? TayarColors.error : TayarColors.primary)
-                    .withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppRadius.xxl),
-                border: Border.all(
-                  color: (isNegative ? TayarColors.error : TayarColors.primary)
-                      .withValues(alpha: 0.4),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    loc.availableBalance,
-                    style: TextStyle(
-                      color: context.textGreyColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    loc.currencyEGP(balance.toStringAsFixed(0)),
-                    style: TayarStatTextStyles.statMedium.copyWith(
-                      color: isNegative
-                          ? TayarColors.error
-                          : TayarColors.primary,
-                    ),
-                  ),
-                  if (isNegative) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      loc.negativeWalletBalanceNote,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: TayarColors.error, fontSize: 12),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
-            // ====== زرار شحن المحفظة ======
-            SizedBox(
-              height: 50,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TayarColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                  ),
-                ),
-                icon: Icon(
-                  Icons.add_card_outlined,
-                  color: context.onPrimaryColor,
-                ),
-                label: Text(
-                  loc.topUpWalletButton,
-                  style: TextStyle(
-                    color: context.onPrimaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const DriverWalletTopupScreen(),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xxl),
-
-            // ====== سجل المعاملات ======
-            Text(
-              loc.walletTransactionsTitle,
-              style: TextStyle(
-                color: context.textColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              stream: FirebaseFirestore.instance
-                  .collection('drivers')
-                  .doc(driverId)
-                  .collection('walletTransactions')
-                  .orderBy('createdAt', descending: true)
-                  .limit(50)
-                  .snapshots(),
-              builder: (context, txnSnapshot) {
-                if (!txnSnapshot.hasData) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                      child: CircularProgressIndicator(
-                        color: TayarColors.primary,
-                      ),
-                    ),
-                  );
-                }
-                final docs = txnSnapshot.data!.docs;
-                if (docs.isEmpty) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.xl,
-                    ),
-                    child: Center(
-                      child: Text(
-                        loc.noWalletTransactionsLabel,
-                        style: TextStyle(color: context.textGreyColor),
-                      ),
-                    ),
-                  );
-                }
-                return Column(
-                  children: docs
-                      .map((doc) => _WalletTransactionTile(data: doc.data()))
-                      .toList(),
-                );
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-// ====== سطر واحد في سجل معاملات المحفظة (عمولة رحلة أو طلب شحن) ======
-class _WalletTransactionTile extends StatelessWidget {
-  final Map<String, dynamic> data;
-  const _WalletTransactionTile({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final type = data['type'] as String? ?? '';
-    final status = data['status'] as String? ?? '';
-    final amount = (data['amount'] as num?)?.toDouble() ?? 0;
-
-    late final String label;
-    late final IconData icon;
-    late final Color color;
-
-    if (type == 'commission') {
-      label = loc.walletCommissionTransactionLabel;
-      icon = Icons.percent;
-      color = TayarColors.error;
-    } else if (status == 'approved') {
-      label = loc.walletTopupApprovedLabel;
-      icon = Icons.check_circle_outline;
-      color = TayarColors.success;
-    } else if (status == 'rejected') {
-      label = loc.walletTopupRejectedLabel;
-      icon = Icons.cancel_outlined;
-      color = TayarColors.error;
-    } else {
-      label = loc.walletTopupPendingLabel;
-      icon = Icons.hourglass_top_outlined;
-      color = TayarColors.warning;
-    }
-
-    final displayAmount = type == 'commission'
-        ? amount // من الأساس بالسالب في الداتا
-        : amount.abs();
-    final sign = displayAmount < 0 || type == 'commission' ? '' : '+';
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(color: context.textColor, fontSize: 14),
-            ),
-          ),
-          Text(
-            '$sign${loc.currencyEGP(displayAmount.abs().toStringAsFixed(0))}',
-            style: TextStyle(
-              color: color,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ====== كارت ملخص رقمي (بيتستخدم في تبويبات الدخل والمحفظة) ======
-class _IncomeSummaryCard extends StatelessWidget {
-  final String title;
-  final double value;
-  final IconData icon;
-  final bool isCurrency;
-
-  const _IncomeSummaryCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    this.isCurrency = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: TayarColors.primary, size: 28),
-          const SizedBox(width: AppSpacing.lg),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(color: context.textGreyColor, fontSize: 14),
-            ),
-          ),
-          Text(
-            isCurrency
-                ? AppLocalizations.of(
-                    context,
-                  )!.currencyEGP(value.toStringAsFixed(0))
-                : value.toStringAsFixed(0),
-            style: TextStyle(
-              color: context.textColor,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ====== شاشة تفاصيل طلب الرحلة: خريطة بالنقطتين + واجهة المزايدة ======
-class _TripRequestDetailScreen extends StatefulWidget {
-  final String orderId;
-  final String pickupAddress;
-  final String destinationAddress;
-  final GeoPoint? pickupLocation;
-  final GeoPoint? destinationLocation;
-  final double distanceKm;
-  final int durationMin;
-  final double proposedFare;
-  final String paymentMethod;
-  final bool alreadyOffered;
-  final VoidCallback? onQuickAccept;
-  final ValueChanged<double>? onCustomOffer;
-
-  const _TripRequestDetailScreen({
-    required this.orderId,
-    required this.pickupAddress,
-    required this.destinationAddress,
-    required this.pickupLocation,
-    required this.destinationLocation,
-    required this.distanceKm,
-    required this.durationMin,
-    required this.proposedFare,
-    required this.paymentMethod,
-    required this.alreadyOffered,
-    this.onQuickAccept,
-    this.onCustomOffer,
-  });
-
-  @override
-  State<_TripRequestDetailScreen> createState() =>
-      _TripRequestDetailScreenState();
-}
-
-class _TripRequestDetailScreenState extends State<_TripRequestDetailScreen> {
-  List<LatLng> _routePoints = [];
-  late double _price;
-
-  @override
-  void initState() {
-    super.initState();
-    _price = widget.proposedFare;
-    _fetchRoute();
-  }
-
-  Future<void> _fetchRoute() async {
-    final pickup = widget.pickupLocation;
-    final dest = widget.destinationLocation;
-    if (pickup == null || dest == null) return;
-
-    try {
-      final url = Uri.parse(
-        'https://router.project-osrm.org/route/v1/driving/'
-        '${pickup.longitude},${pickup.latitude};'
-        '${dest.longitude},${dest.latitude}'
-        '?overview=full&geometries=geojson',
-      );
-      final response = await http.get(url).timeout(const Duration(seconds: 6));
-      if (response.statusCode != 200) return;
-
-      final json = jsonDecode(response.body);
-      final coords =
-          json['routes'][0]['geometry']['coordinates'] as List<dynamic>;
-      final points = coords
-          .map(
-            (c) => LatLng((c[1] as num).toDouble(), (c[0] as num).toDouble()),
-          )
-          .toList();
-
-      if (mounted) setState(() => _routePoints = points);
-    } catch (e) {
-      debugPrint('⚠️ تعذر جلب المسار: $e');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final pickup = widget.pickupLocation;
-    final dest = widget.destinationLocation;
-    final hasLocations = pickup != null && dest != null;
-
-    final center = hasLocations
-        ? LatLng(
-            (pickup.latitude + dest.latitude) / 2,
-            (pickup.longitude + dest.longitude) / 2,
-          )
-        : const LatLng(30.2854, 31.7414); // مركز افتراضي (العاشر من رمضان)
-
-    return Scaffold(
-      backgroundColor: context.bgColor,
-      appBar: AppBar(
-        backgroundColor: context.bgColor,
-        elevation: 0,
-        iconTheme: IconThemeData(color: context.textColor),
-        title: Text(
-          AppLocalizations.of(context)!.orderDetailsTitle,
-          style: TextStyle(color: context.textColor),
-        ),
-      ),
-      body: Column(
-        children: [
-          // ====== الخريطة: نقطة الانطلاق (A) والوجهة (B) ======
-          Expanded(
-            flex: 3,
-            child: hasLocations
-                ? FlutterMap(
-                    options: MapOptions(initialCenter: center, initialZoom: 13),
-                    children: [
-                      const TayarTileLayer(),
-                      if (_routePoints.isNotEmpty)
-                        PolylineLayer(
-                          polylines: [
-                            Polyline(
-                              points: _routePoints,
-                              color: TayarColors.primary,
-                              strokeWidth: 4,
-                            ),
-                          ],
-                        ),
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: LatLng(pickup.latitude, pickup.longitude),
-                            width: 40,
-                            height: 40,
-                            child: const PinMarker(
-                              type: PinType.pickup,
-                              size: 40,
-                            ),
-                          ),
-                          Marker(
-                            point: LatLng(dest.latitude, dest.longitude),
-                            width: 40,
-                            height: 40,
-                            child: const PinMarker(
-                              type: PinType.destination,
-                              size: 40,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                : Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.locationUnavailableForOrder,
-                      style: TextStyle(color: context.textGreyColor),
-                    ),
-                  ),
-          ),
-
-          // ====== كارت العنوانين + واجهة المزايدة ======
-          Expanded(
-            flex: 2,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.lg),
-                    decoration: BoxDecoration(
-                      color: context.cardColor,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.location_on,
-                              color: TayarColors.primary,
-                              size: 16,
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Expanded(
-                              child: Text(
-                                widget.pickupAddress,
-                                style: TextStyle(color: context.textColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppSpacing.sm,
-                          ),
-                          child: SizedBox(
-                            height: 14,
-                            child: VerticalDivider(
-                              color: context.dividerColor2,
-                              thickness: 2,
-                            ),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.flag,
-                              color: TayarColors.primary,
-                              size: 16,
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Expanded(
-                              child: Text(
-                                widget.destinationAddress,
-                                style: TextStyle(color: context.textColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.distanceDurationLabel(
-                                widget.distanceKm.toStringAsFixed(1),
-                                widget.durationMin,
-                              ),
-                              style: TextStyle(
-                                color: context.textGreyColor,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              paymentMethodDisplay(
-                                context,
-                                widget.paymentMethod,
-                              ),
-                              style: TextStyle(
-                                color: context.textGreyColor,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // ====== واجهة المزايدة (زيادة/نقصان السعر) ======
-                  if (!widget.alreadyOffered) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _StepButton(
-                          icon: Icons.remove,
-                          onTap: () {
-                            if (_price - 5 > 0) {
-                              setState(() => _price -= 5);
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          width: 120,
-                          child: Text(
-                            AppLocalizations.of(
-                              context,
-                            )!.currencyEGP(_price.toStringAsFixed(0)),
-                            textAlign: TextAlign.center,
-                            style: TayarStatTextStyles.statSmall,
-                          ),
-                        ),
-                        _StepButton(
-                          icon: Icons.add,
-                          onTap: () => setState(() => _price += 5),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () {
-                              widget.onCustomOffer?.call(_price);
-                              Navigator.pop(context);
-                            },
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppSpacing.lg,
-                              ),
-                              side: const BorderSide(
-                                color: TayarColors.primary,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.sm,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.offerAtMyPriceButton,
-                              style: TextStyle(color: TayarColors.primary),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              widget.onQuickAccept?.call();
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: TayarColors.primary,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppSpacing.lg,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.sm,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!.acceptProposedPrice,
-                              style: TextStyle(color: context.textColor),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ] else
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.md,
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)!.alreadyOfferedOnOrder,
-                          style: TextStyle(color: context.textGreyColor),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
