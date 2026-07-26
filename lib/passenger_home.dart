@@ -1104,57 +1104,67 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
             ),
           ),
 
-          // ====== زرار تحديد الموقع (بيتحرك بسلاسة حسب ظهور الشريط السفلي، وبيختفي وقت سحب الخريطة) ======
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            bottom: (_destinationAddress != null && _routeDistanceKm != null)
-                ? 296
-                : 28 + MediaQuery.of(context).padding.bottom,
-            left: 16,
-            child: AnimatedBuilder(
-              animation: _sheetAnimController,
-              builder: (context, child) => Opacity(
-                opacity: 1 - _sheetAnimController.value,
-                child: IgnorePointer(
-                  ignoring: _sheetAnimController.value > 0.5,
-                  child: child,
-                ),
-              ),
-              child: AnimatedSlide(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeInOut,
-                offset: _isDraggingMap ? const Offset(0, 2) : Offset.zero,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: _isDraggingMap ? 0 : 1,
+          // ====== زرار تحديد الموقع: بيفضل مثبت فوق الشريط السفلي على
+          // الشمال بالظبط (مش بأرقام ثابتة)، بنحسب ارتفاعه بنفس معادلة
+          // ارتفاع الشريط في الأسفل (collapsedHeight/expandedHeight)
+          // عشان يفضل ملتصق بحافته العلوية دايمًا مهما اتحرك، وبيختفي
+          // تدريجيًا وقت ما نسحب الشريط لفوق (وبرضو وقت سحب الخريطة) ======
+          AnimatedBuilder(
+            animation: _sheetAnimController,
+            builder: (context, child) {
+              final screenHeight = MediaQuery.of(context).size.height;
+              final expandedHeight =
+                  screenHeight - topSafeArea - AppSpacing.xxl;
+              final collapsedHeight = screenHeight *
+                  (_destinationAddress == null ? 0.5 : 0.38);
+              final t = _sheetAnimController.value;
+              final sheetHeight =
+                  collapsedHeight + (expandedHeight - collapsedHeight) * t;
+              return Positioned(
+                left: 16,
+                bottom: sheetHeight + 16,
+                child: Opacity(
+                  opacity: 1 - t,
                   child: IgnorePointer(
-                    ignoring: _isDraggingMap,
-                    child: GestureDetector(
-                      onTap: _getCurrentLocation,
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: context.bgColor.withValues(alpha: 0.95),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: context.dividerColor2,
-                            width: 1,
+                    ignoring: t > 0.5,
+                    child: child,
+                  ),
+                ),
+              );
+            },
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              offset: _isDraggingMap ? const Offset(0, 2) : Offset.zero,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _isDraggingMap ? 0 : 1,
+                child: IgnorePointer(
+                  ignoring: _isDraggingMap,
+                  child: GestureDetector(
+                    onTap: _getCurrentLocation,
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: context.bgColor.withValues(alpha: 0.95),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: context.dividerColor2,
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.25),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.25),
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.my_location,
-                          color: TayarColors.primary,
-                          size: 22,
-                        ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.my_location,
+                        color: TayarColors.primary,
+                        size: 22,
                       ),
                     ),
                   ),
