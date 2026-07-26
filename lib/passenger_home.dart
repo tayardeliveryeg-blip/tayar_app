@@ -120,6 +120,13 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   late final AnimationController _sheetAnimController;
   double _sheetDragRange = 300; // بيتحسب فعليًا وقت بداية السحب (فرق الارتفاعين)
 
+  // ====== مفتاح لقياس الارتفاع الحقيقي للشريط السفلي بعد ما يتبني فعليًا
+  // (المحتوى بيحدد ارتفاعه لوحده جوه ConstrainedBox، فمش دايمًا بياخد كل
+  // الارتفاع النظري اللي بنحسبه في _sheetHeights)، عشان زرار تحديد الموقع
+  // يقدر يتثبت فوقه بالظبط من غير أي فراغ زيادة بينه وبين الشريط ======
+  final GlobalKey _sheetContainerKey = GlobalKey();
+  double _measuredSheetHeight = 0;
+
   @override
   void initState() {
     super.initState();
@@ -493,6 +500,23 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   // ====== بداية سحب الشريط السفلي: بنحسب مدى السحب (الفرق بين الوضع
   // الطبيعي ووضع ملء الشاشة) عشان نحول حركة الإصبع بالبكسل لنسبة 0-1 ======
+  // ====== بيتنفّذ بعد كل فريم: بيقرأ الارتفاع الحقيقي اللي اتحسب فعليًا
+  // للشريط السفلي (مش الرقم النظري)، ولو اتغيّر عن اللي متسجل، بنعمل
+  // setState عشان زرار تحديد الموقع يتابعه. الشرط بالفرق (0.5) عشان منعملش
+  // setState لانهائي بسبب فروق تقريب بسيطة جدًا ======
+  void _measureSheetHeight() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final renderBox =
+          _sheetContainerKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox == null || !renderBox.hasSize) return;
+      final newHeight = renderBox.size.height;
+      if ((newHeight - _measuredSheetHeight).abs() > 0.5) {
+        setState(() => _measuredSheetHeight = newHeight);
+      }
+    });
+  }
+
   void _onSheetDragStart(double collapsedHeight, double expandedHeight) {
     _sheetDragRange = (expandedHeight - collapsedHeight).abs();
     if (_sheetDragRange < 1) _sheetDragRange = 1;
@@ -769,6 +793,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     // ارتفاع شريط الحالة (الساعة/البطارية) أو الـ notch، بيتغير حسب الجهاز.
     // بنضيفه لكل الـ Positioned اللي في أعلى الشاشة عشان محدش يتداخل معاه.
     final double topSafeArea = MediaQuery.of(context).padding.top;
+    _measureSheetHeight();
     return Scaffold(
       backgroundColor: context.bgColor,
       drawer: const TayarDrawer(),
@@ -994,7 +1019,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
             ),
 
-          // ====== زرار جرس الإشعارات (أعلى الشاشة، شمال) ======
+          // ====== زرار جرس الإشعارات (أعلى الشاشة، شمال، بيختفي لفوق وقت سحب الخريطة زي زرار القايمة الجانبية بالظبط) ======
           Positioned(
             top: 8 + topSafeArea,
             left: 16,
@@ -1007,30 +1032,42 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   child: child,
                 ),
               ),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: _isDraggingMap ? 0 : 1,
-                child: IgnorePointer(
-                  ignoring: _isDraggingMap,
-                  child: GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const NotificationsScreen(),
+              child: AnimatedSlide(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                offset: _isDraggingMap ? const Offset(0, -2) : Offset.zero,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: _isDraggingMap ? 0 : 1,
+                  child: IgnorePointer(
+                    ignoring: _isDraggingMap,
+                    child: GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
                       ),
-                    ),
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: context.cardColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: context.dividerColor2),
-                      ),
-                      child: Icon(
-                        Icons.notifications_none,
-                        color: context.textColor,
-                        size: 24,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: context.cardColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: context.dividerColor2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.25),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.notifications_none,
+                          color: context.textColor,
+                          size: 24,
+                        ),
                       ),
                     ),
                   ),
@@ -1120,14 +1157,18 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           ),
 
           // ====== زرار تحديد الموقع: بيفضل مثبت فوق الشريط السفلي على
-          // الشمال بالظبط (مش بأرقام ثابتة)، بنحسب ارتفاعه بنفس معادلة
-          // ارتفاع الشريط في الأسفل (collapsedHeight/expandedHeight)
-          // عشان يفضل ملتصق بحافته العلوية دايمًا مهما اتحرك، وبيختفي
-          // تدريجيًا وقت ما نسحب الشريط لفوق (وبرضو وقت سحب الخريطة) ======
+          // الشمال بالظبط. بنستخدم الارتفاع الحقيقي المقاس فعليًا للشريط
+          // (_measuredSheetHeight) بدل الرقم النظري، لأن محتوى الشريط ممكن
+          // ياخد مساحة أصغر من كده فبيسيب فراغ زيادة بين الزرار والشريط.
+          // أول فريم قبل ما القياس يحصل، بنستخدم الرقم النظري كـ fallback
+          // مؤقت لحد ما القياس الحقيقي يوصل. وبيختفي تدريجيًا وقت ما نسحب
+          // الشريط لفوق (وبرضو وقت سحب الخريطة) ======
           AnimatedBuilder(
             animation: _sheetAnimController,
             builder: (context, child) {
-              final sheetHeight = _sheetHeights(context, topSafeArea).current;
+              final sheetHeight = _measuredSheetHeight > 0
+                  ? _measuredSheetHeight
+                  : _sheetHeights(context, topSafeArea).current;
               final t = _sheetAnimController.value;
               return Positioned(
                 left: 16,
@@ -1206,6 +1247,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   final currentHeight = heights.current;
 
                   return ConstrainedBox(
+                    key: _sheetContainerKey,
                     constraints: BoxConstraints(maxHeight: currentHeight),
                     child: _destinationAddress == null
                         ? TayarIdleBottomSheet(
