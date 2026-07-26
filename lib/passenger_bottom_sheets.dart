@@ -613,7 +613,7 @@ class _LastTripSection extends StatelessWidget {
 class NewCustomerPromoBanner extends StatelessWidget {
   final VoidCallback onDismiss;
 
-  const NewCustomerPromoBanner({required this.onDismiss});
+  const NewCustomerPromoBanner({super.key, required this.onDismiss});
 
   @override
   Widget build(BuildContext context) {
