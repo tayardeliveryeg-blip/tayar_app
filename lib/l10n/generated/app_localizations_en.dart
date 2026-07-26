@@ -12,9 +12,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Tayar - Instantly There';
 
   @override
-  String get splashTagline => 'Instantly There';
-
-  @override
   String get clientOrderPriority =>
       'Sent to nearby drivers; best price gets priority';
 
@@ -152,26 +149,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get availableBalance => 'Available Balance';
 
   @override
-  String get totalEarningsBeforeCommission =>
-      'Total Earnings (before commission)';
-
-  @override
-  String get companyCommission => 'Company Commission (10%)';
-
-  @override
-  String get motorcycleInfoTitle => 'Motorcycle Info';
-
-  @override
-  String get bikeModelLabel => 'Model';
-
-  @override
-  String get bikeColorLabel => 'Color';
-
-  @override
   String get bikePlateLabel => 'Plate Number';
-
-  @override
-  String get bikeYearLabel => 'Model (Year)';
 
   @override
   String get orderDetailsTitle => 'Order Details';
@@ -194,9 +172,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmLogoutMessage => 'Log out of your account?';
-
-  @override
-  String get languageToggleTooltip => 'العربية / English';
 
   @override
   String get navNotifications => 'Notifications';
@@ -326,9 +301,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fromLabel => 'Where from';
-
-  @override
-  String get chooseDestinationHint => 'Where to?';
 
   @override
   String get serviceRideMe => 'Ride Me';
@@ -591,55 +563,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get passwordLabel => 'Password';
-
-  @override
-  String get loginButton => 'Login';
-
-  @override
-  String get dontHaveAccountLink => 'Don\'t have an account? Create one';
-
-  @override
-  String get orContinueWithLabel => 'Or continue with';
-
-  @override
-  String get createAccountTitle => 'Create a new account';
-
-  @override
   String get nameLabel => 'Name';
 
   @override
-  String get confirmPasswordLabel => 'Confirm password';
-
-  @override
-  String get createAccountButton => 'Create account';
-
-  @override
-  String get agreeToTermsText => 'I agree to the Terms and Conditions';
-
-  @override
-  String get alreadyHaveAccountLink => 'Already have an account? Login';
-
-  @override
   String get requiredFieldError => 'This field is required';
-
-  @override
-  String get invalidEmailError => 'Invalid email address';
-
-  @override
-  String get weakPasswordError =>
-      'Password is too weak (at least 6 characters)';
-
-  @override
-  String get emailAlreadyInUseError => 'This email is already in use';
-
-  @override
-  String get passwordsDoNotMatchError => 'Passwords do not match';
-
-  @override
-  String registrationFailedError(String error) {
-    return 'Registration failed: $error';
-  }
 
   @override
   String get markAllAsReadButton => 'Mark all as read';
@@ -733,9 +660,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sendCodeButton => 'Send Code';
-
-  @override
-  String get otpLengthError => 'Enter the 6-digit code';
 
   @override
   String get invalidOtpError => 'Incorrect code, please try again';
@@ -983,13 +907,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendButton => 'Send';
 
   @override
-  String get tripCompletedTitle => 'You\'ve arrived at your destination!';
-
-  @override
   String get tripCancelledTitle => 'Trip Cancelled';
-
-  @override
-  String get thankYouForUsingTayarLabel => 'Thank you for using Tayar!';
 
   @override
   String get tripCancelledByDriverOrSystemLabel =>
@@ -1174,14 +1092,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get negativeWalletBalanceNote =>
       'Your balance is negative, top up your wallet to keep receiving new orders';
-
-  @override
-  String homeGreeting(String name) {
-    return 'Hi $name';
-  }
-
-  @override
-  String get homeGreetingSubtitle => 'Where can we take you today?';
 
   @override
   String get homePromoBannerText => 'Get your first delivery for free';

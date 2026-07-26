@@ -104,12 +104,6 @@ abstract class AppLocalizations {
   /// **'طيار - وصلك في لحظة'**
   String get appName;
 
-  /// No description provided for @splashTagline.
-  ///
-  /// In ar, this message translates to:
-  /// **'وصلك في لحظة'**
-  String get splashTagline;
-
   /// No description provided for @clientOrderPriority.
   ///
   /// In ar, this message translates to:
@@ -362,47 +356,11 @@ abstract class AppLocalizations {
   /// **'رصيدك المتاح'**
   String get availableBalance;
 
-  /// No description provided for @totalEarningsBeforeCommission.
-  ///
-  /// In ar, this message translates to:
-  /// **'إجمالي الأرباح (قبل العمولة)'**
-  String get totalEarningsBeforeCommission;
-
-  /// No description provided for @companyCommission.
-  ///
-  /// In ar, this message translates to:
-  /// **'عمولة الشركة (10%)'**
-  String get companyCommission;
-
-  /// No description provided for @motorcycleInfoTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'بيانات الدراجة النارية'**
-  String get motorcycleInfoTitle;
-
-  /// No description provided for @bikeModelLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'الموديل'**
-  String get bikeModelLabel;
-
-  /// No description provided for @bikeColorLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'اللون'**
-  String get bikeColorLabel;
-
   /// No description provided for @bikePlateLabel.
   ///
   /// In ar, this message translates to:
   /// **'رقم اللوحة'**
   String get bikePlateLabel;
-
-  /// No description provided for @bikeYearLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'الموديل (سنة الصنع)'**
-  String get bikeYearLabel;
 
   /// No description provided for @orderDetailsTitle.
   ///
@@ -445,12 +403,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تأكيد تسجيل الخروج؟'**
   String get confirmLogoutMessage;
-
-  /// No description provided for @languageToggleTooltip.
-  ///
-  /// In ar, this message translates to:
-  /// **'العربية / English'**
-  String get languageToggleTooltip;
 
   /// No description provided for @navNotifications.
   ///
@@ -703,12 +655,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'من'**
   String get fromLabel;
-
-  /// No description provided for @chooseDestinationHint.
-  ///
-  /// In ar, this message translates to:
-  /// **'إلى'**
-  String get chooseDestinationHint;
 
   /// No description provided for @serviceRideMe.
   ///
@@ -1178,101 +1124,17 @@ abstract class AppLocalizations {
   /// **'فشل تسجيل الدخول بآبل: {error}'**
   String signInWithAppleFailedError(String error);
 
-  /// No description provided for @passwordLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'كلمة السر'**
-  String get passwordLabel;
-
-  /// No description provided for @loginButton.
-  ///
-  /// In ar, this message translates to:
-  /// **'تسجيل الدخول'**
-  String get loginButton;
-
-  /// No description provided for @dontHaveAccountLink.
-  ///
-  /// In ar, this message translates to:
-  /// **'معندكش حساب؟ إنشاء حساب جديد'**
-  String get dontHaveAccountLink;
-
-  /// No description provided for @orContinueWithLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'أو تابع باستخدام'**
-  String get orContinueWithLabel;
-
-  /// No description provided for @createAccountTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'إنشاء حساب جديد'**
-  String get createAccountTitle;
-
   /// No description provided for @nameLabel.
   ///
   /// In ar, this message translates to:
   /// **'الاسم'**
   String get nameLabel;
 
-  /// No description provided for @confirmPasswordLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'تأكيد كلمة السر'**
-  String get confirmPasswordLabel;
-
-  /// No description provided for @createAccountButton.
-  ///
-  /// In ar, this message translates to:
-  /// **'إنشاء حساب'**
-  String get createAccountButton;
-
-  /// No description provided for @agreeToTermsText.
-  ///
-  /// In ar, this message translates to:
-  /// **'أوافق على الشروط والأحكام'**
-  String get agreeToTermsText;
-
-  /// No description provided for @alreadyHaveAccountLink.
-  ///
-  /// In ar, this message translates to:
-  /// **'عندك حساب بالفعل؟ تسجيل الدخول'**
-  String get alreadyHaveAccountLink;
-
   /// No description provided for @requiredFieldError.
   ///
   /// In ar, this message translates to:
   /// **'هذا الحقل مطلوب'**
   String get requiredFieldError;
-
-  /// No description provided for @invalidEmailError.
-  ///
-  /// In ar, this message translates to:
-  /// **'البريد الإلكتروني غير صحيح'**
-  String get invalidEmailError;
-
-  /// No description provided for @weakPasswordError.
-  ///
-  /// In ar, this message translates to:
-  /// **'كلمة السر ضعيفة جداً (6 أحرف على الأقل)'**
-  String get weakPasswordError;
-
-  /// No description provided for @emailAlreadyInUseError.
-  ///
-  /// In ar, this message translates to:
-  /// **'هذا البريد مستخدم بالفعل'**
-  String get emailAlreadyInUseError;
-
-  /// No description provided for @passwordsDoNotMatchError.
-  ///
-  /// In ar, this message translates to:
-  /// **'كلمتا السر غير متطابقتين'**
-  String get passwordsDoNotMatchError;
-
-  /// No description provided for @registrationFailedError.
-  ///
-  /// In ar, this message translates to:
-  /// **'فشل إنشاء الحساب: {error}'**
-  String registrationFailedError(String error);
 
   /// No description provided for @markAllAsReadButton.
   ///
@@ -1429,12 +1291,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إرسال الكود'**
   String get sendCodeButton;
-
-  /// No description provided for @otpLengthError.
-  ///
-  /// In ar, this message translates to:
-  /// **'اكتب الكود المكون من 6 أرقام'**
-  String get otpLengthError;
 
   /// No description provided for @invalidOtpError.
   ///
@@ -1880,23 +1736,11 @@ abstract class AppLocalizations {
   /// **'إرسال'**
   String get sendButton;
 
-  /// No description provided for @tripCompletedTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'وصلت وجهتك'**
-  String get tripCompletedTitle;
-
   /// No description provided for @tripCancelledTitle.
   ///
   /// In ar, this message translates to:
   /// **'تم إلغاء الرحلة'**
   String get tripCancelledTitle;
-
-  /// No description provided for @thankYouForUsingTayarLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'شكرا لاستخدامك طيار'**
-  String get thankYouForUsingTayarLabel;
 
   /// No description provided for @tripCancelledByDriverOrSystemLabel.
   ///
@@ -2233,18 +2077,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة'**
   String get negativeWalletBalanceNote;
-
-  /// No description provided for @homeGreeting.
-  ///
-  /// In ar, this message translates to:
-  /// **'أهلًا يا {name}'**
-  String homeGreeting(String name);
-
-  /// No description provided for @homeGreetingSubtitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'فين نوصّلك النهاردة؟'**
-  String get homeGreetingSubtitle;
 
   /// No description provided for @homePromoBannerText.
   ///

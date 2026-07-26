@@ -1,6 +1,5 @@
 {
   "appName": "طيار - وصلك في لحظة",
-  "splashTagline": "وصلك في لحظة",
   "clientOrderPriority": "طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية",
   "driverNoOrders": "مفيش طلبات متاحة",
   "driverOfflineHint": "أنت غير متاح دوس \"اونلاين\" عشان تشوف الطلبات المتاحة",
@@ -14,7 +13,6 @@
   "defaultDriverName": "طيار",
   "statusAvailable": "متاح",
   "statusUnavailable": "غير متاح",
-
   "permissionLocationRequired": "لازم تسمح بصلاحية الوصول للموقع الأول عشان تظهر أونلاين",
   "offerSentWaitingPassenger": "تم إرسال عرضك، في انتظار رد الراكب",
   "offerSendFailed": "تعذر إرسال العرض، حاول تاني",
@@ -25,12 +23,10 @@
   "driverToggleOffline": "غير متاح",
   "mustSignInFirst": "لازم تسجل الدخول الأول",
   "paymentMethodCash": "نقدي",
-
   "navProfile": "الملف الشخصي",
   "navIncome": "الدخل",
   "navRatings": "التقييم",
   "navWallet": "المحفظة",
-
   "distanceDurationLabel": "{distance} كم • {duration} دقيقة",
   "@distanceDurationLabel": {
     "placeholders": {
@@ -42,7 +38,6 @@
       }
     }
   },
-
   "currencyEGP": "{amount} جنيه",
   "@currencyEGP": {
     "placeholders": {
@@ -51,7 +46,6 @@
       }
     }
   },
-
   "distanceKmLabel": "{distance} كم",
   "@distanceKmLabel": {
     "placeholders": {
@@ -60,20 +54,16 @@
       }
     }
   },
-
   "offerSentAlreadyLabel": "تم إرسال عرضك، في انتظار رد الراكب",
   "offerCustomButton": "عرض سعر مختلف",
   "acceptProposedPrice": "قبول بالسعر المقترح",
   "setYourPriceLabel": "حدد سعرك",
   "submitOfferButton": "إرسال العرض",
-
   "tripInProgressLabel": "الرحلة جارية الآن",
   "tripAcceptedWaitingLabel": "رحلة مقبولة - في انتظار البدء",
-
   "todayIncome": "دخل اليوم",
   "totalIncome": "إجمالي الدخل",
   "completedTripsCount": "عدد الرحلات المكتملة",
-
   "ratingCountLabel": "من {count} تقييم",
   "@ratingCountLabel": {
     "placeholders": {
@@ -82,33 +72,21 @@
       }
     }
   },
-
   "availableBalance": "رصيدك المتاح",
-  "totalEarningsBeforeCommission": "إجمالي الأرباح (قبل العمولة)",
-  "companyCommission": "عمولة الشركة (10%)",
-
-  "motorcycleInfoTitle": "بيانات الدراجة النارية",
-  "bikeModelLabel": "الموديل",
-  "bikeColorLabel": "اللون",
   "bikePlateLabel": "رقم اللوحة",
-  "bikeYearLabel": "الموديل (سنة الصنع)",
-
   "orderDetailsTitle": "تفاصيل الطلب",
   "locationUnavailableForOrder": "الموقع غير متاح لهذا الطلب",
   "offerAtMyPriceButton": "تقديم بسعري",
   "alreadyOfferedOnOrder": "قدّمت عرض بالفعل على الطلب ده",
-
   "logout": "تسجيل الخروج",
   "cancel": "إلغاء",
   "confirmLogoutMessage": "تأكيد تسجيل الخروج؟",
-  "languageToggleTooltip": "العربية / English",
   "navNotifications": "الإشعارات",
   "navSecurity": "الأمان",
   "navSettings": "الإعدادات",
   "navHelp": "مساعدة",
   "navSupport": "الدعم",
   "backToPassengerModeButton": "رجوع لوضع الركاب",
-
   "appLanguageLabel": "لغة التطبيق",
   "useDeviceLanguageLabel": "استخدام لغة الجهاز",
   "appThemeLabel": "مظهر التطبيق",
@@ -123,7 +101,6 @@
   "privacyPolicyBody": "بنحافظ على بياناتك ومنستخدمش موقعك إلا وقت وجود رحلة فعلية، ومبنشاركش بياناتك مع أي طرف تالت من غير موافقتك.",
   "appVersionLabel": "إصدار التطبيق",
   "ok": "تمام",
-
   "firstNameHint": "الاسم",
   "lastNameHint": "الاسم الاخير",
   "birthDateHint": "تاريخ الميلاد",
@@ -139,7 +116,6 @@
   "takePhotoLabel": "التقاط صورة بالكاميرا",
   "photoTooLargeError": "الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر",
   "invalidPhoneNumberError": "رقم الهاتف غير صحيح، لازم يكون رقم مصري صحيح",
-
   "locatingAddress": "جاري تحديد الموقع...",
   "addressUnknown": "موقع غير معروف",
   "addressFetchFailed": "تعذر تحديد العنوان",
@@ -147,7 +123,6 @@
   "paymentMethodInstapay": "إنستاباي",
   "choosePaymentMethodTitle": "اختار طريقة الدفع",
   "fromLabel": "من",
-  "chooseDestinationHint": "إلى",
   "serviceRideMe": "وصلني",
   "serviceDeliverOrders": "وصل طلباتي",
   "deliveryOrderTitle": "توصيل طلب",
@@ -179,7 +154,6 @@
   "defaultUserName": "مستخدم",
   "driverModeButton": "وضع الطيار",
   "orderHistoryLabel": "سجل الطلبات",
-
   "driverRegistrationTitle": "تسجيل الطيار",
   "closeButton": "إغلاق",
   "submitApplicationSuccessTitle": "تم إرسال طلبك",
@@ -210,7 +184,6 @@
   "bikeModelHint": "طراز الدراجة النارية",
   "bikeColorHint": "لون الدراجة النارية",
   "bikeYearHint": "سنة الانتاج",
-
   "helpScreenTitle": "مساعدة",
   "faqOrderTripQuestion": "إزاي أطلب رحلة؟",
   "faqOrderTripAnswer": "من الشاشة الرئيسية، حدد نقطة الانطلاق ثم اختار الوجهة، وبعدها شوف السعر المقترح وابعت الطلب. هتظهرلك عروض من الطيارين القريبين وتقدر تختار العرض اللي يناسبك.",
@@ -228,7 +201,6 @@
   "faqDeliverPackageAnswer": "أيوه، من خدمة \"وصل طلباتي\" تقدر تبعت طرد من مكان لمكان من غير ما تكون موجود في الرحلة، ونفس نظام المزايدة بيتطبق برضه.",
   "faqTripProblemQuestion": "إيه اللي أعمله لو حصلت مشكلة في رحلة؟",
   "faqTripProblemAnswer": "تقدر تتواصل مع فريق الدعم مباشرة من شاشة \"الدعم\" في القايمة الجانبية، وهنساعدك تحل المشكلة أول بأول.",
-
   "chooseYourRideSubtitle": "اختار الرحلة المناسبة ليك",
   "continueWithGoogleButton": "المتابعة باستخدام Google",
   "continueWithAppleButton": "المتابعة باستخدام Apple",
@@ -250,31 +222,8 @@
       }
     }
   },
-
-  "passwordLabel": "كلمة السر",
-  "loginButton": "تسجيل الدخول",
-  "dontHaveAccountLink": "معندكش حساب؟ إنشاء حساب جديد",
-  "orContinueWithLabel": "أو تابع باستخدام",
-  "createAccountTitle": "إنشاء حساب جديد",
   "nameLabel": "الاسم",
-  "confirmPasswordLabel": "تأكيد كلمة السر",
-  "createAccountButton": "إنشاء حساب",
-  "agreeToTermsText": "أوافق على الشروط والأحكام",
-  "alreadyHaveAccountLink": "عندك حساب بالفعل؟ تسجيل الدخول",
   "requiredFieldError": "هذا الحقل مطلوب",
-  "invalidEmailError": "البريد الإلكتروني غير صحيح",
-  "weakPasswordError": "كلمة السر ضعيفة جداً (6 أحرف على الأقل)",
-  "emailAlreadyInUseError": "هذا البريد مستخدم بالفعل",
-  "passwordsDoNotMatchError": "كلمتا السر غير متطابقتين",
-  "registrationFailedError": "فشل إنشاء الحساب: {error}",
-  "@registrationFailedError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-
   "markAllAsReadButton": "تحديد الكل كمقروء",
   "mustSignInToViewNotifications": "لازم تسجل الدخول عشان تشوف الإشعارات",
   "errorLoadingNotifications": "حصل خطأ في تحميل الإشعارات",
@@ -304,7 +253,6 @@
       }
     }
   },
-
   "defaultCustomerName": "مستخدم",
   "setYourFareTitle": "حدد سعرك",
   "routeFromLabel": "من",
@@ -322,7 +270,6 @@
   },
   "autoAcceptCheckboxLabel": "قبول تلقائي لأول عرض بنفس السعر المقترح",
   "searchForDriversButton": "البحث عن طيارين",
-
   "phoneNumberFormatError": "من فضلك اكتب رقم هاتف صحيح",
   "mobileNumberMatchHint": "لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه",
   "credentialAlreadyInUseError": "رقم الموبايل ده متسجل بحساب تاني بالفعل. من فضلك اكتب رقم مختلف",
@@ -338,7 +285,6 @@
   },
   "otpSendNoticeLabel": "هنبعتلك كود تحقق على الرقم ده",
   "sendCodeButton": "إرسال الكود",
-  "otpLengthError": "اكتب الكود المكون من 6 أرقام",
   "invalidOtpError": "الكود غلط، حاول تاني",
   "confirmPhoneNumberTitle": "تأكيد الرقم",
   "otpSentToNumberLabel": "بعتنالك كود تحقق على {phone}",
@@ -360,11 +306,9 @@
   },
   "didntReceiveCodeLabel": "لسه مبعتلكش الكود؟",
   "codeResentMessage": "اتبعت الكود تاني",
-
   "determiningAddressLabel": "جاري تحديد العنوان...",
   "customLocationLabel": "موقع مخصص",
   "doneButton": "تم",
-
   "rateTripArrivedSafelyTitle": "وصلت وجهتك بأمان",
   "rateTripSubtitle": "قيّم رحلتك مع الطيار",
   "pleaseSelectStarsFirst": "من فضلك اختار عدد النجوم الأول",
@@ -379,7 +323,6 @@
   "commentHintOptional": "اكتب تعليقك (اختياري)",
   "submitRatingButton": "إرسال التقييم",
   "skipButton": "تخطي",
-
   "failedToAcceptOfferError": "تعذر قبول العرض، حاول تاني",
   "offerAcceptedTitle": "تم قبول العرض",
   "driverOnWayWithFareLabel": "الطيار {driverName} في الطريق ليك بسعر {price} جنيه",
@@ -443,7 +386,6 @@
   },
   "rejectButton": "رفض",
   "acceptButton": "قبول",
-
   "setPinTitle": "حدد رقم سري من 4 أرقام",
   "unknownProviderLabel": "غير معروف",
   "googleAccountLabel": "حساب Google",
@@ -463,7 +405,6 @@
   "signInMethodLabel": "وسيلة تسجيل الدخول",
   "appLockTitle": "قفل التطبيق برقم سري",
   "appLockSubtitle": "هتحتاج تدخل الرقم السري كل ما تفتح التطبيق",
-
   "noMatchingResultsError": "مفيش نتائج مطابقة",
   "searchFailedTryAgainError": "تعذر البحث حاليًا، حاول تاني",
   "unknownPlaceLabel": "مكان غير معروف",
@@ -472,7 +413,6 @@
   "pickFromMapLabel": "اختار من الخريطة",
   "startTypingToSearchLabel": "ابدأ الكتابة عشان تدور على مكان",
   "recentSearchesLabel": "عمليات البحث الأخيرة",
-
   "failedToOpenAppError": "تعذر فتح التطبيق المطلوب",
   "whatsappSupportMessage": "مرحبًا، محتاج مساعدة في تطبيق طيار",
   "supportEmailSubject": "مساعدة تطبيق طيار",
@@ -485,10 +425,7 @@
   "orSendMessageHereLabel": "أو ابعتلنا رسالتك هنا",
   "supportMessageHint": "اكتب مشكلتك أو استفسارك هنا...",
   "sendButton": "إرسال",
-
-  "tripCompletedTitle": "وصلت وجهتك",
   "tripCancelledTitle": "تم إلغاء الرحلة",
-  "thankYouForUsingTayarLabel": "شكرا لاستخدامك طيار",
   "tripCancelledByDriverOrSystemLabel": "الرحلة اتلغت من الطيار أو من النظام",
   "driverOnWayToYouLabel": "الطيار في الطريق ليك",
   "driverArrivedAtPickupLabel": "الطيار وصلك",
@@ -497,7 +434,6 @@
   "updatingLabel": "جاري التحديث...",
   "arrivedWaitingDriverToEndTripLabel": "وصلت وجهتك، اطلب من الطيار ينهي الرحلة",
   "waitingDriverShareLocationLabel": "في انتظار مشاركة موقع الطيار...",
-
   "noOrdersYetTitle": "مفيش طلبات",
   "noOrdersYetSubtitle": "طلباتك اللي هتعملها هتظهر هنا",
   "orderStatusSearchingLabel": "بيدور على طيار",
@@ -515,7 +451,6 @@
       }
     }
   },
-
   "chatWithDriverLabel": "محادثة",
   "callDriverLabel": "مكالمة",
   "chatWithPassengerLabel": "محادثة",
@@ -536,7 +471,6 @@
   "chatQuickReplyArrived": "وصلت المكان",
   "chatQuickReplyWaitPlease": "استنى شوية لو سمحت",
   "chatQuickReplyOk": "تمام",
-
   "chooseAccountTypeTitle": "اختار نوع حسابك",
   "chooseAccountTypeSubtitle": "تقدر تبدأ كراكب أو كطيار",
   "passengerRoleTitle": "راكب",
@@ -545,7 +479,6 @@
   "driverRoleDescription": "اشتغل واكسب فلوس بموتوسيكلك",
   "completeProfileTitle": "كمّل بياناتك",
   "completeProfileSubtitle": "هنستخدم اسمك عشان الناس تتعرف عليك",
-
   "topUpWalletButton": "اشحن محفظتك",
   "topUpWalletTitle": "شحن رصيد المحفظة",
   "topUpWalletSubtitle": "حوّل المبلغ إنستاباي وارفع صورة إيصال التحويل، وهنراجع طلبك ونضيفه لرصيدك أول بأول",
@@ -563,15 +496,6 @@
   "walletTopupApprovedLabel": "طلب شحن - تم القبول",
   "walletTopupRejectedLabel": "طلب شحن - مرفوض",
   "negativeWalletBalanceNote": "رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة",
-  "homeGreeting": "أهلًا يا {name}",
-  "@homeGreeting": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "homeGreetingSubtitle": "فين نوصّلك النهاردة؟",
   "homePromoBannerText": "احصل على أول توصيل مجانًا",
   "homeSearchHint": "عايز تروح فين؟",
   "savedPlacesLabel": "أماكن محفوظة",

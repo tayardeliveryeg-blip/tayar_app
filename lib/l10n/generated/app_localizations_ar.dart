@@ -12,9 +12,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'طيار - وصلك في لحظة';
 
   @override
-  String get splashTagline => 'وصلك في لحظة';
-
-  @override
   String get clientOrderPriority =>
       'طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية';
 
@@ -152,25 +149,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get availableBalance => 'رصيدك المتاح';
 
   @override
-  String get totalEarningsBeforeCommission => 'إجمالي الأرباح (قبل العمولة)';
-
-  @override
-  String get companyCommission => 'عمولة الشركة (10%)';
-
-  @override
-  String get motorcycleInfoTitle => 'بيانات الدراجة النارية';
-
-  @override
-  String get bikeModelLabel => 'الموديل';
-
-  @override
-  String get bikeColorLabel => 'اللون';
-
-  @override
   String get bikePlateLabel => 'رقم اللوحة';
-
-  @override
-  String get bikeYearLabel => 'الموديل (سنة الصنع)';
 
   @override
   String get orderDetailsTitle => 'تفاصيل الطلب';
@@ -192,9 +171,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get confirmLogoutMessage => 'تأكيد تسجيل الخروج؟';
-
-  @override
-  String get languageToggleTooltip => 'العربية / English';
 
   @override
   String get navNotifications => 'الإشعارات';
@@ -326,9 +302,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fromLabel => 'من';
-
-  @override
-  String get chooseDestinationHint => 'إلى';
 
   @override
   String get serviceRideMe => 'وصلني';
@@ -588,54 +561,10 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get passwordLabel => 'كلمة السر';
-
-  @override
-  String get loginButton => 'تسجيل الدخول';
-
-  @override
-  String get dontHaveAccountLink => 'معندكش حساب؟ إنشاء حساب جديد';
-
-  @override
-  String get orContinueWithLabel => 'أو تابع باستخدام';
-
-  @override
-  String get createAccountTitle => 'إنشاء حساب جديد';
-
-  @override
   String get nameLabel => 'الاسم';
 
   @override
-  String get confirmPasswordLabel => 'تأكيد كلمة السر';
-
-  @override
-  String get createAccountButton => 'إنشاء حساب';
-
-  @override
-  String get agreeToTermsText => 'أوافق على الشروط والأحكام';
-
-  @override
-  String get alreadyHaveAccountLink => 'عندك حساب بالفعل؟ تسجيل الدخول';
-
-  @override
   String get requiredFieldError => 'هذا الحقل مطلوب';
-
-  @override
-  String get invalidEmailError => 'البريد الإلكتروني غير صحيح';
-
-  @override
-  String get weakPasswordError => 'كلمة السر ضعيفة جداً (6 أحرف على الأقل)';
-
-  @override
-  String get emailAlreadyInUseError => 'هذا البريد مستخدم بالفعل';
-
-  @override
-  String get passwordsDoNotMatchError => 'كلمتا السر غير متطابقتين';
-
-  @override
-  String registrationFailedError(String error) {
-    return 'فشل إنشاء الحساب: $error';
-  }
 
   @override
   String get markAllAsReadButton => 'تحديد الكل كمقروء';
@@ -729,9 +658,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sendCodeButton => 'إرسال الكود';
-
-  @override
-  String get otpLengthError => 'اكتب الكود المكون من 6 أرقام';
 
   @override
   String get invalidOtpError => 'الكود غلط، حاول تاني';
@@ -977,13 +903,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sendButton => 'إرسال';
 
   @override
-  String get tripCompletedTitle => 'وصلت وجهتك';
-
-  @override
   String get tripCancelledTitle => 'تم إلغاء الرحلة';
-
-  @override
-  String get thankYouForUsingTayarLabel => 'شكرا لاستخدامك طيار';
 
   @override
   String get tripCancelledByDriverOrSystemLabel =>
@@ -1162,14 +1082,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get negativeWalletBalanceNote =>
       'رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة';
-
-  @override
-  String homeGreeting(String name) {
-    return 'أهلًا يا $name';
-  }
-
-  @override
-  String get homeGreetingSubtitle => 'فين نوصّلك النهاردة؟';
 
   @override
   String get homePromoBannerText => 'احصل على أول توصيل مجانًا';

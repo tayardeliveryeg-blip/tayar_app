@@ -53,3 +53,8 @@ flutter_build_log.txt
 *.jks
 *.keystore
 key.properties
+
+# Node (Cloud Functions) — never commit installed packages
+functions/node_modules/
+functions/lib/
+**/npm-debug.log*
