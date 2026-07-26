@@ -1880,8 +1880,8 @@ class _NewCustomerPromoBanner extends StatelessWidget {
 
         return Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+            horizontal: AppSpacing.sm,
+            vertical: 6,
           ),
           decoration: BoxDecoration(
             color: TayarColors.primary,
@@ -1898,15 +1898,15 @@ class _NewCustomerPromoBanner extends StatelessWidget {
               const Icon(
                 Icons.local_offer_outlined,
                 color: Colors.white,
-                size: 18,
+                size: 15,
               ),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: Text(
                   AppLocalizations.of(context)!.homePromoBannerText,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 1,
@@ -1918,7 +1918,7 @@ class _NewCustomerPromoBanner extends StatelessWidget {
                 child: const Icon(
                   Icons.close,
                   color: Colors.white70,
-                  size: 16,
+                  size: 14,
                 ),
               ),
             ],
