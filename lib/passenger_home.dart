@@ -1085,12 +1085,14 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: context.bgColor.withValues(alpha: 0.9),
+                            color: context.cardColor,
                             shape: BoxShape.circle,
+                            border: Border.all(color: context.dividerColor2),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 8,
+                                color: Colors.black.withValues(alpha: 0.25),
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
@@ -1147,7 +1149,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: context.bgColor.withValues(alpha: 0.95),
+                        color: context.cardColor,
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: context.dividerColor2,
