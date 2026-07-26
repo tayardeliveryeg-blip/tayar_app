@@ -617,10 +617,16 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   // ====== حفظ عنوان "البيت" أو "الشغل": بيفتح نفس شاشة اختيار الوجهة
   // الموجودة أصلاً، وبعد ما المستخدم يختار مكان بيحفظه في
-  // users/{uid}.savedAddresses.{key} على فيرستور. بنستخدم dot-notation في
-  // اسم الحقل (savedAddresses.$key) مع merge:true عشان نضمن إننا بنعدّل
-  // المفتاح ده بس من غير ما نمسح باقي بيانات اليوزر أو المفتاح التاني
-  // (home/work) لو موجود بالفعل ======
+  // users/{uid}.savedAddresses.{key} على فيرستور.
+  // ====== مهم: لازم نبني الـ Map متداخلة فعليًا زي
+  // {'savedAddresses': {key: {...}}} مش نستخدم اسم حقل فيه نقطة زي
+  // {'savedAddresses.$key': {...}}. الـ dot-notation في اسم الحقل بتشتغل
+  // بس مع .update()، أما مع .set(..., merge:true) فبيتعامل معاها كاسم حقل
+  // حرفي فيه نقطة (يعني بيتحفظ حقل غريب اسمه "savedAddresses.home") مش
+  // كمسار متداخل — وده كان بيمنع _SavedPlacesRow من قراءة العنوان تاني
+  // أبدًا لأنها بتدور على حقل savedAddresses المتداخل الفعلي.
+  // استخدام merge:true مع Map متداخلة فعليًا بيعمل deep-merge صح: بيعدّل
+  // المفتاح (home أو work) بس من غير ما يمسح المفتاح التاني لو موجود ======
   Future<void> _pickAndSaveAddress(String key, String screenTitle) async {
     final result = await Navigator.push<PlaceResult>(
       context,
@@ -638,10 +644,12 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
     try {
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
-        'savedAddresses.$key': {
-          'address': result.title,
-          'lat': result.location.latitude,
-          'lng': result.location.longitude,
+        'savedAddresses': {
+          key: {
+            'address': result.title,
+            'lat': result.location.latitude,
+            'lng': result.location.longitude,
+          },
         },
       }, SetOptions(merge: true));
 
