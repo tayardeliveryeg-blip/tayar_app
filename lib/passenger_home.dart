@@ -1030,7 +1030,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           // نهائيًا بمجرد ما يكمل أول رحلة، مش مجرد إغلاق مؤقت) ======
           if (!_promoDismissed)
             Positioned(
-              top: 60 + topSafeArea,
+              top: 66 + topSafeArea,
               right: 16,
               left: 16,
               child: AnimatedBuilder(
