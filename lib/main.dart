@@ -14,7 +14,7 @@ import 'package:tayay_app/screens/auth/app_lock_screen.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 
-export 'passenger_home.dart' show TayarColors, TayarTheme, TayarThemeColors;
+export 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarTheme, TayarThemeColors;
 
 // ====== مفتاح Navigator عام: محتاجه خدمة دعوة المكالمات (ZegoCloud) عشان
 // تقدر تعرض واجهة "مكالمة واردة" فوق أي شاشة في التطبيق، حتى لو

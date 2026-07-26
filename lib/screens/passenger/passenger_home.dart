@@ -25,7 +25,7 @@ import 'package:tayay_app/main.dart' show navigatorKey;
 import 'package:tayay_app/services/call_invitation_setup.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
-export 'theme_extensions.dart'; // مصدر TayarColors / TayarTheme / TayarThemeColors الوحيد
+export 'package:tayay_app/theme/theme_extensions.dart'; // مصدر TayarColors / TayarTheme / TayarThemeColors الوحيد
 
 // ====== القيمة الداخلية لطريقة الدفع بتفضل ثابتة (عربي) عشان التوافق مع
 // Firestore وشاشة الطيار، والترجمة بتحصل بس وقت العرض عن طريق الدالة دي ======
