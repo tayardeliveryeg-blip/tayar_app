@@ -1060,7 +1060,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   opacity: _isDraggingMap ? 0 : 1,
                   child: IgnorePointer(
                     ignoring: _isDraggingMap,
-                    child: _NewCustomerPromoBanner(
+                    child: NewCustomerPromoBanner(
                       onDismiss: () =>
                           setState(() => _promoDismissed = true),
                     ),

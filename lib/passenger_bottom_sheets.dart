@@ -610,10 +610,10 @@ class _LastTripSection extends StatelessWidget {
 // ====== بانر "احصل على أول توصيل مجانًا": بيتشيك على Firestore هل الراكب
 // عنده أي رحلة مكتملة قبل كده ولا لأ. لو عنده رحلة مكتملة واحدة على الأقل
 // (يعني مش عميل جديد) بيختفي البانر نهائيًا من غير ما يحتاج زرار إغلاق ======
-class _NewCustomerPromoBanner extends StatelessWidget {
+class NewCustomerPromoBanner extends StatelessWidget {
   final VoidCallback onDismiss;
 
-  const _NewCustomerPromoBanner({required this.onDismiss});
+  const NewCustomerPromoBanner({required this.onDismiss});
 
   @override
   Widget build(BuildContext context) {
