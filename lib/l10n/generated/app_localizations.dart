@@ -2132,6 +2132,12 @@ abstract class AppLocalizations {
   /// **'إعادة الطلب'**
   String get reorderTripLabel;
 
+  /// No description provided for @recentDestinationsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وجهات أخيرة'**
+  String get recentDestinationsLabel;
+
   /// No description provided for @selectHomeAddressTitle.
   ///
   /// In ar, this message translates to:

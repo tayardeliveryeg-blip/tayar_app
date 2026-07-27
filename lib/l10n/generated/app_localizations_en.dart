@@ -1121,6 +1121,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reorderTripLabel => 'Reorder';
 
   @override
+  String get recentDestinationsLabel => 'Recent destinations';
+
+  @override
   String get selectHomeAddressTitle => 'Choose your home address';
 
   @override

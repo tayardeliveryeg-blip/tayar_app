@@ -1111,6 +1111,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reorderTripLabel => 'إعادة الطلب';
 
   @override
+  String get recentDestinationsLabel => 'وجهات أخيرة';
+
+  @override
   String get selectHomeAddressTitle => 'اختار عنوان البيت';
 
   @override
