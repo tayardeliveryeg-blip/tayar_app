@@ -126,6 +126,9 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                       initialCenter: center,
                       initialZoom: 13,
                       minZoom: 4,
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                      ),
                     ),
                     children: [
                       const TayarTileLayer(),

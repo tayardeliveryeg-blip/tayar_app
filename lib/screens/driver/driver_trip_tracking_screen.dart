@@ -387,6 +387,10 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                   const LatLng(30.296, 31.742),
               initialZoom: 15,
               minZoom: 4,
+              // نمنع الدوران خالص، بيفضل بس سحب وزوم (نفس باقي خرائط التطبيق)
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+              ),
               onMapReady: () {
                 _mapReady = true;
                 _fitInitialBounds();
