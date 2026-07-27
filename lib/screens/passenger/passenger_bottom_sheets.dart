@@ -165,6 +165,10 @@ class TayarIdleBottomSheet extends StatelessWidget {
   final void Function(LatLng location, String address) onReorderTrip;
   final VoidCallback onTapRideService;
   final VoidCallback onTapDeliveryService;
+  // ====== عدد الطيارين المتاحين حاليًا في نطاق قريب من موقع الراكب.
+  // null يعني لسه مفيش موقع لحظي كافي نحسب بيه، و0 يعني مفيش سواقين
+  // قريبين — في الحالتين دول العنصر بيختفي (شوف build) ======
+  final int? nearbyDriversCount;
   // ====== callbacks السحب: بتخلي المقبض العلوي يقدر يوسّع الشريط لملء
   // الشاشة أو يرجعه للوضع الطبيعي (شوف _onSheetDrag* في الشاشة الأب) ======
   final void Function()? onDragStart;
@@ -179,6 +183,7 @@ class TayarIdleBottomSheet extends StatelessWidget {
     required this.onReorderTrip,
     required this.onTapRideService,
     required this.onTapDeliveryService,
+    this.nearbyDriversCount,
     this.onDragStart,
     this.onDragUpdate,
     this.onDragEnd,
@@ -248,6 +253,31 @@ class TayarIdleBottomSheet extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // ====== مؤشر السواقين القريبين: بيظهر بس لو عندنا موقع
+                    // لحظي للراكب وفيه سواق واحد على الأقل في النطاق ======
+                    if (nearbyDriversCount != null && nearbyDriversCount! > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.two_wheeler,
+                              color: TayarColors.primary,
+                              size: 15,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              loc.nearbyDriversCountLabel(nearbyDriversCount!),
+                              style: const TextStyle(
+                                color: TayarColors.primary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
                     // ====== شريط البحث: بيفتح شاشة اختيار الوجهة الموجودة أصلاً ======
                     GestureDetector(
                       onTap: onTapSearch,

@@ -506,6 +506,14 @@
   "lastTripLabel": "Last trip",
   "reorderTripLabel": "Reorder",
   "recentDestinationsLabel": "Recent destinations",
+  "nearbyDriversCountLabel": "{count} drivers nearby",
+  "@nearbyDriversCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "selectHomeAddressTitle": "Choose your home address",
   "selectWorkAddressTitle": "Choose your work address",
   "savedAddressSavedConfirmation": "Address saved",

@@ -506,6 +506,14 @@
   "lastTripLabel": "آخر رحلة",
   "reorderTripLabel": "إعادة الطلب",
   "recentDestinationsLabel": "وجهات أخيرة",
+  "nearbyDriversCountLabel": "{count} سواقين قريبين منك",
+  "@nearbyDriversCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "selectHomeAddressTitle": "اختار عنوان البيت",
   "selectWorkAddressTitle": "اختار عنوان الشغل",
   "savedAddressSavedConfirmation": "تم حفظ العنوان",

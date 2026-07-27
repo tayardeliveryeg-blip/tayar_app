@@ -109,6 +109,23 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   // ====== الطيارين المتاحين القريبين، بيظهروا كإيموجي موتوسيكل متحرك ======
   final Map<String, _NearbyDriverMarker> _nearbyDrivers = {};
+
+  // ====== عدد الطيارين المتاحين في نطاق قريب (كيلومترات) من موقع الراكب
+  // اللحظي. null لو لسه مفيش موقع لحظي متاح (قبل ما GPS يجيب أول إحداثية) ======
+  static const double _nearbyDriversRadiusKm = 5.0;
+  int? get _nearbyDriversCount {
+    final userLocation = _liveUserLocation;
+    if (userLocation == null) return null;
+    const distanceCalc = Distance();
+    return _nearbyDrivers.values.where((driver) {
+      return distanceCalc.as(
+            LengthUnit.Kilometer,
+            userLocation,
+            driver.target,
+          ) <=
+          _nearbyDriversRadiusKm;
+    }).length;
+  }
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _nearbyDriversSub;
   late final AnimationController _driversMoveController;
 
@@ -1433,6 +1450,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                             onSaveAddress: _pickAndSaveAddress,
                             onReorderTrip: _reorderLastTrip,
                             onTapRideService: _openDestinationSearch,
+                            nearbyDriversCount: _nearbyDriversCount,
                             onTapDeliveryService: () => Navigator.push(
                               context,
                               MaterialPageRoute(
