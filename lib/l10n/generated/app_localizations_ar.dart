@@ -1121,4 +1121,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get savedAddressSaveError => 'حصل خطأ أثناء حفظ العنوان، حاول تاني';
+
+  @override
+  String get selectCustomPlaceTitle => 'اختار مكان الحفظ';
+
+  @override
+  String get nameSavedPlaceTitle => 'سمّي المكان';
+
+  @override
+  String get nameSavedPlaceHint => 'مثلاً: الجيم، بيت ماما';
+
+  @override
+  String get nameSavedPlaceRequiredError => 'من فضلك اكتب اسم للمكان';
+
+  @override
+  String get removeSavedPlaceTitle => 'حذف المكان المحفوظ؟';
+
+  @override
+  String get removeSavedPlaceMessage =>
+      'هيتم حذف المكان ده من الأماكن المحفوظة';
+
+  @override
+  String get removeSavedPlaceButton => 'حذف';
+
+  @override
+  String get savedPlaceRemovedConfirmation => 'تم حذف المكان المحفوظ';
 }

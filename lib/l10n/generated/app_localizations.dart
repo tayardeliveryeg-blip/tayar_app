@@ -2155,6 +2155,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'حصل خطأ أثناء حفظ العنوان، حاول تاني'**
   String get savedAddressSaveError;
+
+  /// No description provided for @selectCustomPlaceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار مكان الحفظ'**
+  String get selectCustomPlaceTitle;
+
+  /// No description provided for @nameSavedPlaceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سمّي المكان'**
+  String get nameSavedPlaceTitle;
+
+  /// No description provided for @nameSavedPlaceHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثلاً: الجيم، بيت ماما'**
+  String get nameSavedPlaceHint;
+
+  /// No description provided for @nameSavedPlaceRequiredError.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك اكتب اسم للمكان'**
+  String get nameSavedPlaceRequiredError;
+
+  /// No description provided for @removeSavedPlaceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف المكان المحفوظ؟'**
+  String get removeSavedPlaceTitle;
+
+  /// No description provided for @removeSavedPlaceMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيتم حذف المكان ده من الأماكن المحفوظة'**
+  String get removeSavedPlaceMessage;
+
+  /// No description provided for @removeSavedPlaceButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف'**
+  String get removeSavedPlaceButton;
+
+  /// No description provided for @savedPlaceRemovedConfirmation.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حذف المكان المحفوظ'**
+  String get savedPlaceRemovedConfirmation;
 }
 
 class _AppLocalizationsDelegate

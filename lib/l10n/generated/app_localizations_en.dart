@@ -1132,4 +1132,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get savedAddressSaveError =>
       'Something went wrong while saving the address, please try again';
+
+  @override
+  String get selectCustomPlaceTitle => 'Choose the place\'s location';
+
+  @override
+  String get nameSavedPlaceTitle => 'Name this place';
+
+  @override
+  String get nameSavedPlaceHint => 'e.g. Gym, Mom\'s house';
+
+  @override
+  String get nameSavedPlaceRequiredError => 'Please enter a name';
+
+  @override
+  String get removeSavedPlaceTitle => 'Remove saved place?';
+
+  @override
+  String get removeSavedPlaceMessage =>
+      'This place will be removed from your saved places';
+
+  @override
+  String get removeSavedPlaceButton => 'Remove';
+
+  @override
+  String get savedPlaceRemovedConfirmation => 'Saved place removed';
 }
