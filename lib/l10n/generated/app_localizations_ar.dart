@@ -1114,6 +1114,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recentDestinationsLabel => 'وجهات أخيرة';
 
   @override
+  String nearbyDriversCountLabel(int count) {
+    return '$count سواقين قريبين منك';
+  }
+
+  @override
   String get selectHomeAddressTitle => 'اختار عنوان البيت';
 
   @override

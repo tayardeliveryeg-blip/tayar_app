@@ -1124,6 +1124,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recentDestinationsLabel => 'Recent destinations';
 
   @override
+  String nearbyDriversCountLabel(int count) {
+    return '$count drivers nearby';
+  }
+
+  @override
   String get selectHomeAddressTitle => 'Choose your home address';
 
   @override

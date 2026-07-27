@@ -2138,6 +2138,12 @@ abstract class AppLocalizations {
   /// **'وجهات أخيرة'**
   String get recentDestinationsLabel;
 
+  /// No description provided for @nearbyDriversCountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} سواقين قريبين منك'**
+  String nearbyDriversCountLabel(int count);
+
   /// No description provided for @selectHomeAddressTitle.
   ///
   /// In ar, this message translates to:
