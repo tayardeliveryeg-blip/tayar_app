@@ -1169,9 +1169,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           // (_measuredSheetHeight) بدل الرقم النظري، لأن محتوى الشريط ممكن
           // ياخد مساحة أصغر من كده فبيسيب فراغ زيادة بين الزرار والشريط.
           // أول فريم قبل ما القياس يحصل، بنستخدم الرقم النظري كـ fallback
-          // مؤقت لحد ما القياس الحقيقي يوصل. وبيختفي تدريجيًا وقت ما نسحب
-          // الشريط لفوق (وبرضو وقت سحب الخريطة)، وبيختفي تمامًا بعد ما
-          // يتحدد وجهة (يعني بس موجود في الشاشة الرئيسية قبل اختيار الوجهة) ======
+          // مؤقت لحد ما القياس الحقيقي يوصل. بيتزحلق لتحت ويختفي (نفس
+          // حركة السحب اللي بيعملها الشريط السفلي نفسه) في حالتين: وقت
+          // سحب الخريطة، أو بعد ما يتحدد وجهة (يعني بس موجود في الشاشة
+          // الرئيسية قبل اختيار الوجهة) ======
           AnimatedBuilder(
             animation: _sheetAnimController,
             builder: (context, child) {
@@ -1184,7 +1185,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 left: 16,
                 bottom: sheetHeight + 16,
                 child: Opacity(
-                  opacity: hasDestination ? 0 : 1 - t,
+                  opacity: 1 - t,
                   child: IgnorePointer(
                     ignoring: hasDestination || t > 0.5,
                     child: child,
@@ -1195,12 +1196,14 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
             child: AnimatedSlide(
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeInOut,
-              offset: _isDraggingMap ? const Offset(0, 2) : Offset.zero,
+              offset: (_isDraggingMap || _destinationAddress != null)
+                  ? const Offset(0, 2)
+                  : Offset.zero,
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 200),
-                opacity: _isDraggingMap ? 0 : 1,
+                opacity: (_isDraggingMap || _destinationAddress != null) ? 0 : 1,
                 child: IgnorePointer(
-                  ignoring: _isDraggingMap,
+                  ignoring: _isDraggingMap || _destinationAddress != null,
                   child: GestureDetector(
                     onTap: _getCurrentLocation,
                     child: Container(
