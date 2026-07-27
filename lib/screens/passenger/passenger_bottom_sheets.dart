@@ -321,8 +321,8 @@ class TayarIdleBottomSheet extends StatelessWidget {
                       ],
                     ),
 
-                    // ====== آخر رحلة: بتظهر بس لو فيه رحلة سابقة فعلًا في Firestore ======
-                    _LastTripSection(onReorderTrip: onReorderTrip),
+                    // ====== وجهات أخيرة: بتظهر بس لو فيه رحلات سابقة فعلًا في Firestore ======
+                    _RecentDestinationsSection(onReorderTrip: onReorderTrip),
                   ],
                 ),
               ),
@@ -597,12 +597,15 @@ class _SavedPlaceChip extends StatelessWidget {
   }
 }
 
-// ====== قسم "آخر رحلة": بيجيب آخر طلب رحلة مكتمل للراكب الحالي من
-// collection('orders') على فيرستور، وبيخفي نفسه تمامًا لو مفيش رحلات سابقة ======
-class _LastTripSection extends StatelessWidget {
+// ====== قسم "وجهات أخيرة": بيجيب آخر 30 طلب رحلة للراكب الحالي من
+// collection('orders')، بيفلتر الرحلات المكتملة بس، وبيستخرج منهم أحدث 5
+// وجهات مختلفة (deduplicated بالعنوان، الأحدث بياخد الأولوية) ويعرضهم في
+// صف قابل للتمرير أفقيًا بنفس ستايل _SavedPlacesRow. بيختفي تمامًا لو
+// مفيش رحلات سابقة ======
+class _RecentDestinationsSection extends StatelessWidget {
   final void Function(LatLng location, String address) onReorderTrip;
 
-  const _LastTripSection({required this.onReorderTrip});
+  const _RecentDestinationsSection({required this.onReorderTrip});
 
   @override
   Widget build(BuildContext context) {
@@ -632,77 +635,64 @@ class _LastTripSection extends StatelessWidget {
               return bTime.compareTo(aTime);
             });
 
-        if (docs.isEmpty) return const SizedBox.shrink();
-
-        final lastTrip = docs.first.data();
-        final destinationAddress = lastTrip['destinationAddress'] as String?;
-        final destinationGeoPoint =
-            lastTrip['destinationLocation'] as GeoPoint?;
-        final pickupAddress = lastTrip['pickupAddress'] as String?;
-        if (destinationAddress == null || destinationGeoPoint == null) {
-          return const SizedBox.shrink();
+        // ====== استخراج أحدث 5 وجهات مختلفة: بنمشي على الرحلات من الأحدث
+        // للأقدم، ولو العنوان اتكرر (نفس الوجهة راح لها قبل كده) بنتجاهله
+        // عشان الصف مايتلخبطش بتكرار نفس المكان أكتر من مرة ======
+        final seenAddresses = <String>{};
+        final recent = <_RecentDestination>[];
+        for (final doc in docs) {
+          if (recent.length >= 5) break;
+          final data = doc.data();
+          final destinationAddress = data['destinationAddress'] as String?;
+          final destinationGeoPoint = data['destinationLocation'] as GeoPoint?;
+          if (destinationAddress == null || destinationGeoPoint == null) {
+            continue;
+          }
+          if (!seenAddresses.add(destinationAddress)) continue;
+          recent.add(
+            _RecentDestination(
+              address: destinationAddress,
+              location: LatLng(
+                destinationGeoPoint.latitude,
+                destinationGeoPoint.longitude,
+              ),
+            ),
+          );
         }
 
+        if (recent.isEmpty) return const SizedBox.shrink();
+
         final loc = AppLocalizations.of(context)!;
-        final routeLabel = pickupAddress != null
-            ? '$pickupAddress ← $destinationAddress'
-            : destinationAddress;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: AppSpacing.md),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  loc.lastTripLabel,
-                  style: TextStyle(
-                    color: context.textGreyColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => onReorderTrip(
-                    LatLng(
-                      destinationGeoPoint.latitude,
-                      destinationGeoPoint.longitude,
-                    ),
-                    destinationAddress,
-                  ),
-                  child: Text(
-                    loc.reorderTripLabel,
-                    style: const TextStyle(
-                      color: TayarColors.primary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            GestureDetector(
-              onTap: () => onReorderTrip(
-                LatLng(
-                  destinationGeoPoint.latitude,
-                  destinationGeoPoint.longitude,
-                ),
-                destinationAddress,
+            Text(
+              loc.recentDestinationsLabel,
+              style: TextStyle(
+                color: context.textGreyColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
               ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  Icon(Icons.history, color: context.textGreyColor, size: 16),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      routeLabel,
-                      style: TextStyle(color: context.textColor, fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  for (final dest in recent) ...[
+                    SizedBox(
+                      width: 120,
+                      child: _SavedPlaceChip(
+                        icon: Icons.history,
+                        label: dest.address,
+                        onTap: () =>
+                            onReorderTrip(dest.location, dest.address),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: AppSpacing.sm),
+                  ],
                 ],
               ),
             ),
@@ -711,6 +701,15 @@ class _LastTripSection extends StatelessWidget {
       },
     );
   }
+}
+
+// ====== موديل بسيط لوجهة أخيرة (عنوان + إحداثيات) بيتستخدم جوه
+// _RecentDestinationsSection بس ======
+class _RecentDestination {
+  final String address;
+  final LatLng location;
+
+  const _RecentDestination({required this.address, required this.location});
 }
 
 // ====== بانر "احصل على أول توصيل مجانًا": بيتشيك على Firestore هل الراكب

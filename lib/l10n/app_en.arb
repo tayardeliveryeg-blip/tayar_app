@@ -505,6 +505,7 @@
   "savedPlacesComingSoonMessage": "This feature is coming soon",
   "lastTripLabel": "Last trip",
   "reorderTripLabel": "Reorder",
+  "recentDestinationsLabel": "Recent destinations",
   "selectHomeAddressTitle": "Choose your home address",
   "selectWorkAddressTitle": "Choose your work address",
   "savedAddressSavedConfirmation": "Address saved",
