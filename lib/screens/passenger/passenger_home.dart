@@ -1170,7 +1170,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           // ياخد مساحة أصغر من كده فبيسيب فراغ زيادة بين الزرار والشريط.
           // أول فريم قبل ما القياس يحصل، بنستخدم الرقم النظري كـ fallback
           // مؤقت لحد ما القياس الحقيقي يوصل. وبيختفي تدريجيًا وقت ما نسحب
-          // الشريط لفوق (وبرضو وقت سحب الخريطة) ======
+          // الشريط لفوق (وبرضو وقت سحب الخريطة)، وبيختفي تمامًا بعد ما
+          // يتحدد وجهة (يعني بس موجود في الشاشة الرئيسية قبل اختيار الوجهة) ======
           AnimatedBuilder(
             animation: _sheetAnimController,
             builder: (context, child) {
@@ -1178,13 +1179,14 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   ? _measuredSheetHeight
                   : _sheetHeights(context, topSafeArea).current;
               final t = _sheetAnimController.value;
+              final hasDestination = _destinationAddress != null;
               return Positioned(
                 left: 16,
                 bottom: sheetHeight + 16,
                 child: Opacity(
-                  opacity: 1 - t,
+                  opacity: hasDestination ? 0 : 1 - t,
                   child: IgnorePointer(
-                    ignoring: t > 0.5,
+                    ignoring: hasDestination || t > 0.5,
                     child: child,
                   ),
                 ),

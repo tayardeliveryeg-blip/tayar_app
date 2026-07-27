@@ -51,6 +51,12 @@ class TayarBottomSheet extends StatelessWidget {
 
     return Align(
       alignment: Alignment.bottomCenter,
+      // ====== heightFactor: 1 مهم جدًا هنا: من غيره الـ Align بياخد كل
+      // الارتفاع المسموح بيه من ConstrainedBox اللي فوقه (maxHeight) حتى
+      // لو المحتوى الحقيقي أصغر بكتير، وده بيسبب مساحة فاضية غير مرئية
+      // فوق الكارت بتأثر على أي حاجة بتقيس ارتفاع الشريط فعليًا (زي زرار
+      // تحديد الموقع) ======
+      heightFactor: 1,
       child: Container(
         margin: const EdgeInsets.only(bottom: 0),
         decoration: BoxDecoration(
@@ -183,6 +189,11 @@ class TayarIdleBottomSheet extends StatelessWidget {
     final loc = AppLocalizations.of(context)!;
     return Align(
       alignment: Alignment.bottomCenter,
+      // ====== نفس ملحوظة heightFactor في TayarBottomSheet فوق: من غيرها
+      // كان فيه فراغ غير مرئي بين الزرار العائم فوق (تحديد الموقع) وبين
+      // حافة الكارت الحقيقية، لأن الـ Align كان بياخد نص الشاشة كارتفاع
+      // (collapsedHeight) حتى لو المحتوى الفعلي أصغر بكتير من كده ======
+      heightFactor: 1,
       child: Container(
         decoration: BoxDecoration(
           color: context.bgColor,
