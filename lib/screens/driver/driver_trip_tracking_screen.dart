@@ -386,6 +386,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                   _driverDisplayedPosition ??
                   const LatLng(30.296, 31.742),
               initialZoom: 15,
+              minZoom: 4,
               onMapReady: () {
                 _mapReady = true;
                 _fitInitialBounds();

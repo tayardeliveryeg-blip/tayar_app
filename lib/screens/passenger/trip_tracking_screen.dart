@@ -474,6 +474,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                   _pickupLocation ??
                   const LatLng(30.7, 31.7),
               initialZoom: 15,
+              minZoom: 4,
               onMapReady: () {
                 _mapReady = true;
                 if (_driverDisplayedPosition != null) {

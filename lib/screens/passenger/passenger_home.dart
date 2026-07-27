@@ -991,6 +991,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               options: MapOptions(
                 initialCenter: _currentLocation,
                 initialZoom: 15,
+                // ====== minZoom بيمنع اليوزر إنه يزوم آوت لحد ما الخريطة
+                // تتكرر جنب بعضها (بيحصل في flutter_map/OSM لو الزوم قل
+                // عن حوالي 3). 4 رقم آمن كافي إنه يمنع التكرار ولسه
+                // بيسمح بمشاهدة مساحة واسعة حوالين المدينة لو احتاج المستخدم ======
+                minZoom: 4,
                 onMapEvent: _onMapEvent,
                 // نسمح بالسحب (يمين/شمال/فوق/تحت) والزوم، ونمنع الدوران خالص
                 interactionOptions: const InteractionOptions(

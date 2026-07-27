@@ -122,7 +122,11 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
             flex: 3,
             child: hasLocations
                 ? FlutterMap(
-                    options: MapOptions(initialCenter: center, initialZoom: 13),
+                    options: MapOptions(
+                      initialCenter: center,
+                      initialZoom: 13,
+                      minZoom: 4,
+                    ),
                     children: [
                       const TayarTileLayer(),
                       if (_routePoints.isNotEmpty)
