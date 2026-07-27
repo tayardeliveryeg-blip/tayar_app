@@ -514,6 +514,7 @@
       }
     }
   },
+  "rateLastTripReminderText": "Rate your last trip",
   "selectHomeAddressTitle": "Choose your home address",
   "selectWorkAddressTitle": "Choose your work address",
   "savedAddressSavedConfirmation": "Address saved",

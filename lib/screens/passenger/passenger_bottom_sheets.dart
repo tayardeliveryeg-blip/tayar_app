@@ -10,6 +10,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart' show paymentMethodDisplay;
+import 'package:tayay_app/screens/passenger/rate_trip_screen.dart';
 
 class TayarBottomSheet extends StatelessWidget {
   final String? destinationAddress;
@@ -310,6 +311,11 @@ class TayarIdleBottomSheet extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
+
+                    // ====== تذكير تقييم آخر رحلة: بيظهر بس لو آخر رحلة
+                    // مكتملة لسه ما اتقيّمتش (مثلاً الراكب قفل التطبيق قبل
+                    // ما شاشة التقييم التلقائية تظهر) ======
+                    const _RateLastTripReminder(),
 
                     // ====== أماكن محفوظة: البيت / الشغل / إضافة، بنفس
                     // المقاس بالظبط (كل واحدة Expanded) ======
@@ -623,6 +629,116 @@ class _SavedPlaceChip extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ====== تذكير تقييم آخر رحلة: بيجيب آخر رحلة مكتملة للراكب، ولو مفيش
+// حقل 'rating' عليها (يعني اتخطّت التقييم التلقائي على trip_tracking_screen،
+// غالبًا لأن الراكب قفل التطبيق قبل ما الشاشة تظهر) بيعرض بانر صغير بيوديه
+// لشاشة RateTripScreen مباشرة. بيختفي تمامًا لو مفيش رحلة سابقة أو لو
+// اتقيّمت بالفعل ======
+class _RateLastTripReminder extends StatelessWidget {
+  const _RateLastTripReminder();
+
+  @override
+  Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const SizedBox.shrink();
+
+    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      // نفس أسلوب الاستعلام المحلي (بدون composite index) المستخدم في
+      // بقية أقسام الشريط ده.
+      future: FirebaseFirestore.instance
+          .collection('orders')
+          .where('customerId', isEqualTo: uid)
+          .limit(30)
+          .get(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const SizedBox.shrink();
+
+        final docs =
+            snapshot.data!.docs.where((doc) {
+              final data = doc.data();
+              return data['serviceType'] == 'passenger' &&
+                  data['status'] == 'completed';
+            }).toList()..sort((a, b) {
+              final aTime = a.data()['createdAt'] as Timestamp?;
+              final bTime = b.data()['createdAt'] as Timestamp?;
+              if (aTime == null || bTime == null) return 0;
+              return bTime.compareTo(aTime);
+            });
+
+        if (docs.isEmpty) return const SizedBox.shrink();
+
+        final lastTripDoc = docs.first;
+        final data = lastTripDoc.data();
+
+        // ====== لو آخر رحلة اتقيّمت بالفعل، مفيش داعي للتذكير ======
+        if (data['rating'] != null) return const SizedBox.shrink();
+
+        final driverId = data['driverId'] as String? ?? '';
+        final driverName = data['driverName'] as String? ?? '';
+        final fare = (data['acceptedFare'] as num?)?.toDouble() ?? 0;
+        final loc = AppLocalizations.of(context)!;
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+          child: GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RateTripScreen(
+                  orderId: lastTripDoc.id,
+                  driverId: driverId,
+                  driverName: driverName,
+                  fare: fare,
+                ),
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
+              decoration: BoxDecoration(
+                color: context.cardColor,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(
+                  color: TayarColors.primary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.star_outline,
+                    color: TayarColors.primary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      loc.rateLastTripReminderText,
+                      style: TextStyle(
+                        color: context.textColor,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_left,
+                    color: context.textGreyColor,
+                    size: 18,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

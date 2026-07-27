@@ -514,6 +514,7 @@
       }
     }
   },
+  "rateLastTripReminderText": "قيّم رحلتك الأخيرة",
   "selectHomeAddressTitle": "اختار عنوان البيت",
   "selectWorkAddressTitle": "اختار عنوان الشغل",
   "savedAddressSavedConfirmation": "تم حفظ العنوان",
