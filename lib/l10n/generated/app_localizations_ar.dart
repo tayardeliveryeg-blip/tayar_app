@@ -1119,6 +1119,9 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get rateLastTripReminderText => 'قيّم رحلتك الأخيرة';
+
+  @override
   String get selectHomeAddressTitle => 'اختار عنوان البيت';
 
   @override

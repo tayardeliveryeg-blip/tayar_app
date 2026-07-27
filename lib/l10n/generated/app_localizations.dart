@@ -2144,6 +2144,12 @@ abstract class AppLocalizations {
   /// **'{count} سواقين قريبين منك'**
   String nearbyDriversCountLabel(int count);
 
+  /// No description provided for @rateLastTripReminderText.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيّم رحلتك الأخيرة'**
+  String get rateLastTripReminderText;
+
   /// No description provided for @selectHomeAddressTitle.
   ///
   /// In ar, this message translates to:

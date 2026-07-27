@@ -1129,6 +1129,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rateLastTripReminderText => 'Rate your last trip';
+
+  @override
   String get selectHomeAddressTitle => 'Choose your home address';
 
   @override
