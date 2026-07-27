@@ -603,15 +603,174 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     await _fetchRoute(_currentLocation, location);
   }
 
-  // ====== الأماكن المحفوظة (البيت/الشغل) لسه مش متفعّلة، فبنوري المستخدم
-  // إنها هتضاف قريبًا بدل ما الزرار يبقى ميت من غير أي رد فعل ======
-  void _showSavedPlacesComingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context)!.savedPlacesComingSoonMessage,
+  // ====== زرار "+ إضافة" في صف الأماكن المحفوظة: بيفتح شاشة اختيار
+  // الموقع الموجودة أصلاً، وبعدين بيطلب من المستخدم اسم للمكان ده (زي
+  // "الجيم" أو "بيت ماما")، وأخيرًا بيحفظه في users/{uid}.savedAddresses
+  // بمفتاح فريد (custom_<timestamp>) عشان يفضل متاح جنب البيت والشغل ======
+  Future<void> _addCustomSavedPlace() async {
+    final loc = AppLocalizations.of(context)!;
+
+    final result = await Navigator.push<PlaceResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SelectDestinationScreen(
+          initialLocation: _currentLocation,
+          title: loc.selectCustomPlaceTitle,
         ),
       ),
+    );
+    if (result == null || !mounted) return;
+
+    final name = await _promptForSavedPlaceName();
+    if (name == null || !mounted) return;
+
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final key = 'custom_${DateTime.now().millisecondsSinceEpoch}';
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'savedAddresses': {
+          key: {
+            'address': result.title,
+            'lat': result.location.latitude,
+            'lng': result.location.longitude,
+            'label': name,
+          },
+        },
+      }, SetOptions(merge: true));
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.savedAddressSavedConfirmation)),
+      );
+    } catch (e) {
+      debugPrint('❌ خطأ في حفظ مكان محفوظ مخصص ($key): $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.savedAddressSaveError)),
+      );
+    }
+  }
+
+  // ====== شيت بسيط بيطلب اسم قصير للمكان المحفوظ الجديد (نفس ستايل شيت
+  // اختيار طريقة الدفع)، وبيرجع النص بعد الضغط على "حفظ"، أو null لو
+  // المستخدم قفل الشيت من غير ما يكمل ======
+  Future<String?> _promptForSavedPlaceName() {
+    final loc = AppLocalizations.of(context)!;
+    final controller = TextEditingController();
+    String? errorText;
+
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.bgColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (sheetContext, setSheetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.xl,
+                    AppSpacing.lg,
+                    AppSpacing.xl,
+                    AppSpacing.lg,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: context.handleColor,
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.handle,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(
+                        loc.nameSavedPlaceTitle,
+                        style: TextStyle(
+                          color: context.textColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      TextField(
+                        controller: controller,
+                        autofocus: true,
+                        style: TextStyle(color: context.textColor),
+                        decoration: InputDecoration(
+                          hintText: loc.nameSavedPlaceHint,
+                          hintStyle: TextStyle(color: context.textGreyColor),
+                          errorText: errorText,
+                          filled: true,
+                          fillColor: context.cardColor,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        onSubmitted: (_) {
+                          final trimmed = controller.text.trim();
+                          if (trimmed.isEmpty) {
+                            setSheetState(
+                              () => errorText = loc.nameSavedPlaceRequiredError,
+                            );
+                            return;
+                          }
+                          Navigator.pop(sheetContext, trimmed);
+                        },
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: TayarColors.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.md,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                          ),
+                        ),
+                        onPressed: () {
+                          final trimmed = controller.text.trim();
+                          if (trimmed.isEmpty) {
+                            setSheetState(
+                              () => errorText = loc.nameSavedPlaceRequiredError,
+                            );
+                            return;
+                          }
+                          Navigator.pop(sheetContext, trimmed);
+                        },
+                        child: Text(loc.saveButton),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -1265,7 +1424,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     child: _destinationAddress == null
                         ? TayarIdleBottomSheet(
                             onTapSearch: _openDestinationSearch,
-                            onTapSavedPlace: _showSavedPlacesComingSoon,
+                            onTapSavedPlace: _addCustomSavedPlace,
                             onSaveAddress: _pickAndSaveAddress,
                             onReorderTrip: _reorderLastTrip,
                             onTapRideService: _openDestinationSearch,

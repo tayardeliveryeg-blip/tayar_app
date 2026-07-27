@@ -415,39 +415,134 @@ class _SavedPlacesRow extends StatelessWidget {
         final home = savedAddresses?['home'] as Map<String, dynamic>?;
         final work = savedAddresses?['work'] as Map<String, dynamic>?;
 
-        return Row(
-          children: [
-            Expanded(
-              child: _SavedPlaceChip(
-                icon: Icons.home_outlined,
-                label: loc.savedPlaceHome,
-                onTap: () => _handleTap('home', home, loc.savedPlaceHome),
-                onLongPress: () =>
-                    onSaveAddress('home', loc.selectHomeAddressTitle),
+        // ====== أي مفتاح تاني غير home/work هو مكان مخصّص اتضاف من زرار
+        // "+ إضافة" (مفاتيحه بالشكل custom_<timestamp>)، فبيترتبوا
+        // زمنيًا تلقائيًا من غير ما نحتاج نخزّن حقل ترتيب منفصل ======
+        final customEntries =
+            (savedAddresses?.entries.where(
+                  (e) => e.key != 'home' && e.key != 'work',
+                ) ??
+                const <MapEntry<String, dynamic>>[])
+                .toList()
+              ..sort((a, b) => a.key.compareTo(b.key));
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 96,
+                child: _SavedPlaceChip(
+                  icon: Icons.home_outlined,
+                  label: loc.savedPlaceHome,
+                  onTap: () => _handleTap('home', home, loc.savedPlaceHome),
+                  onLongPress: () =>
+                      onSaveAddress('home', loc.selectHomeAddressTitle),
+                ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: _SavedPlaceChip(
-                icon: Icons.work_outline,
-                label: loc.savedPlaceWork,
-                onTap: () => _handleTap('work', work, loc.savedPlaceWork),
-                onLongPress: () =>
-                    onSaveAddress('work', loc.selectWorkAddressTitle),
+              const SizedBox(width: AppSpacing.sm),
+              SizedBox(
+                width: 96,
+                child: _SavedPlaceChip(
+                  icon: Icons.work_outline,
+                  label: loc.savedPlaceWork,
+                  onTap: () => _handleTap('work', work, loc.savedPlaceWork),
+                  onLongPress: () =>
+                      onSaveAddress('work', loc.selectWorkAddressTitle),
+                ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: _SavedPlaceChip(
-                icon: Icons.add,
-                label: addLabel,
-                onTap: onAddTap,
+              for (final entry in customEntries) ...[
+                const SizedBox(width: AppSpacing.sm),
+                SizedBox(
+                  width: 96,
+                  child: _SavedPlaceChip(
+                    icon: Icons.star_outline,
+                    label:
+                        (entry.value as Map<String, dynamic>)['label']
+                            as String? ??
+                        (entry.value as Map<String, dynamic>)['address']
+                            as String? ??
+                        loc.savedPlaceAdd,
+                    onTap: () {
+                      final data = entry.value as Map<String, dynamic>;
+                      final lat = (data['lat'] as num?)?.toDouble();
+                      final lng = (data['lng'] as num?)?.toDouble();
+                      final address = data['address'] as String?;
+                      if (lat == null || lng == null || address == null) {
+                        return;
+                      }
+                      onUseAddress(LatLng(lat, lng), address);
+                    },
+                    onLongPress: () =>
+                        _confirmAndDeleteCustomPlace(context, uid, entry.key),
+                  ),
+                ),
+              ],
+              const SizedBox(width: AppSpacing.sm),
+              SizedBox(
+                width: 96,
+                child: _SavedPlaceChip(
+                  icon: Icons.add,
+                  label: addLabel,
+                  onTap: onAddTap,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
+  }
+
+  // ====== حذف مكان محفوظ مخصّص: بيسأل تأكيد الأول، وبعدين بيمسح المفتاح
+  // بتاعه من users/{uid}.savedAddresses باستخدام dot-notation مع
+  // .update() (ده بيشتغل صح كمسار متداخل بعكس .set(merge:true)) ======
+  Future<void> _confirmAndDeleteCustomPlace(
+    BuildContext context,
+    String uid,
+    String key,
+  ) async {
+    final loc = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: context.bgColor,
+        title: Text(
+          loc.removeSavedPlaceTitle,
+          style: TextStyle(color: context.textColor),
+        ),
+        content: Text(
+          loc.removeSavedPlaceMessage,
+          style: TextStyle(color: context.textGreyColor),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(loc.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(
+              loc.removeSavedPlaceButton,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'savedAddresses.$key': FieldValue.delete(),
+      });
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.savedPlaceRemovedConfirmation)));
+    } catch (e) {
+      debugPrint('❌ خطأ في حذف مكان محفوظ مخصص ($key): $e');
+    }
   }
 }
 

@@ -508,5 +508,13 @@
   "selectHomeAddressTitle": "Choose your home address",
   "selectWorkAddressTitle": "Choose your work address",
   "savedAddressSavedConfirmation": "Address saved",
-  "savedAddressSaveError": "Something went wrong while saving the address, please try again"
+  "savedAddressSaveError": "Something went wrong while saving the address, please try again",
+  "selectCustomPlaceTitle": "Choose the place's location",
+  "nameSavedPlaceTitle": "Name this place",
+  "nameSavedPlaceHint": "e.g. Gym, Mom's house",
+  "nameSavedPlaceRequiredError": "Please enter a name",
+  "removeSavedPlaceTitle": "Remove saved place?",
+  "removeSavedPlaceMessage": "This place will be removed from your saved places",
+  "removeSavedPlaceButton": "Remove",
+  "savedPlaceRemovedConfirmation": "Saved place removed"
 }

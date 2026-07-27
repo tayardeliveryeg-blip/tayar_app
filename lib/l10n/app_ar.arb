@@ -508,5 +508,13 @@
   "selectHomeAddressTitle": "اختار عنوان البيت",
   "selectWorkAddressTitle": "اختار عنوان الشغل",
   "savedAddressSavedConfirmation": "تم حفظ العنوان",
-  "savedAddressSaveError": "حصل خطأ أثناء حفظ العنوان، حاول تاني"
+  "savedAddressSaveError": "حصل خطأ أثناء حفظ العنوان، حاول تاني",
+  "selectCustomPlaceTitle": "اختار مكان الحفظ",
+  "nameSavedPlaceTitle": "سمّي المكان",
+  "nameSavedPlaceHint": "مثلاً: الجيم، بيت ماما",
+  "nameSavedPlaceRequiredError": "من فضلك اكتب اسم للمكان",
+  "removeSavedPlaceTitle": "حذف المكان المحفوظ؟",
+  "removeSavedPlaceMessage": "هيتم حذف المكان ده من الأماكن المحفوظة",
+  "removeSavedPlaceButton": "حذف",
+  "savedPlaceRemovedConfirmation": "تم حذف المكان المحفوظ"
 }
