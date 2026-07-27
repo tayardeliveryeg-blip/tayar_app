@@ -13,7 +13,7 @@ import 'package:tayay_app/screens/auth/phone_auth_screen.dart';
 import 'package:tayay_app/helpers/auth_flow_helpers.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/google_signin_web_button_stub.dart'
-    if (dart.library.js_interop) 'google_signin_web_button_web.dart';
+    if (dart.library.js_interop) 'package:tayay_app/widgets/google_signin_web_button_web.dart';
 
 // ====================================================
 // ====== شاشة تسجيل الدخول: جوجل + الموبايل بس ======
