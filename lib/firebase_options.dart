@@ -2,7 +2,7 @@
 // ignore_for_file: type=lint
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show defaultTargetPlatform, TargetPlatform;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -15,40 +15,21 @@ import 'package:flutter/foundation.dart'
 /// );
 /// ```
 class DefaultFirebaseOptions {
+  // ====== التطبيق (الراكب/السائق) يدعم Android و iOS بس. الويب ملوش
+  // استخدام هنا - لوحة الأدمن صفحة HTML منفصلة (tayar-admin/public)
+  // ومش شغالة بكود Flutter ده خالص ======
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      return web;
-    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
         return ios;
-      case TargetPlatform.macOS:
-        return macos;
-      case TargetPlatform.windows:
-        return windows;
-      case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
       default:
         throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
+          'DefaultFirebaseOptions are only configured for Android and iOS.',
         );
     }
   }
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBHtdeFuPYg5iSQDkbIfe4FwZJ0NvJ0KW0',
-    appId: '1:354477388400:web:1c206c0a04529a3bc23ab5',
-    messagingSenderId: '354477388400',
-    projectId: 'b10-app-1e682',
-    authDomain: 'b10-app-1e682.firebaseapp.com',
-    storageBucket: 'b10-app-1e682.firebasestorage.app',
-    measurementId: 'G-XEY01VPFVG',
-  );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDvv6t5H7pdmWmqDzwQ1SRo3gyWYzFuWrI',
@@ -57,24 +38,6 @@ class DefaultFirebaseOptions {
     projectId: 'b10-app-1e682',
     storageBucket: 'b10-app-1e682.firebasestorage.app',
     iosBundleId: 'com.example.tayayApp',
-  );
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDvv6t5H7pdmWmqDzwQ1SRo3gyWYzFuWrI',
-    appId: '1:354477388400:ios:e2a0f27cbe68e736c23ab5',
-    messagingSenderId: '354477388400',
-    projectId: 'b10-app-1e682',
-    storageBucket: 'b10-app-1e682.firebasestorage.app',
-    iosBundleId: 'com.example.tayayApp',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBHtdeFuPYg5iSQDkbIfe4FwZJ0NvJ0KW0',
-    appId: '1:354477388400:web:1c206c0a04529a3bc23ab5',
-    messagingSenderId: '354477388400',
-    projectId: 'b10-app-1e682',
-    authDomain: 'b10-app-1e682.firebaseapp.com',
-    storageBucket: 'b10-app-1e682.firebasestorage.app',
-    measurementId: 'G-XEY01VPFVG',
   );
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyC7CW-3rCVG5lIesTWU_envKbZkNd5zyBQ',
