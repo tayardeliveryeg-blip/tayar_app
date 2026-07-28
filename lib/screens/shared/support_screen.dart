@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart';
 import 'package:tayay_app/theme/app_settings.dart';
@@ -119,7 +120,7 @@ class _SupportScreenState extends State<SupportScreen> {
             children: [
               Expanded(
                 child: _SupportActionButton(
-                  icon: Icons.chat,
+                  icon: FontAwesomeIcons.whatsapp,
                   label: loc.whatsappLabel,
                   onTap: _openWhatsapp,
                 ),

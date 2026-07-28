@@ -374,8 +374,8 @@ class TayarDrawer extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.xl),
                   _SocialIcon(
-                    icon: Icon(
-                      Icons.chat_bubble_outline,
+                    icon: FaIcon(
+                      FontAwesomeIcons.whatsapp,
                       color: context.textColor,
                       size: 20,
                     ), // واتساب

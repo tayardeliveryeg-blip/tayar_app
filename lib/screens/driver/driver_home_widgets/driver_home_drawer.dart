@@ -334,8 +334,8 @@ class DriverHomeDrawer extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.xl),
                   DriverSocialIcon(
-                    icon: Icon(
-                      Icons.chat_bubble_outline,
+                    icon: FaIcon(
+                      FontAwesomeIcons.whatsapp,
                       color: context.textColor,
                       size: 20,
                     ), // واتساب
