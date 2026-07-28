@@ -1112,6 +1112,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Insufficient balance for this fare';
 
   @override
+  String walletMaxFareCapLabel(String amount) {
+    return 'Max fare you can offer based on your wallet balance: EGP $amount';
+  }
+
+  @override
   String get homePromoBannerText => 'Get your first delivery for free';
 
   @override
