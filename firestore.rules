@@ -9,7 +9,7 @@ service cloud.firestore {
     }
 
     // ====== بتتأكد إن أي تعديل الراكب بيعمله على طلبه محصور في السيناريوهات
-    // الأربعة المعروفة بالظبط (مش أي حقل تاني زي distanceKm أو suggestedFare
+    // الخمسة المعروفة بالظبط (مش أي حقل تاني زي distanceKm أو suggestedFare
     // اللي المفروض تتحسب من السيرفر بس) ======
     function isValidCustomerOrderUpdate(orderId) {
       let changedKeys = request.resource.data.diff(resource.data).affectedKeys();
@@ -29,7 +29,52 @@ service cloud.firestore {
           exists(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)) &&
           get(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)).data.driverId == request.resource.data.driverId &&
           get(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)).data.price == request.resource.data.acceptedFare
+        ) ||
+        (
+          // ====== الراكب بيعلّم إن طلبه المدفوع بالمحفظة اتخصم بالفعل — مرة
+          // واحدة بس، بعد ما الرحلة تخلص فعليًا. ده بيحصل في نفس الـ
+          // transaction اللي بتخصم الرصيد من users/{userId} (شوف
+          // isValidWalletDeduction تحت) ======
+          changedKeys.hasOnly(['walletDeducted']) &&
+          request.resource.data.walletDeducted == true &&
+          resource.data.walletDeducted != true &&
+          resource.data.paymentMethod == 'محفظة إلكترونية' &&
+          resource.data.status == 'completed'
         );
+    }
+
+    // ====== بتتأكد إن خصم رصيد الراكب (users/{userId}.walletBalance) مش
+    // تعديل حر - لازم يكون مرتبط بطلب حقيقي مكتمل، مدفوع بالمحفظة فعلاً،
+    // ولسه ما اتخصمش، والمبلغ المخصوم يطابق سعر الرحلة بالظبط، والرصيد
+    // الجديد منقلش عن صفر. get() هنا بيقرا حالة الطلب قبل الـ transaction
+    // الحالية (مش بعد الكتابة الجارية في نفس الـ transaction) فمينفعش حد
+    // يخصم مرتين بنفس الطلب ======
+    function isValidWalletDeduction(userId) {
+      let orderId = request.resource.data.walletLastDeductionOrderId;
+      let order = get(/databases/$(database)/documents/orders/$(orderId)).data;
+      return
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['walletBalance', 'walletLastDeductionOrderId']) &&
+        order.customerId == userId &&
+        order.paymentMethod == 'محفظة إلكترونية' &&
+        order.status == 'completed' &&
+        order.walletDeducted != true &&
+        resource.data.walletBalance - request.resource.data.walletBalance == order.acceptedFare &&
+        request.resource.data.walletBalance >= 0;
+    }
+
+    // ====== بتتأكد إن أي سطر بيتضاف في سجل حركات محفظة الراكب من الراكب
+    // نفسه (users/{userId}/walletTransactions) مرتبط بنفس الطلب المكتمل
+    // اللي بيتخصم منه - عشان محدش يقدر يزوّر سجل حركات وهمي ======
+    function isValidWalletLedgerEntry(userId) {
+      let orderId = request.resource.data.orderId;
+      let order = get(/databases/$(database)/documents/orders/$(orderId)).data;
+      return
+        request.resource.data.type == 'trip_payment' &&
+        order.customerId == userId &&
+        order.paymentMethod == 'محفظة إلكترونية' &&
+        order.status == 'completed' &&
+        order.walletDeducted != true;
     }
 
     // ====== الطلبات/الرحلات ======
@@ -109,11 +154,39 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
       allow create: if request.auth != null && request.auth.uid == userId;
+      // ====== الراكب يقدر يعدّل بروفايله بحرية، إلا رصيد محفظته
+      // (walletBalance) - ده منقلش إلا من خلال مسار خصم متحقق منه بدقة
+      // (isValidWalletDeduction) أو من الأدمن (لمنح رصيد/هدايا) ======
       allow update: if request.auth != null && (
-        request.auth.uid == userId ||
-        (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']))
+        (
+          request.auth.uid == userId &&
+          (
+            !request.resource.data.diff(resource.data).affectedKeys()
+              .hasAny(['walletBalance', 'walletLastDeductionOrderId']) ||
+            isValidWalletDeduction(userId)
+          )
+        ) ||
+        (
+          isAdmin() &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        ) ||
+        (
+          isAdmin() &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['walletBalance'])
+        )
       );
       allow delete: if false;
+
+      // ====== سجل حركات محفظة الراكب (خصم رحلات مدفوعة بالمحفظة + رصيد
+      // بيمنحه الأدمن كهدية/خصم) - نفس فكرة drivers/{id}/walletTransactions ======
+      match /walletTransactions/{transactionId} {
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow create: if request.auth != null && (
+          (request.auth.uid == userId && isValidWalletLedgerEntry(userId)) ||
+          isAdmin()
+        );
+        allow update, delete: if false;
+      }
     }
 
     // ====== إشعارات المستخدم ======
