@@ -2078,6 +2078,24 @@ abstract class AppLocalizations {
   /// **'رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة'**
   String get negativeWalletBalanceNote;
 
+  /// No description provided for @myWalletLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'محفظتي'**
+  String get myWalletLabel;
+
+  /// No description provided for @walletTripPaymentLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رحلة مدفوعة بالمحفظة'**
+  String get walletTripPaymentLabel;
+
+  /// No description provided for @walletAdminCreditLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيد مضاف من الإدارة'**
+  String get walletAdminCreditLabel;
+
   /// No description provided for @homePromoBannerText.
   ///
   /// In ar, this message translates to:

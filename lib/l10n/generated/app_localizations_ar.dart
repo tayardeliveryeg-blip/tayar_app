@@ -1084,6 +1084,15 @@ class AppLocalizationsAr extends AppLocalizations {
       'رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة';
 
   @override
+  String get myWalletLabel => 'محفظتي';
+
+  @override
+  String get walletTripPaymentLabel => 'رحلة مدفوعة بالمحفظة';
+
+  @override
+  String get walletAdminCreditLabel => 'رصيد مضاف من الإدارة';
+
+  @override
   String get homePromoBannerText => 'احصل على أول توصيل مجانًا';
 
   @override

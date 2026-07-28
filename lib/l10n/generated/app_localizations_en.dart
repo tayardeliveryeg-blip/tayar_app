@@ -1094,6 +1094,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your balance is negative, top up your wallet to keep receiving new orders';
 
   @override
+  String get myWalletLabel => 'My Wallet';
+
+  @override
+  String get walletTripPaymentLabel => 'Trip paid with wallet';
+
+  @override
+  String get walletAdminCreditLabel => 'Credit added by admin';
+
+  @override
   String get homePromoBannerText => 'Get your first delivery for free';
 
   @override
