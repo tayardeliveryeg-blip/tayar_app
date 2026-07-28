@@ -478,7 +478,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                     ),
                   ],
                 ),
-                child: Icon(Icons.arrow_forward, color: context.textColor),
+                child: Icon(Icons.arrow_back, color: context.textColor),
               ),
             ),
           ),

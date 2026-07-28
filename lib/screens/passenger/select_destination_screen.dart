@@ -326,7 +326,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
         backgroundColor: context.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_forward, color: context.textColor),
+          icon: Icon(Icons.arrow_back, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(

@@ -705,7 +705,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     ),
                   ],
                 ),
-                child: Icon(Icons.arrow_forward, color: context.textColor),
+                child: Icon(Icons.arrow_back, color: context.textColor),
               ),
             ),
           ),

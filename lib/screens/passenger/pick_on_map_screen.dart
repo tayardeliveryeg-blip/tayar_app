@@ -276,7 +276,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     ),
                   ],
                 ),
-                child: Icon(Icons.arrow_forward, color: context.textColor),
+                child: Icon(Icons.arrow_back, color: context.textColor),
               ),
             ),
           ),
