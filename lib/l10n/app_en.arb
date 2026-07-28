@@ -506,6 +506,12 @@
     }
   },
   "walletInsufficientBalanceLabel": "Insufficient balance for this fare",
+  "walletMaxFareCapLabel": "Max fare you can offer based on your wallet balance: EGP {amount}",
+  "@walletMaxFareCapLabel": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
   "homePromoBannerText": "Get your first delivery for free",
   "homeSearchHint": "Where would you like to go?",
   "savedPlacesLabel": "Saved places",

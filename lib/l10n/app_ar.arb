@@ -506,6 +506,12 @@
     }
   },
   "walletInsufficientBalanceLabel": "الرصيد مش كافي لدفع الأجرة دي",
+  "walletMaxFareCapLabel": "أقصى سعر ممكن تقترحه حسب رصيد محفظتك: {amount} جنيه",
+  "@walletMaxFareCapLabel": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
   "homePromoBannerText": "احصل على أول توصيل مجانًا",
   "homeSearchHint": "عايز تروح فين؟",
   "savedPlacesLabel": "أماكن محفوظة",

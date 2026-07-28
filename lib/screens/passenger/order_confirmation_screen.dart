@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/searching_offers_screen.dart';
+import 'package:tayay_app/services/wallet_service.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String pickupAddress;
@@ -41,6 +43,11 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   static const double _step = 5.0; // مقدار الزيادة/النقصان لكل ضغطة
   late final double _minFare; // أقل سعر مسموح بيه (مش هننزل عن حد معين)
 
+  // ====== لما الدفع يكون محفظة إلكترونية: أعلى سعر مسموح بيه هو رصيد
+  // المحفظة الفعلي (بنجيبه من السيرفر عشان محدش يتلاعب بيه من الشاشة
+  // اللي فاتت)، عشان الراكب مايقدرش يقترح سعر أكبر من اللي معاه فعلاً ======
+  double? _walletMaxFare;
+
   // ====== خانة القبول التلقائي ======
   bool _autoAccept = false;
 
@@ -50,10 +57,32 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
     _proposedFare = widget.fare;
     _minFare = (widget.fare * 0.5)
         .roundToDouble(); // مش هننزل عن نص السعر المقترح الأساسي
+    if (widget.paymentMethod == kWalletPaymentMethodValue) {
+      _loadWalletCap();
+    }
+  }
+
+  Future<void> _loadWalletCap() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+    try {
+      final balance = await getPassengerWalletBalance(uid);
+      if (!mounted) return;
+      setState(() {
+        _walletMaxFare = balance;
+        if (_proposedFare > balance) {
+          _proposedFare = balance;
+        }
+      });
+    } catch (_) {}
   }
 
   void _increaseFare() {
-    setState(() => _proposedFare += _step);
+    setState(() {
+      if (_walletMaxFare == null || _proposedFare + _step <= _walletMaxFare!) {
+        _proposedFare += _step;
+      }
+    });
   }
 
   void _decreaseFare() {
@@ -262,7 +291,14 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                           ),
                         ),
                       ),
-                      _FareStepButton(icon: Icons.add, onTap: _increaseFare),
+                      _FareStepButton(
+                        icon: Icons.add,
+                        onTap:
+                            (_walletMaxFare != null &&
+                                _proposedFare + _step > _walletMaxFare!)
+                            ? null
+                            : _increaseFare,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -273,6 +309,18 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       fontSize: 12,
                     ),
                   ),
+                  if (_walletMaxFare != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.walletMaxFareCapLabel(
+                        _walletMaxFare!.toStringAsFixed(0),
+                      ),
+                      style: TextStyle(
+                        color: context.textGreyColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
