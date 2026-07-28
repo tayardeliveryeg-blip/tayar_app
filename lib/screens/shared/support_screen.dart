@@ -120,7 +120,7 @@ class _SupportScreenState extends State<SupportScreen> {
             children: [
               Expanded(
                 child: _SupportActionButton(
-                  icon: FontAwesomeIcons.whatsapp,
+                  icon: const FaIcon(FontAwesomeIcons.whatsapp),
                   label: loc.whatsappLabel,
                   onTap: _openWhatsapp,
                 ),
@@ -128,7 +128,7 @@ class _SupportScreenState extends State<SupportScreen> {
               const SizedBox(width: 10),
               Expanded(
                 child: _SupportActionButton(
-                  icon: Icons.call_outlined,
+                  icon: const Icon(Icons.call_outlined),
                   label: loc.callLabel,
                   onTap: _callSupport,
                 ),
@@ -136,7 +136,7 @@ class _SupportScreenState extends State<SupportScreen> {
               const SizedBox(width: 10),
               Expanded(
                 child: _SupportActionButton(
-                  icon: Icons.email_outlined,
+                  icon: const Icon(Icons.email_outlined),
                   label: loc.emailLabel,
                   onTap: _emailSupport,
                 ),
@@ -207,7 +207,7 @@ class _SupportScreenState extends State<SupportScreen> {
 }
 
 class _SupportActionButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
   final VoidCallback onTap;
 
@@ -230,7 +230,10 @@ class _SupportActionButton extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, color: TayarColors.primary, size: 26),
+            IconTheme(
+              data: const IconThemeData(color: TayarColors.primary, size: 26),
+              child: icon,
+            ),
             const SizedBox(height: 8),
             Text(
               label,
