@@ -129,6 +129,17 @@ Future<void> deductWalletForCompletedTrip({
   });
 }
 
+/// ====== بترجع رصيد محفظة الراكب الحالي (users/{uid}.walletBalance) ======
+/// مستخدمة في شاشة اختيار طريقة الدفع عشان نعرف نفعّل خيار "محفظة إلكترونية"
+/// من عدمه حسب كفاية الرصيد للأجرة الحالية ======
+Future<double> getPassengerWalletBalance(String uid) async {
+  final snap = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uid)
+      .get();
+  return (snap.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
+}
+
 /// ====== تسجيل طلب شحن رصيد جديد من الطيار (في انتظار المراجعة اليدوية) ======
 /// الطلب بيتحفظ بحالة 'pending' وميأثرش على الرصيد إلا لما يتراجع ويتوافق
 /// عليه يدويًا من Firebase Console حاليًا (لحد ما تتعمل شاشة الأدمن) ======

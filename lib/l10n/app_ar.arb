@@ -499,6 +499,13 @@
   "myWalletLabel": "محفظتي",
   "walletTripPaymentLabel": "رحلة مدفوعة بالمحفظة",
   "walletAdminCreditLabel": "رصيد مضاف من الإدارة",
+  "walletAvailableBalanceLabel": "الرصيد المتاح: {amount} جنيه",
+  "@walletAvailableBalanceLabel": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "walletInsufficientBalanceLabel": "الرصيد مش كافي لدفع الأجرة دي",
   "homePromoBannerText": "احصل على أول توصيل مجانًا",
   "homeSearchHint": "عايز تروح فين؟",
   "savedPlacesLabel": "أماكن محفوظة",

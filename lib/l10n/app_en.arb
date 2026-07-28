@@ -499,6 +499,13 @@
   "myWalletLabel": "My Wallet",
   "walletTripPaymentLabel": "Trip paid with wallet",
   "walletAdminCreditLabel": "Credit added by admin",
+  "walletAvailableBalanceLabel": "Available balance: EGP {amount}",
+  "@walletAvailableBalanceLabel": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "walletInsufficientBalanceLabel": "Insufficient balance for this fare",
   "homePromoBannerText": "Get your first delivery for free",
   "homeSearchHint": "Where would you like to go?",
   "savedPlacesLabel": "Saved places",

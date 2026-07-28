@@ -12,6 +12,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColor
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart' show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/screens/passenger/searching_offers_screen.dart';
+import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 
 /// ====== شاشة إنشاء طلب "وصل طلباتي" (توصيل طرد/بضاعة) ======
@@ -176,6 +177,19 @@ class _CreateDeliveryOrderScreenState
       {'value': 'إنستاباي', 'icon': Icons.bolt_outlined},
     ];
 
+    // ====== رصيد المحفظة الحالي + مقارنته بالأجرة عشان نعرف نفعّل خيار
+    // "محفظة إلكترونية" ولا نسيبه غير قابل للاختيار ======
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    double walletBalance = 0;
+    if (uid != null) {
+      try {
+        walletBalance = await getPassengerWalletBalance(uid);
+      } catch (_) {}
+    }
+    final fare = _estimatedFare;
+    final walletCoversFare = walletBalance >= fare && fare > 0;
+
+    if (!mounted) return;
     final selected = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: context.bgColor,
@@ -219,24 +233,47 @@ class _CreateDeliveryOrderScreenState
                 final value = option['value'] as String;
                 final label = paymentMethodDisplay(sheetContext, value);
                 final isSelected = value == _paymentMethod;
+                final isWalletOption = value == 'محفظة إلكترونية';
+                final isDisabled = isWalletOption && !walletCoversFare;
                 return ListTile(
-                  onTap: () => Navigator.pop(sheetContext, value),
+                  onTap: isDisabled
+                      ? null
+                      : () => Navigator.pop(sheetContext, value),
                   leading: Icon(
                     option['icon'] as IconData,
-                    color: isSelected
+                    color: isDisabled
+                        ? context.textGreyColor.withValues(alpha: 0.4)
+                        : isSelected
                         ? TayarColors.primary
                         : context.textGreyColor,
                   ),
                   title: Text(
                     label,
                     style: TextStyle(
-                      color: context.textColor,
+                      color: isDisabled
+                          ? context.textGreyColor.withValues(alpha: 0.5)
+                          : context.textColor,
                       fontSize: 15,
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.normal,
                     ),
                   ),
+                  subtitle: isWalletOption
+                      ? Text(
+                          isDisabled
+                              ? loc.walletInsufficientBalanceLabel
+                              : loc.walletAvailableBalanceLabel(
+                                  walletBalance.toStringAsFixed(0),
+                                ),
+                          style: TextStyle(
+                            color: isDisabled
+                                ? Colors.redAccent
+                                : context.textGreyColor,
+                            fontSize: 12,
+                          ),
+                        )
+                      : null,
                   trailing: isSelected
                       ? const Icon(
                           Icons.check_circle,
