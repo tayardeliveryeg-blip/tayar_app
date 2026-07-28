@@ -18,6 +18,7 @@ import 'package:tayay_app/screens/driver/registration/driver_registration_screen
 import 'package:tayay_app/screens/auth/login_screen.dart';
 import 'package:tayay_app/screens/shared/notifications_screen.dart';
 import 'package:tayay_app/screens/passenger/order_history_screen.dart';
+import 'package:tayay_app/screens/passenger/passenger_wallet_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_profile_screen.dart';
 import 'package:tayay_app/screens/shared/security_screen.dart';
 import 'package:tayay_app/screens/shared/settings_screen.dart';
@@ -222,6 +223,19 @@ class TayarDrawer extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const OrderHistoryScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _DrawerItem(
+                    icon: Icons.account_balance_wallet_outlined,
+                    label: AppLocalizations.of(context)!.myWalletLabel,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PassengerWalletScreen(),
                         ),
                       );
                     },
