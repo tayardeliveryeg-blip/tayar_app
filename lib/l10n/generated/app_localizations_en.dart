@@ -1103,6 +1103,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get walletAdminCreditLabel => 'Credit added by admin';
 
   @override
+  String walletAvailableBalanceLabel(String amount) {
+    return 'Available balance: EGP $amount';
+  }
+
+  @override
+  String get walletInsufficientBalanceLabel =>
+      'Insufficient balance for this fare';
+
+  @override
   String get homePromoBannerText => 'Get your first delivery for free';
 
   @override

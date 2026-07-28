@@ -1093,6 +1093,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get walletAdminCreditLabel => 'رصيد مضاف من الإدارة';
 
   @override
+  String walletAvailableBalanceLabel(String amount) {
+    return 'الرصيد المتاح: $amount جنيه';
+  }
+
+  @override
+  String get walletInsufficientBalanceLabel => 'الرصيد مش كافي لدفع الأجرة دي';
+
+  @override
   String get homePromoBannerText => 'احصل على أول توصيل مجانًا';
 
   @override

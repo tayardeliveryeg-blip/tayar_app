@@ -2096,6 +2096,18 @@ abstract class AppLocalizations {
   /// **'رصيد مضاف من الإدارة'**
   String get walletAdminCreditLabel;
 
+  /// No description provided for @walletAvailableBalanceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرصيد المتاح: {amount} جنيه'**
+  String walletAvailableBalanceLabel(String amount);
+
+  /// No description provided for @walletInsufficientBalanceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرصيد مش كافي لدفع الأجرة دي'**
+  String get walletInsufficientBalanceLabel;
+
   /// No description provided for @homePromoBannerText.
   ///
   /// In ar, this message translates to:
