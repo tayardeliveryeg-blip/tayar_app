@@ -1101,6 +1101,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get walletInsufficientBalanceLabel => 'الرصيد مش كافي لدفع الأجرة دي';
 
   @override
+  String walletMaxFareCapLabel(String amount) {
+    return 'أقصى سعر ممكن تقترحه حسب رصيد محفظتك: $amount جنيه';
+  }
+
+  @override
   String get homePromoBannerText => 'احصل على أول توصيل مجانًا';
 
   @override

@@ -2108,6 +2108,12 @@ abstract class AppLocalizations {
   /// **'الرصيد مش كافي لدفع الأجرة دي'**
   String get walletInsufficientBalanceLabel;
 
+  /// No description provided for @walletMaxFareCapLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقصى سعر ممكن تقترحه حسب رصيد محفظتك: {amount} جنيه'**
+  String walletMaxFareCapLabel(String amount);
+
   /// No description provided for @homePromoBannerText.
   ///
   /// In ar, this message translates to:
