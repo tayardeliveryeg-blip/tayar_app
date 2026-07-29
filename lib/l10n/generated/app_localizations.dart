@@ -2383,6 +2383,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لو عايز تبقى شريك تجاري معانا؟'**
   String get registerStoreDrawerLabel;
+
+  /// No description provided for @becomeVendorDrawerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شريك تجاري'**
+  String get becomeVendorDrawerLabel;
 }
 
 class _AppLocalizationsDelegate

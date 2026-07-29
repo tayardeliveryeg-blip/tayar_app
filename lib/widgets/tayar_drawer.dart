@@ -243,7 +243,7 @@ class TayarDrawer extends StatelessWidget {
                   ),
                   _DrawerItem(
                     icon: Icons.storefront_outlined,
-                    label: AppLocalizations.of(context)!.registerStoreDrawerLabel,
+                    label: AppLocalizations.of(context)!.becomeVendorDrawerLabel,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(

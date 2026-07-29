@@ -563,5 +563,6 @@
   "vendorApplicationSentTitle": "Request sent",
   "vendorApplicationSentMessage": "Your request is under review, we'll be in touch soon.",
   "okButton": "OK",
-  "registerStoreDrawerLabel": "Want to become a business partner?"
+  "registerStoreDrawerLabel": "Want to become a business partner?",
+  "becomeVendorDrawerLabel": "Business partner"
 }

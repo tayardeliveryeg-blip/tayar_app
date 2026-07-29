@@ -1245,4 +1245,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get registerStoreDrawerLabel => 'لو عايز تبقى شريك تجاري معانا؟';
+
+  @override
+  String get becomeVendorDrawerLabel => 'شريك تجاري';
 }

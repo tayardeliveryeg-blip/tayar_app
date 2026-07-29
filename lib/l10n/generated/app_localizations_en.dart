@@ -1258,4 +1258,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registerStoreDrawerLabel => 'Want to become a business partner?';
+
+  @override
+  String get becomeVendorDrawerLabel => 'Business partner';
 }

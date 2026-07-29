@@ -563,5 +563,6 @@
   "vendorApplicationSentTitle": "تم إرسال طلبك",
   "vendorApplicationSentMessage": "طلبك قيد المراجعة حاليًا، هنتواصل معاك قريبًا.",
   "okButton": "تمام",
-  "registerStoreDrawerLabel": "لو عايز تبقى شريك تجاري معانا؟"
+  "registerStoreDrawerLabel": "لو عايز تبقى شريك تجاري معانا؟",
+  "becomeVendorDrawerLabel": "شريك تجاري"
 }
