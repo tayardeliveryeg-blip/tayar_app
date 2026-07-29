@@ -104,6 +104,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   // ====== بانر العرض الترويجي فوق الخريطة: بيقفل محليًا بس (مش متخزن)،
   // يرجع يظهر تاني لو المستخدم قفل وفتح التطبيق من جديد ======
   bool _promoDismissed = false;
+  bool _vendorPromoDismissed = false;
 
   LatLng? _liveUserLocation; // موقعك الحقيقي الفعلي، بيتحدث لايف مع تحركك
   StreamSubscription<Position>? _liveLocationSub;
@@ -1326,6 +1327,37 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     child: NewCustomerPromoBanner(
                       onDismiss: () =>
                           setState(() => _promoDismissed = true),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+          // ====== بانر "لو عايز تبقى شريك تجاري معانا؟" - نفس أسلوب البانر
+          // اللي فوقه بالظبط، بس بيوديه لشاشة فورم انضمام التاجر، وبيختفي
+          // لو المستخدم بعت طلب انضمام قبل كده أو دوس زرار الإغلاق ======
+          if (!_vendorPromoDismissed)
+            Positioned(
+              top: 66 + topSafeArea + 34,
+              right: 16,
+              left: 16,
+              child: AnimatedBuilder(
+                animation: _sheetAnimController,
+                builder: (context, child) => Opacity(
+                  opacity: 1 - _sheetAnimController.value,
+                  child: IgnorePointer(
+                    ignoring: _sheetAnimController.value > 0.5,
+                    child: child,
+                  ),
+                ),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: _isDraggingMap ? 0 : 1,
+                  child: IgnorePointer(
+                    ignoring: _isDraggingMap,
+                    child: BecomeVendorPromoBanner(
+                      onDismiss: () =>
+                          setState(() => _vendorPromoDismissed = true),
                     ),
                   ),
                 ),

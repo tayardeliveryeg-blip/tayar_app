@@ -1191,4 +1191,71 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedPlaceRemovedConfirmation => 'Saved place removed';
+
+  @override
+  String get becomeVendorTitle => 'Become a business partner';
+
+  @override
+  String get becomeVendorIntro =>
+      'Fill in your store details and we\'ll reach out after reviewing.';
+
+  @override
+  String get vendorStoreNameLabel => 'Store name';
+
+  @override
+  String get vendorStoreNameHint => 'e.g. Al Noor Supermarket';
+
+  @override
+  String get vendorBusinessTypeLabel => 'Business type';
+
+  @override
+  String get vendorTypeRestaurant => 'Restaurant';
+
+  @override
+  String get vendorTypeSupermarket => 'Supermarket';
+
+  @override
+  String get vendorTypePharmacy => 'Pharmacy';
+
+  @override
+  String get vendorTypeOther => 'Other';
+
+  @override
+  String get vendorPhoneLabel => 'Mobile/WhatsApp number';
+
+  @override
+  String get vendorLocationLabel => 'Store location';
+
+  @override
+  String get vendorLocationPickTitle => 'Pick the store location';
+
+  @override
+  String get vendorNoteLabel => 'Note (optional)';
+
+  @override
+  String get vendorNoteHint => 'Any extra details you\'d like to add';
+
+  @override
+  String get vendorSubmitButton => 'Submit request';
+
+  @override
+  String get vendorFillRequiredFieldsError =>
+      'Please fill in the store name, phone number, and location';
+
+  @override
+  String get vendorSubmitFailedError =>
+      'Couldn\'t submit the request, please try again';
+
+  @override
+  String get vendorApplicationSentTitle => 'Request sent';
+
+  @override
+  String get vendorApplicationSentMessage =>
+      'Your request is under review, we\'ll be in touch soon.';
+
+  @override
+  String get okButton => 'OK';
+
+  @override
+  String get registerStoreDrawerLabel => 'Want to become a business partner?';
 }

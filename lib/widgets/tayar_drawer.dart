@@ -19,6 +19,7 @@ import 'package:tayay_app/screens/auth/login_screen.dart';
 import 'package:tayay_app/screens/shared/notifications_screen.dart';
 import 'package:tayay_app/screens/passenger/order_history_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_wallet_screen.dart';
+import 'package:tayay_app/screens/passenger/become_vendor_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_profile_screen.dart';
 import 'package:tayay_app/screens/shared/security_screen.dart';
 import 'package:tayay_app/screens/shared/settings_screen.dart';
@@ -236,6 +237,19 @@ class TayarDrawer extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const PassengerWalletScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _DrawerItem(
+                    icon: Icons.storefront_outlined,
+                    label: AppLocalizations.of(context)!.registerStoreDrawerLabel,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BecomeVendorScreen(),
                         ),
                       );
                     },

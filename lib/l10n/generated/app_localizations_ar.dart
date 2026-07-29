@@ -1179,4 +1179,70 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get savedPlaceRemovedConfirmation => 'تم حذف المكان المحفوظ';
+
+  @override
+  String get becomeVendorTitle => 'عايز تبقى شريك تجاري معانا؟';
+
+  @override
+  String get becomeVendorIntro =>
+      'املأ بيانات محلك وهنتواصل معاك بعد المراجعة.';
+
+  @override
+  String get vendorStoreNameLabel => 'اسم المحل';
+
+  @override
+  String get vendorStoreNameHint => 'مثال: سوبر ماركت النور';
+
+  @override
+  String get vendorBusinessTypeLabel => 'نوع النشاط';
+
+  @override
+  String get vendorTypeRestaurant => 'مطعم';
+
+  @override
+  String get vendorTypeSupermarket => 'سوبر ماركت';
+
+  @override
+  String get vendorTypePharmacy => 'صيدلية';
+
+  @override
+  String get vendorTypeOther => 'أخرى';
+
+  @override
+  String get vendorPhoneLabel => 'رقم موبايل/واتساب';
+
+  @override
+  String get vendorLocationLabel => 'موقع المحل';
+
+  @override
+  String get vendorLocationPickTitle => 'حدد موقع المحل';
+
+  @override
+  String get vendorNoteLabel => 'ملاحظة (اختياري)';
+
+  @override
+  String get vendorNoteHint => 'أي تفاصيل إضافية تحب تضيفها';
+
+  @override
+  String get vendorSubmitButton => 'إرسال الطلب';
+
+  @override
+  String get vendorFillRequiredFieldsError =>
+      'من فضلك املأ اسم المحل ورقم الموبايل وحدد الموقع';
+
+  @override
+  String get vendorSubmitFailedError => 'تعذر إرسال الطلب، حاول تاني';
+
+  @override
+  String get vendorApplicationSentTitle => 'تم إرسال طلبك';
+
+  @override
+  String get vendorApplicationSentMessage =>
+      'طلبك قيد المراجعة حاليًا، هنتواصل معاك قريبًا.';
+
+  @override
+  String get okButton => 'تمام';
+
+  @override
+  String get registerStoreDrawerLabel => 'لو عايز تبقى شريك تجاري معانا؟';
 }

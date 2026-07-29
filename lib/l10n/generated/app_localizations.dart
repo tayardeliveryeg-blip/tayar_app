@@ -2257,6 +2257,132 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم حذف المكان المحفوظ'**
   String get savedPlaceRemovedConfirmation;
+
+  /// No description provided for @becomeVendorTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عايز تبقى شريك تجاري معانا؟'**
+  String get becomeVendorTitle;
+
+  /// No description provided for @becomeVendorIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'املأ بيانات محلك وهنتواصل معاك بعد المراجعة.'**
+  String get becomeVendorIntro;
+
+  /// No description provided for @vendorStoreNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المحل'**
+  String get vendorStoreNameLabel;
+
+  /// No description provided for @vendorStoreNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: سوبر ماركت النور'**
+  String get vendorStoreNameHint;
+
+  /// No description provided for @vendorBusinessTypeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع النشاط'**
+  String get vendorBusinessTypeLabel;
+
+  /// No description provided for @vendorTypeRestaurant.
+  ///
+  /// In ar, this message translates to:
+  /// **'مطعم'**
+  String get vendorTypeRestaurant;
+
+  /// No description provided for @vendorTypeSupermarket.
+  ///
+  /// In ar, this message translates to:
+  /// **'سوبر ماركت'**
+  String get vendorTypeSupermarket;
+
+  /// No description provided for @vendorTypePharmacy.
+  ///
+  /// In ar, this message translates to:
+  /// **'صيدلية'**
+  String get vendorTypePharmacy;
+
+  /// No description provided for @vendorTypeOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'أخرى'**
+  String get vendorTypeOther;
+
+  /// No description provided for @vendorPhoneLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم موبايل/واتساب'**
+  String get vendorPhoneLabel;
+
+  /// No description provided for @vendorLocationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'موقع المحل'**
+  String get vendorLocationLabel;
+
+  /// No description provided for @vendorLocationPickTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدد موقع المحل'**
+  String get vendorLocationPickTitle;
+
+  /// No description provided for @vendorNoteLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظة (اختياري)'**
+  String get vendorNoteLabel;
+
+  /// No description provided for @vendorNoteHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أي تفاصيل إضافية تحب تضيفها'**
+  String get vendorNoteHint;
+
+  /// No description provided for @vendorSubmitButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال الطلب'**
+  String get vendorSubmitButton;
+
+  /// No description provided for @vendorFillRequiredFieldsError.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك املأ اسم المحل ورقم الموبايل وحدد الموقع'**
+  String get vendorFillRequiredFieldsError;
+
+  /// No description provided for @vendorSubmitFailedError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذر إرسال الطلب، حاول تاني'**
+  String get vendorSubmitFailedError;
+
+  /// No description provided for @vendorApplicationSentTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طلبك'**
+  String get vendorApplicationSentTitle;
+
+  /// No description provided for @vendorApplicationSentMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبك قيد المراجعة حاليًا، هنتواصل معاك قريبًا.'**
+  String get vendorApplicationSentMessage;
+
+  /// No description provided for @okButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمام'**
+  String get okButton;
+
+  /// No description provided for @registerStoreDrawerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لو عايز تبقى شريك تجاري معانا؟'**
+  String get registerStoreDrawerLabel;
 }
 
 class _AppLocalizationsDelegate
