@@ -2150,24 +2150,6 @@ abstract class AppLocalizations {
   /// **'إضافة'**
   String get savedPlaceAdd;
 
-  /// No description provided for @savedPlacesComingSoonMessage.
-  ///
-  /// In ar, this message translates to:
-  /// **'الميزة دي هتضاف قريبًا'**
-  String get savedPlacesComingSoonMessage;
-
-  /// No description provided for @lastTripLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'آخر رحلة'**
-  String get lastTripLabel;
-
-  /// No description provided for @reorderTripLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'إعادة الطلب'**
-  String get reorderTripLabel;
-
   /// No description provided for @recentDestinationsLabel.
   ///
   /// In ar, this message translates to:

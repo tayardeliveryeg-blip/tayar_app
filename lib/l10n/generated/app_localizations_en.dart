@@ -1135,15 +1135,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savedPlaceAdd => 'Add';
 
   @override
-  String get savedPlacesComingSoonMessage => 'This feature is coming soon';
-
-  @override
-  String get lastTripLabel => 'Last trip';
-
-  @override
-  String get reorderTripLabel => 'Reorder';
-
-  @override
   String get recentDestinationsLabel => 'Recent destinations';
 
   @override

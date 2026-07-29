@@ -1124,15 +1124,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get savedPlaceAdd => 'إضافة';
 
   @override
-  String get savedPlacesComingSoonMessage => 'الميزة دي هتضاف قريبًا';
-
-  @override
-  String get lastTripLabel => 'آخر رحلة';
-
-  @override
-  String get reorderTripLabel => 'إعادة الطلب';
-
-  @override
   String get recentDestinationsLabel => 'وجهات أخيرة';
 
   @override
