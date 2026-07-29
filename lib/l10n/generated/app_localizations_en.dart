@@ -1174,7 +1174,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameSavedPlaceTitle => 'Name this place';
 
   @override
-  String get nameSavedPlaceHint => 'e.g. Gym, Mom\'s house';
+  String get nameSavedPlaceHint => 'e.g. Gym, Office';
 
   @override
   String get nameSavedPlaceRequiredError => 'Please enter a name';

@@ -2225,7 +2225,7 @@ abstract class AppLocalizations {
   /// No description provided for @nameSavedPlaceHint.
   ///
   /// In ar, this message translates to:
-  /// **'مثلاً: الجيم، بيت ماما'**
+  /// **'مثلاً: الجيم، المكتب'**
   String get nameSavedPlaceHint;
 
   /// No description provided for @nameSavedPlaceRequiredError.

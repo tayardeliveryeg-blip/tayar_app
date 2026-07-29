@@ -1162,7 +1162,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nameSavedPlaceTitle => 'سمّي المكان';
 
   @override
-  String get nameSavedPlaceHint => 'مثلاً: الجيم، بيت ماما';
+  String get nameSavedPlaceHint => 'مثلاً: الجيم، المكتب';
 
   @override
   String get nameSavedPlaceRequiredError => 'من فضلك اكتب اسم للمكان';
