@@ -409,6 +409,40 @@
         </div>
       </div>
 
+      <!-- WALLET -->
+      <div class="section" id="sec-wallet">
+        <div class="panel-head" style="margin-bottom:14px;">
+          <h3 style="font-size:15px;">Passenger wallet credit</h3>
+          <span class="hint">Search a passenger by phone or UID, then grant or adjust their wallet credit directly — this updates the real balance in Firestore, no Firebase Console needed.</span>
+        </div>
+        <div class="panel">
+          <div class="settings-field" style="max-width:420px;">
+            <label>Search by phone or UID</label>
+            <input type="text" id="walletSearchInput" placeholder="e.g. 010xxxxxxxx or UID" oninput="renderWalletSearchResults()">
+          </div>
+          <div id="walletSearchResults" style="margin-top:14px;"></div>
+        </div>
+
+        <div class="panel" id="walletGrantPanel" style="display:none; margin-top:16px;">
+          <div class="panel-head"><h3 id="walletSelectedUserName" style="font-size:15px;"></h3></div>
+          <div class="hint" style="margin-bottom:14px;">Current balance: <span class="mono" id="walletSelectedBalance">—</span> EGP</div>
+          <div class="settings-grid">
+            <div class="settings-field">
+              <label>Amount (EGP) <span class="hint">— use a negative number to deduct</span></label>
+              <input type="number" id="walletGrantAmount" placeholder="e.g. 50">
+            </div>
+            <div class="settings-field">
+              <label>Reason <span class="hint">(optional, shown to the passenger in their wallet history)</span></label>
+              <input type="text" id="walletGrantReason" placeholder="e.g. Promo credit / Compensation">
+            </div>
+          </div>
+          <div style="margin-top:16px; display:flex; gap:10px;">
+            <button class="btn primary" onclick="submitWalletGrant()">Apply to wallet</button>
+            <button class="btn" onclick="cancelWalletGrant()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
       <!-- SETTINGS -->
       <div class="section" id="sec-settings">
         <div class="panel">
@@ -542,6 +576,7 @@ const icons = {
   orders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg>',
   drivers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14M6 17l1.5-6h9L18 17M9 11V7h6v4"/><circle cx="7.5" cy="17.5" r="1.6"/><circle cx="16.5" cy="17.5" r="1.6"/></svg>',
   users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M16 12h3"/><path d="M3 9h18"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
 
@@ -669,6 +704,7 @@ const navItems = [
   {key:'orders', label:'Orders', count:()=>orders.length},
   {key:'drivers', label:'Drivers', count:()=>drivers.length},
   {key:'users', label:'Customers', count:()=>users.length},
+  {key:'wallet', label:'Wallet'},
   {key:'settings', label:'Settings'},
 ];
 
@@ -688,12 +724,13 @@ function goTo(key){
   currentSection = key;
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+key).classList.add('active');
-  const titles = {overview:'Overview', orders:'Orders', drivers:'Drivers', users:'Customers', settings:'Settings'};
+  const titles = {overview:'Overview', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', settings:'Settings'};
   document.getElementById('pageTitle').textContent = titles[key];
   document.getElementById('pageBreadcrumb').textContent = 'tayar / ' + key;
   renderNav();
   renderAll();
   if(key==='settings') loadSettings();
+  if(key==='wallet'){ cancelWalletGrant(); document.getElementById('walletSearchInput').value=''; document.getElementById('walletSearchResults').innerHTML=''; }
 }
 
 /* ---------------- SETTINGS ---------------- */
@@ -918,6 +955,93 @@ function toggleUser(id, newStatus){
   db.collection(COLLECTIONS.users).doc(id).update({status:newStatus})
     .then(()=>toast(`User is now ${newStatus}`))
     .catch(err=>toast('Failed: ' + err.message));
+}
+
+/* ---------------- WALLET (grant/adjust passenger credit) ---------------- */
+let walletSelectedUserId = null;
+
+function renderWalletSearchResults(){
+  const q = (document.getElementById('walletSearchInput').value || '').trim();
+  const container = document.getElementById('walletSearchResults');
+  if(!q){ container.innerHTML = ''; return; }
+  const qLower = q.toLowerCase();
+  const qDigits = q.replace(/[^0-9]/g,'');
+  const matches = users.filter(u => {
+    const idMatch = u.id.toLowerCase().includes(qLower);
+    const nameMatch = (u.name||'').toLowerCase().includes(qLower);
+    const phoneDigits = (u.phone||'').replace(/[^0-9]/g,'');
+    const phoneMatch = qDigits.length >= 3 && phoneDigits.includes(qDigits);
+    return idMatch || nameMatch || phoneMatch;
+  }).slice(0, 15);
+
+  if(matches.length === 0){
+    container.innerHTML = `<div class="hint">No matching passengers.</div>`;
+    return;
+  }
+  container.innerHTML = `
+    <table>
+      <thead><tr><th>Name</th><th>Phone</th><th>UID</th><th></th></tr></thead>
+      <tbody>
+        ${matches.map(u=>`
+          <tr>
+            <td>${u.name}</td>
+            <td class="mono">${u.phone}</td>
+            <td class="mono">${u.id}</td>
+            <td><button class="btn small primary" onclick="selectWalletUser('${u.id}')">Select</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+function selectWalletUser(userId){
+  const u = users.find(x => x.id === userId);
+  if(!u) return;
+  walletSelectedUserId = userId;
+  document.getElementById('walletGrantPanel').style.display = 'block';
+  document.getElementById('walletSelectedUserName').textContent = `${u.name} (${u.phone})`;
+  document.getElementById('walletSelectedBalance').textContent = '…';
+  document.getElementById('walletGrantAmount').value = '';
+  document.getElementById('walletGrantReason').value = '';
+  db.collection(COLLECTIONS.users).doc(userId).get().then(doc=>{
+    const bal = (doc.data() && doc.data().walletBalance) || 0;
+    document.getElementById('walletSelectedBalance').textContent = bal.toFixed(0);
+  });
+}
+
+function cancelWalletGrant(){
+  walletSelectedUserId = null;
+  document.getElementById('walletGrantPanel').style.display = 'none';
+}
+
+function submitWalletGrant(){
+  if(!walletSelectedUserId){ toast('Select a passenger first'); return; }
+  const amount = parseFloat(document.getElementById('walletGrantAmount').value);
+  const reason = document.getElementById('walletGrantReason').value.trim();
+  if(!amount || isNaN(amount)){ toast('Enter a valid, non-zero amount'); return; }
+
+  const userRef = db.collection(COLLECTIONS.users).doc(walletSelectedUserId);
+  db.runTransaction(txn => txn.get(userRef).then(doc => {
+    const currentBalance = (doc.data() && doc.data().walletBalance) || 0;
+    const newBalance = currentBalance + amount;
+    // ====== لازم التحديث ده يمس حقل walletBalance بس عشان يعدي
+    // Firestore Security Rules (isAdmin() write مسموح بيه على الحقل ده لوحده) ======
+    txn.update(userRef, { walletBalance: newBalance });
+    const ledgerRef = userRef.collection('walletTransactions').doc();
+    txn.set(ledgerRef, {
+      type: 'admin_credit',
+      amount: amount,
+      reason: reason || null,
+      balanceAfter: newBalance,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    return newBalance;
+  })).then(newBalance=>{
+    toast(`Wallet updated — new balance: ${newBalance.toFixed(0)} EGP`);
+    document.getElementById('walletSelectedBalance').textContent = newBalance.toFixed(0);
+    document.getElementById('walletGrantAmount').value = '';
+    document.getElementById('walletGrantReason').value = '';
+  }).catch(err=>toast('Failed: ' + err.message));
 }
 
 /* ---------------- MODAL (add driver) ---------------- */
