@@ -537,7 +537,7 @@
   "savedAddressSaveError": "حصل خطأ أثناء حفظ العنوان، حاول تاني",
   "selectCustomPlaceTitle": "اختار مكان الحفظ",
   "nameSavedPlaceTitle": "سمّي المكان",
-  "nameSavedPlaceHint": "مثلاً: الجيم، بيت ماما",
+  "nameSavedPlaceHint": "مثلاً: الجيم، المكتب",
   "nameSavedPlaceRequiredError": "من فضلك اكتب اسم للمكان",
   "removeSavedPlaceTitle": "حذف المكان المحفوظ؟",
   "removeSavedPlaceMessage": "هيتم حذف المكان ده من الأماكن المحفوظة",

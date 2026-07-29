@@ -537,7 +537,7 @@
   "savedAddressSaveError": "Something went wrong while saving the address, please try again",
   "selectCustomPlaceTitle": "Choose the place's location",
   "nameSavedPlaceTitle": "Name this place",
-  "nameSavedPlaceHint": "e.g. Gym, Mom's house",
+  "nameSavedPlaceHint": "e.g. Gym, Office",
   "nameSavedPlaceRequiredError": "Please enter a name",
   "removeSavedPlaceTitle": "Remove saved place?",
   "removeSavedPlaceMessage": "This place will be removed from your saved places",
