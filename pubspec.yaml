@@ -33,7 +33,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  google_fonts: ^8.1.0 # لسه على 6.x عمدًا - آخر إصدار 8.1.0 فيه قفزتين major، محتاج اختبار قبل الترقية
+  google_fonts: ^8.1.0
   shared_preferences: ^2.5.5
   http: ^1.6.0
   image_picker: ^1.1.2

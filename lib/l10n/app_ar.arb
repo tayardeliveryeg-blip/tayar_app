@@ -518,9 +518,6 @@
   "savedPlaceHome": "البيت",
   "savedPlaceWork": "الشغل",
   "savedPlaceAdd": "إضافة",
-  "savedPlacesComingSoonMessage": "الميزة دي هتضاف قريبًا",
-  "lastTripLabel": "آخر رحلة",
-  "reorderTripLabel": "إعادة الطلب",
   "recentDestinationsLabel": "وجهات أخيرة",
   "nearbyDriversCountLabel": "{count} سواقين قريبين منك",
   "@nearbyDriversCountLabel": {

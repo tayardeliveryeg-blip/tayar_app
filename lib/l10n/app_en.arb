@@ -518,9 +518,6 @@
   "savedPlaceHome": "Home",
   "savedPlaceWork": "Work",
   "savedPlaceAdd": "Add",
-  "savedPlacesComingSoonMessage": "This feature is coming soon",
-  "lastTripLabel": "Last trip",
-  "reorderTripLabel": "Reorder",
   "recentDestinationsLabel": "Recent destinations",
   "nearbyDriversCountLabel": "{count} drivers nearby",
   "@nearbyDriversCountLabel": {
