@@ -1185,10 +1185,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get becomeVendorIntro =>
-      'املأ بيانات محلك وهنتواصل معاك بعد المراجعة.';
+      'املأ بيانات نشاطك التجاري وهنتواصل معاك بعد المراجعة.';
 
   @override
-  String get vendorStoreNameLabel => 'اسم المحل';
+  String get vendorStoreNameLabel => 'اسم النشاط التجاري';
 
   @override
   String get vendorStoreNameHint => 'مثال: سوبر ماركت النور';
@@ -1212,10 +1212,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get vendorPhoneLabel => 'رقم موبايل/واتساب';
 
   @override
-  String get vendorLocationLabel => 'موقع المحل';
+  String get vendorLocationLabel => 'موقع النشاط التجاري';
 
   @override
-  String get vendorLocationPickTitle => 'حدد موقع المحل';
+  String get vendorLocationPickTitle => 'حدد موقع النشاط التجاري';
 
   @override
   String get vendorNoteLabel => 'ملاحظة (اختياري)';
@@ -1228,7 +1228,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get vendorFillRequiredFieldsError =>
-      'من فضلك املأ اسم المحل ورقم الموبايل وحدد الموقع';
+      'من فضلك املأ اسم النشاط التجاري ورقم الموبايل وحدد الموقع';
 
   @override
   String get vendorSubmitFailedError => 'تعذر إرسال الطلب، حاول تاني';

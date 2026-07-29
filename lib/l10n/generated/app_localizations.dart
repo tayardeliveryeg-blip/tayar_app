@@ -2267,13 +2267,13 @@ abstract class AppLocalizations {
   /// No description provided for @becomeVendorIntro.
   ///
   /// In ar, this message translates to:
-  /// **'املأ بيانات محلك وهنتواصل معاك بعد المراجعة.'**
+  /// **'املأ بيانات نشاطك التجاري وهنتواصل معاك بعد المراجعة.'**
   String get becomeVendorIntro;
 
   /// No description provided for @vendorStoreNameLabel.
   ///
   /// In ar, this message translates to:
-  /// **'اسم المحل'**
+  /// **'اسم النشاط التجاري'**
   String get vendorStoreNameLabel;
 
   /// No description provided for @vendorStoreNameHint.
@@ -2321,13 +2321,13 @@ abstract class AppLocalizations {
   /// No description provided for @vendorLocationLabel.
   ///
   /// In ar, this message translates to:
-  /// **'موقع المحل'**
+  /// **'موقع النشاط التجاري'**
   String get vendorLocationLabel;
 
   /// No description provided for @vendorLocationPickTitle.
   ///
   /// In ar, this message translates to:
-  /// **'حدد موقع المحل'**
+  /// **'حدد موقع النشاط التجاري'**
   String get vendorLocationPickTitle;
 
   /// No description provided for @vendorNoteLabel.
@@ -2351,7 +2351,7 @@ abstract class AppLocalizations {
   /// No description provided for @vendorFillRequiredFieldsError.
   ///
   /// In ar, this message translates to:
-  /// **'من فضلك املأ اسم المحل ورقم الموبايل وحدد الموقع'**
+  /// **'من فضلك املأ اسم النشاط التجاري ورقم الموبايل وحدد الموقع'**
   String get vendorFillRequiredFieldsError;
 
   /// No description provided for @vendorSubmitFailedError.
