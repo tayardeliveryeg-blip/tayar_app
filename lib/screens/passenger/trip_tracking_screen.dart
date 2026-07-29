@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/rate_trip_screen.dart';
 import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
 import 'package:tayay_app/services/call_invitation_helper.dart';
+import 'package:tayay_app/services/wallet_service.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -42,6 +44,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
   String _driverName = '';
   String _driverId = '';
   double _fare = 0;
+  String _paymentMethod = 'كاش';
   String _pickupAddress = '';
   String _destinationAddress = '';
   LatLng? _pickupLocation;
@@ -114,6 +117,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
           AppLocalizations.of(context)!.defaultDriverName;
       _driverId = (data['driverId'] as String?) ?? '';
       _fare = (data['acceptedFare'] as num?)?.toDouble() ?? 0;
+      _paymentMethod = (data['paymentMethod'] as String?) ?? _paymentMethod;
       _pickupAddress = (data['pickupAddress'] as String?) ?? '';
       _destinationAddress = (data['destinationAddress'] as String?) ?? '';
 
@@ -371,12 +375,29 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
   }
 
   // ====== لما الرحلة تخلص (completed) بننتقل مباشرة لشاشة تقييم الطيار
-  // بدل ديالوج الشكر، عشان نضمن إن الراكب يقيّم كل رحلة ======
+  // بدل ديالوج الشكر، عشان نضمن إن الراكب يقيّم كل رحلة. لو الدفع كان
+  // بالمحفظة الإلكترونية، بنخصم رصيد الراكب الأول (عملية آمنة ومحمية
+  // بـ walletDeducted flag فمينفعش تتكرر حتى لو الفانكشن اتنادت أكتر
+  // من مرة) قبل ما ننقل الشاشة ======
   void _goToRateTripScreen() {
     if (_endDialogShown) return;
     _endDialogShown = true;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future<void> proceed() async {
+      if (_paymentMethod == kWalletPaymentMethodValue) {
+        final uid = FirebaseAuth.instance.currentUser?.uid;
+        if (uid != null) {
+          try {
+            await deductWalletForCompletedTrip(
+              orderId: widget.orderId,
+              userId: uid,
+            );
+          } catch (e) {
+            debugPrint('❌ خطأ في خصم رصيد المحفظة: $e');
+          }
+        }
+      }
+
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
@@ -389,7 +410,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
         ),
         (route) => route.isFirst,
       );
-    });
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => proceed());
   }
 
   // ====== ديالوج الإلغاء فقط (لما الطيار أو النظام يلغي الرحلة) ======
