@@ -1,0 +1,95 @@
+diff a/tayar-admin/public/index.html b/tayar-admin/public/index.html	(rejected hunks)
+@@ -205,6 +205,9 @@
+   .badge.active{background:var(--success-dim);color:var(--success);}
+   .badge.banned{background:var(--danger-dim);color:var(--danger);}
+ 
++  .badge.pending{background:#3d2f10;color:var(--amber);}
++  .badge.contacted{background:var(--success-dim);color:var(--success);}
++
+   .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+   .chip{
+     padding:6px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;
+@@ -511,7 +528,8 @@ const firebaseConfig = {
+ const COLLECTIONS = {
+   orders: 'orders',
+   drivers: 'drivers',
+-  users: 'users'
++  users: 'users',
++  vendorApplications: 'vendor_applications'
+ };
+ 
+ firebase.initializeApp(firebaseConfig);
+@@ -577,6 +595,7 @@ const icons = {
+   drivers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14M6 17l1.5-6h9L18 17M9 11V7h6v4"/><circle cx="7.5" cy="17.5" r="1.6"/><circle cx="16.5" cy="17.5" r="1.6"/></svg>',
+   users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>',
+   wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M16 12h3"/><path d="M3 9h18"/></svg>',
++  vendorApplications: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9z"/><path d="M9 20v-6h6v6"/></svg>',
+   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
+ };
+ 
+@@ -584,8 +603,9 @@ const icons = {
+ let orders = [];
+ let drivers = [];
+ let users = [];
++let vendorApplications = [];
+ let orderFilter = 'all';
+-let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting' };
++let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting' };
+ 
+ function showConnError(collectionKey, err){
+   const banner = document.getElementById('connBanner');
+@@ -683,6 +703,29 @@ function startListeners(){
+     connectionState.users = 'ok';
+     renderAll();
+   }, err => { connectionState.users = 'error'; showConnError('users', err); });
++
++  // vendor_applications: submitted from the app's "become a business partner" form
++  // (submitVendorApplication in vendor_service.dart). Only status/reviewedAt/reviewNote
++  // are writable from here — everything else is locked by Firestore Security Rules.
++  db.collection(COLLECTIONS.vendorApplications).onSnapshot(snap => {
++    vendorApplications = snap.docs.map(doc => {
++      const d = doc.data();
++      const loc = d.location || {};
++      return {
++        id: doc.id,
++        storeName: pick(d, ['storeName'], '—'),
++        businessType: pick(d, ['businessType'], '—'),
++        contactPhone: pick(d, ['contactPhone'], '—'),
++        lat: loc.lat, lon: loc.lon,
++        note: pick(d, ['note'], ''),
++        status: (pick(d, ['status'], 'pending')+'').toLowerCase(),
++        createdAtRaw: (()=>{ const ts = pick(d,['createdAt'],null); return ts ? (ts.toDate ? ts.toDate() : new Date(ts)) : null; })(),
++        time: relativeTime(pick(d, ['createdAt'], null))
++      };
++    });
++    connectionState.vendorApplications = 'ok';
++    renderAll();
++  }, err => { connectionState.vendorApplications = 'error'; showConnError('vendorApplications', err); });
+ }
+ 
+ /* deliveries-per-driver and orders-per-customer aren't stored fields —
+@@ -705,6 +748,7 @@ const navItems = [
+   {key:'drivers', label:'Drivers', count:()=>drivers.length},
+   {key:'users', label:'Customers', count:()=>users.length},
+   {key:'wallet', label:'Wallet'},
++  {key:'vendorApplications', label:'Vendor Requests', count:()=>vendorApplications.filter(v=>v.status==='pending').length},
+   {key:'settings', label:'Settings'},
+ ];
+ 
+@@ -724,7 +768,7 @@ function goTo(key){
+   currentSection = key;
+   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+   document.getElementById('sec-'+key).classList.add('active');
+-  const titles = {overview:'Overview', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', settings:'Settings'};
++  const titles = {overview:'Overview', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', vendorApplications:'Vendor Requests', settings:'Settings'};
+   document.getElementById('pageTitle').textContent = titles[key];
+   document.getElementById('pageBreadcrumb').textContent = 'tayar / ' + key;
+   renderNav();
+@@ -1122,6 +1212,7 @@ function renderAll(){
+   if(currentSection==='orders'){ renderOrderFilters(); renderOrders(); }
+   if(currentSection==='drivers'){ renderDrivers(); }
+   if(currentSection==='users'){ renderUsers(); }
++  if(currentSection==='vendorApplications'){ renderVendorApplications(); }
+ }
+ 
+ renderNav();

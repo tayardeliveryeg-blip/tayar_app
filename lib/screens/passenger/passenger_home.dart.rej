@@ -1,0 +1,9 @@
+diff a/lib/screens/passenger/passenger_home.dart b/lib/screens/passenger/passenger_home.dart	(rejected hunks)
+@@ -104,6 +104,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
+   // ====== بانر العرض الترويجي فوق الخريطة: بيقفل محليًا بس (مش متخزن)،
+   // يرجع يظهر تاني لو المستخدم قفل وفتح التطبيق من جديد ======
+   bool _promoDismissed = false;
++  bool _vendorPromoDismissed = false;
+ 
+   LatLng? _liveUserLocation; // موقعك الحقيقي الفعلي، بيتحدث لايف مع تحركك
+   StreamSubscription<Position>? _liveLocationSub;

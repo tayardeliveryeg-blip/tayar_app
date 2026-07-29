@@ -1,0 +1,9 @@
+diff a/lib/screens/passenger/passenger_bottom_sheets.dart b/lib/screens/passenger/passenger_bottom_sheets.dart	(rejected hunks)
+@@ -11,6 +11,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/theme/theme_extensions.dart';
+ import 'package:tayay_app/screens/passenger/passenger_home.dart' show paymentMethodDisplay;
+ import 'package:tayay_app/screens/passenger/rate_trip_screen.dart';
++import 'package:tayay_app/screens/passenger/become_vendor_screen.dart';
+ 
+ class TayarBottomSheet extends StatelessWidget {
+   final String? destinationAddress;

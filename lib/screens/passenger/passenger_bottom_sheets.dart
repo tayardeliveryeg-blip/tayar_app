@@ -9,7 +9,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show paymentMethodDisplay;
+import 'package:tayay_app/screens/passenger/passenger_home.dart'
+    show paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/rate_trip_screen.dart';
 import 'package:tayay_app/screens/passenger/become_vendor_screen.dart';
 
@@ -80,9 +81,7 @@ class TayarBottomSheet extends StatelessWidget {
               onVerticalDragUpdate: onDragUpdate,
               onVerticalDragEnd: onDragEnd,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppSpacing.md,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                 child: Center(
                   child: Container(
                     width: 40,
@@ -457,9 +456,9 @@ class _SavedPlacesRow extends StatelessWidget {
         // زمنيًا تلقائيًا من غير ما نحتاج نخزّن حقل ترتيب منفصل ======
         final customEntries =
             (savedAddresses?.entries.where(
-                  (e) => e.key != 'home' && e.key != 'work',
-                ) ??
-                const <MapEntry<String, dynamic>>[])
+                      (e) => e.key != 'home' && e.key != 'work',
+                    ) ??
+                    const <MapEntry<String, dynamic>>[])
                 .toList()
               ..sort((a, b) => a.key.compareTo(b.key));
 
@@ -574,9 +573,9 @@ class _SavedPlacesRow extends StatelessWidget {
         'savedAddresses.$key': FieldValue.delete(),
       });
       if (!context.mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.savedPlaceRemovedConfirmation)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.savedPlaceRemovedConfirmation)),
+      );
     } catch (e) {
       debugPrint('❌ خطأ في حذف مكان محفوظ مخصص ($key): $e');
     }
@@ -834,8 +833,7 @@ class _RecentDestinationsSection extends StatelessWidget {
                       child: _SavedPlaceChip(
                         icon: Icons.history,
                         label: dest.address,
-                        onTap: () =>
-                            onReorderTrip(dest.location, dest.address),
+                        onTap: () => onReorderTrip(dest.location, dest.address),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
@@ -923,11 +921,7 @@ class NewCustomerPromoBanner extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: onDismiss,
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.white70,
-                  size: 14,
-                ),
+                child: const Icon(Icons.close, color: Colors.white70, size: 14),
               ),
             ],
           ),
