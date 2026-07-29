@@ -77,6 +77,21 @@ service cloud.firestore {
         order.walletDeducted != true;
     }
 
+    // ====== بتتأكد إن طلب انضمام تاجر جديد (vendor_applications) شكله سليم:
+    // مربوط باليوزر اللي بعت الطلب، الحقول المطلوبة كلها موجودة وبالشكل
+    // الصح، حالة الطلب بتبدأ 'pending' دايمًا (محدش يقدر يبعت طلب ويحطه
+    // مقبول من نفسه)، والملاحظة الاختيارية لو موجودة محدودة الطول ======
+    function isValidVendorApplication() {
+      let d = request.resource.data;
+      return d.submittedByUserId == request.auth.uid &&
+        d.storeName is string && d.storeName.size() > 0 && d.storeName.size() <= 100 &&
+        d.businessType in ['مطعم', 'سوبر ماركت', 'صيدلية', 'أخرى'] &&
+        d.contactPhone is string && d.contactPhone.size() > 0 && d.contactPhone.size() <= 20 &&
+        d.location is map &&
+        d.status == 'pending' &&
+        (!('note' in d) || (d.note is string && d.note.size() <= 300));
+    }
+
     // ====== الطلبات/الرحلات ======
     match /orders/{orderId} {
       allow read: if request.auth != null && (
@@ -206,6 +221,21 @@ service cloud.firestore {
       allow read: if request.auth != null &&
         (resource.data.userId == request.auth.uid || isAdmin());
       allow update, delete: if false;
+    }
+
+    // ====== طلبات انضمام المحلات كـ"شركاء تجاريين" (فورم "عايز تبقى شريك
+    // تجاري معانا؟") - أي مستخدم مسجّل دخول يقدر يبعت طلب، بيتراجع بعدين
+    // من تاب "Vendor Requests" في لوحة الأدمن (مش من Firebase Console) ======
+    match /vendor_applications/{applicationId} {
+      allow create: if request.auth != null && isValidVendorApplication();
+      allow read: if request.auth != null &&
+        (resource.data.submittedByUserId == request.auth.uid || isAdmin());
+      // ====== الأدمن بس يقدر يعدّل حالة الطلب بعد المراجعة (contacted/
+      // rejected) - محدش تاني يقدر يلمس أي حقل في الطلب بعد إرساله ======
+      allow update: if isAdmin() &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'reviewedAt', 'reviewNote']);
+      allow delete: if isAdmin();
     }
 
     // ====== إعدادات التطبيق (سعر الرحلة، العمولة، تليفون الدعم) — قراءة عامة
