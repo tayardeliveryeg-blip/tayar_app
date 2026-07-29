@@ -291,7 +291,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addressFetchFailed => 'Couldn\'t get address';
 
   @override
-  String get paymentMethodWallet => 'E-Wallet';
+  String get paymentMethodWallet => 'My Wallet';
 
   @override
   String get paymentMethodInstapay => 'InstaPay';

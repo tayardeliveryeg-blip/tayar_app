@@ -119,7 +119,7 @@
   "locatingAddress": "جاري تحديد الموقع...",
   "addressUnknown": "موقع غير معروف",
   "addressFetchFailed": "تعذر تحديد العنوان",
-  "paymentMethodWallet": "محفظة إلكترونية",
+  "paymentMethodWallet": "محفظتي",
   "paymentMethodInstapay": "إنستاباي",
   "choosePaymentMethodTitle": "اختار طريقة الدفع",
   "fromLabel": "من",

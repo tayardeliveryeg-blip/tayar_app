@@ -635,7 +635,7 @@ abstract class AppLocalizations {
   /// No description provided for @paymentMethodWallet.
   ///
   /// In ar, this message translates to:
-  /// **'محفظة إلكترونية'**
+  /// **'محفظتي'**
   String get paymentMethodWallet;
 
   /// No description provided for @paymentMethodInstapay.

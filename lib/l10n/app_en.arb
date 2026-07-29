@@ -119,7 +119,7 @@
   "locatingAddress": "Locating address...",
   "addressUnknown": "Unknown location",
   "addressFetchFailed": "Couldn't get address",
-  "paymentMethodWallet": "E-Wallet",
+  "paymentMethodWallet": "My Wallet",
   "paymentMethodInstapay": "InstaPay",
   "choosePaymentMethodTitle": "Choose Payment Method",
   "fromLabel": "Where from",

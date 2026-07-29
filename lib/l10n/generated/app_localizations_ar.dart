@@ -292,7 +292,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addressFetchFailed => 'تعذر تحديد العنوان';
 
   @override
-  String get paymentMethodWallet => 'محفظة إلكترونية';
+  String get paymentMethodWallet => 'محفظتي';
 
   @override
   String get paymentMethodInstapay => 'إنستاباي';
