@@ -1,9 +1,0 @@
-diff a/lib/widgets/tayar_drawer.dart b/lib/widgets/tayar_drawer.dart	(rejected hunks)
-@@ -19,6 +19,7 @@ import 'package:tayay_app/screens/auth/login_screen.dart';
- import 'package:tayay_app/screens/shared/notifications_screen.dart';
- import 'package:tayay_app/screens/passenger/order_history_screen.dart';
- import 'package:tayay_app/screens/passenger/passenger_wallet_screen.dart';
-+import 'package:tayay_app/screens/passenger/become_vendor_screen.dart';
- import 'package:tayay_app/screens/passenger/passenger_profile_screen.dart';
- import 'package:tayay_app/screens/shared/security_screen.dart';
- import 'package:tayay_app/screens/shared/settings_screen.dart';

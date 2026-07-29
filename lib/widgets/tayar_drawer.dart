@@ -255,19 +255,6 @@ class TayarDrawer extends StatelessWidget {
                     },
                   ),
                   _DrawerItem(
-                    icon: Icons.storefront_outlined,
-                    label: AppLocalizations.of(context)!.registerStoreDrawerLabel,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const BecomeVendorScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _DrawerItem(
                     icon: Icons.notifications_none,
                     label: AppLocalizations.of(context)!.navNotifications,
                     onTap: () {

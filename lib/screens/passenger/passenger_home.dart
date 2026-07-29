@@ -1364,37 +1364,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
             ),
 
-          // ====== بانر "لو عايز تبقى شريك تجاري معانا؟" - نفس أسلوب البانر
-          // اللي فوقه بالظبط، بس بيوديه لشاشة فورم انضمام التاجر، وبيختفي
-          // لو المستخدم بعت طلب انضمام قبل كده أو دوس زرار الإغلاق ======
-          if (!_vendorPromoDismissed)
-            Positioned(
-              top: 66 + topSafeArea + 34,
-              right: 16,
-              left: 16,
-              child: AnimatedBuilder(
-                animation: _sheetAnimController,
-                builder: (context, child) => Opacity(
-                  opacity: 1 - _sheetAnimController.value,
-                  child: IgnorePointer(
-                    ignoring: _sheetAnimController.value > 0.5,
-                    child: child,
-                  ),
-                ),
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: _isDraggingMap ? 0 : 1,
-                  child: IgnorePointer(
-                    ignoring: _isDraggingMap,
-                    child: BecomeVendorPromoBanner(
-                      onDismiss: () =>
-                          setState(() => _vendorPromoDismissed = true),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
           // ====== زرار القايمة الجانبية (بيختفي لفوق وقت سحب الخريطة) ======
           Positioned(
             top: 8 + topSafeArea,

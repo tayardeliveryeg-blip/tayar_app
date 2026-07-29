@@ -460,20 +460,6 @@
         </div>
       </div>
 
-      <!-- VENDOR REQUESTS -->
-      <div class="section" id="sec-vendorApplications">
-        <div class="panel-head" style="margin-bottom:14px;">
-          <h3 style="font-size:15px;">Vendor Requests</h3>
-          <span class="hint">Requests submitted from the app's "become a business partner" form. Review each one and mark it contacted or reject it — no Firebase Console needed.</span>
-        </div>
-        <div class="panel">
-          <table>
-            <thead><tr><th>Store</th><th>Type</th><th>Phone</th><th>Location</th><th>Note</th><th>Submitted</th><th>Status</th><th></th></tr></thead>
-            <tbody id="vendorApplicationsBody"></tbody>
-          </table>
-        </div>
-      </div>
-
       <!-- SETTINGS -->
       <div class="section" id="sec-settings">
         <div class="panel">
@@ -1012,52 +998,6 @@ function renderUsers(){
 function toggleUser(id, newStatus){
   db.collection(COLLECTIONS.users).doc(id).update({status:newStatus})
     .then(()=>toast(`User is now ${newStatus}`))
-    .catch(err=>toast('Failed: ' + err.message));
-}
-
-/* ---------------- VENDOR REQUESTS ---------------- */
-function renderVendorApplications(){
-  document.getElementById('vendorApplicationsBody').innerHTML = vendorApplications.map(v=>{
-    const mapLink = (v.lat != null && v.lon != null)
-      ? `<a href="https://maps.google.com/?q=${v.lat},${v.lon}" target="_blank" style="color:var(--info);">map</a>`
-      : '—';
-    const actions = v.status === 'pending'
-      ? `<button class="btn small primary" onclick="markVendorContacted('${v.id}')">Mark contacted</button>
-         <button class="btn small danger-outline" onclick="rejectVendorApplication('${v.id}')">Reject</button>`
-      : `<button class="btn small danger-outline" onclick="removeVendorApplication('${v.id}')">Remove</button>`;
-    return `
-    <tr>
-      <td>${v.storeName}</td>
-      <td>${v.businessType}</td>
-      <td class="mono">${v.contactPhone}</td>
-      <td>${mapLink}</td>
-      <td style="font-size:12px;color:var(--text-dim);max-width:180px;">${v.note || '—'}</td>
-      <td class="mono" style="color:var(--text-dimmer);font-size:12px;">${v.time}</td>
-      <td><span class="badge ${v.status}">${v.status}</span></td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap;">${actions}</td>
-    </tr>
-  `;
-  }).join('');
-}
-function markVendorContacted(id){
-  db.collection(COLLECTIONS.vendorApplications).doc(id).update({
-    status: 'contacted',
-    reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
-  })
-    .then(()=>toast('Marked as contacted'))
-    .catch(err=>toast('Failed: ' + err.message));
-}
-function rejectVendorApplication(id){
-  db.collection(COLLECTIONS.vendorApplications).doc(id).update({
-    status: 'rejected',
-    reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
-  })
-    .then(()=>toast('Request rejected'))
-    .catch(err=>toast('Failed: ' + err.message));
-}
-function removeVendorApplication(id){
-  db.collection(COLLECTIONS.vendorApplications).doc(id).delete()
-    .then(()=>toast('Request removed'))
     .catch(err=>toast('Failed: ' + err.message));
 }
 
