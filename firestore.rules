@@ -172,6 +172,16 @@ service cloud.firestore {
       allow update: if request.auth != null &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount']);
       allow delete: if request.auth != null && (isAdmin() || isPreInvitedMatch());
+
+      // ====== سجل حركات محفظة الطيار (عمولة كل رحلة + طلبات شحن رصيد
+      // InstaPay) - نفس فكرة users/{uid}/walletTransactions. ده كان ناقص
+      // قبل كده فكانت كل كتابة/قراءة هنا بترفض تلقائيًا (default-deny) لأن
+      // مفيش match block ليها أصلًا ======
+      match /walletTransactions/{transactionId} {
+        allow read: if request.auth != null && (request.auth.uid == driverId || isAdmin());
+        allow create: if request.auth != null && (request.auth.uid == driverId || isAdmin());
+        allow update, delete: if false;
+      }
     }
 
     match /driver_locations/{driverId} {
