@@ -347,7 +347,7 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.acceptProposedPrice,
-                              style: TextStyle(color: context.textColor),
+                              style: TextStyle(color: context.onPrimaryColor),
                             ),
                           ),
                         ),

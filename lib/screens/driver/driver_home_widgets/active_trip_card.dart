@@ -205,7 +205,7 @@ class ActiveTripCard extends StatelessWidget {
                           ? AppLocalizations.of(context)!.endTrip
                           : AppLocalizations.of(context)!.startTrip,
                       style: TextStyle(
-                        color: context.textColor,
+                        color: context.onPrimaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

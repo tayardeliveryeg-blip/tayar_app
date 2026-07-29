@@ -323,7 +323,7 @@ class OfferNotificationSheet extends StatelessWidget {
                       child: (photoUrl == null || photoUrl!.isEmpty)
                           ? Icon(
                               Icons.person,
-                              color: context.textColor,
+                              color: context.onPrimaryColor,
                               size: 26,
                             )
                           : null,

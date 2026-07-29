@@ -63,9 +63,10 @@ extension TayarThemeColors on BuildContext {
       isDarkMode ? TayarColors.dividerDark : TayarColors.dividerLight;
 
   // ====== لون أي نص/أيقونة فوق خلفية برتقالية كاملة (زرار، أفاتار، شارة...):
-  // أبيض في الوضع الغامق / أسود في الوضع الفاتح. لا يُستخدم فوق التدرّجات
-  // البرتقالية الشفافة (withValues alpha) لأن المحتوى هناك بيفضل برتقالي ======
-  Color get onPrimaryColor => isDarkMode ? Colors.white : Colors.black;
+  // أبيض ثابت في الوضعين الغامق والفاتح (زي بنرات الشاشة الرئيسية). لا يُستخدم
+  // فوق التدرّجات البرتقالية الشفافة (withValues alpha) لأن المحتوى هناك بيفضل
+  // برتقالي ======
+  Color get onPrimaryColor => Colors.white;
 
   // ====== لون خط السحب (Drag Handle) فوق الـ Bottom Sheets. كان مكتوب
   // Colors.grey.shade700 يدويًا في أكتر من شاشة، وده كان بيبان غريب في

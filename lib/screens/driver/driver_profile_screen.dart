@@ -343,7 +343,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
-                                color: context.textColor,
+                                color: context.onPrimaryColor,
                                 strokeWidth: 2,
                               ),
                             )

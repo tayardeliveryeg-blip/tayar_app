@@ -253,7 +253,7 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
-                                color: context.textColor,
+                                color: context.onPrimaryColor,
                                 strokeWidth: 2,
                               ),
                             )

@@ -188,7 +188,7 @@ class _SupportScreenState extends State<SupportScreen> {
                       height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: context.textColor,
+                        color: context.onPrimaryColor,
                       ),
                     )
                   : Text(

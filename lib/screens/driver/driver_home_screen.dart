@@ -682,7 +682,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         ),
         action: SnackBarAction(
           label: AppLocalizations.of(context)!.endTrip,
-          textColor: context.textColor,
+          textColor: context.onPrimaryColor,
           onPressed: () => _completeTrip(tripId),
         ),
       ),
