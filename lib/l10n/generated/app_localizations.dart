@@ -602,6 +602,18 @@ abstract class AppLocalizations {
   /// **'التقاط صورة بالكاميرا'**
   String get takePhotoLabel;
 
+  /// No description provided for @editPhotoTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الصورة'**
+  String get editPhotoTitle;
+
+  /// No description provided for @editPhotoHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'كبّر أو صغّر واسحب الصورة عشان تظبطها جوه الدائرة'**
+  String get editPhotoHint;
+
   /// No description provided for @photoTooLargeError.
   ///
   /// In ar, this message translates to:

@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
 import 'package:tayay_app/services/profile_photo_validator.dart';
 import 'package:tayay_app/screens/shared/profile_widgets.dart';
+import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
 
 // ====================================================
 // ====== شاشة بروفايل الراكب: قابلة للتعديل ======
@@ -163,7 +164,18 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
       return;
     }
 
-    setState(() => _newPhotoBytes = bytes);
+    // ====== الصورة عدّت فحص الوجه، دلوقتي نسيب المستخدم يكبّر/يصغّر
+    // ويظبط الصورة جوه دائرة القص قبل ما تتحفظ فعليًا ======
+    if (!mounted) return;
+    final editedBytes = await Navigator.of(context).push<Uint8List>(
+      MaterialPageRoute(
+        builder: (_) => ProfilePhotoEditScreen(imageBytes: bytes),
+        fullscreenDialog: true,
+      ),
+    );
+    if (editedBytes == null) return;
+
+    setState(() => _newPhotoBytes = editedBytes);
   }
 
   Future<void> _pickDate() async {

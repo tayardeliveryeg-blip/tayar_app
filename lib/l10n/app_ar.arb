@@ -114,6 +114,8 @@
   "choosePhotoSourceTitle": "اختار مصدر الصورة",
   "chooseFromGalleryLabel": "اختيار من المعرض",
   "takePhotoLabel": "التقاط صورة بالكاميرا",
+  "editPhotoTitle": "تعديل الصورة",
+  "editPhotoHint": "كبّر أو صغّر واسحب الصورة عشان تظبطها جوه الدائرة",
   "photoTooLargeError": "الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر",
   "invalidPhoneNumberError": "رقم الهاتف غير صحيح، لازم يكون رقم مصري صحيح",
   "locatingAddress": "جاري تحديد الموقع...",

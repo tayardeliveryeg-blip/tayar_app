@@ -1,0 +1,269 @@
+diff --git a/lib/l10n/app_ar.arb b/lib/l10n/app_ar.arb
+index 886795b..fbf29a7 100644
+--- a/lib/l10n/app_ar.arb
++++ b/lib/l10n/app_ar.arb
+@@ -114,6 +114,8 @@
+   "choosePhotoSourceTitle": "اختار مصدر الصورة",
+   "chooseFromGalleryLabel": "اختيار من المعرض",
+   "takePhotoLabel": "التقاط صورة بالكاميرا",
++  "editPhotoTitle": "تعديل الصورة",
++  "editPhotoHint": "كبّر أو صغّر واسحب الصورة عشان تظبطها جوه الدائرة",
+   "photoTooLargeError": "الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر",
+   "invalidPhoneNumberError": "رقم الهاتف غير صحيح، لازم يكون رقم مصري صحيح",
+   "locatingAddress": "جاري تحديد الموقع...",
+diff --git a/lib/l10n/app_en.arb b/lib/l10n/app_en.arb
+index e59263b..6db09df 100644
+--- a/lib/l10n/app_en.arb
++++ b/lib/l10n/app_en.arb
+@@ -114,6 +114,8 @@
+   "choosePhotoSourceTitle": "Choose photo source",
+   "chooseFromGalleryLabel": "Choose from gallery",
+   "takePhotoLabel": "Take a photo",
++  "editPhotoTitle": "Edit Photo",
++  "editPhotoHint": "Pinch to zoom and drag to position the photo inside the circle",
+   "photoTooLargeError": "Photo too large, choose a smaller one",
+   "invalidPhoneNumberError": "Invalid phone number, please enter a valid Egyptian number",
+   "locatingAddress": "Locating address...",
+diff --git a/lib/screens/driver/driver_profile_screen.dart b/lib/screens/driver/driver_profile_screen.dart
+index e718897..7384a97 100644
+--- a/lib/screens/driver/driver_profile_screen.dart
++++ b/lib/screens/driver/driver_profile_screen.dart
+@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
+     show TayarColors, TayarThemeColors;
+ import 'package:tayay_app/services/profile_photo_validator.dart';
+ import 'package:tayay_app/screens/shared/profile_widgets.dart';
++import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
+ 
+ // ====================================================
+ // ====== شاشة بروفايل الطيار: قابلة للتعديل ======
+@@ -163,7 +164,18 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
+       return;
+     }
+ 
+-    setState(() => _newPhotoBytes = bytes);
++    // ====== الصورة عدّت فحص الوجه، دلوقتي نسيب المستخدم يكبّر/يصغّر
++    // ويظبط الصورة جوه دائرة القص قبل ما تتحفظ فعليًا ======
++    if (!mounted) return;
++    final editedBytes = await Navigator.of(context).push<Uint8List>(
++      MaterialPageRoute(
++        builder: (_) => ProfilePhotoEditScreen(imageBytes: bytes),
++        fullscreenDialog: true,
++      ),
++    );
++    if (editedBytes == null) return;
++
++    setState(() => _newPhotoBytes = editedBytes);
+   }
+ 
+   Future<void> _pickDate() async {
+diff --git a/lib/screens/passenger/passenger_profile_screen.dart b/lib/screens/passenger/passenger_profile_screen.dart
+index 8a11a8a..a952c4d 100644
+--- a/lib/screens/passenger/passenger_profile_screen.dart
++++ b/lib/screens/passenger/passenger_profile_screen.dart
+@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
+     show TayarColors, TayarThemeColors;
+ import 'package:tayay_app/services/profile_photo_validator.dart';
+ import 'package:tayay_app/screens/shared/profile_widgets.dart';
++import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
+ 
+ // ====================================================
+ // ====== شاشة بروفايل الراكب: قابلة للتعديل ======
+@@ -163,7 +164,18 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
+       return;
+     }
+ 
+-    setState(() => _newPhotoBytes = bytes);
++    // ====== الصورة عدّت فحص الوجه، دلوقتي نسيب المستخدم يكبّر/يصغّر
++    // ويظبط الصورة جوه دائرة القص قبل ما تتحفظ فعليًا ======
++    if (!mounted) return;
++    final editedBytes = await Navigator.of(context).push<Uint8List>(
++      MaterialPageRoute(
++        builder: (_) => ProfilePhotoEditScreen(imageBytes: bytes),
++        fullscreenDialog: true,
++      ),
++    );
++    if (editedBytes == null) return;
++
++    setState(() => _newPhotoBytes = editedBytes);
+   }
+ 
+   Future<void> _pickDate() async {
+diff --git a/lib/screens/shared/profile_photo_edit_screen.dart b/lib/screens/shared/profile_photo_edit_screen.dart
+new file mode 100644
+index 0000000..30f540e
+--- /dev/null
++++ b/lib/screens/shared/profile_photo_edit_screen.dart
+@@ -0,0 +1,173 @@
++// ====================================================
++// ====== شاشة تعديل صورة البروفايل قبل الحفظ ======
++// بتفتح فور ما المستخدم يختار صورة (من المعرض أو الكاميرا) وقبل ما تتبعت
++// لـ ProfilePhotoValidator. بتسمح له يكبّر/يصغّر ويسحب الصورة جوه دائرة
++// القص، وبعدين "حفظ" بيرجّع الصورة النهائية بعد القص كـ Uint8List،
++// أو "إلغاء" بيرجّع null (يعني نفضل مستخدمين الصورة القديمة/محدش اتغيّر) ======
++import 'dart:typed_data';
++import 'dart:ui' as ui;
++
++import 'package:flutter/material.dart';
++import 'package:flutter/rendering.dart';
++import 'package:tayay_app/l10n/generated/app_localizations.dart';
++import 'package:tayay_app/theme/theme_extensions.dart';
++
++class ProfilePhotoEditScreen extends StatefulWidget {
++  final Uint8List imageBytes;
++
++  const ProfilePhotoEditScreen({super.key, required this.imageBytes});
++
++  @override
++  State<ProfilePhotoEditScreen> createState() =>
++      _ProfilePhotoEditScreenState();
++}
++
++class _ProfilePhotoEditScreenState extends State<ProfilePhotoEditScreen> {
++  // ====== حجم دائرة القص على الشاشة (بالـ logical pixels) ======
++  static const double _cropSize = 280;
++
++  final TransformationController _transformationController =
++      TransformationController();
++  final GlobalKey _repaintBoundaryKey = GlobalKey();
++
++  bool _isSaving = false;
++
++  @override
++  void dispose() {
++    _transformationController.dispose();
++    super.dispose();
++  }
++
++  // ====== نحوّل اللي ظاهر جوه دائرة القص بس (مش الصورة كلها) لـ PNG bytes
++  // عن طريق تصوير الـ RepaintBoundary اللي لافّة منطقة القص ======
++  Future<void> _saveCroppedImage() async {
++    setState(() => _isSaving = true);
++    try {
++      final boundary = _repaintBoundaryKey.currentContext?.findRenderObject()
++          as RenderRepaintBoundary?;
++      if (boundary == null) {
++        if (mounted) Navigator.of(context).pop(null);
++        return;
++      }
++      // ====== دقة أعلى من حجم العرض الفعلي عشان الصورة النهائية متكونش
++      // مبكسلة لو المستخدم فتحها بحجم أكبر بعدين ======
++      final image = await boundary.toImage(pixelRatio: 3);
++      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
++      if (byteData == null) {
++        if (mounted) Navigator.of(context).pop(null);
++        return;
++      }
++      final bytes = byteData.buffer.asUint8List();
++      if (mounted) Navigator.of(context).pop(bytes);
++    } catch (e) {
++      debugPrint('❌ خطأ في قص الصورة: $e');
++      if (mounted) Navigator.of(context).pop(null);
++    }
++  }
++
++  @override
++  Widget build(BuildContext context) {
++    final l10n = AppLocalizations.of(context)!;
++    return Scaffold(
++      backgroundColor: Colors.black,
++      appBar: AppBar(
++        backgroundColor: Colors.black,
++        foregroundColor: Colors.white,
++        elevation: 0,
++        title: Text(l10n.editPhotoTitle),
++        leading: IconButton(
++          icon: const Icon(Icons.close),
++          onPressed: _isSaving ? null : () => Navigator.of(context).pop(null),
++        ),
++      ),
++      body: Column(
++        children: [
++          const SizedBox(height: 24),
++          Text(
++            l10n.editPhotoHint,
++            textAlign: TextAlign.center,
++            style: const TextStyle(color: Colors.white70, fontSize: 13),
++          ),
++          const SizedBox(height: 24),
++          Expanded(
++            child: Center(
++              child: ClipRect(
++                child: RepaintBoundary(
++                  key: _repaintBoundaryKey,
++                  child: ClipOval(
++                    child: SizedBox(
++                      width: _cropSize,
++                      height: _cropSize,
++                      child: InteractiveViewer(
++                        transformationController: _transformationController,
++                        // ====== نسيبه يكبّر لغاية 4 أضعاف، ونمنع إنه يصغّر
++                        // الصورة لحد ما تبقى أصغر من دائرة القص وتسيب فراغ ======
++                        minScale: 1,
++                        maxScale: 4,
++                        boundaryMargin: const EdgeInsets.all(0),
++                        child: Image.memory(
++                          widget.imageBytes,
++                          width: _cropSize,
++                          height: _cropSize,
++                          fit: BoxFit.cover,
++                        ),
++                      ),
++                    ),
++                  ),
++                ),
++              ),
++            ),
++          ),
++          const SizedBox(height: 24),
++          Padding(
++            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
++            child: Row(
++              children: [
++                Expanded(
++                  child: OutlinedButton(
++                    onPressed: _isSaving
++                        ? null
++                        : () => Navigator.of(context).pop(null),
++                    style: OutlinedButton.styleFrom(
++                      foregroundColor: Colors.white,
++                      side: const BorderSide(color: Colors.white38),
++                      padding: const EdgeInsets.symmetric(vertical: 14),
++                      shape: RoundedRectangleBorder(
++                        borderRadius: BorderRadius.circular(AppRadius.lg),
++                      ),
++                    ),
++                    child: Text(l10n.cancel),
++                  ),
++                ),
++                const SizedBox(width: 16),
++                Expanded(
++                  child: ElevatedButton(
++                    onPressed: _isSaving ? null : _saveCroppedImage,
++                    style: ElevatedButton.styleFrom(
++                      backgroundColor: TayarColors.primary,
++                      foregroundColor: Colors.white,
++                      padding: const EdgeInsets.symmetric(vertical: 14),
++                      shape: RoundedRectangleBorder(
++                        borderRadius: BorderRadius.circular(AppRadius.lg),
++                      ),
++                    ),
++                    child: _isSaving
++                        ? const SizedBox(
++                            width: 20,
++                            height: 20,
++                            child: CircularProgressIndicator(
++                              strokeWidth: 2,
++                              color: Colors.white,
++                            ),
++                          )
++                        : Text(l10n.saveButton),
++                  ),
++                ),
++              ],
++            ),
++          ),
++        ],
++      ),
++    );
++  }
++}

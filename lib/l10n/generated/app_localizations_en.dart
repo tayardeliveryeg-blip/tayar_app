@@ -275,6 +275,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get takePhotoLabel => 'Take a photo';
 
   @override
+  String get editPhotoTitle => 'Edit Photo';
+
+  @override
+  String get editPhotoHint =>
+      'Pinch to zoom and drag to position the photo inside the circle';
+
+  @override
   String get photoTooLargeError => 'Photo too large, choose a smaller one';
 
   @override

@@ -275,6 +275,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get takePhotoLabel => 'التقاط صورة بالكاميرا';
 
   @override
+  String get editPhotoTitle => 'تعديل الصورة';
+
+  @override
+  String get editPhotoHint =>
+      'كبّر أو صغّر واسحب الصورة عشان تظبطها جوه الدائرة';
+
+  @override
   String get photoTooLargeError =>
       'الصورة كبيرة جدًا، من فضلك اختار صورة تانية أصغر';
 
