@@ -369,7 +369,6 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
     final bool inProgress = _status == 'in_progress';
 
     return Scaffold(
