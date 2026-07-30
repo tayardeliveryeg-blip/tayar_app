@@ -801,7 +801,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   // {'savedAddresses.$key': {...}}. الـ dot-notation في اسم الحقل بتشتغل
   // بس مع .update()، أما مع .set(..., merge:true) فبيتعامل معاها كاسم حقل
   // حرفي فيه نقطة (يعني بيتحفظ حقل غريب اسمه "savedAddresses.home") مش
-  // كمسار متداخل — وده كان بيمنع _SavedPlacesRow من قراءة العنوان تاني
+  // كمسار متداخل — وده كان بيمنع SavedPlacesRow من قراءة العنوان تاني
   // أبدًا لأنها بتدور على حقل savedAddresses المتداخل الفعلي.
   // استخدام merge:true مع Map متداخلة فعليًا بيعمل deep-merge صح: بيعدّل
   // المفتاح (home أو work) بس من غير ما يمسح المفتاح التاني لو موجود ======
