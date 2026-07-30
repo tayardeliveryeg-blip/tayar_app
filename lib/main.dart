@@ -9,7 +9,6 @@ import 'package:tayay_app/firebase_options.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
-import 'package:tayay_app/screens/shared/splash_screen.dart';
 import 'package:tayay_app/screens/auth/app_lock_screen.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
@@ -178,7 +177,7 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
       locale: _locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const SplashScreen(),
+      home: const AuthGate(),
       // ====== بيعرض شاشة قفل الرقم السري فوق كل حاجة لو _isLocked = true،
       // من غير ما يأثر على الـ Navigator أو الشاشة الحالية تحته ======
       builder: (context, child) {
