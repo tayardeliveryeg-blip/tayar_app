@@ -6,7 +6,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
 import 'package:tayay_app/services/call_invitation_helper.dart';
-import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/contact_action_button.dart';
+import 'package:tayay_app/widgets/contact_action_button.dart';
 
 // ====== كارت تفاصيل الرحلة أسفل شاشة تتبع الطيار: بيانات الراكب، العنوانين،
 // طريقة الدفع، زرارين التواصل (شات/مكالمة)، وزرار بدء/إنهاء الرحلة ======

@@ -5,8 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/passenger_home.dart'
+    show TayarColors, TayarThemeColors;
 import 'package:tayay_app/services/profile_photo_validator.dart';
+import 'package:tayay_app/screens/shared/profile_widgets.dart';
 
 // ====================================================
 // ====== شاشة بروفايل الطيار: قابلة للتعديل ======
@@ -98,20 +100,27 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.photo_library_outlined,
-                    color: TayarColors.primary),
-                title: Text(l10n.chooseFromGalleryLabel,
-                    style: TextStyle(color: sheetContext.textColor)),
+                leading: Icon(
+                  Icons.photo_library_outlined,
+                  color: TayarColors.primary,
+                ),
+                title: Text(
+                  l10n.chooseFromGalleryLabel,
+                  style: TextStyle(color: sheetContext.textColor),
+                ),
                 onTap: () =>
                     Navigator.of(sheetContext).pop(ImageSource.gallery),
               ),
               ListTile(
-                leading:
-                    Icon(Icons.camera_alt_outlined, color: TayarColors.primary),
-                title: Text(l10n.takePhotoLabel,
-                    style: TextStyle(color: sheetContext.textColor)),
-                onTap: () =>
-                    Navigator.of(sheetContext).pop(ImageSource.camera),
+                leading: Icon(
+                  Icons.camera_alt_outlined,
+                  color: TayarColors.primary,
+                ),
+                title: Text(
+                  l10n.takePhotoLabel,
+                  style: TextStyle(color: sheetContext.textColor),
+                ),
+                onTap: () => Navigator.of(sheetContext).pop(ImageSource.camera),
               ),
             ],
           ),
@@ -278,12 +287,13 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                     child: ListView(
                       children: [
                         Center(
-                          child: _ProfilePhotoPicker(
+                          child: ProfilePhotoPicker(
                             existingPhotoBase64: _existingPhotoBase64,
                             newPhotoBytes: _newPhotoBytes,
                             isChecking: _isCheckingPhoto,
-                            onTap:
-                                _isCheckingPhoto ? null : _showPhotoSourceSheet,
+                            onTap: _isCheckingPhoto
+                                ? null
+                                : _showPhotoSourceSheet,
                           ),
                         ),
                         Center(
@@ -299,29 +309,29 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        _ProfileTextField(
+                        ProfileTextField(
                           controller: _firstNameController,
                           hint: AppLocalizations.of(context)!.firstNameHint,
                         ),
-                        _ProfileTextField(
+                        ProfileTextField(
                           controller: _lastNameController,
                           hint: AppLocalizations.of(context)!.lastNameHint,
                         ),
                         GestureDetector(
                           onTap: _pickDate,
                           child: AbsorbPointer(
-                            child: _ProfileTextField(
+                            child: ProfileTextField(
                               controller: _birthDateController,
                               hint: AppLocalizations.of(context)!.birthDateHint,
                             ),
                           ),
                         ),
-                        _ProfileTextField(
+                        ProfileTextField(
                           controller: _phoneController,
                           hint: AppLocalizations.of(context)!.phoneNumberLabel,
                           keyboardType: TextInputType.phone,
                         ),
-                        _ProfileTextField(
+                        ProfileTextField(
                           controller: _addressController,
                           hint: AppLocalizations.of(context)!.addressLabel,
                         ),
@@ -360,119 +370,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                 ],
               ),
             ),
-    );
-  }
-}
-
-// ====================================================
-// ====== دائرة صورة البروفايل مع أيقونة تعديل فوقها ======
-// ====================================================
-class _ProfilePhotoPicker extends StatelessWidget {
-  final String? existingPhotoBase64;
-  final Uint8List? newPhotoBytes;
-  final bool isChecking;
-  final VoidCallback? onTap;
-
-  const _ProfilePhotoPicker({
-    required this.existingPhotoBase64,
-    required this.newPhotoBytes,
-    required this.onTap,
-    this.isChecking = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    ImageProvider? imageProvider;
-    if (newPhotoBytes != null) {
-      imageProvider = MemoryImage(newPhotoBytes!);
-    } else if (existingPhotoBase64 != null && existingPhotoBase64!.isNotEmpty) {
-      try {
-        imageProvider = MemoryImage(base64Decode(existingPhotoBase64!));
-      } catch (_) {
-        imageProvider = null;
-      }
-    }
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Stack(
-        children: [
-          CircleAvatar(
-            radius: 56,
-            backgroundColor: context.cardColor,
-            backgroundImage: imageProvider,
-            child: imageProvider == null
-                ? Icon(Icons.person, color: context.textGreyColor, size: 48)
-                : null,
-          ),
-          if (isChecking)
-            Positioned.fill(
-              child: CircleAvatar(
-                radius: 56,
-                backgroundColor: Colors.black45,
-                child: const CircularProgressIndicator(color: Colors.white),
-              ),
-            ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: const BoxDecoration(
-                color: TayarColors.primary,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.camera_alt,
-                color: context.onPrimaryColor,
-                size: 16,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ====================================================
-// ====== حقل نص موحّد لشاشة البروفايل ======
-// ====================================================
-class _ProfileTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final TextInputType? keyboardType;
-
-  const _ProfileTextField({
-    required this.controller,
-    required this.hint,
-    this.keyboardType,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: TextStyle(color: context.textColor),
-        textAlign: TextAlign.right,
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: TextStyle(color: context.textGreyColor),
-          filled: true,
-          fillColor: context.cardColor,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
-        ),
-      ),
     );
   }
 }
