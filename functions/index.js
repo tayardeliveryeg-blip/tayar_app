@@ -125,7 +125,48 @@ exports.onNewChatMessage = onDocumentCreated(
 );
 
 /**
- * ====== 2) إشعار عام (طلب اتقبل / الطيار وصل / ... إلخ) ======
+ * ====== 2) إشعار شحن محفظة من لوحة الأدمن ======
+ * بتتفعّل تلقائيًا لما لوحة الأدمن تضيف رصيد لراكب (submitWalletGrant بتكتب
+ * مستند بنوع 'admin_credit' في users/{userId}/walletTransactions). الدالة دي
+ * بتكتب مستند في collection('notifications') عشان الراكب ياخد إشعار فوري،
+ * وده هيشغّل onNewGeneralNotification تحت تلقائيًا ويبعت الـ Push الحقيقي -
+ * مفيش أي تعديل مطلوب في لوحة الأدمن نفسها.
+ */
+exports.onWalletCredit = onDocumentCreated(
+  "users/{userId}/walletTransactions/{transactionId}",
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+
+    const txn = snap.data();
+    // ====== بس شحن الأدمن اليدوي - أي نوع حركة محفظة تاني (خصم رحلة..إلخ)
+    // مبيبعتش إشعار من هنا ======
+    if (txn.type !== "admin_credit") return;
+
+    const { userId } = event.params;
+    const amount = txn.amount || 0;
+    const balanceAfter = txn.balanceAfter || 0;
+    const reason = txn.reason;
+
+    const body = reason
+      ? `تم إضافة ${amount} جنيه إلى محفظتك (${reason}). رصيدك الحالي: ${balanceAfter} جنيه.`
+      : `تم إضافة ${amount} جنيه إلى محفظتك. رصيدك الحالي: ${balanceAfter} جنيه.`;
+
+    await admin.firestore().collection("notifications").add({
+      userId,
+      title: "تم شحن محفظتك",
+      body,
+      type: "wallet",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      isRead: false,
+    });
+
+    console.log(`إشعار شحن محفظة اتكتب للمستخدم ${userId}`);
+  }
+);
+
+/**
+ * ====== 3) إشعار عام (طلب اتقبل / الطيار وصل / ... إلخ) ======
  * بتتفعّل تلقائيًا لما مستند جديد يتكتب في collection('notifications')
  * (نفس الـ collection اللي شاشة الإشعارات بتقرا منها بالفعل).
  * الحقول المتوقعة: userId, title, body
@@ -170,7 +211,7 @@ exports.onNewGeneralNotification = onDocumentCreated(
 );
 
 // ====================================================================
-// ====== 3) إنشاء طلب رحلة (createOrder) - Callable Function ======
+// ====== 4) إنشاء طلب رحلة (createOrder) - Callable Function ======
 // ====================================================================
 // المسؤولية: بدل ما الموبايل يكتب مباشرة في collection('orders') بالمسافة
 // والسعر اللي حسبهم بنفسه (وممكن يتلاعب فيهم أي حد بيعدّل الـ APK)، الدالة
