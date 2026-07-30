@@ -5,8 +5,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart'
-    show TayarColors;
 import 'package:tayay_app/theme/theme_extensions.dart';
 
 // ====================================================
