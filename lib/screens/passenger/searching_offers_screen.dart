@@ -12,6 +12,7 @@ import 'package:tayay_app/screens/passenger/trip_tracking_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/searching_offers_widgets/driver_moto_marker.dart';
 import 'package:tayay_app/screens/passenger/searching_offers_widgets/offer_cards.dart';
+import 'package:tayay_app/services/fare_negotiation_rules.dart';
 
 /// ====== شاشة البحث عن عروض الطيارين (زي InDrive) ======
 /// بتستنى عروض من مجموعة orders/{orderId}/offers وتعرضهم لايف،
@@ -216,10 +217,21 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
     }
   }
 
-  void _increaseFare() => _updateProposedFare(_proposedFare + _fareStep);
+  // ====== الحد الأقصى مبني على widget.proposedFare (قيمة الكونستركتور
+  // الثابتة، وهي السعر الأصلي وقت فتح الشاشة) مش على _proposedFare
+  // المتغيّرة، عشان السقف يفضل ثابت ومايزحفش لفوق مع كل تعديل ======
+  double get _maxFare =>
+      FareNegotiationRules.maxFareFor(widget.proposedFare);
+  double get _minFare =>
+      FareNegotiationRules.minFareFor(widget.proposedFare);
+
+  void _increaseFare() {
+    final next = _proposedFare + _fareStep;
+    if (next <= _maxFare) _updateProposedFare(next);
+  }
 
   void _decreaseFare() {
-    if (_proposedFare - _fareStep >= (widget.proposedFare * 0.5)) {
+    if (_proposedFare - _fareStep >= _minFare) {
       _updateProposedFare(_proposedFare - _fareStep);
     }
   }
@@ -229,7 +241,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       _dismissedRaiseFarePrompt = true;
       _elapsedSeconds = 0;
     });
-    await _updateProposedFare(_proposedFare + (_fareStep * 3));
+    final next = math.min(_proposedFare + (_fareStep * 3), _maxFare);
+    await _updateProposedFare(next);
   }
 
   Future<void> _toggleAutoAccept(bool value) async {
@@ -509,7 +522,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
             final bool showRaiseFarePrompt =
                 offers.isEmpty &&
                 !_dismissedRaiseFarePrompt &&
-                _elapsedSeconds >= _raiseFareThresholdSeconds;
+                _elapsedSeconds >= _raiseFareThresholdSeconds &&
+                _proposedFare < _maxFare;
 
             // ====== خريطة driverId -> السعر المقترح، عشان نعرف نربط كل عرض
             // بموتوسيكل الطيار بتاعه على الخريطة ونعرض السعر فوقه ======
@@ -660,7 +674,10 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                             if (showRaiseFarePrompt)
                               RaiseFareCard(
                                 currentFare: _proposedFare,
-                                suggestedFare: _proposedFare + (_fareStep * 3),
+                                suggestedFare: math.min(
+                                  _proposedFare + (_fareStep * 3),
+                                  _maxFare,
+                                ),
                                 onRaiseFare: _raiseFareAndRetry,
                                 onDismiss: () => setState(
                                   () => _dismissedRaiseFarePrompt = true,
@@ -709,7 +726,9 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                 children: [
                                   FareStepButton(
                                     icon: Icons.remove,
-                                    onTap: _decreaseFare,
+                                    onTap: _proposedFare <= _minFare
+                                        ? null
+                                        : _decreaseFare,
                                   ),
                                   SizedBox(
                                     width: 150,
@@ -727,17 +746,23 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                                   ),
                                   FareStepButton(
                                     icon: Icons.add,
-                                    onTap: _increaseFare,
+                                    onTap: _proposedFare >= _maxFare
+                                        ? null
+                                        : _increaseFare,
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 8),
                               TextButton(
-                                onPressed: _increaseFare,
+                                onPressed: _proposedFare >= _maxFare
+                                    ? null
+                                    : _increaseFare,
                                 child: Text(
                                   loc.increaseFareButton,
-                                  style: const TextStyle(
-                                    color: TayarColors.primary,
+                                  style: TextStyle(
+                                    color: _proposedFare >= _maxFare
+                                        ? context.textGreyColor
+                                        : TayarColors.primary,
                                   ),
                                 ),
                               ),

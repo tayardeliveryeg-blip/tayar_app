@@ -226,6 +226,10 @@ class _CreateDeliveryOrderScreenState
         'durationMin': _durationMin ?? 0,
         'suggestedFare': fare,
         'proposedFare': fare,
+        // ====== ثابتة من لحظة إنشاء الطلب ومتتغيرش تاني، عكس proposedFare
+        // اللي بتتحدث كل مرة أي طرف يغيّر السعر. دي المرجع اللي بيتحسب
+        // عليه حد أقصى/أدنى المفاوضة (شوف fare_negotiation_rules.dart) ======
+        'initialFare': fare,
         'autoAccept': false,
         'paymentMethod': _paymentMethod,
         'serviceType': 'delivery',

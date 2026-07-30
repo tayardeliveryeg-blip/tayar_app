@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 
 // ====== شيت تقديم عرض بسعر مخصص من السائق على طلب ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
 class OfferSheet extends StatefulWidget {
   final double proposedFare;
+  final double initialFare;
   final String pickupAddress;
   final String destinationAddress;
   final double distanceKm;
@@ -14,6 +16,7 @@ class OfferSheet extends StatefulWidget {
   const OfferSheet({
     super.key,
     required this.proposedFare,
+    required this.initialFare,
     required this.pickupAddress,
     required this.destinationAddress,
     required this.distanceKm,
@@ -28,10 +31,15 @@ class OfferSheetState extends State<OfferSheet> {
   late double _price;
   static const double _step = 5.0;
 
+  // ====== نفس الحدود المطبّقة في شاشة الراكب (searching_offers_screen.dart)،
+  // محسوبة على initialFare الثابت مش على أي قيمة متغيّرة ======
+  double get _minPrice => FareNegotiationRules.minFareFor(widget.initialFare);
+  double get _maxPrice => FareNegotiationRules.maxFareFor(widget.initialFare);
+
   @override
   void initState() {
     super.initState();
-    _price = widget.proposedFare;
+    _price = widget.proposedFare.clamp(_minPrice, _maxPrice).toDouble();
   }
 
   @override
@@ -78,9 +86,9 @@ class OfferSheetState extends State<OfferSheet> {
             children: [
               StepButton(
                 icon: Icons.remove,
-                onTap: () {
-                  if (_price - _step > 0) setState(() => _price -= _step);
-                },
+                onTap: _price <= _minPrice
+                    ? null
+                    : () => setState(() => _price -= _step),
               ),
               SizedBox(
                 width: 130,
@@ -94,7 +102,9 @@ class OfferSheetState extends State<OfferSheet> {
               ),
               StepButton(
                 icon: Icons.add,
-                onTap: () => setState(() => _price += _step),
+                onTap: _price >= _maxPrice
+                    ? null
+                    : () => setState(() => _price += _step),
               ),
             ],
           ),
@@ -127,19 +137,22 @@ class OfferSheetState extends State<OfferSheet> {
 
 class StepButton extends StatelessWidget {
   final IconData icon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   const StepButton({super.key, required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final bool enabled = onTap != null;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.pill),
       child: Container(
         width: 40,
         height: 40,
-        decoration: const BoxDecoration(
-          color: TayarColors.primary,
+        decoration: BoxDecoration(
+          color: enabled
+              ? TayarColors.primary
+              : TayarColors.primary.withValues(alpha: 0.4),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: context.onPrimaryColor, size: 20),

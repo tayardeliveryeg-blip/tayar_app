@@ -371,6 +371,12 @@ exports.createOrder = onCall(async (request) => {
     durationMin,
     suggestedFare,
     proposedFare,
+    // ====== ثابتة من لحظة الإنشاء ومتتغيرش تاني، عكس proposedFare اللي
+    // بتتحدث كل مرة الراكب أو السائق يغيّر السعر أثناء المفاوضة. دي
+    // المرجع اللي بيتحسب عليه حد أقصى/أدنى المفاوضة في الموبايل (شوف
+    // fare_negotiation_rules.dart) - لازم تتطابق مع نفس الحقل اللي
+    // بيتكتب في create_delivery_order_screen.dart ======
+    initialFare: proposedFare,
     autoAccept: autoAccept === true,
     paymentMethod,
     serviceType: "passenger",

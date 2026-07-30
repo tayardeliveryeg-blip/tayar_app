@@ -54,6 +54,10 @@ class DriverRequestsTab extends StatelessWidget {
   ) {
     final data = orderDoc.data();
     final double proposedFare = (data['proposedFare'] as num?)?.toDouble() ?? 0;
+    // ====== initialFare مش موجودة في الطلبات القديمة قبل إضافة الحقل ده،
+    // فبنرجع لـ proposedFare كـ fallback بدل ما نكسر الشاشة ======
+    final double initialFare =
+        (data['initialFare'] as num?)?.toDouble() ?? proposedFare;
 
     showModalBottomSheet(
       context: context,
@@ -63,6 +67,7 @@ class DriverRequestsTab extends StatelessWidget {
       ),
       builder: (_) => OfferSheet(
         proposedFare: proposedFare,
+        initialFare: initialFare,
         pickupAddress: (data['pickupAddress'] as String?) ?? '',
         destinationAddress: (data['destinationAddress'] as String?) ?? '',
         distanceKm: (data['distanceKm'] as num?)?.toDouble() ?? 0,

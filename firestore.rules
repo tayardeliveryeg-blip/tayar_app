@@ -16,8 +16,11 @@ service cloud.firestore {
       return
         (
           changedKeys.hasOnly(['proposedFare']) &&
-          request.resource.data.proposedFare >= resource.data.suggestedFare * 0.5 - 1 &&
-          request.resource.data.proposedFare <= resource.data.suggestedFare * 3 + 1
+          // ====== المرجع initialFare (ثابت من لحظة الإنشاء) مش suggestedFare،
+          // وحدود 0.5x-1.5x مطابقة بالظبط لـ fare_negotiation_rules.dart في
+          // الموبايل (شاشتي الراكب والسائق) - لازم الاتنين يفضلوا متطابقين ======
+          request.resource.data.proposedFare >= resource.data.initialFare * 0.5 - 1 &&
+          request.resource.data.proposedFare <= resource.data.initialFare * 1.5 + 1
         ) ||
         changedKeys.hasOnly(['autoAccept']) ||
         (changedKeys.hasOnly(['status']) && request.resource.data.status == 'cancelled') ||
@@ -92,6 +95,16 @@ service cloud.firestore {
         (!('note' in d) || (d.note is string && d.note.size() <= 300));
     }
 
+    // ====== بتتأكد إن سعر عرض السائق (offers/{offerId}.price) في نفس حدود
+    // 0.5x-1.5x من initialFare بتاعة الطلب - نفس الحدود بالظبط اللي التطبيق
+    // بيفرضها في offer_sheet.dart، عشان محدش يقدر يبعت عرض بسعر عشوائي عن
+    // طريق مناداة Firestore مباشرة ======
+    function isValidOfferPrice(orderId) {
+      let order = get(/databases/$(database)/documents/orders/$(orderId)).data;
+      return request.resource.data.price >= order.initialFare * 0.5 - 1 &&
+        request.resource.data.price <= order.initialFare * 1.5 + 1;
+    }
+
     // ====== الطلبات/الرحلات ======
     match /orders/{orderId} {
       allow read: if request.auth != null && (
@@ -119,7 +132,8 @@ service cloud.firestore {
           isAdmin()
         );
         allow create: if request.auth != null &&
-          request.resource.data.driverId == request.auth.uid;
+          request.resource.data.driverId == request.auth.uid &&
+          isValidOfferPrice(orderId);
         allow update, delete: if false;
       }
       match /messages/{messageId} {
