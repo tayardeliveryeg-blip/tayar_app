@@ -5,6 +5,7 @@
 // passenger_home_widgets/ عشان الملف ده كان كبير جدًا (1266 سطر) — نفس
 // السلوك بالظبط، بس منظّم في ملفات أصغر لكل ودجت مسؤولية واحدة ======
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
@@ -19,6 +20,89 @@ import 'package:tayay_app/screens/passenger/passenger_home_widgets/trip_summary_
 // NewCustomerPromoBanner وBecomeVendorPromoBanner من الملف ده على طول -
 // الـ export ده بيخليهم يفضلوا شغالين من غير ما نغيّر الاستيراد بتاعهم ======
 export 'package:tayay_app/screens/passenger/passenger_home_widgets/promo_banners.dart';
+
+// ====================================================
+// ====== طبقة "اسحب من أي مكان": بتخلي المستخدم يقدر يسحب الشريط لفوق/
+// لتحت بالضغط في أي نقطة جواه (مش بس من المقبض الصغير فوق زي الأول).
+// بنستخدم Listener بدل GestureDetector عشان Listener بيسمع لحركة
+// الإصبع الخام مباشرة من غير ما يدخل "معركة" الإيماءات (gesture arena) -
+// فده بيسيب أي تاب أو سحب تاني جوه الشريط (زرار البحث، سكرول الأماكن
+// المحفوظة، البانرات..إلخ) شغال عادي زي ما هو من غير أي تعارض ======
+// ====================================================
+class _SheetDragArea extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onDragStart;
+  final void Function(DragUpdateDetails)? onDragUpdate;
+  final void Function(DragEndDetails)? onDragEnd;
+
+  const _SheetDragArea({
+    required this.child,
+    this.onDragStart,
+    this.onDragUpdate,
+    this.onDragEnd,
+  });
+
+  @override
+  State<_SheetDragArea> createState() => _SheetDragAreaState();
+}
+
+class _SheetDragAreaState extends State<_SheetDragArea> {
+  VelocityTracker? _velocityTracker;
+  Offset? _lastPosition;
+
+  void _handlePointerDown(PointerDownEvent event) {
+    _velocityTracker = VelocityTracker.withKind(event.kind);
+    _velocityTracker!.addPosition(event.timeStamp, event.position);
+    _lastPosition = event.position;
+    widget.onDragStart?.call();
+  }
+
+  void _handlePointerMove(PointerMoveEvent event) {
+    if (_lastPosition == null) return;
+    _velocityTracker?.addPosition(event.timeStamp, event.position);
+    final dy = event.position.dy - _lastPosition!.dy;
+    _lastPosition = event.position;
+    if (dy == 0) return;
+    widget.onDragUpdate?.call(
+      DragUpdateDetails(
+        globalPosition: event.position,
+        delta: Offset(0, dy),
+        primaryDelta: dy,
+      ),
+    );
+  }
+
+  void _handlePointerUp(PointerUpEvent event) {
+    final velocity = _velocityTracker?.getVelocity() ?? Velocity.zero;
+    widget.onDragEnd?.call(
+      DragEndDetails(
+        velocity: velocity,
+        primaryVelocity: velocity.pixelsPerSecond.dy,
+      ),
+    );
+    _velocityTracker = null;
+    _lastPosition = null;
+  }
+
+  void _handlePointerCancel(PointerCancelEvent event) {
+    _velocityTracker = null;
+    _lastPosition = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: widget.onDragUpdate == null ? null : _handlePointerDown,
+      onPointerMove: widget.onDragUpdate == null ? null : _handlePointerMove,
+      onPointerUp: widget.onDragUpdate == null ? null : _handlePointerUp,
+      onPointerCancel: widget.onDragUpdate == null
+          ? null
+          : _handlePointerCancel,
+      child: widget.child,
+    );
+  }
+}
 
 class TayarBottomSheet extends StatelessWidget {
   final String? destinationAddress;
@@ -75,18 +159,16 @@ class TayarBottomSheet extends StatelessWidget {
             topRight: Radius.circular(24),
           ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // ====== المقبض العلوي: منطقة السحب اللي بتوسّع/تصغّر الشريط ======
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onVerticalDragStart: onDragStart == null
-                  ? null
-                  : (_) => onDragStart!(),
-              onVerticalDragUpdate: onDragUpdate,
-              onVerticalDragEnd: onDragEnd,
-              child: Padding(
+        child: _SheetDragArea(
+          onDragStart: onDragStart,
+          onDragUpdate: onDragUpdate,
+          onDragEnd: onDragEnd,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ====== المقبض العلوي: مجرد مؤشر بصري دلوقتي - السحب بقى شغال
+              // من أي مكان في الشريط (شوف _SheetDragArea فوق) ======
+              Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                 child: Center(
                   child: Container(
@@ -99,62 +181,62 @@ class TayarBottomSheet extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
 
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  0,
-                  AppSpacing.lg,
-                  AppSpacing.xxl,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // ====== الوجهة المختارة: أول مكان بيتعرض فيه العنوان
-                    // دلوقتي بعد ما شريط البحث العلوي اتشال ======
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.location_on,
-                            color: TayarColors.primary,
-                            size: 18,
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Expanded(
-                            child: Text(
-                              destinationAddress!,
-                              style: TextStyle(
-                                color: context.textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    0,
+                    AppSpacing.lg,
+                    AppSpacing.xxl,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // ====== الوجهة المختارة: أول مكان بيتعرض فيه العنوان
+                      // دلوقتي بعد ما شريط البحث العلوي اتشال ======
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on,
+                              color: TayarColors.primary,
+                              size: 18,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                destinationAddress!,
+                                style: TextStyle(
+                                  color: context.textColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    // ملخص الرحلة + زرار الطلب
-                    TripSummaryCard(
-                      distanceKm: distanceKm!,
-                      durationMin: durationMin ?? 0,
-                      fare: fare,
-                      paymentMethod: paymentMethod,
-                      onTapPaymentMethod: onTapPaymentMethod,
-                      onCancel: onCancelDestination,
-                      onConfirm: onConfirmOrder,
-                    ),
-                  ],
+                      // ملخص الرحلة + زرار الطلب
+                      TripSummaryCard(
+                        distanceKm: distanceKm!,
+                        durationMin: durationMin ?? 0,
+                        fare: fare,
+                        paymentMethod: paymentMethod,
+                        onTapPaymentMethod: onTapPaymentMethod,
+                        onCancel: onCancelDestination,
+                        onConfirm: onConfirmOrder,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -221,19 +303,17 @@ class TayarIdleBottomSheet extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ====== المقبض العلوي: منطقة السحب اللي بتوسّع/تصغّر الشريط ======
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onVerticalDragStart: onDragStart == null
-                  ? null
-                  : (_) => onDragStart!(),
-              onVerticalDragUpdate: onDragUpdate,
-              onVerticalDragEnd: onDragEnd,
-              child: Padding(
+        child: _SheetDragArea(
+          onDragStart: onDragStart,
+          onDragUpdate: onDragUpdate,
+          onDragEnd: onDragEnd,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ====== المقبض العلوي: مجرد مؤشر بصري دلوقتي - السحب بقى شغال
+              // من أي مكان في الشريط (شوف _SheetDragArea فوق) ======
+              Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                 child: Center(
                   child: Container(
@@ -246,130 +326,132 @@ class TayarIdleBottomSheet extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
 
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  0,
-                  AppSpacing.lg,
-                  AppSpacing.xxl,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // ====== مؤشر السواقين القريبين: بيظهر بس لو عندنا موقع
-                    // لحظي للراكب وفيه سواق واحد على الأقل في النطاق ======
-                    if (nearbyDriversCount != null && nearbyDriversCount! > 0)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.two_wheeler,
-                              color: TayarColors.primary,
-                              size: 15,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              loc.nearbyDriversCountLabel(nearbyDriversCount!),
-                              style: const TextStyle(
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    0,
+                    AppSpacing.lg,
+                    AppSpacing.xxl,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ====== مؤشر السواقين القريبين: بيظهر بس لو عندنا موقع
+                      // لحظي للراكب وفيه سواق واحد على الأقل في النطاق ======
+                      if (nearbyDriversCount != null && nearbyDriversCount! > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.two_wheeler,
                                 color: TayarColors.primary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                                size: 15,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 6),
+                              Text(
+                                loc.nearbyDriversCountLabel(
+                                  nearbyDriversCount!,
+                                ),
+                                style: const TextStyle(
+                                  color: TayarColors.primary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
 
-                    // ====== شريط البحث: بيفتح شاشة اختيار الوجهة الموجودة أصلاً ======
-                    GestureDetector(
-                      onTap: onTapSearch,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: 13,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.cardColor,
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.search,
-                              color: context.textGreyColor,
-                              size: 18,
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Text(
-                              loc.homeSearchHint,
-                              style: TextStyle(
+                      // ====== شريط البحث: بيفتح شاشة اختيار الوجهة الموجودة أصلاً ======
+                      GestureDetector(
+                        onTap: onTapSearch,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
+                            vertical: 13,
+                          ),
+                          decoration: BoxDecoration(
+                            color: context.cardColor,
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.search,
                                 color: context.textGreyColor,
-                                fontSize: 13,
+                                size: 18,
                               ),
+                              const SizedBox(width: AppSpacing.sm),
+                              Text(
+                                loc.homeSearchHint,
+                                style: TextStyle(
+                                  color: context.textGreyColor,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+
+                      // ====== تذكير تقييم آخر رحلة: بيظهر بس لو آخر رحلة
+                      // مكتملة لسه ما اتقيّمتش (مثلاً الراكب قفل التطبيق قبل
+                      // ما شاشة التقييم التلقائية تظهر) ======
+                      const RateLastTripReminder(),
+
+                      // ====== أماكن محفوظة: البيت / الشغل / إضافة، بنفس
+                      // المقاس بالظبط (كل واحدة Expanded) ======
+                      Text(
+                        loc.savedPlacesLabel,
+                        style: TextStyle(
+                          color: context.textGreyColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      SavedPlacesRow(
+                        onUseAddress: onReorderTrip,
+                        onSaveAddress: onSaveAddress,
+                        onAddTap: onTapSavedPlace,
+                        addLabel: loc.savedPlaceAdd,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+
+                      // ====== الخدمات السريعة: تحت الأماكن المحفوظة مباشرة ======
+                      Row(
+                        children: [
+                          Expanded(
+                            child: QuickServiceButton(
+                              icon: Icons.two_wheeler,
+                              label: loc.serviceRideMe,
+                              onTap: onTapRideService,
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-
-                    // ====== تذكير تقييم آخر رحلة: بيظهر بس لو آخر رحلة
-                    // مكتملة لسه ما اتقيّمتش (مثلاً الراكب قفل التطبيق قبل
-                    // ما شاشة التقييم التلقائية تظهر) ======
-                    const RateLastTripReminder(),
-
-                    // ====== أماكن محفوظة: البيت / الشغل / إضافة، بنفس
-                    // المقاس بالظبط (كل واحدة Expanded) ======
-                    Text(
-                      loc.savedPlacesLabel,
-                      style: TextStyle(
-                        color: context.textGreyColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    SavedPlacesRow(
-                      onUseAddress: onReorderTrip,
-                      onSaveAddress: onSaveAddress,
-                      onAddTap: onTapSavedPlace,
-                      addLabel: loc.savedPlaceAdd,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-
-                    // ====== الخدمات السريعة: تحت الأماكن المحفوظة مباشرة ======
-                    Row(
-                      children: [
-                        Expanded(
-                          child: QuickServiceButton(
-                            icon: Icons.two_wheeler,
-                            label: loc.serviceRideMe,
-                            onTap: onTapRideService,
                           ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: QuickServiceButton(
-                            icon: Icons.delivery_dining,
-                            label: loc.serviceDeliverOrders,
-                            onTap: onTapDeliveryService,
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: QuickServiceButton(
+                              icon: Icons.delivery_dining,
+                              label: loc.serviceDeliverOrders,
+                              onTap: onTapDeliveryService,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                    // ====== وجهات أخيرة: بتظهر بس لو فيه رحلات سابقة فعلًا في Firestore ======
-                    RecentDestinationsSection(onReorderTrip: onReorderTrip),
-                  ],
+                      // ====== وجهات أخيرة: بتظهر بس لو فيه رحلات سابقة فعلًا في Firestore ======
+                      RecentDestinationsSection(onReorderTrip: onReorderTrip),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
