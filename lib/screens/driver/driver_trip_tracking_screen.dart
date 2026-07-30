@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,13 +8,13 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
-    show TayarColors, TayarThemeColors, paymentMethodDisplay;
+    show TayarColors, TayarThemeColors;
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
-import 'package:tayay_app/services/call_invitation_helper.dart';
 import 'package:tayay_app/services/wallet_service.dart';
+import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/driver_position_marker.dart';
+import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/trip_details_card.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي من ناحية الطيار ======
 /// بتتفتح فورًا لحظة قبول عرض الطيار، أو لما يدوس على كارت الرحلة النشطة
@@ -432,26 +431,8 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                       point: _driverDisplayedPosition!,
                       width: 46,
                       height: 46,
-                      child: Transform.rotate(
-                        angle: _driverDisplayedHeading * math.pi / 180,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: TayarColors.primary,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 3),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 8,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.navigation,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                        ),
+                      child: DriverPositionMarker(
+                        headingDegrees: _driverDisplayedHeading,
                       ),
                     ),
                 ],
@@ -484,308 +465,22 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
           ),
 
           // ====== كارت تفاصيل الرحلة أسفل الشاشة ======
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              decoration: BoxDecoration(
-                color: context.bgColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade700,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      inProgress
-                          ? loc.tripInProgressLabel
-                          : loc.tripAcceptedWaitingLabel,
-                      style: const TextStyle(
-                        color: TayarColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: TayarColors.primary,
-                          child: Icon(
-                            Icons.person,
-                            color: context.onPrimaryColor,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _customerName,
-                                style: TextStyle(
-                                  color: context.textColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                loc.distanceDurationLabel(
-                                  _distanceKm.toStringAsFixed(1),
-                                  _durationMin,
-                                ),
-                                style: TextStyle(
-                                  color: context.textGreyColor,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              loc.currencyEGP(_acceptedFare.toStringAsFixed(0)),
-                              style: const TextStyle(
-                                color: TayarColors.primary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            if (_proposedFare > 0 &&
-                                _proposedFare != _acceptedFare)
-                              Text(
-                                loc.originalProposedFareLabel(
-                                  _proposedFare.toStringAsFixed(0),
-                                ),
-                                style: TextStyle(
-                                  color: context.textGreyColor,
-                                  fontSize: 12,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    // ====== العنوانين ======
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: context.cardColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.location_on,
-                                color: TayarColors.primary,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  _pickupAddress,
-                                  style: TextStyle(
-                                    color: context.textColor,
-                                    fontSize: 14,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: SizedBox(
-                              height: 12,
-                              child: VerticalDivider(
-                                color: context.dividerColor2,
-                                thickness: 2,
-                              ),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.flag,
-                                color: TayarColors.primary,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  _destinationAddress,
-                                  style: TextStyle(
-                                    color: context.textColor,
-                                    fontSize: 14,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.payments_outlined,
-                                color: context.textColor.withValues(alpha: 0.7),
-                                size: 14,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                paymentMethodDisplay(context, _paymentMethod),
-                                style: TextStyle(
-                                  color: context.textColor.withValues(
-                                    alpha: 0.7,
-                                  ),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // ====== زرارين التواصل مع الراكب ======
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _ContactActionButton(
-                            icon: Icons.chat_bubble_outline,
-                            label: loc.chatWithPassengerLabel,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => TripChatScreen(
-                                    orderId: widget.orderId,
-                                    otherPartyName: _customerName,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _ContactActionButton(
-                            icon: Icons.call_outlined,
-                            label: loc.callPassengerLabel,
-                            onTap: () async {
-                              try {
-                                await sendCallInvitation(
-                                  calleeId: _customerId,
-                                  calleeName: _customerName,
-                                );
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('تعذر بدء المكالمة: $e'),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 46,
-                      child: ElevatedButton(
-                        onPressed: inProgress ? _completeTrip : _startTrip,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: TayarColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: Text(
-                          inProgress ? loc.endTrip : loc.startTrip,
-                          style: TextStyle(
-                            color: context.onPrimaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          TripDetailsCard(
+            inProgress: inProgress,
+            orderId: widget.orderId,
+            customerId: _customerId,
+            customerName: _customerName,
+            distanceKm: _distanceKm,
+            durationMin: _durationMin,
+            acceptedFare: _acceptedFare,
+            proposedFare: _proposedFare,
+            pickupAddress: _pickupAddress,
+            destinationAddress: _destinationAddress,
+            paymentMethod: _paymentMethod,
+            onStartTrip: _startTrip,
+            onCompleteTrip: _completeTrip,
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ====== زرار موحّد لأزرار "شات" و"مكالمة" ======
-class _ContactActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _ContactActionButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: TayarColors.primary.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: TayarColors.primary, size: 18),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: const TextStyle(
-                color: TayarColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
