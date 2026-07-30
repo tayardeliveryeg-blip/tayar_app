@@ -12,8 +12,11 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColor
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart' show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/screens/passenger/searching_offers_screen.dart';
-import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/location_pick_row.dart';
+import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/labeled_text_field.dart';
+import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/route_summary_card.dart';
+import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/payment_method_sheet.dart';
 
 /// ====== شاشة إنشاء طلب "وصل طلباتي" (توصيل طرد/بضاعة) ======
 /// بتاخد مكان استلام + مكان تسليم + تفاصيل العناوين + أرقام موبايل
@@ -167,127 +170,11 @@ class _CreateDeliveryOrderScreenState
   }
 
   Future<void> _showPaymentMethodSheet() async {
-    final loc = AppLocalizations.of(context)!;
-    final options = <Map<String, dynamic>>[
-      {'value': 'كاش', 'icon': Icons.payments_outlined},
-      {
-        'value': 'محفظة إلكترونية',
-        'icon': Icons.account_balance_wallet_outlined,
-      },
-      {'value': 'إنستاباي', 'icon': Icons.bolt_outlined},
-    ];
-
-    // ====== رصيد المحفظة الحالي + مقارنته بالأجرة عشان نعرف نفعّل خيار
-    // "محفظة إلكترونية" ولا نسيبه غير قابل للاختيار ======
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    double walletBalance = 0;
-    if (uid != null) {
-      try {
-        walletBalance = await getPassengerWalletBalance(uid);
-      } catch (_) {}
-    }
-    final fare = _estimatedFare;
-    final walletCoversFare = walletBalance >= fare && fare > 0;
-
-    if (!mounted) return;
-    final selected = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: context.bgColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-      ),
-      builder: (sheetContext) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade700,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    loc.choosePaymentMethodTitle,
-                    style:  TextStyle(
-                      color: context.textColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...options.map((option) {
-                final value = option['value'] as String;
-                final label = paymentMethodDisplay(sheetContext, value);
-                final isSelected = value == _paymentMethod;
-                final isWalletOption = value == 'محفظة إلكترونية';
-                final isDisabled = isWalletOption && !walletCoversFare;
-                return ListTile(
-                  onTap: isDisabled
-                      ? null
-                      : () => Navigator.pop(sheetContext, value),
-                  leading: Icon(
-                    option['icon'] as IconData,
-                    color: isDisabled
-                        ? context.textGreyColor.withValues(alpha: 0.4)
-                        : isSelected
-                        ? TayarColors.primary
-                        : context.textGreyColor,
-                  ),
-                  title: Text(
-                    label,
-                    style: TextStyle(
-                      color: isDisabled
-                          ? context.textGreyColor.withValues(alpha: 0.5)
-                          : context.textColor,
-                      fontSize: 15,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-                  ),
-                  subtitle: isWalletOption
-                      ? Text(
-                          isDisabled
-                              ? loc.walletInsufficientBalanceLabel
-                              : loc.walletAvailableBalanceLabel(
-                                  walletBalance.toStringAsFixed(0),
-                                ),
-                          style: TextStyle(
-                            color: isDisabled
-                                ? Colors.redAccent
-                                : context.textGreyColor,
-                            fontSize: 12,
-                          ),
-                        )
-                      : null,
-                  trailing: isSelected
-                      ? const Icon(
-                          Icons.check_circle,
-                          color: TayarColors.primary,
-                        )
-                      : null,
-                );
-              }),
-            ],
-          ),
-        ),
-      ),
+    final selected = await showDeliveryPaymentMethodSheet(
+      context,
+      currentMethod: _paymentMethod,
+      estimatedFare: _estimatedFare,
     );
-
     if (selected != null) {
       setState(() => _paymentMethod = selected);
     }
@@ -404,7 +291,7 @@ class _CreateDeliveryOrderScreenState
               ),
               child: Column(
                 children: [
-                  _LocationPickRow(
+                  LocationPickRow(
                     icon: Icons.location_on,
                     iconColor: TayarColors.primary,
                     label: loc.pickupLocationLabel,
@@ -420,7 +307,7 @@ class _CreateDeliveryOrderScreenState
                       ],
                     ),
                   ),
-                  _LocationPickRow(
+                  LocationPickRow(
                     icon: Icons.flag,
                     iconColor: TayarColors.primary,
                     label: loc.deliveryLocationLabel,
@@ -433,7 +320,7 @@ class _CreateDeliveryOrderScreenState
             const SizedBox(height: 16),
 
             // ====== تفاصيل عنوان الاستلام ======
-            _LabeledTextField(
+            LabeledTextField(
               label: loc.pickupAddressDetailsLabel,
               hint: loc.pickupAddressDetailsHint,
               controller: _pickupDetailsController,
@@ -441,7 +328,7 @@ class _CreateDeliveryOrderScreenState
             const SizedBox(height: 12),
 
             // ====== تفاصيل عنوان التسليم ======
-            _LabeledTextField(
+            LabeledTextField(
               label: loc.deliveryAddressDetailsLabel,
               hint: loc.deliveryAddressDetailsHint,
               controller: _dropoffDetailsController,
@@ -449,7 +336,7 @@ class _CreateDeliveryOrderScreenState
             const SizedBox(height: 12),
 
             // ====== رقم موبايل المُرسل ======
-            _LabeledTextField(
+            LabeledTextField(
               label: loc.senderPhoneLabel,
               hint: loc.phoneNumberHint,
               controller: _senderPhoneController,
@@ -460,7 +347,7 @@ class _CreateDeliveryOrderScreenState
             const SizedBox(height: 12),
 
             // ====== رقم موبايل المُستلم ======
-            _LabeledTextField(
+            LabeledTextField(
               label: loc.receiverPhoneLabel,
               hint: loc.phoneNumberHint,
               controller: _receiverPhoneController,
@@ -517,70 +404,11 @@ class _CreateDeliveryOrderScreenState
             const SizedBox(height: 16),
 
             // ====== كارت المسافة/الوقت/السعر (بيظهر بعد ما نحدد الموقعين) ======
-            if (_isCalculatingRoute)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Center(
-                  child: CircularProgressIndicator(color: TayarColors.primary),
-                ),
-              )
-            else if (_distanceKm != null)
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: TayarColors.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: TayarColors.primary.withValues(alpha: 0.4),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          loc.distanceLabel,
-                          style:  TextStyle(
-                            color: context.textGreyColor,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          loc.distanceKmLabel(_distanceKm!.toStringAsFixed(1)),
-                          style:  TextStyle(
-                            color: context.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                     Divider(color: context.dividerColor2),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          loc.estimatedFareLabel,
-                          style:  TextStyle(
-                            color: context.textColor,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          loc.currencyEGP(_estimatedFare.toStringAsFixed(0)),
-                          style: const TextStyle(
-                            color: TayarColors.primary,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            RouteSummaryCard(
+              isCalculating: _isCalculatingRoute,
+              distanceKm: _distanceKm,
+              estimatedFare: _estimatedFare,
+            ),
             const SizedBox(height: 20),
 
             // ====== زرار حفظ الطلب ======
@@ -618,120 +446,6 @@ class _CreateDeliveryOrderScreenState
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// ====== صف اختيار موقع (استلام/تسليم) - بيتحول لزرار قابل للضغط ======
-class _LocationPickRow extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String? address;
-  final VoidCallback onTap;
-
-  const _LocationPickRow({
-    required this.icon,
-    required this.iconColor,
-    required this.label,
-    required this.address,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: iconColor, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style:  TextStyle(
-                    color: context.textGreyColor,
-                    fontSize: 12,
-                  ),
-                ),
-                Text(
-                  address ?? loc.tapToSelectLocationLabel,
-                  style: TextStyle(
-                    color: address != null ? context.textColor : context.textGreyColor,
-                    fontSize: 15,
-                    fontWeight: address != null
-                        ? FontWeight.w600
-                        : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-           Icon(Icons.chevron_left, color: context.textGreyColor, size: 20),
-        ],
-      ),
-    );
-  }
-}
-
-// ====== خانة نص بعنوان فوقها (تفاصيل عنوان / رقم موبايل) ======
-class _LabeledTextField extends StatelessWidget {
-  final String label;
-  final String hint;
-  final TextEditingController controller;
-  final TextInputType? keyboardType;
-  final List<TextInputFormatter>? inputFormatters;
-  final ValueChanged<String>? onChanged;
-
-  const _LabeledTextField({
-    required this.label,
-    required this.hint,
-    required this.controller,
-    this.keyboardType,
-    this.inputFormatters,
-    this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              label,
-              style:  TextStyle(color: context.textGreyColor, fontSize: 12),
-            ),
-          ),
-          TextField(
-            controller: controller,
-            keyboardType: keyboardType,
-            inputFormatters: inputFormatters,
-            onChanged: onChanged,
-            style:  TextStyle(color: context.textColor, fontSize: 15),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle:  TextStyle(color: context.textGreyColor),
-              border: InputBorder.none,
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-          ),
-        ],
       ),
     );
   }

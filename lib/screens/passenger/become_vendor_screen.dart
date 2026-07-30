@@ -375,8 +375,8 @@ String vendorBusinessTypeDisplay(AppLocalizations loc, String value) {
   }
 }
 
-/// ====== خانة نص بعنوان فوقها - نفس شكل _LabeledTextField في
-/// create_delivery_order_screen.dart بس بإضافة maxLines للملاحظة ======
+/// ====== خانة نص بعنوان فوقها - نفس شكل LabeledTextField في
+/// create_delivery_order_widgets/labeled_text_field.dart بس بإضافة maxLines للملاحظة ======
 class _VendorLabeledTextField extends StatelessWidget {
   final String label;
   final String hint;
