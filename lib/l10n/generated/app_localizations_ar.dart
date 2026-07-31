@@ -544,12 +544,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chooseYourRideSubtitle => 'اختار الرحلة المناسبة ليك';
 
   @override
-  String get bikeAdvantageHighlight => 'دراجة = وصول أسرع وأرخص في الزحمة';
-
-  @override
-  String get bikeAdvantageBannerText => 'دراجة أرخص وأسرع في الزحمة';
-
-  @override
   String get continueWithGoogleButton => 'المتابعة باستخدام Google';
 
   @override
