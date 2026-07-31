@@ -419,7 +419,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionPersonalDocuments => 'Personal Documents';
 
   @override
-  String get sectionBikeInfo => 'Motorcycle Information';
+  String get sectionBikeInfo => 'Bike Information';
 
   @override
   String get applicationUnderReviewButton => 'Application Under Review';
@@ -460,22 +460,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get idNumberHint => 'ID Number';
 
   @override
-  String get bikeInfoRequiredError => 'Please complete basic motorcycle info';
+  String get bikeInfoRequiredError => 'Please complete basic Bike info';
 
   @override
-  String get bikePhotoLabel => 'Motorcycle Photo';
+  String get bikePhotoLabel => 'Bike Photo';
 
   @override
-  String get bikeLicensePhotoLabel => 'Motorcycle License';
+  String get bikeLicensePhotoLabel => 'Bike License';
 
   @override
-  String get bikeBrandHint => 'Motorcycle Brand';
+  String get bikeBrandHint => 'Bike Brand';
 
   @override
-  String get bikeModelHint => 'Motorcycle Model';
+  String get bikeModelHint => 'Bike Model';
 
   @override
-  String get bikeColorHint => 'Motorcycle Color';
+  String get bikeColorHint => 'Bike Color';
 
   @override
   String get bikeYearHint => 'Year of Manufacture';
@@ -518,7 +518,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqBecomeDriverAnswer =>
-      'Choose \"Driver Mode\" from the side menu and complete registration (info, license, motorcycle). You can accept orders after review.';
+      'Choose \"Driver Mode\" from the side menu and complete registration (info, license, Bike). You can accept orders after review.';
 
   @override
   String get faqDriverEarningsQuestion => 'How are driver earnings calculated?';
@@ -548,11 +548,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get motorcycleAdvantageHighlight =>
-      'Motorcycle = faster and cheaper in traffic';
+      'موتوسيكل = وصول أسرع وأرخص في الزحمة';
 
   @override
-  String get motorcycleAdvantageBannerText =>
-      'Motorcycles: cheaper and faster in traffic';
+  String get motorcycleAdvantageBannerText => 'موتوسيكل أرخص وأسرع في الزحمة';
 
   @override
   String get continueWithGoogleButton => 'Continue with Google';
@@ -1049,8 +1048,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverRoleTitle => 'Driver';
 
   @override
-  String get driverRoleDescription =>
-      'Work and earn money with your motorcycle';
+  String get driverRoleDescription => 'Work and earn money with your Bike';
 
   @override
   String driverCommissionBadge(String percent) {

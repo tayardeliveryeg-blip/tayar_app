@@ -419,7 +419,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sectionPersonalDocuments => 'المستندات الشخصية';
 
   @override
-  String get sectionBikeInfo => 'معلومات الدراجة النارية';
+  String get sectionBikeInfo => 'معلومات الدراجة';
 
   @override
   String get applicationUnderReviewButton => 'طلبك قيد المراجعة';
@@ -460,23 +460,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get idNumberHint => 'رقم الهوية';
 
   @override
-  String get bikeInfoRequiredError =>
-      'من فضلك أكمل بيانات الدراجة النارية الأساسية';
+  String get bikeInfoRequiredError => 'من فضلك أكمل بيانات الدراجة الأساسية';
 
   @override
-  String get bikePhotoLabel => 'صورة الدراجة النارية';
+  String get bikePhotoLabel => 'صورة الدراجة';
 
   @override
-  String get bikeLicensePhotoLabel => 'رخصة الدراجة النارية';
+  String get bikeLicensePhotoLabel => 'رخصة الدراجة';
 
   @override
-  String get bikeBrandHint => 'العلامة التجارية للدراجة نارية';
+  String get bikeBrandHint => 'العلامة التجارية للدراجة';
 
   @override
-  String get bikeModelHint => 'طراز الدراجة النارية';
+  String get bikeModelHint => 'طراز الدراجة';
 
   @override
-  String get bikeColorHint => 'لون الدراجة النارية';
+  String get bikeColorHint => 'لون الدراجة';
 
   @override
   String get bikeYearHint => 'سنة الانتاج';
@@ -517,7 +516,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqBecomeDriverAnswer =>
-      'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة النارية)، وبعد المراجعة هتقدر تستقبل طلبات.';
+      'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة)، وبعد المراجعة هتقدر تستقبل طلبات.';
 
   @override
   String get faqDriverEarningsQuestion => 'إزاي بتتحسب أرباح الطيار؟';

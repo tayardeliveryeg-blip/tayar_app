@@ -12,6 +12,7 @@ import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/offer_sheet.dart'
     show StepButton;
+import 'package:tayay_app/services/fare_negotiation_rules.dart';
 
 // ====== شاشة تفاصيل طلب الرحلة: خريطة بالنقطتين + واجهة المزايدة ======
 // (كانت قبل كده private class جوه driver_home_screen.dart واتقسمت في ملف منفصل)
@@ -53,6 +54,12 @@ class TripRequestDetailScreen extends StatefulWidget {
 class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
   List<LatLng> _routePoints = [];
   late double _price;
+
+  // ====== نفس الحدود المطبّقة في offer_sheet.dart، محسوبة على
+  // widget.proposedFare بتاعة الطلب وقت فتح الشاشة (السعر الأصلي قبل أي
+  // مزايدة من السائق ده)، مش على _price المتغيّرة ======
+  double get _minPrice => FareNegotiationRules.minFareFor(widget.proposedFare);
+  double get _maxPrice => FareNegotiationRules.maxFareFor(widget.proposedFare);
 
   @override
   void initState() {
@@ -275,11 +282,11 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                       children: [
                         StepButton(
                           icon: Icons.remove,
-                          onTap: () {
-                            if (_price - 5 > 0) {
-                              setState(() => _price -= 5);
-                            }
-                          },
+                          onTap: _price <= _minPrice
+                              ? null
+                              : () {
+                                  setState(() => _price -= 5);
+                                },
                         ),
                         SizedBox(
                           width: 120,
@@ -293,7 +300,9 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                         ),
                         StepButton(
                           icon: Icons.add,
-                          onTap: () => setState(() => _price += 5),
+                          onTap: _price >= _maxPrice
+                              ? null
+                              : () => setState(() => _price += 5),
                         ),
                       ],
                     ),

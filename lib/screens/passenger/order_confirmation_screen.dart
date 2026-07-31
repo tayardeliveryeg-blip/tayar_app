@@ -6,6 +6,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/searching_offers_screen.dart';
+import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/services/wallet_service.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
@@ -41,7 +42,12 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   // ====== السعر المقترح من الراكب (قابل للتعديل) ======
   late double _proposedFare;
   static const double _step = 5.0; // مقدار الزيادة/النقصان لكل ضغطة
-  late final double _minFare; // أقل سعر مسموح بيه (مش هننزل عن حد معين)
+
+  // ====== نفس حدود المزايدة المطبّقة بعد كده في searching_offers_screen.dart
+  // و offer_sheet.dart (0.5x - 1.5x من السعر الأساسي)، عشان الراكب مايقدرش
+  // يرفع السعر هنا فوق السقف اللي هيتفرض عليه بعد كده في شاشة البحث عن عروض ======
+  late final double _minFare; // أقل سعر مسموح بيه
+  late final double _maxFare; // أعلى سعر مسموح بيه (قبل حد المحفظة لو موجود)
 
   // ====== لما الدفع يكون محفظة إلكترونية: أعلى سعر مسموح بيه هو رصيد
   // المحفظة الفعلي (بنجيبه من السيرفر عشان محدش يتلاعب بيه من الشاشة
@@ -55,8 +61,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   void initState() {
     super.initState();
     _proposedFare = widget.fare;
-    _minFare = (widget.fare * 0.5)
-        .roundToDouble(); // مش هننزل عن نص السعر المقترح الأساسي
+    _minFare = FareNegotiationRules.minFareFor(widget.fare);
+    _maxFare = FareNegotiationRules.maxFareFor(widget.fare);
     if (widget.paymentMethod == kWalletPaymentMethodValue) {
       _loadWalletCap();
     }
@@ -79,7 +85,10 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
 
   void _increaseFare() {
     setState(() {
-      if (_walletMaxFare == null || _proposedFare + _step <= _walletMaxFare!) {
+      final bool underNegotiationCap = _proposedFare + _step <= _maxFare;
+      final bool underWalletCap =
+          _walletMaxFare == null || _proposedFare + _step <= _walletMaxFare!;
+      if (underNegotiationCap && underWalletCap) {
         _proposedFare += _step;
       }
     });
@@ -294,8 +303,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       _FareStepButton(
                         icon: Icons.add,
                         onTap:
-                            (_walletMaxFare != null &&
-                                _proposedFare + _step > _walletMaxFare!)
+                            (_proposedFare + _step > _maxFare) ||
+                                (_walletMaxFare != null &&
+                                    _proposedFare + _step > _walletMaxFare!)
                             ? null
                             : _increaseFare,
                       ),

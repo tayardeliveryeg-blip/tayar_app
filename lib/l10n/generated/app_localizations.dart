@@ -875,7 +875,7 @@ abstract class AppLocalizations {
   /// No description provided for @sectionBikeInfo.
   ///
   /// In ar, this message translates to:
-  /// **'معلومات الدراجة النارية'**
+  /// **'معلومات الدراجة'**
   String get sectionBikeInfo;
 
   /// No description provided for @applicationUnderReviewButton.
@@ -953,37 +953,37 @@ abstract class AppLocalizations {
   /// No description provided for @bikeInfoRequiredError.
   ///
   /// In ar, this message translates to:
-  /// **'من فضلك أكمل بيانات الدراجة النارية الأساسية'**
+  /// **'من فضلك أكمل بيانات الدراجة الأساسية'**
   String get bikeInfoRequiredError;
 
   /// No description provided for @bikePhotoLabel.
   ///
   /// In ar, this message translates to:
-  /// **'صورة الدراجة النارية'**
+  /// **'صورة الدراجة'**
   String get bikePhotoLabel;
 
   /// No description provided for @bikeLicensePhotoLabel.
   ///
   /// In ar, this message translates to:
-  /// **'رخصة الدراجة النارية'**
+  /// **'رخصة الدراجة'**
   String get bikeLicensePhotoLabel;
 
   /// No description provided for @bikeBrandHint.
   ///
   /// In ar, this message translates to:
-  /// **'العلامة التجارية للدراجة نارية'**
+  /// **'العلامة التجارية للدراجة'**
   String get bikeBrandHint;
 
   /// No description provided for @bikeModelHint.
   ///
   /// In ar, this message translates to:
-  /// **'طراز الدراجة النارية'**
+  /// **'طراز الدراجة'**
   String get bikeModelHint;
 
   /// No description provided for @bikeColorHint.
   ///
   /// In ar, this message translates to:
-  /// **'لون الدراجة النارية'**
+  /// **'لون الدراجة'**
   String get bikeColorHint;
 
   /// No description provided for @bikeYearHint.
@@ -1055,7 +1055,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqBecomeDriverAnswer.
   ///
   /// In ar, this message translates to:
-  /// **'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة النارية)، وبعد المراجعة هتقدر تستقبل طلبات.'**
+  /// **'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة)، وبعد المراجعة هتقدر تستقبل طلبات.'**
   String get faqBecomeDriverAnswer;
 
   /// No description provided for @faqDriverEarningsQuestion.
