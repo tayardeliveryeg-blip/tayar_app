@@ -1094,8 +1094,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       Marker(
                         point: _currentLocation,
                         width: 44,
-                        height: 44,
-                        child: const PinMarker(type: PinType.pickup),
+                        height: const PinMarkerWithStem().totalHeight,
+                        child: const PinMarkerWithStem(type: PinType.pickup),
                       ),
                     ],
                   ),
@@ -1120,22 +1120,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     markers: [
                       Marker(
                         point: _liveUserLocation!,
-                        width: 18,
-                        height: 18,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2.5),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blue.withValues(alpha: 0.4),
-                                blurRadius: 6,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
-                        ),
+                        width: 56,
+                        height: 56,
+                        child: const LiveLocationDot(),
                       ),
                     ],
                   ),
