@@ -105,7 +105,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   // يرجع يظهر تاني لو المستخدم قفل وفتح التطبيق من جديد ======
   bool _promoDismissed = false;
   bool _vendorPromoDismissed = false;
-  bool _motorcycleAdvantagePromoDismissed = false;
 
   LatLng? _liveUserLocation; // موقعك الحقيقي الفعلي، بيتحدث لايف مع تحركك
   StreamSubscription<Position>? _liveLocationSub;
@@ -1346,38 +1345,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     child: BecomeVendorPromoBanner(
                       onDismiss: () =>
                           setState(() => _vendorPromoDismissed = true),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-          // ====== بانر "موتوسيكل أرخص وأسرع في الزحمة" - نفس أسلوب
-          // البانرات اللي فوقه بالظبط، بس evergreen (بيظهر لأي راكب طول
-          // الوقت من غير شرط Firestore) لحد ما يقفله بنفسه ======
-          if (!_motorcycleAdvantagePromoDismissed)
-            Positioned(
-              top: 66 + topSafeArea + 68,
-              right: 16,
-              left: 16,
-              child: AnimatedBuilder(
-                animation: _sheetAnimController,
-                builder: (context, child) => Opacity(
-                  opacity: 1 - _sheetAnimController.value,
-                  child: IgnorePointer(
-                    ignoring: _sheetAnimController.value > 0.5,
-                    child: child,
-                  ),
-                ),
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: _isDraggingMap ? 0 : 1,
-                  child: IgnorePointer(
-                    ignoring: _isDraggingMap,
-                    child: MotorcycleAdvantagePromoBanner(
-                      onDismiss: () => setState(
-                        () => _motorcycleAdvantagePromoDismissed = true,
-                      ),
                     ),
                   ),
                 ),
