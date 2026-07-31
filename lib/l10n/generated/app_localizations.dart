@@ -1100,6 +1100,18 @@ abstract class AppLocalizations {
   /// **'اختار الرحلة المناسبة ليك'**
   String get chooseYourRideSubtitle;
 
+  /// No description provided for @motorcycleAdvantageHighlight.
+  ///
+  /// In ar, this message translates to:
+  /// **'موتوسيكل = وصول أسرع وأرخص في الزحمة'**
+  String get motorcycleAdvantageHighlight;
+
+  /// No description provided for @motorcycleAdvantageBannerText.
+  ///
+  /// In ar, this message translates to:
+  /// **'موتوسيكل أرخص وأسرع في الزحمة'**
+  String get motorcycleAdvantageBannerText;
+
   /// No description provided for @continueWithGoogleButton.
   ///
   /// In ar, this message translates to:

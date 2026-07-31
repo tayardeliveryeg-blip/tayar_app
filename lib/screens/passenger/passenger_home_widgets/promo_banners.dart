@@ -80,6 +80,54 @@ class NewCustomerPromoBanner extends StatelessWidget {
   }
 }
 
+// ====== بانر "موتوسيكل أرخص وأسرع في الزحمة": نفس الشكل البصري بالظبط
+// بتاع البانرات فوق، بس evergreen (مفيش شرط Firestore، بيظهر لأي راكب
+// طول الوقت) — أكبر سلاح تنافسي لـ Tayar عن Uber/Careem/inDrive، فلازم
+// يفضل واضح على الشاشة الرئيسية طول الوقت لحد ما المستخدم يقفله بنفسه ======
+class MotorcycleAdvantagePromoBanner extends StatelessWidget {
+  final VoidCallback onDismiss;
+
+  const MotorcycleAdvantagePromoBanner({super.key, required this.onDismiss});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: TayarColors.primary,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 8),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.two_wheeler, color: Colors.white, size: 15),
+          const SizedBox(width: AppSpacing.xs),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context)!.motorcycleAdvantageBannerText,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          GestureDetector(
+            onTap: onDismiss,
+            child: const Icon(Icons.close, color: Colors.white70, size: 14),
+          ),
+        ],
+      ),
+    );
+  }
+}
 // ====== بانر "لو عايز تبقى شريك تجاري معانا؟": نفس الشكل البصري بالظبط
 // بتاع NewCustomerPromoBanner فوق، بس بمنطق مختلف تمامًا - مش شرط إنه
 // عميل جديد، وبيختفي بس لو المستخدم بعت طلب انضمام قبل كده (أي حالة، عشان

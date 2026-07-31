@@ -240,6 +240,46 @@ class _LoginScreenState extends State<LoginScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(color: context.textGreyColor),
                           ),
+                          const SizedBox(height: 14),
+                          // ====== أكبر سلاح تنافسي: موتوسيكل بدل عربية = وصول
+                          // أسرع وأرخص وقت الزحمة. لازم يكون واضح من أول شاشة
+                          // يشوفها أي مستخدم جديد قبل حتى ما يسجّل دخول ======
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: TayarColors.primary.withValues(
+                                alpha: 0.12,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.two_wheeler,
+                                  color: TayarColors.primary,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.motorcycleAdvantageHighlight,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: TayarColors.primary,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           const SizedBox(height: 24),
                         ],
                       ),
