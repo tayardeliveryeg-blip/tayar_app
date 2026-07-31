@@ -481,6 +481,22 @@
   "passengerRoleDescription": "Order your ride easily and quickly",
   "driverRoleTitle": "Driver",
   "driverRoleDescription": "Work and earn money with your motorcycle",
+  "driverCommissionBadge": "Only {percent}% commission",
+  "@driverCommissionBadge": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "driverCommissionHighlightDetail": "Our commission is only {percent}% per trip — far less than other apps",
+  "@driverCommissionHighlightDetail": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "completeProfileTitle": "Complete your profile",
   "completeProfileSubtitle": "We'll use your name so people can recognize you",
   "topUpWalletButton": "Top up wallet",

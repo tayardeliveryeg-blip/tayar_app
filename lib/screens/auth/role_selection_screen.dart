@@ -4,6 +4,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, PassengerHomeScreen;
 import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
 import 'package:tayay_app/screens/auth/profile_setup_screen.dart';
+import 'package:tayay_app/theme/app_settings.dart';
 
 // ====================================================
 // ====== شاشة اختيار نوع الحساب بعد أول تسجيل دخول ======
@@ -75,6 +76,9 @@ class RoleSelectionScreen extends StatelessWidget {
                 icon: Icons.two_wheeler,
                 title: loc.driverRoleTitle,
                 subtitle: loc.driverRoleDescription,
+                badge: loc.driverCommissionBadge(
+                  (AppSettings.instance.commissionRate * 100).round().toString(),
+                ),
                 onTap: () => _continueAsDriver(context),
               ),
             ],
@@ -89,12 +93,14 @@ class _RoleCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+  final String? badge;
   final VoidCallback onTap;
 
   const _RoleCard({
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.badge,
     required this.onTap,
   });
 
@@ -142,6 +148,27 @@ class _RoleCard extends StatelessWidget {
                       color: context.textGreyColor,
                     ),
                   ),
+                  if (badge != null) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: TayarColors.primary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        badge!,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: TayarColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

@@ -1988,6 +1988,18 @@ abstract class AppLocalizations {
   /// **'اشتغل واكسب فلوس بموتوسيكلك'**
   String get driverRoleDescription;
 
+  /// No description provided for @driverCommissionBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'عمولة {percent}% بس'**
+  String driverCommissionBadge(String percent);
+
+  /// No description provided for @driverCommissionHighlightDetail.
+  ///
+  /// In ar, this message translates to:
+  /// **'عمولتنا {percent}% بس على كل رحلة — أقل بكتير من باقي التطبيقات'**
+  String driverCommissionHighlightDetail(String percent);
+
   /// No description provided for @completeProfileTitle.
   ///
   /// In ar, this message translates to:

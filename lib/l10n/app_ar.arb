@@ -481,6 +481,22 @@
   "passengerRoleDescription": "اطلب رحلتك بسهولة وسرعة",
   "driverRoleTitle": "طيار",
   "driverRoleDescription": "اشتغل واكسب فلوس بموتوسيكلك",
+  "driverCommissionBadge": "عمولة {percent}% بس",
+  "@driverCommissionBadge": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "driverCommissionHighlightDetail": "عمولتنا {percent}% بس على كل رحلة — أقل بكتير من باقي التطبيقات",
+  "@driverCommissionHighlightDetail": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "completeProfileTitle": "كمّل بياناتك",
   "completeProfileSubtitle": "هنستخدم اسمك عشان الناس تتعرف عليك",
   "topUpWalletButton": "اشحن محفظتك",

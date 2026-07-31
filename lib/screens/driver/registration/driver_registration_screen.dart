@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/driver/registration/personal_info_screen.dart'
 import 'package:tayay_app/screens/driver/registration/driving_license_screen.dart';
 import 'package:tayay_app/screens/driver/registration/personal_documents_screen.dart';
 import 'package:tayay_app/screens/driver/registration/bike_info_screen.dart';
+import 'package:tayay_app/theme/app_settings.dart';
 class DriverRegistrationScreen extends StatefulWidget {
   const DriverRegistrationScreen({super.key});
 
@@ -170,6 +171,44 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // ====== بانر تسويقي بارز: عمولتنا أقل بكتير من باقي
+                  // التطبيقات — بيظهر طول الوقت (قبل وبعد إرسال الطلب
+                  // ووقت المراجعة) عشان يفضل يعزّز نفس الرسالة ======
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: TayarColors.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.local_offer_outlined,
+                          color: TayarColors.primary,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            AppLocalizations.of(context)!
+                                .driverCommissionHighlightDetail(
+                                  (AppSettings.instance.commissionRate * 100)
+                                      .round()
+                                      .toString(),
+                                ),
+                            style: TextStyle(
+                              color: context.textColor,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   if (status == 'pending_review')
                     Container(
                       padding: const EdgeInsets.all(14),

@@ -1038,6 +1038,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverRoleDescription => 'اشتغل واكسب فلوس بموتوسيكلك';
 
   @override
+  String driverCommissionBadge(String percent) {
+    return 'عمولة $percent% بس';
+  }
+
+  @override
+  String driverCommissionHighlightDetail(String percent) {
+    return 'عمولتنا $percent% بس على كل رحلة — أقل بكتير من باقي التطبيقات';
+  }
+
+  @override
   String get completeProfileTitle => 'كمّل بياناتك';
 
   @override

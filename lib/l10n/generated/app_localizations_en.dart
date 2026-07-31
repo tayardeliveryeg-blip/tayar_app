@@ -1045,6 +1045,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Work and earn money with your motorcycle';
 
   @override
+  String driverCommissionBadge(String percent) {
+    return 'Only $percent% commission';
+  }
+
+  @override
+  String driverCommissionHighlightDetail(String percent) {
+    return 'Our commission is only $percent% per trip — far less than other apps';
+  }
+
+  @override
   String get completeProfileTitle => 'Complete your profile';
 
   @override
