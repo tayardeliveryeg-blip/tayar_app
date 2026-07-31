@@ -407,7 +407,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get registrationIntroText =>
-      'قم بتحميل بياناتك الشخصية وبيانات مركبتك. سنراجع جميع البيانات خلال 24 ساعة';
+      'قم بتحميل بياناتك الشخصية وبيانات دراجتك. سنراجع جميع البيانات خلال 24 ساعة';
 
   @override
   String get sectionPersonalInfo => 'المعلومات الشخصية';

@@ -162,7 +162,7 @@
   "submitApplicationSuccessBody": "سنراجع بياناتك خلال 24 ساعة، وهنبلغك أول ما يتم قبول حسابك كطيار.",
   "submitFailedError": "تعذر إرسال الطلب، حاول تاني",
   "applicationUnderReviewBanner": "طلبك قيد المراجعة حاليًا، هنبلغك أول ما يتم الرد.",
-  "registrationIntroText": "قم بتحميل بياناتك الشخصية وبيانات مركبتك. سنراجع جميع البيانات خلال 24 ساعة",
+  "registrationIntroText": "قم بتحميل بياناتك الشخصية وبيانات دراجتك. سنراجع جميع البيانات خلال 24 ساعة",
   "sectionPersonalInfo": "المعلومات الشخصية",
   "sectionDrivingLicense": "رخصة القيادة",
   "sectionPersonalDocuments": "المستندات الشخصية",

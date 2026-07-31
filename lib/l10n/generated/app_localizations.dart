@@ -851,7 +851,7 @@ abstract class AppLocalizations {
   /// No description provided for @registrationIntroText.
   ///
   /// In ar, this message translates to:
-  /// **'قم بتحميل بياناتك الشخصية وبيانات مركبتك. سنراجع جميع البيانات خلال 24 ساعة'**
+  /// **'قم بتحميل بياناتك الشخصية وبيانات دراجتك. سنراجع جميع البيانات خلال 24 ساعة'**
   String get registrationIntroText;
 
   /// No description provided for @sectionPersonalInfo.
