@@ -16,7 +16,9 @@ import 'package:tayay_app/screens/passenger/rate_trip_screen.dart';
 import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
 import 'package:tayay_app/services/call_invitation_helper.dart';
 import 'package:tayay_app/services/wallet_service.dart';
+import 'package:tayay_app/services/trip_share_helper.dart';
 import 'package:tayay_app/widgets/contact_action_button.dart';
+import 'package:tayay_app/widgets/sos_floating_button.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -730,6 +732,58 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                   ],
                 ),
                 child: Icon(Icons.arrow_back, color: context.textColor),
+              ),
+            ),
+          ),
+
+          // ====== زرار الطوارئ (SOS) ======
+          Positioned(
+            top: 50,
+            left: 16,
+            child: SosFloatingButton(
+              userRole: 'passenger',
+              orderId: widget.orderId,
+            ),
+          ),
+
+          // ====== زرار مشاركة موقع الرحلة اللحظي مع شخص تاني عبر واتساب ======
+          Positioned(
+            top: 104,
+            right: 16,
+            child: GestureDetector(
+              onTap: () async {
+                final message = buildTripShareMessage(
+                  intro: loc.shareTripIntro,
+                  otherPartyLabel: loc.shareTripDriverLabel,
+                  otherPartyName: _driverName,
+                  fromLabel: loc.shareTripFromLabel,
+                  pickupAddress: _pickupAddress,
+                  toLabel: loc.shareTripToLabel,
+                  destinationAddress: _destinationAddress,
+                  locationLabel: loc.shareTripLiveLocationLabel,
+                  currentLocation: _driverDisplayedPosition,
+                );
+                final ok = await shareTripViaWhatsapp(message);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(loc.failedToOpenAppError)),
+                  );
+                }
+              },
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: context.bgColor.withValues(alpha: 0.9),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: Icon(Icons.share_outlined, color: context.textColor),
               ),
             ),
           ),

@@ -6,10 +6,15 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/services/sos_service.dart';
 
-// ====== شاشة الأمان: قفل التطبيق برقم سري + عرض وسيلة تسجيل الدخول + حذف الحساب ======
+// ====== شاشة الأمان: قفل التطبيق برقم سري + عرض وسيلة تسجيل الدخول + حذف
+// الحساب + جهة اتصال الطوارئ. شاشة مشتركة بين الراكب والطيار - isDriver
+// بتحدد نكتب جهة اتصال الطوارئ في users/{uid} ولا drivers/{uid} ======
 class SecurityScreen extends StatefulWidget {
-  const SecurityScreen({super.key});
+  final bool isDriver;
+
+  const SecurityScreen({super.key, this.isDriver = false});
 
   @override
   State<SecurityScreen> createState() => _SecurityScreenState();
@@ -19,10 +24,44 @@ class _SecurityScreenState extends State<SecurityScreen> {
   bool _appLockEnabled = false;
   bool _loading = true;
 
+  String get _userRole => widget.isDriver ? 'driver' : 'passenger';
+  final _emergencyContactController = TextEditingController();
+  bool _savingEmergencyContact = false;
+
   @override
   void initState() {
     super.initState();
     _loadAppLockSetting();
+    _loadEmergencyContact();
+  }
+
+  @override
+  void dispose() {
+    _emergencyContactController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadEmergencyContact() async {
+    final phone = await SosService.getEmergencyContact(_userRole);
+    if (!mounted) return;
+    if (phone != null) {
+      setState(() => _emergencyContactController.text = phone);
+    }
+  }
+
+  Future<void> _saveEmergencyContact() async {
+    final phone = _emergencyContactController.text.trim();
+    if (phone.isEmpty) return;
+    setState(() => _savingEmergencyContact = true);
+    try {
+      await SosService.setEmergencyContact(_userRole, phone);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.savedSuccessfully)),
+      );
+    } finally {
+      if (mounted) setState(() => _savingEmergencyContact = false);
+    }
   }
 
   Future<void> _loadAppLockSetting() async {
@@ -308,6 +347,93 @@ class _SecurityScreenState extends State<SecurityScreen> {
                       subtitle: Text(
                         loc.appLockSubtitle,
                         style: TextStyle(color: context.textGreyColor),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _SectionCard(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.contact_phone_outlined,
+                                color: TayarColors.primary,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                loc.emergencyContactTitle,
+                                style: TextStyle(
+                                  color: context.textColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            loc.emergencyContactSubtitle,
+                            style: TextStyle(
+                              color: context.textGreyColor,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller: _emergencyContactController,
+                            keyboardType: TextInputType.phone,
+                            style: TextStyle(color: context.textColor),
+                            decoration: InputDecoration(
+                              hintText: loc.emergencyContactHint,
+                              hintStyle: TextStyle(
+                                color: context.textGreyColor,
+                              ),
+                              filled: true,
+                              fillColor: context.bgColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 44,
+                            child: ElevatedButton(
+                              onPressed: _savingEmergencyContact
+                                  ? null
+                                  : _saveEmergencyContact,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: TayarColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: _savingEmergencyContact
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: context.onPrimaryColor,
+                                      ),
+                                    )
+                                  : Text(
+                                      loc.saveButton,
+                                      style: TextStyle(
+                                        color: context.onPrimaryColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

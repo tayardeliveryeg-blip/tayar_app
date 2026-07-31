@@ -563,5 +563,22 @@
   "vendorApplicationSentMessage": "طلبك قيد المراجعة حاليًا، هنتواصل معاك قريبًا.",
   "okButton": "تمام",
   "registerStoreDrawerLabel": "لو عايز تبقى شريك تجاري معانا؟",
-  "becomeVendorDrawerLabel": "شريك تجاري"
+  "becomeVendorDrawerLabel": "شريك تجاري",
+  "sosSheetTitle": "زرار الطوارئ",
+  "sosAlertSentToAdminNotice": "تم إرسال تنبيه فوري لفريق Tayar بموقعك الحالي",
+  "sosCallPoliceLabel": "اتصال بالشرطة",
+  "sosCallSupportLabel": "اتصال بدعم Tayar",
+  "sosNotifyEmergencyContactLabel": "تنبيه جهة اتصال الطوارئ",
+  "sosNoEmergencyContactSetHint": "مفيش جهة اتصال محفوظة - دوس لإضافة واحدة",
+  "sosWhatsappMessage": "محتاج مساعدة دلوقتي، أنا في رحلة على تطبيق طيار (Tayar). ابعتلي رسالة أو اتصل بيا لو تقدر.",
+  "shareTripIntro": "أنا بستخدم تطبيق طيار (Tayar) دلوقتي في رحلة، ده تفاصيلها:",
+  "shareTripDriverLabel": "السائق",
+  "shareTripPassengerLabel": "الراكب",
+  "shareTripFromLabel": "من",
+  "shareTripToLabel": "إلى",
+  "shareTripLiveLocationLabel": "الموقع الحالي",
+  "emergencyContactTitle": "جهة اتصال الطوارئ",
+  "emergencyContactSubtitle": "الرقم ده هيتبعتله تنبيه واتساب فيه موقعك لو دوست زرار الطوارئ وقت الرحلة",
+  "emergencyContactHint": "رقم موبايل جهة الطوارئ",
+  "savedSuccessfully": "تم الحفظ بنجاح"
 }

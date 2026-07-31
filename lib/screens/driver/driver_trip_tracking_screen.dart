@@ -13,8 +13,10 @@ import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/wallet_service.dart';
+import 'package:tayay_app/services/trip_share_helper.dart';
 import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/driver_position_marker.dart';
 import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/trip_details_card.dart';
+import 'package:tayay_app/widgets/sos_floating_button.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي من ناحية الطيار ======
 /// بتتفتح فورًا لحظة قبول عرض الطيار، أو لما يدوس على كارت الرحلة النشطة
@@ -370,6 +372,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
   @override
   Widget build(BuildContext context) {
     final bool inProgress = _status == 'in_progress';
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: context.bgColor,
@@ -459,6 +462,58 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                   ],
                 ),
                 child: Icon(Icons.arrow_back, color: context.textColor),
+              ),
+            ),
+          ),
+
+          // ====== زرار الطوارئ (SOS) ======
+          Positioned(
+            top: 50,
+            left: 16,
+            child: SosFloatingButton(
+              userRole: 'driver',
+              orderId: widget.orderId,
+            ),
+          ),
+
+          // ====== زرار مشاركة موقع الرحلة اللحظي مع شخص تاني عبر واتساب ======
+          Positioned(
+            top: 104,
+            right: 16,
+            child: GestureDetector(
+              onTap: () async {
+                final message = buildTripShareMessage(
+                  intro: loc.shareTripIntro,
+                  otherPartyLabel: loc.shareTripPassengerLabel,
+                  otherPartyName: _customerName,
+                  fromLabel: loc.shareTripFromLabel,
+                  pickupAddress: _pickupAddress,
+                  toLabel: loc.shareTripToLabel,
+                  destinationAddress: _destinationAddress,
+                  locationLabel: loc.shareTripLiveLocationLabel,
+                  currentLocation: _driverDisplayedPosition,
+                );
+                final ok = await shareTripViaWhatsapp(message);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(loc.failedToOpenAppError)),
+                  );
+                }
+              },
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: context.bgColor.withValues(alpha: 0.9),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: Icon(Icons.share_outlined, color: context.textColor),
               ),
             ),
           ),

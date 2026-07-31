@@ -218,7 +218,7 @@ class DriverHomeDrawer extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const SecurityScreen(),
+                          builder: (_) => const SecurityScreen(isDriver: true),
                         ),
                       );
                     },

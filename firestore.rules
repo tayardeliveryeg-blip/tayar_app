@@ -276,6 +276,22 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ====== تنبيهات زرار الطوارئ (SOS) - أي راكب/طيار مسجل دخول يقدر يسجل
+    // تنبيه طوارئ بس على نفسه (userId لازم يطابق auth.uid) وبحالة 'open'
+    // دايمًا وقت الإنشاء. القراءة محصورة على صاحب التنبيه والأدمن. تعديل
+    // الحالة (حل التنبيه) محصور على الأدمن بس من لوحة التحكم ======
+    match /sos_alerts/{alertId} {
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.status == 'open';
+      allow read: if request.auth != null &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow update: if isAdmin() &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'resolvedAt', 'resolvedBy']);
+      allow delete: if isAdmin();
+    }
+
     // ====== إعدادات التطبيق (سعر الرحلة، العمولة، تليفون الدعم) — قراءة عامة
     // لأن التطبيق بيقراها وقت الفتح حتى قبل ما المستخدم يسجل دخول،
     // والكتابة محصورة على الأدمن بس من لوحة التحكم ======

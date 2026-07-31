@@ -563,5 +563,22 @@
   "vendorApplicationSentMessage": "Your request is under review, we'll be in touch soon.",
   "okButton": "OK",
   "registerStoreDrawerLabel": "Want to become a business partner?",
-  "becomeVendorDrawerLabel": "Business partner"
+  "becomeVendorDrawerLabel": "Business partner",
+  "sosSheetTitle": "Emergency (SOS)",
+  "sosAlertSentToAdminNotice": "An instant alert with your current location was sent to the Tayar team",
+  "sosCallPoliceLabel": "Call the police",
+  "sosCallSupportLabel": "Call Tayar support",
+  "sosNotifyEmergencyContactLabel": "Notify emergency contact",
+  "sosNoEmergencyContactSetHint": "No contact saved - tap to add one",
+  "sosWhatsappMessage": "I need help right now, I'm on a trip on the Tayar app. Please message or call me if you can.",
+  "shareTripIntro": "I'm currently on a trip using the Tayar app, here are the details:",
+  "shareTripDriverLabel": "Driver",
+  "shareTripPassengerLabel": "Passenger",
+  "shareTripFromLabel": "From",
+  "shareTripToLabel": "To",
+  "shareTripLiveLocationLabel": "Current location",
+  "emergencyContactTitle": "Emergency contact",
+  "emergencyContactSubtitle": "This number will get a WhatsApp alert with your location if you tap the SOS button during a trip",
+  "emergencyContactHint": "Emergency contact's phone number",
+  "savedSuccessfully": "Saved successfully"
 }

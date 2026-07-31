@@ -350,6 +350,9 @@
       </div>
     </div>
     <div id="connBanner" style="display:none;background:var(--danger-dim);color:var(--danger);font-size:12.5px;padding:9px 28px;border-bottom:1px solid var(--border);"></div>
+    <div id="sosBanner" onclick="goTo('sosAlerts')" style="display:none;align-items:center;gap:8px;cursor:pointer;background:var(--danger);color:#fff;font-size:13px;font-weight:700;padding:10px 28px;border-bottom:1px solid var(--border);">
+      <span></span>
+    </div>
 
     <div class="content">
 
@@ -446,6 +449,20 @@
         </div>
       </div>
 
+      <!-- SOS ALERTS -->
+      <div class="section" id="sec-sosAlerts">
+        <div class="panel-head" style="margin-bottom:14px;">
+          <h3 style="font-size:15px;">🚨 SOS Alerts</h3>
+          <span class="hint">Instant alerts sent from the app the moment a passenger or driver taps the SOS button during a trip. Call them back on the phone number shown and mark resolved once handled.</span>
+        </div>
+        <div class="panel">
+          <table>
+            <thead><tr><th>Name</th><th>Role</th><th>Phone</th><th>Order</th><th>Location</th><th>Sent</th><th>Status</th><th></th></tr></thead>
+            <tbody id="sosAlertsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- VENDOR REQUESTS -->
       <div class="section" id="sec-vendorApplications">
         <div class="panel-head" style="margin-bottom:14px;">
@@ -529,7 +546,8 @@ const COLLECTIONS = {
   orders: 'orders',
   drivers: 'drivers',
   users: 'users',
-  vendorApplications: 'vendor_applications'
+  vendorApplications: 'vendor_applications',
+  sosAlerts: 'sos_alerts'
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -596,6 +614,7 @@ const icons = {
   users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>',
   wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M16 12h3"/><path d="M3 9h18"/></svg>',
   vendorApplications: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9z"/><path d="M9 20v-6h6v6"/></svg>',
+  sosAlerts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
 
@@ -604,8 +623,9 @@ let orders = [];
 let drivers = [];
 let users = [];
 let vendorApplications = [];
+let sosAlerts = [];
 let orderFilter = 'all';
-let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting' };
+let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting' };
 
 function showConnError(collectionKey, err){
   const banner = document.getElementById('connBanner');
@@ -726,6 +746,31 @@ function startListeners(){
     connectionState.vendorApplications = 'ok';
     renderAll();
   }, err => { connectionState.vendorApplications = 'error'; showConnError('vendorApplications', err); });
+
+  // sos_alerts: created instantly from the app the moment a passenger or driver
+  // taps the SOS button during a trip (SosService.triggerAlert in sos_service.dart).
+  // Ordered newest-first so the most urgent/recent alert is always on top.
+  db.collection(COLLECTIONS.sosAlerts).orderBy('createdAt', 'desc').onSnapshot(snap => {
+    sosAlerts = snap.docs.map(doc => {
+      const d = doc.data();
+      const loc = d.location || null;
+      return {
+        id: doc.id,
+        userId: pick(d, ['userId'], ''),
+        userName: pick(d, ['userName'], '—'),
+        userPhone: pick(d, ['userPhone'], '—'),
+        userRole: pick(d, ['userRole'], '—'),
+        orderId: pick(d, ['orderId'], null),
+        lat: loc ? loc.latitude : null,
+        lon: loc ? loc.longitude : null,
+        status: (pick(d, ['status'], 'open')+'').toLowerCase(),
+        createdAtRaw: (()=>{ const ts = pick(d,['createdAt'],null); return ts ? (ts.toDate ? ts.toDate() : new Date(ts)) : null; })(),
+        time: relativeTime(pick(d, ['createdAt'], null))
+      };
+    });
+    connectionState.sosAlerts = 'ok';
+    renderAll();
+  }, err => { connectionState.sosAlerts = 'error'; showConnError('sosAlerts', err); });
 }
 
 /* deliveries-per-driver and orders-per-customer aren't stored fields —
@@ -744,6 +789,7 @@ function recomputeCounts(){
 /* ---------------- NAV ---------------- */
 const navItems = [
   {key:'overview', label:'Overview'},
+  {key:'sosAlerts', label:'🚨 SOS Alerts', count:()=>sosAlerts.filter(s=>s.status==='open').length},
   {key:'orders', label:'Orders', count:()=>orders.length},
   {key:'drivers', label:'Drivers', count:()=>drivers.length},
   {key:'users', label:'Customers', count:()=>users.length},
@@ -768,7 +814,7 @@ function goTo(key){
   currentSection = key;
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+key).classList.add('active');
-  const titles = {overview:'Overview', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', vendorApplications:'Vendor Requests', settings:'Settings'};
+  const titles = {overview:'Overview', sosAlerts:'SOS Alerts', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', vendorApplications:'Vendor Requests', settings:'Settings'};
   document.getElementById('pageTitle').textContent = titles[key];
   document.getElementById('pageBreadcrumb').textContent = 'tayar / ' + key;
   renderNav();
@@ -1047,6 +1093,57 @@ function removeVendorApplication(id){
     .catch(err=>toast('Failed: ' + err.message));
 }
 
+/* ---------------- SOS ALERTS ---------------- */
+function renderSosAlerts(){
+  const body = document.getElementById('sosAlertsBody');
+  if(!body) return;
+  if(sosAlerts.length === 0){
+    body.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:24px;">No SOS alerts — all clear.</td></tr>`;
+    return;
+  }
+  body.innerHTML = sosAlerts.map(s=>{
+    const mapLink = (s.lat != null && s.lon != null)
+      ? `<a href="https://maps.google.com/?q=${s.lat},${s.lon}" target="_blank" style="color:var(--info);">map</a>`
+      : '—';
+    const roleLabel = s.userRole === 'driver' ? 'Driver' : 'Passenger';
+    const actions = s.status === 'open'
+      ? `<button class="btn small primary" onclick="resolveSosAlert('${s.id}')">Mark resolved</button>`
+      : '—';
+    return `
+    <tr>
+      <td>${s.userName}</td>
+      <td>${roleLabel}</td>
+      <td class="mono"><a href="tel:${s.userPhone}" style="color:var(--info);">${s.userPhone}</a></td>
+      <td class="mono" style="font-size:12px;color:var(--text-dim);">${s.orderId || '—'}</td>
+      <td>${mapLink}</td>
+      <td class="mono" style="color:var(--text-dimmer);font-size:12px;">${s.time}</td>
+      <td><span class="badge ${s.status==='open'?'cancelled':'contacted'}">${s.status}</span></td>
+      <td>${actions}</td>
+    </tr>
+  `;
+  }).join('');
+}
+function resolveSosAlert(id){
+  const admin = auth.currentUser;
+  db.collection(COLLECTIONS.sosAlerts).doc(id).update({
+    status: 'resolved',
+    resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    resolvedBy: admin ? admin.uid : null
+  })
+    .then(()=>toast('Alert marked as resolved'))
+    .catch(err=>toast('Failed: ' + err.message));
+}
+/* persistent red banner across every tab while there's at least one open
+   SOS alert, so the admin can't miss it even if they're on another section */
+function renderSosBanner(){
+  const banner = document.getElementById('sosBanner');
+  if(!banner) return;
+  const openCount = sosAlerts.filter(s=>s.status==='open').length;
+  if(openCount === 0){ banner.style.display = 'none'; return; }
+  banner.style.display = 'flex';
+  banner.querySelector('span').textContent = `🚨 ${openCount} open SOS alert${openCount>1?'s':''} — tap to view`;
+}
+
 /* ---------------- WALLET (grant/adjust passenger credit) ---------------- */
 let walletSelectedUserId = null;
 
@@ -1208,7 +1305,9 @@ function toast(msg){
 function renderAll(){
   recomputeCounts();
   renderNav();
+  renderSosBanner();
   if(currentSection==='overview'){ renderKpis(); renderLiveRoutes(); renderActivity(); }
+  if(currentSection==='sosAlerts'){ renderSosAlerts(); }
   if(currentSection==='orders'){ renderOrderFilters(); renderOrders(); }
   if(currentSection==='drivers'){ renderDrivers(); }
   if(currentSection==='users'){ renderUsers(); }
