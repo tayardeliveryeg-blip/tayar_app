@@ -17,6 +17,7 @@ import 'package:tayay_app/services/trip_share_helper.dart';
 import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/driver_position_marker.dart';
 import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/trip_details_card.dart';
 import 'package:tayay_app/widgets/sos_floating_button.dart';
+import 'package:tayay_app/screens/driver/rate_rider_screen.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي من ناحية الطيار ======
 /// بتتفتح فورًا لحظة قبول عرض الطيار، أو لما يدوس على كارت الرحلة النشطة
@@ -324,7 +325,20 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
       orderId: widget.orderId,
       driverId: driverId,
     );
-    if (mounted) Navigator.of(context).maybePop();
+    // ====== بعد إنهاء الرحلة وتسوية المحفظة، نوجّه الطيار مباشرة لشاشة
+    // تقييم الراكب (بدل الرجوع المباشر للخلف) — نفس فكرة تقييم الراكب
+    // للطيار بالظبط لكن بالعكس ======
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => RateRiderScreen(
+          orderId: widget.orderId,
+          customerId: _customerId,
+          customerName: _customerName,
+          fare: _acceptedFare,
+        ),
+      ),
+    );
   }
 
   void _showEndDialog() {

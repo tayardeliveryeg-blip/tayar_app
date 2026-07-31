@@ -313,6 +313,8 @@
   "doneButton": "تم",
   "rateTripArrivedSafelyTitle": "وصلت وجهتك بأمان",
   "rateTripSubtitle": "قيّم رحلتك مع الطيار",
+  "rateRiderTripFinishedTitle": "الرحلة خلصت",
+  "rateRiderSubtitle": "قيّم الراكب بعد الرحلة دي",
   "pleaseSelectStarsFirst": "من فضلك اختار عدد النجوم الأول",
   "failedToSaveRatingError": "تعذر حفظ التقييم، حاول تاني",
   "thankYouForRatingLabel": "شكراً لتقييمك",

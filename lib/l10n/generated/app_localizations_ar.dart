@@ -707,6 +707,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rateTripSubtitle => 'قيّم رحلتك مع الطيار';
 
   @override
+  String get rateRiderTripFinishedTitle => 'الرحلة خلصت';
+
+  @override
+  String get rateRiderSubtitle => 'قيّم الراكب بعد الرحلة دي';
+
+  @override
   String get pleaseSelectStarsFirst => 'من فضلك اختار عدد النجوم الأول';
 
   @override

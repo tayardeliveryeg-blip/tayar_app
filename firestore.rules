@@ -230,6 +230,13 @@ service cloud.firestore {
       );
       allow delete: if false;
 
+      // ====== أي مستخدم موثّق (زي طيار بيقيّم راكب بعد رحلة) يقدر يحدّث
+      // ratingSum/ratingCount بس في بروفايل راكب تاني — نفس فكرة قاعدة
+      // drivers/{driverId} المطابقة بالظبط، لازمة عشان تقييم الطيار
+      // للراكب في rate_rider_screen.dart يشتغل من غير Permission Denied ======
+      allow update: if request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount']);
+
       // ====== سجل حركات محفظة الراكب (خصم رحلات مدفوعة بالمحفظة + رصيد
       // بيمنحه الأدمن كهدية/خصم) - نفس فكرة drivers/{id}/walletTransactions ======
       match /walletTransactions/{transactionId} {

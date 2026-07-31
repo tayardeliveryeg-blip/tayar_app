@@ -313,6 +313,8 @@
   "doneButton": "Done",
   "rateTripArrivedSafelyTitle": "You've arrived safely!",
   "rateTripSubtitle": "Rate your trip with the driver",
+  "rateRiderTripFinishedTitle": "Trip finished",
+  "rateRiderSubtitle": "Rate the rider for this trip",
   "pleaseSelectStarsFirst": "Please select a star rating first",
   "failedToSaveRatingError": "Couldn't save rating, try again",
   "thankYouForRatingLabel": "Thank you for your rating!",

@@ -709,6 +709,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rateTripSubtitle => 'Rate your trip with the driver';
 
   @override
+  String get rateRiderTripFinishedTitle => 'Trip finished';
+
+  @override
+  String get rateRiderSubtitle => 'Rate the rider for this trip';
+
+  @override
   String get pleaseSelectStarsFirst => 'Please select a star rating first';
 
   @override

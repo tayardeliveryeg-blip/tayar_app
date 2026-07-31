@@ -1376,6 +1376,18 @@ abstract class AppLocalizations {
   /// **'قيّم رحلتك مع الطيار'**
   String get rateTripSubtitle;
 
+  /// No description provided for @rateRiderTripFinishedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرحلة خلصت'**
+  String get rateRiderTripFinishedTitle;
+
+  /// No description provided for @rateRiderSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيّم الراكب بعد الرحلة دي'**
+  String get rateRiderSubtitle;
+
   /// No description provided for @pleaseSelectStarsFirst.
   ///
   /// In ar, this message translates to:
