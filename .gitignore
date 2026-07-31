@@ -58,3 +58,8 @@ key.properties
 functions/node_modules/
 functions/lib/
 **/npm-debug.log*
+# --- cleanup additions ---
+*.log
+missing_keys.txt
+android/.kotlin/
+?????_?????????_Tayar.md
