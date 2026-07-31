@@ -1246,4 +1246,60 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get becomeVendorDrawerLabel => 'شريك تجاري';
+
+  @override
+  String get sosSheetTitle => 'زرار الطوارئ';
+
+  @override
+  String get sosAlertSentToAdminNotice =>
+      'تم إرسال تنبيه فوري لفريق Tayar بموقعك الحالي';
+
+  @override
+  String get sosCallPoliceLabel => 'اتصال بالشرطة';
+
+  @override
+  String get sosCallSupportLabel => 'اتصال بدعم Tayar';
+
+  @override
+  String get sosNotifyEmergencyContactLabel => 'تنبيه جهة اتصال الطوارئ';
+
+  @override
+  String get sosNoEmergencyContactSetHint =>
+      'مفيش جهة اتصال محفوظة - دوس لإضافة واحدة';
+
+  @override
+  String get sosWhatsappMessage =>
+      'محتاج مساعدة دلوقتي، أنا في رحلة على تطبيق طيار (Tayar). ابعتلي رسالة أو اتصل بيا لو تقدر.';
+
+  @override
+  String get shareTripIntro =>
+      'أنا بستخدم تطبيق طيار (Tayar) دلوقتي في رحلة، ده تفاصيلها:';
+
+  @override
+  String get shareTripDriverLabel => 'السائق';
+
+  @override
+  String get shareTripPassengerLabel => 'الراكب';
+
+  @override
+  String get shareTripFromLabel => 'من';
+
+  @override
+  String get shareTripToLabel => 'إلى';
+
+  @override
+  String get shareTripLiveLocationLabel => 'الموقع الحالي';
+
+  @override
+  String get emergencyContactTitle => 'جهة اتصال الطوارئ';
+
+  @override
+  String get emergencyContactSubtitle =>
+      'الرقم ده هيتبعتله تنبيه واتساب فيه موقعك لو دوست زرار الطوارئ وقت الرحلة';
+
+  @override
+  String get emergencyContactHint => 'رقم موبايل جهة الطوارئ';
+
+  @override
+  String get savedSuccessfully => 'تم الحفظ بنجاح';
 }

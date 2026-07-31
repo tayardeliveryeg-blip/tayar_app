@@ -2383,6 +2383,108 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'شريك تجاري'**
   String get becomeVendorDrawerLabel;
+
+  /// No description provided for @sosSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'زرار الطوارئ'**
+  String get sosSheetTitle;
+
+  /// No description provided for @sosAlertSentToAdminNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال تنبيه فوري لفريق Tayar بموقعك الحالي'**
+  String get sosAlertSentToAdminNotice;
+
+  /// No description provided for @sosCallPoliceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتصال بالشرطة'**
+  String get sosCallPoliceLabel;
+
+  /// No description provided for @sosCallSupportLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتصال بدعم Tayar'**
+  String get sosCallSupportLabel;
+
+  /// No description provided for @sosNotifyEmergencyContactLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيه جهة اتصال الطوارئ'**
+  String get sosNotifyEmergencyContactLabel;
+
+  /// No description provided for @sosNoEmergencyContactSetHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش جهة اتصال محفوظة - دوس لإضافة واحدة'**
+  String get sosNoEmergencyContactSetHint;
+
+  /// No description provided for @sosWhatsappMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'محتاج مساعدة دلوقتي، أنا في رحلة على تطبيق طيار (Tayar). ابعتلي رسالة أو اتصل بيا لو تقدر.'**
+  String get sosWhatsappMessage;
+
+  /// No description provided for @shareTripIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنا بستخدم تطبيق طيار (Tayar) دلوقتي في رحلة، ده تفاصيلها:'**
+  String get shareTripIntro;
+
+  /// No description provided for @shareTripDriverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السائق'**
+  String get shareTripDriverLabel;
+
+  /// No description provided for @shareTripPassengerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الراكب'**
+  String get shareTripPassengerLabel;
+
+  /// No description provided for @shareTripFromLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'من'**
+  String get shareTripFromLabel;
+
+  /// No description provided for @shareTripToLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى'**
+  String get shareTripToLabel;
+
+  /// No description provided for @shareTripLiveLocationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموقع الحالي'**
+  String get shareTripLiveLocationLabel;
+
+  /// No description provided for @emergencyContactTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'جهة اتصال الطوارئ'**
+  String get emergencyContactTitle;
+
+  /// No description provided for @emergencyContactSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم ده هيتبعتله تنبيه واتساب فيه موقعك لو دوست زرار الطوارئ وقت الرحلة'**
+  String get emergencyContactSubtitle;
+
+  /// No description provided for @emergencyContactHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم موبايل جهة الطوارئ'**
+  String get emergencyContactHint;
+
+  /// No description provided for @savedSuccessfully.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الحفظ بنجاح'**
+  String get savedSuccessfully;
 }
 
 class _AppLocalizationsDelegate

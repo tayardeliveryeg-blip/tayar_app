@@ -1259,4 +1259,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get becomeVendorDrawerLabel => 'Business partner';
+
+  @override
+  String get sosSheetTitle => 'Emergency (SOS)';
+
+  @override
+  String get sosAlertSentToAdminNotice =>
+      'An instant alert with your current location was sent to the Tayar team';
+
+  @override
+  String get sosCallPoliceLabel => 'Call the police';
+
+  @override
+  String get sosCallSupportLabel => 'Call Tayar support';
+
+  @override
+  String get sosNotifyEmergencyContactLabel => 'Notify emergency contact';
+
+  @override
+  String get sosNoEmergencyContactSetHint =>
+      'No contact saved - tap to add one';
+
+  @override
+  String get sosWhatsappMessage =>
+      'I need help right now, I\'m on a trip on the Tayar app. Please message or call me if you can.';
+
+  @override
+  String get shareTripIntro =>
+      'I\'m currently on a trip using the Tayar app, here are the details:';
+
+  @override
+  String get shareTripDriverLabel => 'Driver';
+
+  @override
+  String get shareTripPassengerLabel => 'Passenger';
+
+  @override
+  String get shareTripFromLabel => 'From';
+
+  @override
+  String get shareTripToLabel => 'To';
+
+  @override
+  String get shareTripLiveLocationLabel => 'Current location';
+
+  @override
+  String get emergencyContactTitle => 'Emergency contact';
+
+  @override
+  String get emergencyContactSubtitle =>
+      'This number will get a WhatsApp alert with your location if you tap the SOS button during a trip';
+
+  @override
+  String get emergencyContactHint => 'Emergency contact\'s phone number';
+
+  @override
+  String get savedSuccessfully => 'Saved successfully';
 }
