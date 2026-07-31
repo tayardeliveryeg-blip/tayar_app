@@ -109,7 +109,7 @@ class MotorcycleAdvantagePromoBanner extends StatelessWidget {
           const SizedBox(width: AppSpacing.xs),
           Expanded(
             child: Text(
-              AppLocalizations.of(context)!.motorcycleAdvantageBannerText,
+              AppLocalizations.of(context)!.bikeAdvantageBannerText,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 11,
@@ -128,6 +128,7 @@ class MotorcycleAdvantagePromoBanner extends StatelessWidget {
     );
   }
 }
+
 // ====== بانر "لو عايز تبقى شريك تجاري معانا؟": نفس الشكل البصري بالظبط
 // بتاع NewCustomerPromoBanner فوق، بس بمنطق مختلف تمامًا - مش شرط إنه
 // عميل جديد، وبيختفي بس لو المستخدم بعت طلب انضمام قبل كده (أي حالة، عشان

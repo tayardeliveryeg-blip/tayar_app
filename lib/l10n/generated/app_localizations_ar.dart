@@ -544,11 +544,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chooseYourRideSubtitle => 'اختار الرحلة المناسبة ليك';
 
   @override
-  String get motorcycleAdvantageHighlight =>
-      'موتوسيكل = وصول أسرع وأرخص في الزحمة';
+  String get bikeAdvantageHighlight => 'دراجة = وصول أسرع وأرخص في الزحمة';
 
   @override
-  String get motorcycleAdvantageBannerText => 'موتوسيكل أرخص وأسرع في الزحمة';
+  String get bikeAdvantageBannerText => 'دراجة أرخص وأسرع في الزحمة';
 
   @override
   String get continueWithGoogleButton => 'المتابعة باستخدام Google';
@@ -1041,7 +1040,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverRoleTitle => 'طيار';
 
   @override
-  String get driverRoleDescription => 'اشتغل واكسب فلوس بموتوسيكلك';
+  String get driverRoleDescription => 'اشتغل واكسب فلوس بدراجةك';
 
   @override
   String driverCommissionBadge(String percent) {

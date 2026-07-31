@@ -204,8 +204,8 @@
   "faqTripProblemQuestion": "إيه اللي أعمله لو حصلت مشكلة في رحلة؟",
   "faqTripProblemAnswer": "تقدر تتواصل مع فريق الدعم مباشرة من شاشة \"الدعم\" في القايمة الجانبية، وهنساعدك تحل المشكلة أول بأول.",
   "chooseYourRideSubtitle": "اختار الرحلة المناسبة ليك",
-  "motorcycleAdvantageHighlight": "موتوسيكل = وصول أسرع وأرخص في الزحمة",
-  "motorcycleAdvantageBannerText": "موتوسيكل أرخص وأسرع في الزحمة",
+  "bikeAdvantageHighlight": "دراجة = وصول أسرع وأرخص في الزحمة",
+  "bikeAdvantageBannerText": "دراجة أرخص وأسرع في الزحمة",
   "continueWithGoogleButton": "المتابعة باستخدام Google",
   "continueWithAppleButton": "المتابعة باستخدام Apple",
   "continueWithPhoneButton": "المتابعة عبر الهاتف",
@@ -482,7 +482,7 @@
   "passengerRoleTitle": "راكب",
   "passengerRoleDescription": "اطلب رحلتك بسهولة وسرعة",
   "driverRoleTitle": "طيار",
-  "driverRoleDescription": "اشتغل واكسب فلوس بموتوسيكلك",
+  "driverRoleDescription": "اشتغل واكسب فلوس بدراجةك",
   "driverCommissionBadge": "عمولة {percent}% بس",
   "@driverCommissionBadge": {
     "placeholders": {

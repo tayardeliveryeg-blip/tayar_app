@@ -268,7 +268,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     AppLocalizations.of(
                                       context,
-                                    )!.motorcycleAdvantageHighlight,
+                                    )!.bikeAdvantageHighlight,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       color: TayarColors.primary,
