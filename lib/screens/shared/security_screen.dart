@@ -1,9 +1,17 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
+import 'package:tayay_app/screens/auth/phone_auth_screen.dart' show OtpVerificationScreen;
 import 'package:tayay_app/screens/passenger/passenger_home.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/sos_service.dart';
@@ -205,11 +213,177 @@ class _SecurityScreenState extends State<SecurityScreen> {
     if (user == null) return loc.unknownProviderLabel;
     final providers = user.providerData.map((p) => p.providerId).toList();
     if (providers.contains('google.com')) return loc.googleAccountLabel;
+    if (providers.contains('apple.com')) return loc.appleAccountLabel;
     if (providers.contains('phone')) {
       return loc.phoneNumberProviderLabel(user.phoneNumber ?? '');
     }
     if (providers.contains('password')) return loc.emailPasswordProviderLabel;
     return loc.unknownProviderLabel;
+  }
+
+  // ====== نقطة البداية: بندوس على "حذف الحساب" فبنثبت هوية المستخدم الأول
+  // بنفس وسيلة تسجيل الدخول اللي داخل بيها (جوجل/أبل/رقم الموبايل)، وبعد
+  // ما ينجح نظهرله رسالة التأكيد النهائية (تأكيد/إلغاء) ======
+  Future<void> _startDeleteAccountFlow() async {
+    final loc = AppLocalizations.of(context)!;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final providers = user.providerData.map((p) => p.providerId).toList();
+
+    bool reauthenticated;
+    try {
+      if (providers.contains('google.com')) {
+        reauthenticated = await _reauthenticateWithGoogle();
+      } else if (providers.contains('apple.com')) {
+        reauthenticated = await _reauthenticateWithApple();
+      } else if (providers.contains('phone')) {
+        reauthenticated = await _reauthenticateWithPhone();
+      } else {
+        // ====== وسيلة دخول مش مدعومة لإعادة التحقق (نادر) - نجرب الحذف
+        // المباشر، ولو محتاج جلسة أحدث هيظهر رسالة الخطأ المعتادة ======
+        reauthenticated = true;
+      }
+    } catch (e) {
+      debugPrint('❌ خطأ في إعادة التحقق من الهوية: $e');
+      reauthenticated = false;
+    }
+
+    if (!reauthenticated) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.reauthRequiredForDeleteError)),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    await _confirmDeleteAccount();
+  }
+
+  // ====== إعادة تسجيل الدخول بجوجل (نفس منطق login_screen.dart) لإثبات
+  // الهوية قبل الحذف - بترجع true لو نجحت ======
+  static bool _googleSignInInitialized = false;
+
+  Future<bool> _reauthenticateWithGoogle() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+    try {
+      if (!_googleSignInInitialized) {
+        try {
+          const webClientId =
+              '354477388400-ir73gp12hplk11kfkim9je588dp0gema.apps.googleusercontent.com';
+          if (kIsWeb) {
+            await GoogleSignIn.instance.initialize(clientId: webClientId);
+          } else {
+            await GoogleSignIn.instance.initialize(
+              serverClientId: webClientId,
+            );
+          }
+        } catch (e) {
+          if (!e.toString().contains('has already been called')) rethrow;
+        }
+        _googleSignInInitialized = true;
+      }
+
+      final googleUser = await GoogleSignIn.instance.authenticate();
+      final googleAuth = googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      await user.reauthenticateWithCredential(credential);
+      return true;
+    } on GoogleSignInException catch (e) {
+      // ====== المستخدم لغى العملية بنفسه ======
+      if (e.code == GoogleSignInExceptionCode.canceled) return false;
+      rethrow;
+    }
+  }
+
+  // ====== إعادة تسجيل الدخول بآبل (نفس منطق login_screen.dart) ======
+  Future<bool> _reauthenticateWithApple() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+    try {
+      final rawNonce = _generateNonce();
+      final hashedNonce = _sha256ofString(rawNonce);
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
+      final oauthCredential = OAuthProvider(
+        'apple.com',
+      ).credential(idToken: appleCredential.identityToken, rawNonce: rawNonce);
+      await user.reauthenticateWithCredential(oauthCredential);
+      return true;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) return false;
+      rethrow;
+    }
+  }
+
+  String _generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDUQDvDUxFShoWWbHougyHjr0tFz3E38fX8e0bnTUpya-P0mXW._';
+    final random = Random.secure();
+    return List.generate(
+      length,
+      (_) => charset[random.nextInt(charset.length)],
+    ).join();
+  }
+
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  // ====== إعادة التحقق برقم الموبايل: بنبعت OTP لنفس رقم المستخدم المسجل،
+  // وبنفتح نفس شاشة الكود (6 خانات) بس في وضع reauth - بترجع true لو
+  // المستخدم أثبت هويته بنجاح، وfalse لو لغى أو فشل ======
+  Future<bool> _reauthenticateWithPhone() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final phone = user?.phoneNumber;
+    if (user == null || phone == null) return false;
+
+    final completer = Completer<bool>();
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phone,
+      timeout: const Duration(seconds: 60),
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        try {
+          await user.reauthenticateWithCredential(credential);
+          if (!completer.isCompleted) completer.complete(true);
+        } catch (_) {
+          if (!completer.isCompleted) completer.complete(false);
+        }
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        if (!completer.isCompleted) completer.complete(false);
+      },
+      codeSent: (String verificationId, int? resendToken) async {
+        if (!mounted) {
+          if (!completer.isCompleted) completer.complete(false);
+          return;
+        }
+        final result = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => OtpVerificationScreen(
+              verificationId: verificationId,
+              phoneNumber: phone,
+              resendToken: resendToken,
+              reauthMode: true,
+            ),
+          ),
+        );
+        if (!completer.isCompleted) completer.complete(result ?? false);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+    return completer.future;
   }
 
   Future<void> _confirmDeleteAccount() async {
@@ -450,7 +624,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         loc.deleteAccountPermanentlyTitle,
                         style: const TextStyle(color: Colors.redAccent),
                       ),
-                      onTap: _confirmDeleteAccount,
+                      onTap: _startDeleteAccountFlow,
                     ),
                   ],
                 ),

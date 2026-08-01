@@ -193,11 +193,18 @@ class OtpVerificationScreen extends StatefulWidget {
   final String phoneNumber;
   final int? resendToken;
 
+  // ====== لما تبقى true: الشاشة مش بتستخدم لتسجيل دخول جديد، لكن لإثبات
+  // هوية المستخدم الحالي (مثلًا قبل حذف الحساب). في الحالة دي بنعمل
+  // reauthenticateWithCredential بدل signInWithCredential، وبعد النجاح
+  // بنرجع للخلف بـ Navigator.pop(true) بدل ما ندخل المستخدم للتطبيق ======
+  final bool reauthMode;
+
   const OtpVerificationScreen({
     super.key,
     required this.verificationId,
     required this.phoneNumber,
     this.resendToken,
+    this.reauthMode = false,
   });
 
   @override
@@ -318,6 +325,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
         verificationId: _verificationId,
         smsCode: code,
       );
+
+      // ====== وضع إعادة التحقق (قبل حذف الحساب مثلًا): بنثبت هوية
+      // المستخدم الحالي بس، مش بنسجله دخول من جديد ولا بنغيّر شاشته ======
+      if (widget.reauthMode) {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user == null) throw Exception('no-current-user');
+        await user.reauthenticateWithCredential(credential);
+        if (!mounted) return;
+        Navigator.pop(context, true);
+        return;
+      }
+
       final userCredential = await FirebaseAuth.instance.signInWithCredential(
         credential,
       );
@@ -363,6 +382,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       forceResendingToken: _resendToken,
       timeout: const Duration(seconds: 60),
       verificationCompleted: (PhoneAuthCredential credential) async {
+        if (widget.reauthMode) {
+          final user = FirebaseAuth.instance.currentUser;
+          if (user == null) return;
+          await user.reauthenticateWithCredential(credential);
+          if (!mounted) return;
+          Navigator.pop(context, true);
+          return;
+        }
         final userCredential = await FirebaseAuth.instance
             .signInWithCredential(credential);
         if (!mounted) return;

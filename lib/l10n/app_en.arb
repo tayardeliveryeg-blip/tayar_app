@@ -393,6 +393,7 @@
   "setPinTitle": "Set a 4-digit PIN",
   "unknownProviderLabel": "Unknown",
   "googleAccountLabel": "Google Account",
+  "appleAccountLabel": "Apple Account",
   "phoneNumberProviderLabel": "Phone Number ({phone})",
   "@phoneNumberProviderLabel": {
     "placeholders": {
