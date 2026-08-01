@@ -1,13 +1,19 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/searching_offers_screen.dart';
+import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
+    show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/services/wallet_service.dart';
+import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String pickupAddress;
@@ -39,6 +45,24 @@ class OrderConfirmationScreen extends StatefulWidget {
 class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   bool _isSubmitting = false;
 
+  // ====== نقطتا الانطلاق والوجهة بقيوا قابلين للتعديل من نفس الشاشة (بالضغط
+  // على أي منهم)، فبقيوا حالة محلية بدل ما يفضلوا ثابتين من اللي وصل من
+  // الشاشة اللي فاتت. بنبدأهم بالقيم اللي وصلت من الـ widget ======
+  late String _pickupAddress;
+  late LatLng _pickupLocation;
+  late String _destinationAddress;
+  late LatLng _destinationLocation;
+  late double _distanceKm;
+  late int _durationMin;
+
+  // ====== السعر المقترح تلقائيًا (المعروض كـ "السعر الأساسي") - بيتغير هو
+  // كمان لو الراكب عدّل نقطة الانطلاق أو الوجهة ======
+  late double _baseFare;
+
+  // ====== true وقت إعادة حساب المسار والسعر بعد تعديل نقطة الانطلاق أو
+  // الوجهة (بنعطل التعديل والزرار الرئيسي لحد ما يخلص) ======
+  bool _isUpdatingRoute = false;
+
   // ====== السعر المقترح من الراكب (قابل للتعديل) ======
   late double _proposedFare;
   static const double _step = 5.0; // مقدار الزيادة/النقصان لكل ضغطة
@@ -46,8 +70,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   // ====== نفس حدود المزايدة المطبّقة بعد كده في searching_offers_screen.dart
   // و offer_sheet.dart (0.5x - 1.5x من السعر الأساسي)، عشان الراكب مايقدرش
   // يرفع السعر هنا فوق السقف اللي هيتفرض عليه بعد كده في شاشة البحث عن عروض ======
-  late final double _minFare; // أقل سعر مسموح بيه
-  late final double _maxFare; // أعلى سعر مسموح بيه (قبل حد المحفظة لو موجود)
+  late double _minFare; // أقل سعر مسموح بيه
+  late double _maxFare; // أعلى سعر مسموح بيه (قبل حد المحفظة لو موجود)
 
   // ====== لما الدفع يكون محفظة إلكترونية: أعلى سعر مسموح بيه هو رصيد
   // المحفظة الفعلي (بنجيبه من السيرفر عشان محدش يتلاعب بيه من الشاشة
@@ -60,12 +84,109 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   @override
   void initState() {
     super.initState();
+    _pickupAddress = widget.pickupAddress;
+    _pickupLocation = widget.pickupLocation;
+    _destinationAddress = widget.destinationAddress;
+    _destinationLocation = widget.destinationLocation;
+    _distanceKm = widget.distanceKm;
+    _durationMin = widget.durationMin;
+    _baseFare = widget.fare;
     _proposedFare = widget.fare;
     _minFare = FareNegotiationRules.minFareFor(widget.fare);
     _maxFare = FareNegotiationRules.maxFareFor(widget.fare);
     if (widget.paymentMethod == kWalletPaymentMethodValue) {
       _loadWalletCap();
     }
+  }
+
+  // ====== فتح شاشة اختيار مكان جديد (استلام أو وجهة) ======
+  Future<void> _editPickup() async {
+    if (_isUpdatingRoute) return;
+    final result = await Navigator.push<PlaceResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SelectDestinationScreen(
+          initialLocation: _pickupLocation,
+          title: AppLocalizations.of(context)!.editPickupLocationTitle,
+          pinType: PinType.pickup,
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      _pickupAddress = result.title;
+      _pickupLocation = result.location;
+    });
+    await _recalculateRouteAndFare();
+  }
+
+  Future<void> _editDestination() async {
+    if (_isUpdatingRoute) return;
+    final result = await Navigator.push<PlaceResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SelectDestinationScreen(
+          initialLocation: _destinationLocation,
+          title: AppLocalizations.of(context)!.editDestinationTitle,
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      _destinationAddress = result.title;
+      _destinationLocation = result.location;
+    });
+    await _recalculateRouteAndFare();
+  }
+
+  // ====== إعادة حساب المسافة والمدة والسعر بعد تغيير نقطة الانطلاق أو
+  // الوجهة، بنفس منطق _fetchRoute في passenger_home.dart (OSRM مع خط مستقيم
+  // بديل لو فشل الاتصال) ======
+  Future<void> _recalculateRouteAndFare() async {
+    setState(() => _isUpdatingRoute = true);
+
+    double distanceKm;
+    int durationMin;
+    try {
+      final url = Uri.parse(
+        'https://router.project-osrm.org/route/v1/driving/'
+        '${_pickupLocation.longitude},${_pickupLocation.latitude};'
+        '${_destinationLocation.longitude},${_destinationLocation.latitude}'
+        '?overview=false',
+      );
+      final response = await http.get(url).timeout(const Duration(seconds: 6));
+      if (response.statusCode != 200) throw Exception('فشل الاتصال بسيرفر المسارات');
+      final data = json.decode(response.body);
+      final routes = data['routes'] as List?;
+      if (routes == null || routes.isEmpty) throw Exception('مفيش مسار متاح');
+      final route = routes[0];
+      distanceKm = (route['distance'] as num).toDouble() / 1000;
+      durationMin = ((route['duration'] as num).toDouble() / 60).ceil();
+    } catch (e) {
+      debugPrint('❌ خطأ في إعادة حساب المسار: $e');
+      final fallbackDistanceKm = const Distance().as(
+        LengthUnit.Kilometer,
+        _pickupLocation,
+        _destinationLocation,
+      );
+      distanceKm = fallbackDistanceKm;
+      durationMin = (fallbackDistanceKm / 30 * 60).ceil();
+    }
+
+    if (!mounted) return;
+    final newFare = AppSettings.instance.estimateFare(distanceKm);
+    setState(() {
+      _distanceKm = distanceKm;
+      _durationMin = durationMin;
+      _baseFare = newFare;
+      _proposedFare = newFare;
+      _minFare = FareNegotiationRules.minFareFor(newFare);
+      _maxFare = FareNegotiationRules.maxFareFor(newFare);
+      if (_walletMaxFare != null && _proposedFare > _walletMaxFare!) {
+        _proposedFare = _walletMaxFare!;
+      }
+      _isUpdatingRoute = false;
+    });
   }
 
   Future<void> _loadWalletCap() async {
@@ -117,12 +238,12 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
       ).httpsCallable('createOrder');
 
       final result = await callable.call<Map<String, dynamic>>({
-        'pickupAddress': widget.pickupAddress,
-        'pickupLat': widget.pickupLocation.latitude,
-        'pickupLng': widget.pickupLocation.longitude,
-        'destinationAddress': widget.destinationAddress,
-        'destinationLat': widget.destinationLocation.latitude,
-        'destinationLng': widget.destinationLocation.longitude,
+        'pickupAddress': _pickupAddress,
+        'pickupLat': _pickupLocation.latitude,
+        'pickupLng': _pickupLocation.longitude,
+        'destinationAddress': _destinationAddress,
+        'destinationLat': _destinationLocation.latitude,
+        'destinationLng': _destinationLocation.longitude,
         'proposedFare': _proposedFare,
         'autoAccept': _autoAccept,
         'paymentMethod': widget.paymentMethod,
@@ -141,9 +262,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             orderId: orderId,
             proposedFare: _proposedFare,
             autoAccept: _autoAccept,
-            pickupAddress: widget.pickupAddress,
-            pickupLocation: widget.pickupLocation,
-            destinationAddress: widget.destinationAddress,
+            pickupAddress: _pickupAddress,
+            pickupLocation: _pickupLocation,
+            destinationAddress: _destinationAddress,
           ),
         ),
       );
@@ -193,7 +314,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ====== كارت المسار: من - إلى ======
+            // ====== كارت المسار: من - إلى (كل صف قابل للضغط لتغييره) ======
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -206,7 +327,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     icon: Icons.location_on,
                     iconColor: TayarColors.primary,
                     label: l10n.routeFromLabel,
-                    address: widget.pickupAddress,
+                    address: _pickupAddress,
+                    onTap: _editPickup,
+                    isLoading: _isUpdatingRoute,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
@@ -225,7 +348,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     icon: Icons.flag,
                     iconColor: TayarColors.primary,
                     label: l10n.routeToLabel,
-                    address: widget.destinationAddress,
+                    address: _destinationAddress,
+                    onTap: _editDestination,
+                    isLoading: _isUpdatingRoute,
                   ),
                 ],
               ),
@@ -244,13 +369,13 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                   _DetailRow(
                     label: l10n.distanceLabel,
                     value: l10n.distanceKmLabel(
-                      widget.distanceKm.toStringAsFixed(1),
+                      _distanceKm.toStringAsFixed(1),
                     ),
                   ),
                   Divider(color: context.dividerColor2),
                   _DetailRow(
                     label: l10n.estimatedTimeLabel,
-                    value: l10n.durationMinLabel(widget.durationMin),
+                    value: l10n.durationMinLabel(_durationMin),
                   ),
                   Divider(color: context.dividerColor2),
                   _DetailRow(
@@ -284,7 +409,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     children: [
                       _FareStepButton(
                         icon: Icons.remove,
-                        onTap: _proposedFare - _step >= _minFare
+                        onTap: !_isUpdatingRoute && _proposedFare - _step >= _minFare
                             ? _decreaseFare
                             : null,
                       ),
@@ -303,7 +428,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       _FareStepButton(
                         icon: Icons.add,
                         onTap:
-                            (_proposedFare + _step > _maxFare) ||
+                            _isUpdatingRoute ||
+                                (_proposedFare + _step > _maxFare) ||
                                 (_walletMaxFare != null &&
                                     _proposedFare + _step > _walletMaxFare!)
                             ? null
@@ -313,7 +439,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    l10n.autoSuggestedFareLabel(widget.fare.toStringAsFixed(0)),
+                    l10n.autoSuggestedFareLabel(_baseFare.toStringAsFixed(0)),
                     style: TextStyle(
                       color: context.textGreyColor,
                       fontSize: 12,
@@ -370,7 +496,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             SizedBox(
               height: 54,
               child: ElevatedButton.icon(
-                onPressed: _isSubmitting ? null : _searchForOffers,
+                onPressed: (_isSubmitting || _isUpdatingRoute)
+                    ? null
+                    : _searchForOffers,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,
                   shape: RoundedRectangleBorder(
@@ -439,41 +567,66 @@ class _RouteRow extends StatelessWidget {
   final Color iconColor;
   final String label;
   final String address;
+  final VoidCallback? onTap;
+  final bool isLoading;
 
   const _RouteRow({
     required this.icon,
     required this.iconColor,
     required this.label,
     required this.address,
+    this.onTap,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: iconColor, size: 20),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(color: context.textGreyColor, fontSize: 12),
+    return InkWell(
+      onTap: isLoading ? null : onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: iconColor, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: context.textGreyColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                  Text(
+                    address,
+                    style: TextStyle(
+                      color: context.textColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                address,
-                style: TextStyle(
-                  color: context.textColor,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+            ),
+            if (isLoading)
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: TayarColors.primary,
                 ),
-              ),
-            ],
-          ),
+              )
+            else if (onTap != null)
+              Icon(Icons.edit, size: 16, color: context.textGreyColor),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

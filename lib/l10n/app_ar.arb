@@ -413,6 +413,8 @@
   "searchFailedTryAgainError": "تعذر البحث حاليًا، حاول تاني",
   "unknownPlaceLabel": "مكان غير معروف",
   "whereDoYouWantToGoTitle": "حدد مسارك",
+  "editPickupLocationTitle": "غيّر مكان الاستلام",
+  "editDestinationTitle": "غيّر الوجهة",
   "searchPlaceHint": "اكتب اسم الشارع أو المكان...",
   "pickFromMapLabel": "اختار من الخريطة",
   "startTypingToSearchLabel": "ابدأ الكتابة عشان تدور على مكان",

@@ -413,6 +413,8 @@
   "searchFailedTryAgainError": "Search failed, please try again",
   "unknownPlaceLabel": "Unknown place",
   "whereDoYouWantToGoTitle": "Where do you want to go?",
+  "editPickupLocationTitle": "Change pickup location",
+  "editDestinationTitle": "Change destination",
   "searchPlaceHint": "Type a street or place name...",
   "pickFromMapLabel": "Pick from map",
   "startTypingToSearchLabel": "Start typing to search for a place",
