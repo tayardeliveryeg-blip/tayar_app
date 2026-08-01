@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
@@ -39,26 +41,53 @@ class PinMarker extends StatelessWidget {
 /// ====== نقطة موقعك الحيّة على الخريطة (زي نقطة Google Maps الزرقاء) ======
 /// دائرة زرقاء صغيرة صلبة في النص، وحواليها هالة زرقاء فاتحة شفافة أكبر
 /// بتمثّل نطاق الدقة (accuracy radius) — نفس الشكل القياسي المعروف.
+/// لو الاتجاه (heading) متاح من الـ GPS، بيتحط مخروط ضوئي شفاف بيدور
+/// حوالين النقطة بيوضح فين المستخدم متجه — بالظبط زي مخروط الاتجاه في
+/// جوجل مابس.
 class LiveLocationDot extends StatelessWidget {
   /// قطر الهالة الخارجية الشفافة بالكامل
   final double haloSize;
   /// قطر الدائرة الصلبة في النص
   final double dotSize;
+  /// اتجاه حركة المستخدم بالدرجات (0 = شمال، بيزيد مع اتجاه عقارب الساعة).
+  /// لو null، مش هيتعرض سهم/مخروط اتجاه خالص (لسه مفيش قراءة اتجاه موثوقة).
+  final double? heading;
 
   const LiveLocationDot({
     super.key,
     this.haloSize = 56,
     this.dotSize = 18,
+    this.heading,
   });
+
+  /// ====== نسبة كبر مخروط الاتجاه عن الهالة الأصلية ======
+  static const double _coneScale = 1.7;
+
+  /// المساحة الكلية اللي الـ widget بياخدها فعليًا (بعد إضافة المخروط).
+  /// المفروض تُستخدم كـ width/height لـ Marker بتاع flutter_map عشان
+  /// النقطة تفضل متمركزة صح على الإحداثية الحقيقية.
+  static double totalSize(double haloSize) => haloSize * _coneScale;
 
   @override
   Widget build(BuildContext context) {
+    // ====== حجم مخروط الاتجاه: أكبر شوية من الهالة عشان يبان واضح خارجها ======
+    final coneSize = haloSize * _coneScale;
+
     return SizedBox(
-      width: haloSize,
-      height: haloSize,
+      width: coneSize,
+      height: coneSize,
       child: Stack(
         alignment: Alignment.center,
         children: [
+          // ====== مخروط الاتجاه: بيدور حسب heading حوالين مركز النقطة ======
+          if (heading != null)
+            Transform.rotate(
+              angle: heading! * math.pi / 180,
+              child: CustomPaint(
+                size: Size(coneSize, coneSize),
+                painter: _DirectionConePainter(),
+              ),
+            ),
           // ====== الهالة الشفافة: نطاق الدقة حوالين الموقع ======
           Container(
             width: haloSize,
@@ -88,6 +117,43 @@ class LiveLocationDot extends StatelessWidget {
       ),
     );
   }
+}
+
+/// ====== رسم مخروط الاتجاه (المروحة الضوئية) بتاع النقطة الزرقاء ======
+/// شكله عبارة عن قطاع دائري (زاوية 70 درجة) طالع لفوق (اتجاه الشمال = 0
+/// درجة) بتدرّج لوني من أزرق واضح عند مركز النقطة لحد شفاف تمامًا عند
+/// حافة القطاع، فبيبان زي شعاع ضوء بيوضح اتجاه حركة المستخدم.
+class _DirectionConePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    const coneAngle = 70 * math.pi / 180;
+
+    final path = Path()
+      ..moveTo(center.dx, center.dy)
+      ..arcTo(
+        Rect.fromCircle(center: center, radius: radius),
+        -math.pi / 2 - coneAngle / 2,
+        coneAngle,
+        false,
+      )
+      ..close();
+
+    final paint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          Colors.blue.withValues(alpha: 0.55),
+          Colors.blue.withValues(alpha: 0.0),
+        ],
+      ).createShader(Rect.fromCircle(center: center, radius: radius));
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _DirectionConePainter oldDelegate) =>
+      oldDelegate != this;
 }
 
 /// ====== دبوس نقطة الانطلاق مع "ساق" (خط + نقطة حمرا صغيرة) بيوصله بالإحداثية

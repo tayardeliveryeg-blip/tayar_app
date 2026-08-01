@@ -41,12 +41,32 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
   // ====== true أثناء تشغيل فحص الوجه على الصورة المختارة قبل قبولها ======
   bool _isCheckingPhoto = false;
 
+  // ====== بتتحط true بعد محاولة "حفظ" فاشلة والحقل المطلوب لسه فاضي،
+  // عشان نعرض إطار أحمر حواليه — وبترجع false تلقائيًا أول ما المستخدم
+  // يكتب فيه حاجة ======
+  bool _firstNameError = false;
+  bool _lastNameError = false;
+
   String? get _uid => FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
     _loadProfile();
+    _firstNameController.addListener(_clearFirstNameError);
+    _lastNameController.addListener(_clearLastNameError);
+  }
+
+  void _clearFirstNameError() {
+    if (_firstNameError && _firstNameController.text.trim().isNotEmpty) {
+      setState(() => _firstNameError = false);
+    }
+  }
+
+  void _clearLastNameError() {
+    if (_lastNameError && _lastNameController.text.trim().isNotEmpty) {
+      setState(() => _lastNameError = false);
+    }
   }
 
   // ====== تحميل بيانات الراكب الحالية عشان الحقول تظهر معمورة، مش فاضية ======
@@ -216,8 +236,13 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
   Future<void> _save() async {
     final uid = _uid;
     if (uid == null) return;
-    if (_firstNameController.text.trim().isEmpty ||
-        _lastNameController.text.trim().isEmpty) {
+    final firstNameEmpty = _firstNameController.text.trim().isEmpty;
+    final lastNameEmpty = _lastNameController.text.trim().isEmpty;
+    if (firstNameEmpty || lastNameEmpty) {
+      setState(() {
+        _firstNameError = firstNameEmpty;
+        _lastNameError = lastNameEmpty;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.fullNameRequiredError),
@@ -293,6 +318,8 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
 
   @override
   void dispose() {
+    _firstNameController.removeListener(_clearFirstNameError);
+    _lastNameController.removeListener(_clearLastNameError);
     _firstNameController.dispose();
     _lastNameController.dispose();
     _birthDateController.dispose();
@@ -352,10 +379,12 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
                         ProfileTextField(
                           controller: _firstNameController,
                           hint: AppLocalizations.of(context)!.firstNameHint,
+                          showError: _firstNameError,
                         ),
                         ProfileTextField(
                           controller: _lastNameController,
                           hint: AppLocalizations.of(context)!.lastNameHint,
+                          showError: _lastNameError,
                         ),
                         GestureDetector(
                           onTap: _pickDate,

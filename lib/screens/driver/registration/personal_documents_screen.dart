@@ -20,6 +20,31 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
   Uint8List? _criminalRecordBack;
   bool _isSaving = false;
 
+  // ====== بتتحط true بعد محاولة "حفظ" فاشلة والحقل المطلوب لسه فاضي،
+  // عشان نعرض إطار أحمر حواليه — وبترجع false تلقائيًا أول ما المستخدم
+  // يعبّيه ======
+  bool _criminalFrontError = false;
+  bool _idNumberError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _idNumberController.addListener(_clearIdNumberError);
+  }
+
+  void _clearIdNumberError() {
+    if (_idNumberError && _idNumberController.text.trim().isNotEmpty) {
+      setState(() => _idNumberError = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _idNumberController.removeListener(_clearIdNumberError);
+    _idNumberController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickPhoto(bool isFront) async {
     final picker = ImagePicker();
     final file = await picker.pickImage(
@@ -31,6 +56,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
     setState(() {
       if (isFront) {
         _criminalRecordFront = bytes;
+        _criminalFrontError = false;
       } else {
         _criminalRecordBack = bytes;
       }
@@ -40,8 +66,13 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
   Future<void> _save() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    if (_criminalRecordFront == null ||
-        _idNumberController.text.trim().isEmpty) {
+    final criminalFrontMissing = _criminalRecordFront == null;
+    final idNumberEmpty = _idNumberController.text.trim().isEmpty;
+    if (criminalFrontMissing || idNumberEmpty) {
+      setState(() {
+        _criminalFrontError = criminalFrontMissing;
+        _idNumberError = idNumberEmpty;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -51,6 +82,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
       );
       return;
     }
+    setState(() => _criminalFrontError = false);
     setState(() => _isSaving = true);
     try {
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
@@ -88,6 +120,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
               label: AppLocalizations.of(context)!.criminalRecordFrontLabel,
               imageBytes: _criminalRecordFront,
               onTap: () => _pickPhoto(true),
+              showError: _criminalFrontError,
             ),
             PhotoUploadTile(
               label: AppLocalizations.of(context)!.criminalRecordBackLabel,
@@ -102,6 +135,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
           controller: _idNumberController,
           hint: AppLocalizations.of(context)!.idNumberHint,
           keyboardType: TextInputType.number,
+          showError: _idNumberError,
         ),
       ],
     );

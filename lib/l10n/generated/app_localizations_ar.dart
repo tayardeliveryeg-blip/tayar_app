@@ -12,6 +12,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'طيار - وصلك في لحظة';
 
   @override
+  String get noInternetConnectionMessage =>
+      'مفيش اتصال بالإنترنت، تأكد من اتصالك وحاول تاني';
+
+  @override
   String get clientOrderPriority =>
       'طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية';
 
@@ -27,6 +31,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get newDriverLabel => 'طيار جديد';
+
+  @override
+  String get newRiderLabel => 'راكب جديد';
 
   @override
   String get tabRequests => 'طلباتي';

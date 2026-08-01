@@ -8,21 +8,37 @@ class FormTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final TextInputType? keyboardType;
+  // ====== لو true، بيظهر إطار أحمر حوالين الحقل عشان يوضح للمستخدم إنه
+  // الحقل ده لازم يتملي (بيتحط true بعد محاولة "حفظ" فاشلة والحقل فاضي) ======
+  final bool showError;
+  final ValueChanged<String>? onChanged;
 
   const FormTextField({
     super.key,
     required this.controller,
     required this.hint,
     this.keyboardType,
+    this.showError = false,
+    this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    final errorBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+    );
+    final normalBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    );
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        onChanged: onChanged,
         style: TextStyle(color: context.textColor),
         textAlign: TextAlign.right,
         decoration: InputDecoration(
@@ -30,10 +46,9 @@ class FormTextField extends StatelessWidget {
           hintStyle: TextStyle(color: context.textGreyColor),
           filled: true,
           fillColor: context.cardColor,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
+          border: showError ? errorBorder : normalBorder,
+          enabledBorder: showError ? errorBorder : normalBorder,
+          focusedBorder: showError ? errorBorder : normalBorder,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 16,
@@ -50,6 +65,9 @@ class PhotoUploadTile extends StatelessWidget {
   final Uint8List? imageBytes;
   final VoidCallback onTap;
   final bool optional;
+  // ====== لو true، بيظهر إطار أحمر حوالين مربع الصورة عشان يوضح إنه
+  // لازم يترفع صورة هنا (بيتحط true بعد محاولة "حفظ" فاشلة والصورة ناقصة) ======
+  final bool showError;
 
   const PhotoUploadTile({
     super.key,
@@ -57,6 +75,7 @@ class PhotoUploadTile extends StatelessWidget {
     required this.imageBytes,
     required this.onTap,
     this.optional = false,
+    this.showError = false,
   });
 
   @override
@@ -73,6 +92,9 @@ class PhotoUploadTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: context.cardColor,
                   borderRadius: BorderRadius.circular(14),
+                  border: showError
+                      ? Border.all(color: Colors.red, width: 1.5)
+                      : null,
                   image: imageBytes != null
                       ? DecorationImage(
                           image: MemoryImage(imageBytes!),

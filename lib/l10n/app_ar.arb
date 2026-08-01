@@ -1,10 +1,12 @@
 {
   "appName": "طيار - وصلك في لحظة",
+  "noInternetConnectionMessage": "مفيش اتصال بالإنترنت، تأكد من اتصالك وحاول تاني",
   "clientOrderPriority": "طلبك بيوصل لأقرب طيارين، السعر الأفضل بياخد الأولوية",
   "driverNoOrders": "مفيش طلبات متاحة",
   "driverOfflineHint": "أنت غير متاح دوس \"اونلاين\" عشان تشوف الطلبات المتاحة",
   "driverNoRatings": "مفيش تقييمات",
   "newDriverLabel": "طيار جديد",
+  "newRiderLabel": "راكب جديد",
   "tabRequests": "طلباتي",
   "tabIncome": "دخلي",
   "tabRatings": "تقييماتي",

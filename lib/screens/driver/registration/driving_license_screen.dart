@@ -18,6 +18,31 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
   Uint8List? _licensePhoto;
   bool _isSaving = false;
 
+  // ====== بتتحط true بعد محاولة "حفظ" فاشلة والحقل المطلوب لسه فاضي،
+  // عشان نعرض إطار أحمر حواليه — وبترجع false تلقائيًا أول ما المستخدم
+  // يعبّيه ======
+  bool _licensePhotoError = false;
+  bool _expiryError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _expiryController.addListener(_clearExpiryError);
+  }
+
+  void _clearExpiryError() {
+    if (_expiryError && _expiryController.text.trim().isNotEmpty) {
+      setState(() => _expiryError = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _expiryController.removeListener(_clearExpiryError);
+    _expiryController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickPhoto() async {
     final picker = ImagePicker();
     final file = await picker.pickImage(
@@ -26,7 +51,10 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
     );
     if (file == null) return;
     final bytes = await file.readAsBytes();
-    setState(() => _licensePhoto = bytes);
+    setState(() {
+      _licensePhoto = bytes;
+      _licensePhotoError = false;
+    });
   }
 
   Future<void> _pickDate() async {
@@ -45,7 +73,13 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
   Future<void> _save() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    if (_licensePhoto == null || _expiryController.text.trim().isEmpty) {
+    final licensePhotoMissing = _licensePhoto == null;
+    final expiryEmpty = _expiryController.text.trim().isEmpty;
+    if (licensePhotoMissing || expiryEmpty) {
+      setState(() {
+        _licensePhotoError = licensePhotoMissing;
+        _expiryError = expiryEmpty;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -55,6 +89,7 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
       );
       return;
     }
+    setState(() => _licensePhotoError = false);
     setState(() => _isSaving = true);
     try {
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
@@ -89,6 +124,7 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
             label: AppLocalizations.of(context)!.sectionDrivingLicense,
             imageBytes: _licensePhoto,
             onTap: _pickPhoto,
+            showError: _licensePhotoError,
           ),
         ),
         const SizedBox(height: 24),
@@ -98,6 +134,7 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
             child: FormTextField(
               controller: _expiryController,
               hint: AppLocalizations.of(context)!.licenseExpiryHint,
+              showError: _expiryError,
             ),
           ),
         ),

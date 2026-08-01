@@ -1,10 +1,12 @@
 {
   "appName": "Tayar - Instantly There",
+  "noInternetConnectionMessage": "No internet connection. Please check your connection and try again",
   "clientOrderPriority": "Sent to nearby drivers; best price gets priority",
   "driverNoOrders": "No orders available",
   "driverOfflineHint": "You're offline. Tap \"Online\" to see orders",
   "driverNoRatings": "No ratings yet",
   "newDriverLabel": "New driver",
+  "newRiderLabel": "New rider",
   "tabRequests": "Requests",
   "tabIncome": "Income",
   "tabRatings": "Ratings",

@@ -336,7 +336,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
       ),
       body: Column(
         children: [
-          // ====== حقل البحث ======
+          // ====== حقل البحث + زرار اختار من الخريطة (أيقونة بس) جوه نفس الخانة ======
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Container(
@@ -363,42 +363,29 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                     ),
                   ),
                   if (_isLoading)
-                    const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: TayarColors.primary,
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: TayarColors.primary,
+                        ),
                       ),
                     ),
+                  // ====== زرار اختار من الخريطة: أيقونة بس من غير نص، بعد
+                  // ما كان ListTile منفصل تحت خانة البحث ======
+                  IconButton(
+                    icon: const Icon(Icons.map, color: TayarColors.primary),
+                    tooltip: loc.pickFromMapLabel,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: _openPickOnMap,
+                  ),
                 ],
               ),
-            ),
-          ),
-
-          // ====== زرار اختار من الخريطة (ثابت وظاهر دايمًا) ======
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: context.cardColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.map, color: TayarColors.primary),
-              ),
-              title: Text(
-                loc.pickFromMapLabel,
-                style: TextStyle(
-                  color: context.textColor,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: _openPickOnMap,
             ),
           ),
           Divider(color: context.dividerColor2, height: 1),

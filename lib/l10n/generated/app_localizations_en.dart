@@ -12,6 +12,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Tayar - Instantly There';
 
   @override
+  String get noInternetConnectionMessage =>
+      'No internet connection. Please check your connection and try again';
+
+  @override
   String get clientOrderPriority =>
       'Sent to nearby drivers; best price gets priority';
 
@@ -27,6 +31,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newDriverLabel => 'New driver';
+
+  @override
+  String get newRiderLabel => 'New rider';
 
   @override
   String get tabRequests => 'Requests';

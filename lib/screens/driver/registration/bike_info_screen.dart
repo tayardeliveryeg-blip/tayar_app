@@ -23,6 +23,44 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
   Uint8List? _licensePhoto;
   bool _isSaving = false;
 
+  // ====== بتتحط true بعد محاولة "حفظ" فاشلة والحقل المطلوب لسه فاضي،
+  // عشان نعرض إطار أحمر حواليه — وبترجع false تلقائيًا أول ما المستخدم
+  // يعبّيه ======
+  bool _bikePhotoError = false;
+  bool _brandError = false;
+  bool _plateError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _brandController.addListener(_clearBrandError);
+    _plateController.addListener(_clearPlateError);
+  }
+
+  void _clearBrandError() {
+    if (_brandError && _brandController.text.trim().isNotEmpty) {
+      setState(() => _brandError = false);
+    }
+  }
+
+  void _clearPlateError() {
+    if (_plateError && _plateController.text.trim().isNotEmpty) {
+      setState(() => _plateError = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _brandController.removeListener(_clearBrandError);
+    _plateController.removeListener(_clearPlateError);
+    _brandController.dispose();
+    _modelController.dispose();
+    _colorController.dispose();
+    _plateController.dispose();
+    _yearController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickPhoto(bool isBikePhoto) async {
     final picker = ImagePicker();
     final file = await picker.pickImage(
@@ -34,6 +72,7 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
     setState(() {
       if (isBikePhoto) {
         _bikePhoto = bytes;
+        _bikePhotoError = false;
       } else {
         _licensePhoto = bytes;
       }
@@ -43,9 +82,15 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
   Future<void> _save() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    if (_bikePhoto == null ||
-        _brandController.text.trim().isEmpty ||
-        _plateController.text.trim().isEmpty) {
+    final bikePhotoMissing = _bikePhoto == null;
+    final brandEmpty = _brandController.text.trim().isEmpty;
+    final plateEmpty = _plateController.text.trim().isEmpty;
+    if (bikePhotoMissing || brandEmpty || plateEmpty) {
+      setState(() {
+        _bikePhotoError = bikePhotoMissing;
+        _brandError = brandEmpty;
+        _plateError = plateEmpty;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.bikeInfoRequiredError),
@@ -53,6 +98,7 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
       );
       return;
     }
+    setState(() => _bikePhotoError = false);
     setState(() => _isSaving = true);
     try {
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
@@ -94,6 +140,7 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
               label: AppLocalizations.of(context)!.bikePhotoLabel,
               imageBytes: _bikePhoto,
               onTap: () => _pickPhoto(true),
+              showError: _bikePhotoError,
             ),
             PhotoUploadTile(
               label: AppLocalizations.of(context)!.bikeLicensePhotoLabel,
@@ -106,6 +153,7 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
         FormTextField(
           controller: _brandController,
           hint: AppLocalizations.of(context)!.bikeBrandHint,
+          showError: _brandError,
         ),
         FormTextField(
           controller: _modelController,
@@ -118,6 +166,7 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
         FormTextField(
           controller: _plateController,
           hint: AppLocalizations.of(context)!.bikePlateLabel,
+          showError: _plateError,
         ),
         FormTextField(
           controller: _yearController,
