@@ -830,6 +830,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get googleAccountLabel => 'حساب Google';
 
   @override
+  String get appleAccountLabel => 'حساب Apple';
+
+  @override
   String phoneNumberProviderLabel(String phone) {
     return 'رقم الهاتف ($phone)';
   }

@@ -834,6 +834,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get googleAccountLabel => 'Google Account';
 
   @override
+  String get appleAccountLabel => 'Apple Account';
+
+  @override
   String phoneNumberProviderLabel(String phone) {
     return 'Phone Number ($phone)';
   }

@@ -1598,6 +1598,12 @@ abstract class AppLocalizations {
   /// **'حساب Google'**
   String get googleAccountLabel;
 
+  /// No description provided for @appleAccountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب Apple'**
+  String get appleAccountLabel;
+
   /// No description provided for @phoneNumberProviderLabel.
   ///
   /// In ar, this message translates to:
