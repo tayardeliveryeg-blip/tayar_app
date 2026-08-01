@@ -2015,7 +2015,7 @@ abstract class AppLocalizations {
   /// No description provided for @driverRoleDescription.
   ///
   /// In ar, this message translates to:
-  /// **'اشتغل واكسب فلوس بدراجةك'**
+  /// **'اشتغل واكسب فلوس بدراجتك'**
   String get driverRoleDescription;
 
   /// No description provided for @driverCommissionBadge.

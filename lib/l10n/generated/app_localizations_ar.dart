@@ -1050,7 +1050,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverRoleTitle => 'طيار';
 
   @override
-  String get driverRoleDescription => 'اشتغل واكسب فلوس بدراجةك';
+  String get driverRoleDescription => 'اشتغل واكسب فلوس بدراجتك';
 
   @override
   String driverCommissionBadge(String percent) {

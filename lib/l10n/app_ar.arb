@@ -485,7 +485,7 @@
   "passengerRoleTitle": "راكب",
   "passengerRoleDescription": "اطلب رحلتك بسهولة وسرعة",
   "driverRoleTitle": "طيار",
-  "driverRoleDescription": "اشتغل واكسب فلوس بدراجةك",
+  "driverRoleDescription": "اشتغل واكسب فلوس بدراجتك",
   "driverCommissionBadge": "عمولة {percent}% بس",
   "@driverCommissionBadge": {
     "placeholders": {
