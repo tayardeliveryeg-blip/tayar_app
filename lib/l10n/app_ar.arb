@@ -395,6 +395,7 @@
   "setPinTitle": "حدد رقم سري من 4 أرقام",
   "unknownProviderLabel": "غير معروف",
   "googleAccountLabel": "حساب Google",
+  "appleAccountLabel": "حساب Apple",
   "phoneNumberProviderLabel": "رقم الهاتف ({phone})",
   "@phoneNumberProviderLabel": {
     "placeholders": {
