@@ -1664,6 +1664,18 @@ abstract class AppLocalizations {
   /// **'حدد مسارك'**
   String get whereDoYouWantToGoTitle;
 
+  /// No description provided for @editPickupLocationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'غيّر مكان الاستلام'**
+  String get editPickupLocationTitle;
+
+  /// No description provided for @editDestinationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'غيّر الوجهة'**
+  String get editDestinationTitle;
+
   /// No description provided for @searchPlaceHint.
   ///
   /// In ar, this message translates to:
