@@ -60,3 +60,54 @@ Future<void> submitVendorApplication({
     if (trimmedNote != null && trimmedNote.isNotEmpty) 'note': trimmedNote,
   });
 }
+
+// ====================================================
+// ====== دليل الشركاء التجاريين المؤكدين (vendor_partners) - بيظهر في
+// خريطة الراكب وفي شاشة "شركاؤنا التجاريين" بعد ما الأدمن يأكد الطلب
+// (زرار "Confirm & Publish" في تاب Vendor Requests). كوليكشن منفصل عن
+// vendor_applications عشان القراءة هنا مفتوحة لأي مستخدم مسجل دخول ======
+// ====================================================
+
+/// ====== شريك تجاري واحد ظاهر في التطبيق (بيانات عامة بس) ======
+class VendorPartner {
+  final String id;
+  final String storeName;
+  final String businessType;
+  final LatLng location;
+
+  VendorPartner({
+    required this.id,
+    required this.storeName,
+    required this.businessType,
+    required this.location,
+  });
+
+  factory VendorPartner.fromDoc(
+    String id,
+    Map<String, dynamic> data,
+  ) {
+    final loc = data['location'] as Map<String, dynamic>? ?? {};
+    return VendorPartner(
+      id: id,
+      storeName: (data['storeName'] as String?) ?? '',
+      businessType: (data['businessType'] as String?) ?? '',
+      location: LatLng(
+        ((loc['lat'] as num?) ?? 0).toDouble(),
+        ((loc['lon'] as num?) ?? 0).toDouble(),
+      ),
+    );
+  }
+}
+
+/// ====== ستريم لايف بكل الشركاء التجاريين المنشورين - مستخدم في دبوس
+/// الخريطة (passenger_home.dart) وشاشة "شركاؤنا التجاريين" ======
+Stream<List<VendorPartner>> streamVendorPartners() {
+  return FirebaseFirestore.instance
+      .collection('vendor_partners')
+      .snapshots()
+      .map(
+        (snap) => snap.docs
+            .map((doc) => VendorPartner.fromDoc(doc.id, doc.data()))
+            .toList(),
+      );
+}

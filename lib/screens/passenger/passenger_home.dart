@@ -25,6 +25,9 @@ import 'package:tayay_app/main.dart' show navigatorKey;
 import 'package:tayay_app/services/call_invitation_setup.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/services/wallet_service.dart';
+import 'package:tayay_app/services/vendor_service.dart';
+import 'package:tayay_app/screens/passenger/become_vendor_screen.dart'
+    show vendorBusinessTypeDisplay;
 import 'package:tayay_app/theme/app_settings.dart';
 export 'package:tayay_app/theme/theme_extensions.dart'; // مصدر TayarColors / TayarTheme / TayarThemeColors الوحيد
 
@@ -299,6 +302,100 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     final size = camera.nonRotatedSize;
     final pinOffset = Offset(size.width / 2, size.height / 2);
     return camera.offsetToCrs(pinOffset);
+  }
+
+  // ====== بيظهر لما المستخدم يدوس على دبوس شريك تجاري على الخريطة - بيوريه
+  // اسم المحل ونوعه، ومعاه زرار يفتحله شاشة طلب توصيل بنقطة استلام متملية
+  // أوتوماتيك بموقع المحل ======
+  void _showVendorPartnerSheet(VendorPartner partner) {
+    final loc = AppLocalizations.of(context)!;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: TayarColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.storefront, color: Colors.white),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          partner.storeName,
+                          style: TextStyle(
+                            color: context.textColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          vendorBusinessTypeDisplay(loc, partner.businessType),
+                          style: TextStyle(
+                            color: context.textGreyColor,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(sheetContext);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CreateDeliveryOrderScreen(
+                          initialPickupLocation: partner.location,
+                          initialPickupAddress: partner.storeName,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TayarColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    loc.orderFromVendorButton,
+                    style: TextStyle(
+                      color: context.onPrimaryColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   // ====== بيتنادى كل مرة الخريطة تتحرك (سحب أو زوم) ======
@@ -1059,6 +1156,45 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
               children: [
                 const TayarTileLayer(),
+                // ====== دبابيس الشركاء التجاريين المؤكدين (محلات/مطاعم/
+                // صيدليات) - بتتحدث لايف مع أي تحديث من لوحة الأدمن ======
+                StreamBuilder<List<VendorPartner>>(
+                  stream: streamVendorPartners(),
+                  builder: (context, snapshot) {
+                    final partners = snapshot.data ?? const [];
+                    if (partners.isEmpty) return const SizedBox.shrink();
+                    return MarkerLayer(
+                      markers: partners.map((partner) {
+                        return Marker(
+                          point: partner.location,
+                          width: 40,
+                          height: 40,
+                          child: GestureDetector(
+                            onTap: () => _showVendorPartnerSheet(partner),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: TayarColors.primary,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 2),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.storefront,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
                 if (_routePoints.isNotEmpty)
                   PolylineLayer(
                     polylines: [

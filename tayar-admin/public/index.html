@@ -1053,8 +1053,9 @@ function renderVendorApplications(){
     const mapLink = (v.lat != null && v.lon != null)
       ? `<a href="https://maps.google.com/?q=${v.lat},${v.lon}" target="_blank" style="color:var(--info);">map</a>`
       : '—';
-    const actions = v.status === 'pending'
-      ? `<button class="btn small primary" onclick="markVendorContacted('${v.id}')">Mark contacted</button>
+    const actions = (v.status === 'pending' || v.status === 'contacted')
+      ? `${v.status === 'pending' ? `<button class="btn small primary" onclick="markVendorContacted('${v.id}')">Mark contacted</button>` : ''}
+         <button class="btn small primary" onclick="confirmAndPublishVendor('${v.id}')">Confirm &amp; Publish</button>
          <button class="btn small danger-outline" onclick="rejectVendorApplication('${v.id}')">Reject</button>`
       : `<button class="btn small danger-outline" onclick="removeVendorApplication('${v.id}')">Remove</button>`;
     return `
@@ -1077,6 +1078,30 @@ function markVendorContacted(id){
     reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
   })
     .then(()=>toast('Marked as contacted'))
+    .catch(err=>toast('Failed: ' + err.message));
+}
+// ====== بعد ما الأدمن يتأكد من التاجر فعليًا (اتصال/تحقق يدوي): بننشر
+// المحل في كوليكشن vendor_partners العام (بيانات عامة بس، من غير رقم
+// تليفون أو ملاحظات خاصة) عشان يظهر في التطبيق للراكبين (دبوس على
+// الخريطة + شاشة "شركاؤنا التجاريين")، وبنعلّم الطلب الأصلي كـ active ======
+function confirmAndPublishVendor(id){
+  const v = vendorApplications.find(x => x.id === id);
+  if (!v) { toast('Request not found'); return; }
+  if (v.lat == null || v.lon == null) { toast('Missing location, cannot publish'); return; }
+
+  db.collection('vendor_partners').add({
+    sourceApplicationId: v.id,
+    storeName: v.storeName,
+    businessType: v.businessType,
+    location: { lat: v.lat, lon: v.lon },
+    publishedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    return db.collection(COLLECTIONS.vendorApplications).doc(id).update({
+      status: 'active',
+      reviewedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  })
+    .then(()=>toast('Published to app'))
     .catch(err=>toast('Failed: ' + err.message));
 }
 function rejectVendorApplication(id){

@@ -585,6 +585,21 @@
   "okButton": "OK",
   "registerStoreDrawerLabel": "Want to become a business partner?",
   "becomeVendorDrawerLabel": "Business partner",
+  "vendorPartnersDrawerLabel": "Our business partners",
+  "vendorPartnersScreenTitle": "Our business partners",
+  "noVendorPartnersYetMessage": "No business partners near you yet",
+  "vendorDistanceAwayLabel": "{type} - {distance} km away",
+  "@vendorDistanceAwayLabel": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "orderFromVendorButton": "Order delivery",
   "sosSheetTitle": "Emergency (SOS)",
   "sosAlertSentToAdminNotice": "An instant alert with your current location was sent to the Tayar team",
   "sosCallPoliceLabel": "Call the police",

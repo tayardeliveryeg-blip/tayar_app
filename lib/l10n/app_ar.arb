@@ -585,6 +585,21 @@
   "okButton": "تمام",
   "registerStoreDrawerLabel": "لو عايز تبقى شريك تجاري معانا؟",
   "becomeVendorDrawerLabel": "شريك تجاري",
+  "vendorPartnersDrawerLabel": "شركاؤنا التجاريين",
+  "vendorPartnersScreenTitle": "شركاؤنا التجاريين",
+  "noVendorPartnersYetMessage": "لسه مفيش شركاء تجاريين متاحين قريب منك",
+  "vendorDistanceAwayLabel": "{type} - على بعد {distance} كم",
+  "@vendorDistanceAwayLabel": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "orderFromVendorButton": "اطلب توصيل",
   "sosSheetTitle": "زرار الطوارئ",
   "sosAlertSentToAdminNotice": "تم إرسال تنبيه فوري لفريق Tayar بموقعك الحالي",
   "sosCallPoliceLabel": "اتصال بالشرطة",
