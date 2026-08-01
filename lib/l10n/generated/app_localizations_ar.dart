@@ -1279,6 +1279,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get becomeVendorDrawerLabel => 'شريك تجاري';
 
   @override
+  String get vendorPartnersDrawerLabel => 'شركاؤنا التجاريين';
+
+  @override
+  String get vendorPartnersScreenTitle => 'شركاؤنا التجاريين';
+
+  @override
+  String get noVendorPartnersYetMessage =>
+      'لسه مفيش شركاء تجاريين متاحين قريب منك';
+
+  @override
+  String vendorDistanceAwayLabel(String type, String distance) {
+    return '$type - على بعد $distance كم';
+  }
+
+  @override
+  String get orderFromVendorButton => 'اطلب توصيل';
+
+  @override
   String get sosSheetTitle => 'زرار الطوارئ';
 
   @override

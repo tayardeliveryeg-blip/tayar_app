@@ -1292,6 +1292,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get becomeVendorDrawerLabel => 'Business partner';
 
   @override
+  String get vendorPartnersDrawerLabel => 'Our business partners';
+
+  @override
+  String get vendorPartnersScreenTitle => 'Our business partners';
+
+  @override
+  String get noVendorPartnersYetMessage => 'No business partners near you yet';
+
+  @override
+  String vendorDistanceAwayLabel(String type, String distance) {
+    return '$type - $distance km away';
+  }
+
+  @override
+  String get orderFromVendorButton => 'Order delivery';
+
+  @override
   String get sosSheetTitle => 'Emergency (SOS)';
 
   @override

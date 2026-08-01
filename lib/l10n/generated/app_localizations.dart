@@ -2438,6 +2438,36 @@ abstract class AppLocalizations {
   /// **'شريك تجاري'**
   String get becomeVendorDrawerLabel;
 
+  /// No description provided for @vendorPartnersDrawerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شركاؤنا التجاريين'**
+  String get vendorPartnersDrawerLabel;
+
+  /// No description provided for @vendorPartnersScreenTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شركاؤنا التجاريين'**
+  String get vendorPartnersScreenTitle;
+
+  /// No description provided for @noVendorPartnersYetMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه مفيش شركاء تجاريين متاحين قريب منك'**
+  String get noVendorPartnersYetMessage;
+
+  /// No description provided for @vendorDistanceAwayLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{type} - على بعد {distance} كم'**
+  String vendorDistanceAwayLabel(String type, String distance);
+
+  /// No description provided for @orderFromVendorButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'اطلب توصيل'**
+  String get orderFromVendorButton;
+
   /// No description provided for @sosSheetTitle.
   ///
   /// In ar, this message translates to:
