@@ -67,6 +67,9 @@ class SelectDestinationScreen extends StatefulWidget {
 
 class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
   final TextEditingController _controller = TextEditingController();
+  // ====== الفوكس بتاع حقل البحث: بنستخدمه عشان زرار "البحث" يبقى شغال
+  // فعليًا (يفتح الكيبورد ويظهر نتائج البحث) لما يتضغط، مش مجرد أيقونة ======
+  final FocusNode _searchFocusNode = FocusNode();
   Timer? _debounce;
   List<PlaceResult> _results = [];
   List<PlaceResult> _recentSearches = [];
@@ -90,6 +93,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
   void dispose() {
     _debounce?.cancel();
     _controller.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -336,56 +340,74 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
       ),
       body: Column(
         children: [
-          // ====== حقل البحث + زرار اختار من الخريطة (أيقونة بس) جوه نفس الخانة ======
+          // ====== زرار البحث (يفتح الفوكس/الكيبورد) + خانة الكتابة + زرار
+          // اختار من الخريطة — التلات عناصر بنفس ارتفاع الصف، وزرار البحث
+          // وزرار الخريطة بنفس الحجم بالظبط (مربع 48×48) وقابلين للضغط ======
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              decoration: BoxDecoration(
-                color: context.cardColor,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.search, color: context.textGreyColor),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      autofocus: true,
-                      onChanged: _onQueryChanged,
-                      style: TextStyle(color: context.textColor, fontSize: 16),
-                      decoration: InputDecoration(
-                        hintText: loc.searchPlaceHint,
-                        hintStyle: TextStyle(color: context.textGreyColor),
-                        border: InputBorder.none,
-                      ),
+            child: Row(
+              children: [
+                _SquareIconButton(
+                  icon: Icons.search,
+                  color: context.textGreyColor,
+                  tooltip: loc.searchPlaceHint,
+                  onTap: () => _searchFocusNode.requestFocus(),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    height: 48,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: context.cardColor,
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                  ),
-                  if (_isLoading)
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: TayarColors.primary,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            focusNode: _searchFocusNode,
+                            autofocus: true,
+                            onChanged: _onQueryChanged,
+                            style: TextStyle(
+                              color: context.textColor,
+                              fontSize: 16,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: loc.searchPlaceHint,
+                              hintStyle: TextStyle(
+                                color: context.textGreyColor,
+                              ),
+                              border: InputBorder.none,
+                              isCollapsed: true,
+                            ),
+                          ),
                         ),
-                      ),
+                        if (_isLoading)
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: TayarColors.primary,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  // ====== زرار اختار من الخريطة: أيقونة بس من غير نص، بعد
-                  // ما كان ListTile منفصل تحت خانة البحث ======
-                  IconButton(
-                    icon: const Icon(Icons.map, color: TayarColors.primary),
-                    tooltip: loc.pickFromMapLabel,
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: _openPickOnMap,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 10),
+                _SquareIconButton(
+                  icon: Icons.map,
+                  color: TayarColors.primary,
+                  tooltip: loc.pickFromMapLabel,
+                  onTap: _openPickOnMap,
+                ),
+              ],
             ),
           ),
           Divider(color: context.dividerColor2, height: 1),
@@ -479,6 +501,46 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
           onTap: () => _selectPlace(place),
         );
       },
+    );
+  }
+}
+
+// ====================================================
+// ====== زرار مربع موحّد الحجم (48×48) بيتحط جنب خانة البحث ======
+// نفس الشكل بالظبط مستخدم لزرار "البحث" وزرار "اختار من الخريطة" عشان
+// الاتنين يبانوا بنفس الحجم تمامًا، والاتنين قابلين للضغط فعليًا (مش مجرد
+// أيقونة ديكور) ======
+// ====================================================
+class _SquareIconButton extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  const _SquareIconButton({
+    required this.icon,
+    required this.color,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: context.cardColor,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Icon(icon, color: color),
+          ),
+        ),
+      ),
     );
   }
 }
