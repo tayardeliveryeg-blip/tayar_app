@@ -866,6 +866,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whereDoYouWantToGoTitle => 'حدد مسارك';
 
   @override
+  String get editPickupLocationTitle => 'غيّر مكان الاستلام';
+
+  @override
+  String get editDestinationTitle => 'غيّر الوجهة';
+
+  @override
   String get searchPlaceHint => 'اكتب اسم الشارع أو المكان...';
 
   @override
