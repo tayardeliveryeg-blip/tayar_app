@@ -11,6 +11,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/screens/auth/app_lock_screen.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
+import 'package:tayay_app/widgets/no_internet_banner.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 
 export 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarTheme, TayarThemeColors;
@@ -188,6 +189,9 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
               AppLockScreen(
                 onUnlocked: () => setState(() => _isLocked = false),
               ),
+            // ====== بانر انقطاع الإنترنت: فوق كل حاجة تانية عشان يفضل
+            // ظاهر حتى لو المستخدم على شاشة قفل الرقم السري ======
+            const NoInternetBanner(),
           ],
         );
       },

@@ -257,10 +257,10 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
             ),
           ),
 
-          // ====== زرار الرجوع ======
+          // ====== زرار الرجوع: على الشمال دايمًا زي كل شاشات التطبيق ======
           Positioned(
             top: 50,
-            right: 16,
+            left: 16,
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(

@@ -110,6 +110,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   bool _vendorPromoDismissed = false;
 
   LatLng? _liveUserLocation; // موقعك الحقيقي الفعلي، بيتحدث لايف مع تحركك
+  double? _liveUserHeading; // اتجاه حركتك الفعلي (0 = شمال)، لسهم النقطة الزرقاء
   StreamSubscription<Position>? _liveLocationSub;
 
   // ====== الطيارين المتاحين القريبين، بيظهروا كإيموجي موتوسيكل متحرك ======
@@ -214,12 +215,18 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
             locationSettings: locationSettings,
           ).listen((position) {
             if (!mounted) return;
-            setState(
-              () => _liveUserLocation = LatLng(
+            setState(() {
+              _liveUserLocation = LatLng(
                 position.latitude,
                 position.longitude,
-              ),
-            );
+              );
+              // ====== الاتجاه بييجي من الـ GPS بس وقت الحركة الفعلية،
+              // فلو مفيش قراءة موثوقة (heading سالب) بنسيب آخر اتجاه معروف
+              // زي ما هو بدل ما نمسحه ======
+              if (position.heading >= 0) {
+                _liveUserHeading = position.heading;
+              }
+            });
           });
     } catch (e) {
       debugPrint('❌ خطأ في بث الموقع اللحظي: $e');
@@ -1256,9 +1263,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     markers: [
                       Marker(
                         point: _liveUserLocation!,
-                        width: 56,
-                        height: 56,
-                        child: const LiveLocationDot(),
+                        width: LiveLocationDot.totalSize(56),
+                        height: LiveLocationDot.totalSize(56),
+                        child: LiveLocationDot(heading: _liveUserHeading),
                       ),
                     ],
                   ),
@@ -1352,16 +1359,41 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     const SizedBox(height: AppSpacing.xs),
                     // أيقونة الماركر
                     const PinMarker(type: PinType.pickup),
+                    // ظل خفيف تحت الدبوس: بيدي إحساس إن الدبوس معلّق شوية فوق
+                    // الأرض وقت تحريك الخريطة، وبيبان/يختفي بنفس توقيت
+                    // النقطة الحمرا (AnimatedOpacity)، والمساحة بتاعته فاضلة
+                    // محجوزة زي غيره عشان ارتفاع الـ Column ميتغيرش
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: _isDraggingMap ? 1 : 0,
+                      child: Container(
+                        width: 18,
+                        height: 6,
+                        margin: const EdgeInsets.only(top: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.22),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
                     // الخط الواصل
                     Container(width: 2, height: 14, color: Colors.white54),
-                    // نقطة صغيرة حمرا: دي رأس الدبوس الثابت اللي بيأشر فعليًا على المكان
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
+                    // نقطة صغيرة حمرا: دي رأس الدبوس الثابت اللي بيأشر فعليًا على المكان.
+                    // بتبان بس وقت سحب الخريطة (عشان توضح مكان التثبيت الدقيق
+                    // للمستخدم وهو بيحرك)، وبتختفي بشفافية فور الإفلات — نفس
+                    // أسلوب الكارت العلوي بالظبط، والمساحة بتاعتها بتفضل
+                    // محجوزة زي ما هي عشان ارتفاع الـ Column ميتغيرش.
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: _isDraggingMap ? 1 : 0,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
                       ),
                     ),
                   ],

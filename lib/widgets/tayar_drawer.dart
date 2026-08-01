@@ -156,6 +156,19 @@ class TayarDrawer extends StatelessWidget {
                         ? googleName
                         : AppLocalizations.of(context)!.defaultUserName;
 
+                    // ====== متوسط تقييم الراكب: نفس مستند users/{uid} اللي
+                    // الـ StreamBuilder ده بيسمعه بالفعل، فمفيش داعي لأي
+                    // استعلام إضافي — بنفس منطق ratingSum/ratingCount
+                    // المستخدم في تقييم الطيار بالظبط ======
+                    final userData = snapshot.data?.data();
+                    final ratingCount =
+                        (userData?['ratingCount'] as num?)?.toInt() ?? 0;
+                    final double? riderRating = ratingCount > 0
+                        ? ((userData?['ratingSum'] as num?)?.toDouble() ??
+                                  0.0) /
+                              ratingCount
+                        : null;
+
                     return Row(
                       children: [
                         CircleAvatar(
@@ -172,15 +185,51 @@ class TayarDrawer extends StatelessWidget {
                         ),
                         const SizedBox(width: AppSpacing.md),
                         Expanded(
-                          child: Text(
-                            displayName,
-                            style: TextStyle(
-                              color: context.textColor,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                displayName,
+                                style: TextStyle(
+                                  color: context.textColor,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              // ====== تقييم الراكب: نجمة + الرقم، أو "راكب
+                              // جديد" لو لسه معندوش أي تقييمات — نفس ستايل
+                              // تقييم الطيار بالظبط في offer_cards.dart ======
+                              if (riderRating != null)
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      color: TayarColors.primary,
+                                      size: 14,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      riderRating.toStringAsFixed(1),
+                                      style: TextStyle(
+                                        color: context.textGreyColor,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              else
+                                Text(
+                                  AppLocalizations.of(context)!.newRiderLabel,
+                                  style: TextStyle(
+                                    color: context.textGreyColor,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                         Icon(Icons.chevron_right, color: context.textColor),

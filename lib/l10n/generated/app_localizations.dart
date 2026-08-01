@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'طيار - وصلك في لحظة'**
   String get appName;
 
+  /// No description provided for @noInternetConnectionMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش اتصال بالإنترنت، تأكد من اتصالك وحاول تاني'**
+  String get noInternetConnectionMessage;
+
   /// No description provided for @clientOrderPriority.
   ///
   /// In ar, this message translates to:
@@ -133,6 +139,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'طيار جديد'**
   String get newDriverLabel;
+
+  /// No description provided for @newRiderLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'راكب جديد'**
+  String get newRiderLabel;
 
   /// No description provided for @tabRequests.
   ///
@@ -1586,6 +1598,12 @@ abstract class AppLocalizations {
   /// **'حساب Google'**
   String get googleAccountLabel;
 
+  /// No description provided for @appleAccountLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب Apple'**
+  String get appleAccountLabel;
+
   /// No description provided for @phoneNumberProviderLabel.
   ///
   /// In ar, this message translates to:
@@ -1997,7 +2015,7 @@ abstract class AppLocalizations {
   /// No description provided for @driverRoleDescription.
   ///
   /// In ar, this message translates to:
-  /// **'اشتغل واكسب فلوس بدراجةك'**
+  /// **'اشتغل واكسب فلوس بدراجتك'**
   String get driverRoleDescription;
 
   /// No description provided for @driverCommissionBadge.

@@ -24,6 +24,13 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Uint8List? _photoBytes;
   bool _isSaving = false;
 
+  // ====== بتتحط true بعد محاولة "حفظ" فاشلة والحقل المطلوب لسه فاضي/غلط،
+  // عشان نعرض إطار أحمر حواليه — وبترجع false تلقائيًا أول ما المستخدم
+  // يكتب فيه حاجة ======
+  bool _firstNameError = false;
+  bool _lastNameError = false;
+  bool _mobileError = false;
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +40,27 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     final authPhone = FirebaseAuth.instance.currentUser?.phoneNumber;
     if (authPhone != null && authPhone.isNotEmpty) {
       _mobileController.text = authPhone;
+    }
+    _firstNameController.addListener(_clearFirstNameError);
+    _lastNameController.addListener(_clearLastNameError);
+    _mobileController.addListener(_clearMobileError);
+  }
+
+  void _clearFirstNameError() {
+    if (_firstNameError && _firstNameController.text.trim().isNotEmpty) {
+      setState(() => _firstNameError = false);
+    }
+  }
+
+  void _clearLastNameError() {
+    if (_lastNameError && _lastNameController.text.trim().isNotEmpty) {
+      setState(() => _lastNameError = false);
+    }
+  }
+
+  void _clearMobileError() {
+    if (_mobileError && _mobileController.text.trim().isNotEmpty) {
+      setState(() => _mobileError = false);
     }
   }
 
@@ -63,8 +91,13 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Future<void> _save() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    if (_firstNameController.text.trim().isEmpty ||
-        _lastNameController.text.trim().isEmpty) {
+    final firstNameEmpty = _firstNameController.text.trim().isEmpty;
+    final lastNameEmpty = _lastNameController.text.trim().isEmpty;
+    if (firstNameEmpty || lastNameEmpty) {
+      setState(() {
+        _firstNameError = firstNameEmpty;
+        _lastNameError = lastNameEmpty;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.fullNameRequiredError),
@@ -75,6 +108,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     final mobile = _mobileController.text.trim();
     final normalizedMobile = normalizeEgyptPhone(mobile);
     if (normalizedMobile == null || normalizedMobile.length < 9) {
+      setState(() => _mobileError = true);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.phoneNumberFormatError),
@@ -82,6 +116,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       );
       return;
     }
+    setState(() => _mobileError = false);
 
     // ====== لو الرقم اللي كتبه هنا نفس رقم الـ Auth المُوثّق بالفعل
     // (يعني دخل بالموبايل أصلاً، أو سبق وربط نفس الرقم)، معندناش داعي
@@ -215,6 +250,18 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   @override
+  void dispose() {
+    _firstNameController.removeListener(_clearFirstNameError);
+    _lastNameController.removeListener(_clearLastNameError);
+    _mobileController.removeListener(_clearMobileError);
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _birthDateController.dispose();
+    _mobileController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SectionScaffold(
       title: AppLocalizations.of(context)!.sectionPersonalInfo,
@@ -232,10 +279,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         FormTextField(
           controller: _firstNameController,
           hint: AppLocalizations.of(context)!.firstNameHint,
+          showError: _firstNameError,
         ),
         FormTextField(
           controller: _lastNameController,
           hint: AppLocalizations.of(context)!.lastNameHint,
+          showError: _lastNameError,
         ),
         GestureDetector(
           onTap: _pickDate,
@@ -250,6 +299,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           controller: _mobileController,
           hint: AppLocalizations.of(context)!.phoneNumberLabel,
           keyboardType: TextInputType.phone,
+          showError: _mobileError,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 4, bottom: 12),

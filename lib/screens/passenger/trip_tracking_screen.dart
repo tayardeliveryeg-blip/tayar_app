@@ -712,10 +712,10 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               ),
             ),
 
-          // ====== زرار الرجوع ======
+          // ====== زرار الرجوع: على الشمال دايمًا زي كل شاشات التطبيق ======
           Positioned(
             top: 50,
-            right: 16,
+            left: 16,
             child: GestureDetector(
               onTap: () => Navigator.of(context).maybePop(),
               child: Container(
@@ -736,10 +736,11 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
             ),
           ),
 
-          // ====== زرار الطوارئ (SOS) ======
+          // ====== زرار الطوارئ (SOS): بقى على اليمين عشان مايتصدمش مع
+          // زرار الرجوع اللي بقى ثابت على الشمال ======
           Positioned(
             top: 50,
-            left: 16,
+            right: 16,
             child: SosFloatingButton(
               userRole: 'passenger',
               orderId: widget.orderId,
