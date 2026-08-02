@@ -133,6 +133,7 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                       initialCenter: center,
                       initialZoom: 13,
                       minZoom: 4,
+                      cameraConstraint: tayarMapCameraConstraint,
                       interactionOptions: const InteractionOptions(
                         flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                       ),

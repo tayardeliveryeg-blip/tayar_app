@@ -1157,6 +1157,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 // عن حوالي 3). 4 رقم آمن كافي إنه يمنع التكرار ولسه
                 // بيسمح بمشاهدة مساحة واسعة حوالين المدينة لو احتاج المستخدم ======
                 minZoom: 4,
+                cameraConstraint: tayarMapCameraConstraint,
                 onMapEvent: _onMapEvent,
                 // نسمح بالسحب (يمين/شمال/فوق/تحت) والزوم، ونمنع الدوران خالص
                 interactionOptions: const InteractionOptions(

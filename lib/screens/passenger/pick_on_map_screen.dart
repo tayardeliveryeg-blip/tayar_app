@@ -172,6 +172,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                 initialZoom: 16,
                 // نفس ملحوظة minZoom في passenger_home.dart: بيمنع تكرار الخريطة
                 minZoom: 4,
+                cameraConstraint: tayarMapCameraConstraint,
                 onMapEvent: _onMapEvent,
                 interactionOptions: const InteractionOptions(
                   flags: InteractiveFlag.all & ~InteractiveFlag.rotate,

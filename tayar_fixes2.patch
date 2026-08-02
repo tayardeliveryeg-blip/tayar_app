@@ -1,0 +1,290 @@
+diff --git a/lib/screens/driver/driver_home_widgets/trip_request_detail_screen.dart b/lib/screens/driver/driver_home_widgets/trip_request_detail_screen.dart
+index ddf5348..99c196c 100644
+--- a/lib/screens/driver/driver_home_widgets/trip_request_detail_screen.dart
++++ b/lib/screens/driver/driver_home_widgets/trip_request_detail_screen.dart
+@@ -133,6 +133,7 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
+                       initialCenter: center,
+                       initialZoom: 13,
+                       minZoom: 4,
++                      cameraConstraint: tayarMapCameraConstraint,
+                       interactionOptions: const InteractionOptions(
+                         flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                       ),
+diff --git a/lib/screens/driver/driver_trip_tracking_screen.dart b/lib/screens/driver/driver_trip_tracking_screen.dart
+index 372e2d0..c0a8bcc 100644
+--- a/lib/screens/driver/driver_trip_tracking_screen.dart
++++ b/lib/screens/driver/driver_trip_tracking_screen.dart
+@@ -402,6 +402,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
+                   const LatLng(30.296, 31.742),
+               initialZoom: 15,
+               minZoom: 4,
++              cameraConstraint: tayarMapCameraConstraint,
+               // نمنع الدوران خالص، بيفضل بس سحب وزوم (نفس باقي خرائط التطبيق)
+               interactionOptions: const InteractionOptions(
+                 flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+diff --git a/lib/screens/passenger/passenger_home.dart b/lib/screens/passenger/passenger_home.dart
+index b95df3a..93b6e6d 100644
+--- a/lib/screens/passenger/passenger_home.dart
++++ b/lib/screens/passenger/passenger_home.dart
+@@ -1157,6 +1157,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
+                 // عن حوالي 3). 4 رقم آمن كافي إنه يمنع التكرار ولسه
+                 // بيسمح بمشاهدة مساحة واسعة حوالين المدينة لو احتاج المستخدم ======
+                 minZoom: 4,
++                cameraConstraint: tayarMapCameraConstraint,
+                 onMapEvent: _onMapEvent,
+                 // نسمح بالسحب (يمين/شمال/فوق/تحت) والزوم، ونمنع الدوران خالص
+                 interactionOptions: const InteractionOptions(
+diff --git a/lib/screens/passenger/pick_on_map_screen.dart b/lib/screens/passenger/pick_on_map_screen.dart
+index 8e3a039..177ff19 100644
+--- a/lib/screens/passenger/pick_on_map_screen.dart
++++ b/lib/screens/passenger/pick_on_map_screen.dart
+@@ -172,6 +172,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
+                 initialZoom: 16,
+                 // نفس ملحوظة minZoom في passenger_home.dart: بيمنع تكرار الخريطة
+                 minZoom: 4,
++                cameraConstraint: tayarMapCameraConstraint,
+                 onMapEvent: _onMapEvent,
+                 interactionOptions: const InteractionOptions(
+                   flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+diff --git a/lib/screens/passenger/select_destination_screen.dart b/lib/screens/passenger/select_destination_screen.dart
+index ffb9560..4b1ab19 100644
+--- a/lib/screens/passenger/select_destination_screen.dart
++++ b/lib/screens/passenger/select_destination_screen.dart
+@@ -340,74 +340,97 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
+       ),
+       body: Column(
+         children: [
+-          // ====== زرار البحث (يفتح الفوكس/الكيبورد) + خانة الكتابة + زرار
+-          // اختار من الخريطة — التلات عناصر بنفس ارتفاع الصف، وزرار البحث
+-          // وزرار الخريطة بنفس الحجم بالظبط (مربع 48×48) وقابلين للضغط ======
++          // ====== خانة بحث موحّدة: زرار البحث + خانة الكتابة + زرار اختار
++          // من الخريطة، التلاتة جوه إطار/خلفية واحدة متلاصقة (زي جوجل
++          // مابس)، بدل ما كانوا تلات عناصر منفصلة بينهم مسافة ======
+           Padding(
+             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+-            child: Row(
+-              children: [
+-                _SquareIconButton(
+-                  icon: Icons.search,
+-                  color: context.textGreyColor,
+-                  tooltip: loc.searchPlaceHint,
+-                  onTap: () => _searchFocusNode.requestFocus(),
+-                ),
+-                const SizedBox(width: 10),
+-                Expanded(
+-                  child: Container(
+-                    height: 48,
+-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+-                    decoration: BoxDecoration(
+-                      color: context.cardColor,
+-                      borderRadius: BorderRadius.circular(14),
+-                    ),
+-                    child: Row(
+-                      children: [
+-                        Expanded(
+-                          child: TextField(
+-                            controller: _controller,
+-                            focusNode: _searchFocusNode,
+-                            autofocus: true,
+-                            onChanged: _onQueryChanged,
+-                            style: TextStyle(
+-                              color: context.textColor,
+-                              fontSize: 16,
+-                            ),
+-                            decoration: InputDecoration(
+-                              hintText: loc.searchPlaceHint,
+-                              hintStyle: TextStyle(
+-                                color: context.textGreyColor,
+-                              ),
+-                              border: InputBorder.none,
+-                              isCollapsed: true,
+-                            ),
++            child: Container(
++              height: 48,
++              clipBehavior: Clip.antiAlias,
++              decoration: BoxDecoration(
++                color: context.cardColor,
++                borderRadius: BorderRadius.circular(14),
++              ),
++              child: Row(
++                children: [
++                  Tooltip(
++                    message: loc.searchPlaceHint,
++                    child: Material(
++                      color: Colors.transparent,
++                      child: InkWell(
++                        borderRadius: const BorderRadius.horizontal(
++                          left: Radius.circular(14),
++                        ),
++                        onTap: () => _searchFocusNode.requestFocus(),
++                        child: SizedBox(
++                          width: 48,
++                          height: 48,
++                          child: Icon(
++                            Icons.search,
++                            color: context.textGreyColor,
+                           ),
+                         ),
+-                        if (_isLoading)
+-                          const Padding(
+-                            padding: EdgeInsets.only(left: 8),
+-                            child: SizedBox(
+-                              width: 18,
+-                              height: 18,
+-                              child: CircularProgressIndicator(
+-                                strokeWidth: 2,
+-                                color: TayarColors.primary,
+-                              ),
+-                            ),
++                      ),
++                    ),
++                  ),
++                  Expanded(
++                    child: TextField(
++                      controller: _controller,
++                      focusNode: _searchFocusNode,
++                      autofocus: true,
++                      onChanged: _onQueryChanged,
++                      style: TextStyle(color: context.textColor, fontSize: 16),
++                      decoration: InputDecoration(
++                        hintText: loc.searchPlaceHint,
++                        hintStyle: TextStyle(color: context.textGreyColor),
++                        border: InputBorder.none,
++                        isCollapsed: true,
++                      ),
++                    ),
++                  ),
++                  if (_isLoading)
++                    const Padding(
++                      padding: EdgeInsets.only(right: 8),
++                      child: SizedBox(
++                        width: 18,
++                        height: 18,
++                        child: CircularProgressIndicator(
++                          strokeWidth: 2,
++                          color: TayarColors.primary,
++                        ),
++                      ),
++                    ),
++                  Container(
++                    margin: const EdgeInsets.symmetric(
++                      horizontal: 10,
++                      vertical: 6,
++                    ),
++                    width: 1,
++                    color: context.dividerColor2,
++                  ),
++                  Tooltip(
++                    message: loc.pickFromMapLabel,
++                    child: Material(
++                      color: Colors.transparent,
++                      child: InkWell(
++                        borderRadius: const BorderRadius.horizontal(
++                          right: Radius.circular(14),
++                        ),
++                        onTap: _openPickOnMap,
++                        child: SizedBox(
++                          width: 48,
++                          height: 48,
++                          child: Icon(
++                            Icons.add_location_alt,
++                            color: TayarColors.primary,
+                           ),
+-                      ],
++                        ),
++                      ),
+                     ),
+                   ),
+-                ),
+-                const SizedBox(width: 10),
+-                _SquareIconButton(
+-                  icon: Icons.map,
+-                  color: TayarColors.primary,
+-                  tooltip: loc.pickFromMapLabel,
+-                  onTap: _openPickOnMap,
+-                ),
+-              ],
++                ],
++              ),
+             ),
+           ),
+           Divider(color: context.dividerColor2, height: 1),
+@@ -504,43 +527,3 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
+     );
+   }
+ }
+-
+-// ====================================================
+-// ====== زرار مربع موحّد الحجم (48×48) بيتحط جنب خانة البحث ======
+-// نفس الشكل بالظبط مستخدم لزرار "البحث" وزرار "اختار من الخريطة" عشان
+-// الاتنين يبانوا بنفس الحجم تمامًا، والاتنين قابلين للضغط فعليًا (مش مجرد
+-// أيقونة ديكور) ======
+-// ====================================================
+-class _SquareIconButton extends StatelessWidget {
+-  final IconData icon;
+-  final Color color;
+-  final String tooltip;
+-  final VoidCallback onTap;
+-
+-  const _SquareIconButton({
+-    required this.icon,
+-    required this.color,
+-    required this.tooltip,
+-    required this.onTap,
+-  });
+-
+-  @override
+-  Widget build(BuildContext context) {
+-    return Tooltip(
+-      message: tooltip,
+-      child: Material(
+-        color: context.cardColor,
+-        borderRadius: BorderRadius.circular(14),
+-        child: InkWell(
+-          borderRadius: BorderRadius.circular(14),
+-          onTap: onTap,
+-          child: SizedBox(
+-            width: 48,
+-            height: 48,
+-            child: Icon(icon, color: color),
+-          ),
+-        ),
+-      ),
+-    );
+-  }
+-}
+diff --git a/lib/screens/passenger/trip_tracking_screen.dart b/lib/screens/passenger/trip_tracking_screen.dart
+index c1b529c..ed13422 100644
+--- a/lib/screens/passenger/trip_tracking_screen.dart
++++ b/lib/screens/passenger/trip_tracking_screen.dart
+@@ -501,6 +501,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
+                   const LatLng(30.7, 31.7),
+               initialZoom: 15,
+               minZoom: 4,
++              cameraConstraint: tayarMapCameraConstraint,
+               // نمنع الدوران خالص، بيفضل بس سحب وزوم (نفس باقي خرائط التطبيق)
+               interactionOptions: const InteractionOptions(
+                 flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+diff --git a/lib/widgets/map_tile_layer.dart b/lib/widgets/map_tile_layer.dart
+index 64ff839..2854c70 100644
+--- a/lib/widgets/map_tile_layer.dart
++++ b/lib/widgets/map_tile_layer.dart
+@@ -1,5 +1,18 @@
+ import 'package:flutter/material.dart';
+ import 'package:flutter_map/flutter_map.dart';
++import 'package:latlong2/latlong.dart';
++
++/// ====== حد أقصى لمساحة الخريطة القابلة للسحب: نفس حدود العالم اللي
++/// التايلز فعليًا موجودة فيها (خط عرض ±85.0511، وهو الحد الأقصى لعرض
++/// Web Mercator). بيتحط في MapOptions.cameraConstraint في أي شاشة فيها
++/// سحب/زوم عشان المستخدم ميقدرش يسحب الخريطة لحد ما يوصل لفراغ رمادي
++/// بره حدود التايلز (فوق أو تحت الخريطة) ======
++final tayarMapCameraConstraint = CameraConstraint.contain(
++  bounds: LatLngBounds(
++    const LatLng(-85.0511, -180),
++    const LatLng(85.0511, 180),
++  ),
++);
+ 
+ /// ====== طبقة الخريطة الموحّدة لكل شاشات الخريطة في التطبيق ======
+ /// ملحوظة: الوضع الغامق للخريطة (Mapbox Dark) متوقف مؤقتًا لحد ما يتم

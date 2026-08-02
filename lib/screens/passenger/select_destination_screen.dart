@@ -340,74 +340,97 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
       ),
       body: Column(
         children: [
-          // ====== زرار البحث (يفتح الفوكس/الكيبورد) + خانة الكتابة + زرار
-          // اختار من الخريطة — التلات عناصر بنفس ارتفاع الصف، وزرار البحث
-          // وزرار الخريطة بنفس الحجم بالظبط (مربع 48×48) وقابلين للضغط ======
+          // ====== خانة بحث موحّدة: زرار البحث + خانة الكتابة + زرار اختار
+          // من الخريطة، التلاتة جوه إطار/خلفية واحدة متلاصقة (زي جوجل
+          // مابس)، بدل ما كانوا تلات عناصر منفصلة بينهم مسافة ======
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                _SquareIconButton(
-                  icon: Icons.search,
-                  color: context.textGreyColor,
-                  tooltip: loc.searchPlaceHint,
-                  onTap: () => _searchFocusNode.requestFocus(),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Container(
-                    height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: context.cardColor,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _controller,
-                            focusNode: _searchFocusNode,
-                            autofocus: true,
-                            onChanged: _onQueryChanged,
-                            style: TextStyle(
-                              color: context.textColor,
-                              fontSize: 16,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: loc.searchPlaceHint,
-                              hintStyle: TextStyle(
-                                color: context.textGreyColor,
-                              ),
-                              border: InputBorder.none,
-                              isCollapsed: true,
-                            ),
+            child: Container(
+              height: 48,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: context.cardColor,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  Tooltip(
+                    message: loc.searchPlaceHint,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(14),
+                        ),
+                        onTap: () => _searchFocusNode.requestFocus(),
+                        child: SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: Icon(
+                            Icons.search,
+                            color: context.textGreyColor,
                           ),
                         ),
-                        if (_isLoading)
-                          const Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child: SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: TayarColors.primary,
-                              ),
-                            ),
-                          ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                _SquareIconButton(
-                  icon: Icons.map,
-                  color: TayarColors.primary,
-                  tooltip: loc.pickFromMapLabel,
-                  onTap: _openPickOnMap,
-                ),
-              ],
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      focusNode: _searchFocusNode,
+                      autofocus: true,
+                      onChanged: _onQueryChanged,
+                      style: TextStyle(color: context.textColor, fontSize: 16),
+                      decoration: InputDecoration(
+                        hintText: loc.searchPlaceHint,
+                        hintStyle: TextStyle(color: context.textGreyColor),
+                        border: InputBorder.none,
+                        isCollapsed: true,
+                      ),
+                    ),
+                  ),
+                  if (_isLoading)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: TayarColors.primary,
+                        ),
+                      ),
+                    ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    width: 1,
+                    color: context.dividerColor2,
+                  ),
+                  Tooltip(
+                    message: loc.pickFromMapLabel,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: const BorderRadius.horizontal(
+                          right: Radius.circular(14),
+                        ),
+                        onTap: _openPickOnMap,
+                        child: SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: Icon(
+                            Icons.add_location_alt,
+                            color: TayarColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Divider(color: context.dividerColor2, height: 1),
@@ -501,46 +524,6 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
           onTap: () => _selectPlace(place),
         );
       },
-    );
-  }
-}
-
-// ====================================================
-// ====== زرار مربع موحّد الحجم (48×48) بيتحط جنب خانة البحث ======
-// نفس الشكل بالظبط مستخدم لزرار "البحث" وزرار "اختار من الخريطة" عشان
-// الاتنين يبانوا بنفس الحجم تمامًا، والاتنين قابلين للضغط فعليًا (مش مجرد
-// أيقونة ديكور) ======
-// ====================================================
-class _SquareIconButton extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final String tooltip;
-  final VoidCallback onTap;
-
-  const _SquareIconButton({
-    required this.icon,
-    required this.color,
-    required this.tooltip,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: Material(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(14),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(14),
-          onTap: onTap,
-          child: SizedBox(
-            width: 48,
-            height: 48,
-            child: Icon(icon, color: color),
-          ),
-        ),
-      ),
     );
   }
 }

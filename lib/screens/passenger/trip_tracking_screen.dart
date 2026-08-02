@@ -501,6 +501,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                   const LatLng(30.7, 31.7),
               initialZoom: 15,
               minZoom: 4,
+              cameraConstraint: tayarMapCameraConstraint,
               // نمنع الدوران خالص، بيفضل بس سحب وزوم (نفس باقي خرائط التطبيق)
               interactionOptions: const InteractionOptions(
                 flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
