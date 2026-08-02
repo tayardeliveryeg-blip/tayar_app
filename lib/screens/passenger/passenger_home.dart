@@ -1357,42 +1357,31 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
-                    // أيقونة الماركر
+                    // أيقونة الماركر - ثابتة دايمًا (مش بتختفي)
                     const PinMarker(type: PinType.pickup),
-                    // ظل خفيف تحت الدبوس: بيدي إحساس إن الدبوس معلّق شوية فوق
-                    // الأرض وقت تحريك الخريطة، وبيبان/يختفي بنفس توقيت
-                    // النقطة الحمرا (AnimatedOpacity)، والمساحة بتاعته فاضلة
-                    // محجوزة زي غيره عشان ارتفاع الـ Column ميتغيرش
+                    // الخط الرفيع الواصل - ثابت دايمًا زي المربع بالظبط
+                    Container(width: 2, height: 14, color: context.textColor),
+                    // نقطة صغيرة صلبة + ظل خفيف حواليها (زي شكل الظل في
+                    // خرائط جوجل): دي بس اللي بتبان وقت سحب الخريطة وتختفي
+                    // بشفافية فور الإفلات، والمساحة بتاعتها بتفضل محجوزة
+                    // زي ما هي عشان ارتفاع الـ Column ميتغيرش.
                     AnimatedOpacity(
                       duration: const Duration(milliseconds: 200),
                       opacity: _isDraggingMap ? 1 : 0,
                       child: Container(
-                        width: 18,
+                        width: 6,
                         height: 6,
                         margin: const EdgeInsets.only(top: 2),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.22),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ),
-                    // الخط الواصل
-                    Container(width: 2, height: 14, color: Colors.white54),
-                    // نقطة صغيرة حمرا: دي رأس الدبوس الثابت اللي بيأشر فعليًا على المكان.
-                    // بتبان بس وقت سحب الخريطة (عشان توضح مكان التثبيت الدقيق
-                    // للمستخدم وهو بيحرك)، وبتختفي بشفافية فور الإفلات — نفس
-                    // أسلوب الكارت العلوي بالظبط، والمساحة بتاعتها بتفضل
-                    // محجوزة زي ما هي عشان ارتفاع الـ Column ميتغيرش.
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 200),
-                      opacity: _isDraggingMap ? 1 : 0,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: context.textColor,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: context.textColor.withValues(alpha: 0.35),
+                              blurRadius: 6,
+                              spreadRadius: 2,
+                            ),
+                          ],
                         ),
                       ),
                     ),

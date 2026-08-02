@@ -44,6 +44,9 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
   String _addressTitle = '';
   String _addressSubtitle = '';
   bool _isLoadingAddress = true;
+  // ====== بنستخدمها عشان نخلي النقطة السودا بس تختفي وقت سحب الخريطة
+  // (زي نفس المنطق في passenger_home.dart) ======
+  bool _isDraggingMap = false;
 
   AppLocalizations? _l10n;
   bool _initialFetchDone = false;
@@ -156,22 +159,28 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
       backgroundColor: context.bgColor,
       body: Stack(
         children: [
-          // ====== الخريطة ======
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: _selectedLocation,
-              initialZoom: 16,
-              // نفس ملحوظة minZoom في passenger_home.dart: بيمنع تكرار الخريطة
-              minZoom: 4,
-              onMapEvent: _onMapEvent,
-              interactionOptions: const InteractionOptions(
-                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+          // ====== الخريطة (ملفوفة بـ Listener عشان نرصد بداية/نهاية اللمس
+          // بشكل موثوق ونخلي النقطة السودا تحت الدبوس تختفي/تظهر) ======
+          Listener(
+            onPointerDown: (_) => setState(() => _isDraggingMap = true),
+            onPointerUp: (_) => setState(() => _isDraggingMap = false),
+            onPointerCancel: (_) => setState(() => _isDraggingMap = false),
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: _selectedLocation,
+                initialZoom: 16,
+                // نفس ملحوظة minZoom في passenger_home.dart: بيمنع تكرار الخريطة
+                minZoom: 4,
+                onMapEvent: _onMapEvent,
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                ),
               ),
+              children: [
+                const TayarTileLayer(),
+              ],
             ),
-            children: [
-              const TayarTileLayer(),
-            ],
           ),
 
           // ====== الدبوس الثابت في نص الشاشة ======
@@ -241,15 +250,30 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
+                  // أيقونة الماركر - ثابتة دايمًا
                   PinMarker(type: widget.pinType),
-                  Container(width: 2, height: 14, color: Colors.white54),
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: context.textColor, width: 1.5),
+                  // الخط الرفيع الواصل - ثابت دايمًا
+                  Container(width: 2, height: 14, color: context.textColor),
+                  // نقطة صغيرة صلبة + ظل خفيف حواليها - بتبان بس وقت سحب
+                  // الخريطة وتختفي بشفافية فور الإفلات (نفس منطق
+                  // passenger_home.dart بالظبط)
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: _isDraggingMap ? 1 : 0,
+                    child: Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: context.textColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: context.textColor.withValues(alpha: 0.35),
+                            blurRadius: 6,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
