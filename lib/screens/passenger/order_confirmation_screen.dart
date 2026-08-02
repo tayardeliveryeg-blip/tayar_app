@@ -474,6 +474,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     Checkbox(
                       value: _autoAccept,
                       activeColor: TayarColors.primary,
+                      checkColor: Colors.white,
                       onChanged: (value) =>
                           setState(() => _autoAccept = value ?? false),
                     ),

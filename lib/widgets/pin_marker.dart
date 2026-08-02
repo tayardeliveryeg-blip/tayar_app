@@ -39,64 +39,49 @@ class PinMarker extends StatelessWidget {
 }
 
 /// ====== نقطة موقعك الحيّة على الخريطة (زي نقطة Google Maps الزرقاء) ======
-/// دائرة زرقاء صغيرة صلبة في النص، وحواليها هالة زرقاء فاتحة شفافة أكبر
-/// بتمثّل نطاق الدقة (accuracy radius) — نفس الشكل القياسي المعروف.
-/// لو الاتجاه (heading) متاح من الـ GPS، بيتحط مخروط ضوئي شفاف بيدور
-/// حوالين النقطة بيوضح فين المستخدم متجه — بالظبط زي مخروط الاتجاه في
-/// جوجل مابس.
+/// دائرة زرقاء صغيرة صلبة في النص. نطاق الدقة (accuracy halo) بقى بيترسم
+/// منفصل كـ CircleLayer جغرافي على الخريطة (مش هنا) عشان يكبر ويصغر مع
+/// الزوم زي جوجل مابس بالظبط. لو الاتجاه (heading) متاح من الـ GPS،
+/// بيظهر سهم صغير واضح فوق النقطة بيدور لايف مع اتجاه حركة المستخدم.
 class LiveLocationDot extends StatelessWidget {
-  /// قطر الهالة الخارجية الشفافة بالكامل
-  final double haloSize;
   /// قطر الدائرة الصلبة في النص
   final double dotSize;
   /// اتجاه حركة المستخدم بالدرجات (0 = شمال، بيزيد مع اتجاه عقارب الساعة).
-  /// لو null، مش هيتعرض سهم/مخروط اتجاه خالص (لسه مفيش قراءة اتجاه موثوقة).
+  /// لو null، مش هيتعرض سهم اتجاه خالص (لسه مفيش قراءة اتجاه موثوقة).
   final double? heading;
 
-  const LiveLocationDot({
-    super.key,
-    this.haloSize = 56,
-    this.dotSize = 18,
-    this.heading,
-  });
+  const LiveLocationDot({super.key, this.dotSize = 18, this.heading});
 
-  /// ====== نسبة كبر مخروط الاتجاه عن الهالة الأصلية ======
-  static const double _coneScale = 1.7;
+  /// ====== مسافة السهم عن مركز النقطة ======
+  static const double _arrowOffset = 13;
 
-  /// المساحة الكلية اللي الـ widget بياخدها فعليًا (بعد إضافة المخروط).
+  /// المساحة الكلية اللي الـ widget بياخدها فعليًا (بعد إضافة السهم).
   /// المفروض تُستخدم كـ width/height لـ Marker بتاع flutter_map عشان
   /// النقطة تفضل متمركزة صح على الإحداثية الحقيقية.
-  static double totalSize(double haloSize) => haloSize * _coneScale;
+  static double totalSize(double dotSize) => dotSize + _arrowOffset * 2;
 
   @override
   Widget build(BuildContext context) {
-    // ====== حجم مخروط الاتجاه: أكبر شوية من الهالة عشان يبان واضح خارجها ======
-    final coneSize = haloSize * _coneScale;
+    final boxSize = totalSize(dotSize);
 
     return SizedBox(
-      width: coneSize,
-      height: coneSize,
+      width: boxSize,
+      height: boxSize,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // ====== مخروط الاتجاه: بيدور حسب heading حوالين مركز النقطة ======
+          // ====== السهم: بيدور حسب heading حوالين مركز النقطة ======
           if (heading != null)
             Transform.rotate(
               angle: heading! * math.pi / 180,
-              child: CustomPaint(
-                size: Size(coneSize, coneSize),
-                painter: _DirectionConePainter(),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: CustomPaint(
+                  size: const Size(12, 10),
+                  painter: _SmallArrowPainter(),
+                ),
               ),
             ),
-          // ====== الهالة الشفافة: نطاق الدقة حوالين الموقع ======
-          Container(
-            width: haloSize,
-            height: haloSize,
-            decoration: BoxDecoration(
-              color: Colors.blue.withValues(alpha: 0.18),
-              shape: BoxShape.circle,
-            ),
-          ),
           // ====== الدائرة الزرقاء الصلبة في النص ======
           Container(
             width: dotSize,
@@ -119,41 +104,31 @@ class LiveLocationDot extends StatelessWidget {
   }
 }
 
-/// ====== رسم مخروط الاتجاه (المروحة الضوئية) بتاع النقطة الزرقاء ======
-/// شكله عبارة عن قطاع دائري (زاوية 70 درجة) طالع لفوق (اتجاه الشمال = 0
-/// درجة) بتدرّج لوني من أزرق واضح عند مركز النقطة لحد شفاف تمامًا عند
-/// حافة القطاع، فبيبان زي شعاع ضوء بيوضح اتجاه حركة المستخدم.
-class _DirectionConePainter extends CustomPainter {
+/// ====== رسم سهم صغير واضح بيوضح اتجاه حركة المستخدم فوق النقطة الزرقاء ======
+/// مثلث أزرق صغير، طرفه لفوق (اتجاه الشمال = 0 درجة)، بحدود بيضاء رفيعة
+/// عشان يبان واضح فوق أي خلفية.
+class _SmallArrowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-    const coneAngle = 70 * math.pi / 180;
-
     final path = Path()
-      ..moveTo(center.dx, center.dy)
-      ..arcTo(
-        Rect.fromCircle(center: center, radius: radius),
-        -math.pi / 2 - coneAngle / 2,
-        coneAngle,
-        false,
-      )
+      ..moveTo(size.width / 2, 0)
+      ..lineTo(size.width, size.height)
+      ..lineTo(size.width / 2, size.height * 0.72)
+      ..lineTo(0, size.height)
       ..close();
 
-    final paint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          Colors.blue.withValues(alpha: 0.55),
-          Colors.blue.withValues(alpha: 0.0),
-        ],
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
-
-    canvas.drawPath(path, paint);
+    canvas.drawPath(path, Paint()..color = Colors.blue);
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant _DirectionConePainter oldDelegate) =>
-      oldDelegate != this;
+  bool shouldRepaint(covariant _SmallArrowPainter oldDelegate) => false;
 }
 
 /// ====== دبوس نقطة الانطلاق مع "ساق" (خط + نقطة حمرا صغيرة) بيوصله بالإحداثية

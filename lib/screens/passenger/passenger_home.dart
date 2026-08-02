@@ -111,6 +111,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   LatLng? _liveUserLocation; // موقعك الحقيقي الفعلي، بيتحدث لايف مع تحركك
   double? _liveUserHeading; // اتجاه حركتك الفعلي (0 = شمال)، لسهم النقطة الزرقاء
+  double? _liveUserAccuracy; // نطاق دقة الـ GPS بالمتر، لحجم هالة الدقة
   StreamSubscription<Position>? _liveLocationSub;
 
   // ====== الطيارين المتاحين القريبين، بيظهروا كإيموجي موتوسيكل متحرك ======
@@ -220,6 +221,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 position.latitude,
                 position.longitude,
               );
+              _liveUserAccuracy = position.accuracy;
               // ====== الاتجاه بييجي من الـ GPS بس وقت الحركة الفعلية،
               // فلو مفيش قراءة موثوقة (heading سالب) بنسيب آخر اتجاه معروف
               // زي ما هو بدل ما نمسحه ======
@@ -1257,14 +1259,28 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       );
                     }).toList(),
                   ),
+                // ====== هالة نطاق الدقة: دائرة جغرافية حقيقية بمقاس بالمتر
+                // (نفس نطاق دقة الـ GPS)، فبتكبر مع الزوم إن (Zoom in) وتصغر
+                // مع الزوم أوت — بالظبط زي دائرة الدقة في جوجل مابس ======
+                if (_liveUserLocation != null && _liveUserAccuracy != null)
+                  CircleLayer(
+                    circles: [
+                      CircleMarker(
+                        point: _liveUserLocation!,
+                        radius: _liveUserAccuracy!,
+                        useRadiusInMeter: true,
+                        color: Colors.blue.withValues(alpha: 0.18),
+                      ),
+                    ],
+                  ),
                 // ====== النقطة الزرقاء الثابتة جغرافيًا: موقعك الحقيقي، بتتحرك لايف مع تحركك فعليًا ======
                 if (_liveUserLocation != null)
                   MarkerLayer(
                     markers: [
                       Marker(
                         point: _liveUserLocation!,
-                        width: LiveLocationDot.totalSize(56),
-                        height: LiveLocationDot.totalSize(56),
+                        width: LiveLocationDot.totalSize(18),
+                        height: LiveLocationDot.totalSize(18),
                         child: LiveLocationDot(heading: _liveUserHeading),
                       ),
                     ],
