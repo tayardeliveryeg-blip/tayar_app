@@ -118,6 +118,18 @@ service cloud.firestore {
         request.resource.data.walletBalance >= 0;
     }
 
+    // ====== بتتأكد إن سطر سجل حركة "مكافأة" (كود خصم أو هدية ترحيب إحالة)
+    // من نوع صحيح ومبلغه موجب - ده سطر عرض/توثيق بس (التحقق الحقيقي من
+    // صحة المبلغ بيحصل فعليًا في نفس اللحظة عند تحديث walletBalance نفسه
+    // عبر isValidPromoCredit/isValidReferralWelcomeCredit، فمفيش داعي
+    // نكرر نفس التعقيد هنا - نفس المنطق المتّبع في isValidWalletLedgerEntry
+    // اللي كمان مبتتحققش من قيمة amount) ======
+    function isValidBonusLedgerEntry() {
+      return request.resource.data.type in ['promo_credit', 'referral_welcome_credit'] &&
+        request.resource.data.amount is number &&
+        request.resource.data.amount > 0;
+    }
+
     // ====== بتتأكد إن طلب انضمام تاجر جديد (vendor_applications) شكله سليم:
     // مربوط باليوزر اللي بعت الطلب، الحقول المطلوبة كلها موجودة وبالشكل
     // الصح، حالة الطلب بتبدأ 'pending' دايمًا (محدش يقدر يبعت طلب ويحطه
@@ -285,7 +297,8 @@ service cloud.firestore {
       match /walletTransactions/{transactionId} {
         allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
         allow create: if request.auth != null && (
-          (request.auth.uid == userId && isValidWalletLedgerEntry(userId)) ||
+          (request.auth.uid == userId &&
+            (isValidWalletLedgerEntry(userId) || isValidBonusLedgerEntry())) ||
           isAdmin()
         );
         allow update, delete: if false;

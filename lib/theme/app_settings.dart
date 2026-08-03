@@ -16,6 +16,7 @@ class AppSettings {
   double commissionRate = 0.10;
   double serviceRadiusKm = 15.0; // محفوظة للمستقبل: مفيش فلترة بالمسافة مفعّلة في مطابقة السائقين لسه
   String supportPhone = '+201142263460';
+  double referralWelcomeBonus = 20.0;
 
   bool _loaded = false;
 
@@ -34,6 +35,8 @@ class AppSettings {
         if (commissionPercent != null) commissionRate = commissionPercent / 100;
         serviceRadiusKm = (data['serviceRadiusKm'] as num?)?.toDouble() ?? serviceRadiusKm;
         supportPhone = (data['supportPhone'] as String?) ?? supportPhone;
+        referralWelcomeBonus =
+            (data['referralWelcomeBonus'] as num?)?.toDouble() ?? referralWelcomeBonus;
       }
     } catch (_) {
       // صامت: هنفضل شغالين بالقيم الافتراضية
