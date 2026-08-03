@@ -14,9 +14,11 @@ class AppSettings {
   double baseFare = 10.0;
   double perKmRate = 5.0;
   double commissionRate = 0.10;
-  double serviceRadiusKm = 15.0; // محفوظة للمستقبل: مفيش فلترة بالمسافة مفعّلة في مطابقة السائقين لسه
+  double serviceRadiusKm =
+      15.0; // محفوظة للمستقبل: مفيش فلترة بالمسافة مفعّلة في مطابقة السائقين لسه
   String supportPhone = '+201142263460';
   double referralWelcomeBonus = 20.0;
+  int maxScheduleAdvanceDays = 7;
 
   bool _loaded = false;
 
@@ -31,12 +33,18 @@ class AppSettings {
       if (data != null) {
         baseFare = (data['deliveryFee'] as num?)?.toDouble() ?? baseFare;
         perKmRate = (data['perKmRate'] as num?)?.toDouble() ?? perKmRate;
-        final commissionPercent = (data['commissionPercent'] as num?)?.toDouble();
+        final commissionPercent = (data['commissionPercent'] as num?)
+            ?.toDouble();
         if (commissionPercent != null) commissionRate = commissionPercent / 100;
-        serviceRadiusKm = (data['serviceRadiusKm'] as num?)?.toDouble() ?? serviceRadiusKm;
+        serviceRadiusKm =
+            (data['serviceRadiusKm'] as num?)?.toDouble() ?? serviceRadiusKm;
         supportPhone = (data['supportPhone'] as String?) ?? supportPhone;
         referralWelcomeBonus =
-            (data['referralWelcomeBonus'] as num?)?.toDouble() ?? referralWelcomeBonus;
+            (data['referralWelcomeBonus'] as num?)?.toDouble() ??
+            referralWelcomeBonus;
+        maxScheduleAdvanceDays =
+            (data['maxScheduleAdvanceDays'] as num?)?.toInt() ??
+            maxScheduleAdvanceDays;
       }
     } catch (_) {
       // صامت: هنفضل شغالين بالقيم الافتراضية

@@ -537,6 +537,10 @@
               <label>Referral welcome bonus (EGP) <span class="hint">— credited instantly to a new passenger who signs up with a valid referral code</span></label>
               <input type="number" id="cfgReferralBonus" value="20">
             </div>
+            <div class="settings-field">
+              <label>Max scheduling advance (days) <span class="hint">— how far ahead a passenger can book a scheduled ride</span></label>
+              <input type="number" id="cfgMaxScheduleDays" value="7">
+            </div>
           </div>
           <div style="margin-top:16px;">
             <button class="btn primary" onclick="saveSettings()">Save changes</button>
@@ -918,6 +922,7 @@ function loadSettings(){
     document.getElementById('cfgRadius').value = d.serviceRadiusKm ?? 15;
     document.getElementById('cfgPhone').value = d.supportPhone ?? '+201142263460';
     document.getElementById('cfgReferralBonus').value = d.referralWelcomeBonus ?? 20;
+    document.getElementById('cfgMaxScheduleDays').value = d.maxScheduleAdvanceDays ?? 7;
     document.getElementById('settingsHint').textContent = doc.exists ? 'live values — the app reads these on startup' : 'no config saved yet — showing app defaults';
   }).catch(err=>{
     document.getElementById('settingsHint').textContent = 'failed to load: ' + err.message;
@@ -931,6 +936,7 @@ function saveSettings(){
     serviceRadiusKm: Number(document.getElementById('cfgRadius').value) || 0,
     supportPhone: document.getElementById('cfgPhone').value.trim(),
     referralWelcomeBonus: Number(document.getElementById('cfgReferralBonus').value) || 0,
+    maxScheduleAdvanceDays: Number(document.getElementById('cfgMaxScheduleDays').value) || 7,
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
   db.collection('settings').doc('config').set(payload, {merge:true})

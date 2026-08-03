@@ -299,6 +299,7 @@ exports.createOrder = onCall(async (request) => {
     proposedFare,
     autoAccept,
     paymentMethod,
+    scheduledFor,
   } = data;
 
   if (
@@ -312,6 +313,45 @@ exports.createOrder = onCall(async (request) => {
     !paymentMethod
   ) {
     throw new HttpsError("invalid-argument", "بيانات الطلب ناقصة أو غير صحيحة");
+  }
+
+  // ====== حجز رحلة مقدمًا (Scheduled rides): scheduledFor اختياري - وقت
+  // بالميلي ثانية (epoch ms) لأول ميعاد يبدأ الراكب يدوّر فيه على سائق.
+  // لو موجود، لازم يكون في المستقبل (بحد أدنى 10 دقايق قدام عشان يديله
+  // وقت حقيقي للمطابقة) ومش أبعد من الحد الأقصى المسموح به من الإعدادات
+  // (settings/config.maxScheduleAdvanceDays، افتراضيًا 7 أيام) ======
+  const db = admin.firestore();
+  let scheduledForTimestamp = null;
+  if (scheduledFor !== undefined && scheduledFor !== null) {
+    if (typeof scheduledFor !== "number" || !Number.isFinite(scheduledFor)) {
+      throw new HttpsError("invalid-argument", "ميعاد الرحلة المجدولة غير صحيح");
+    }
+    const now = Date.now();
+    const minLeadMs = 10 * 60 * 1000;
+    if (scheduledFor < now + minLeadMs) {
+      throw new HttpsError(
+        "invalid-argument",
+        "ميعاد الرحلة المجدولة لازم يكون بعد 10 دقايق على الأقل من دلوقتي"
+      );
+    }
+    let maxAdvanceDays = 7;
+    try {
+      const settingsSnap = await db.collection("settings").doc("config").get();
+      const configured = settingsSnap.data()?.maxScheduleAdvanceDays;
+      if (typeof configured === "number" && configured > 0) {
+        maxAdvanceDays = configured;
+      }
+    } catch (err) {
+      console.warn("تعذر قراءة maxScheduleAdvanceDays، هنستخدم القيمة الافتراضية:", err.message);
+    }
+    const maxAdvanceMs = maxAdvanceDays * 24 * 60 * 60 * 1000;
+    if (scheduledFor > now + maxAdvanceMs) {
+      throw new HttpsError(
+        "invalid-argument",
+        `مينفعش تحجز رحلة أبعد من ${maxAdvanceDays} أيام قدام`
+      );
+    }
+    scheduledForTimestamp = admin.firestore.Timestamp.fromMillis(scheduledFor);
   }
 
   // ====== المسافة والسعر بيتحسبوا هنا بس - مش بنثق في أي رقم جاي من الموبايل ======
@@ -338,7 +378,6 @@ exports.createOrder = onCall(async (request) => {
 
   // ====== اسم ورقم الراكب من مصدر موثوق (Firestore / Auth token) - مش من
   // قيمة بتوصل من الموبايل عشان محدش يقدر ينتحل اسم حد تاني ======
-  const db = admin.firestore();
   let customerName = "راكب طيار";
   try {
     const userDoc = await db.collection("users").doc(uid).get();
@@ -380,10 +419,22 @@ exports.createOrder = onCall(async (request) => {
     autoAccept: autoAccept === true,
     paymentMethod,
     serviceType: "passenger",
+    // ====== orderType بيفرّق بين طلب فوري وطلب محجوز مقدمًا فقط لغرض
+    // العرض/الترتيب في واجهة السائق - المطابقة نفسها (عرض/قبول) شغالة
+    // فورًا على الطلبين زي بعض من لحظة الإنشاء، مفيش انتظار لحد الميعاد ======
+    orderType: scheduledForTimestamp ? "scheduled" : "instant",
+    scheduledFor: scheduledForTimestamp,
     status: "searching",
     driverId: null,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
   });
 
-  return { orderId: orderRef.id, distanceKm, durationMin, suggestedFare, minFare };
+  return {
+    orderId: orderRef.id,
+    distanceKm,
+    durationMin,
+    suggestedFare,
+    minFare,
+    orderType: scheduledForTimestamp ? "scheduled" : "instant",
+  };
 });
