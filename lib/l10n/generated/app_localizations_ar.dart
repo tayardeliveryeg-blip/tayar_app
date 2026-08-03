@@ -1351,4 +1351,56 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get savedSuccessfully => 'تم الحفظ بنجاح';
+
+  @override
+  String get redeemCodeSectionTitle => 'عندك كود خصم أو كود دعوة؟';
+
+  @override
+  String get redeemCodeButtonLabel => 'استخدم الكود';
+
+  @override
+  String get enterCodeHint => 'اكتب الكود هنا';
+
+  @override
+  String get redeemCodeSubmitButton => 'تأكيد';
+
+  @override
+  String codeRedeemedSuccessMessage(String amount) {
+    return 'تمام! اتضاف $amount جنيه لمحفظتك';
+  }
+
+  @override
+  String get invalidCodeGenericError => 'الكود ده مش صحيح';
+
+  @override
+  String get myReferralCodeTitle => 'كود دعوة صحابك';
+
+  @override
+  String get myReferralCodeSubtitle =>
+      'شارك الكود ده مع صحابك، وكل ما حد يدخل بيه هتاخد رصيد في محفظتك';
+
+  @override
+  String get copyReferralCodeButton => 'نسخ الكود';
+
+  @override
+  String get shareReferralCodeButton => 'مشاركة';
+
+  @override
+  String get referralCodeCopiedMessage => 'اتنسخ الكود';
+
+  @override
+  String get referralShareMessageIntro =>
+      'جرب تطبيق طيار وخد رصيد هدية أول ما تسجل! استخدم كود الدعوة ده وقت التسجيل:';
+
+  @override
+  String get referralOptionalFieldLabel => 'كود دعوة (اختياري)';
+
+  @override
+  String get referralOptionalFieldHint => 'لو حد دعاك للتطبيق، اكتب كوده هنا';
+
+  @override
+  String get walletPromoCreditLabel => 'كود خصم';
+
+  @override
+  String get walletReferralCreditLabel => 'هدية دعوة صديق';
 }

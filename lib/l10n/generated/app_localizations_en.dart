@@ -1363,4 +1363,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedSuccessfully => 'Saved successfully';
+
+  @override
+  String get redeemCodeSectionTitle => 'Have a promo or referral code?';
+
+  @override
+  String get redeemCodeButtonLabel => 'Redeem code';
+
+  @override
+  String get enterCodeHint => 'Enter the code here';
+
+  @override
+  String get redeemCodeSubmitButton => 'Confirm';
+
+  @override
+  String codeRedeemedSuccessMessage(String amount) {
+    return 'Nice! $amount EGP was added to your wallet';
+  }
+
+  @override
+  String get invalidCodeGenericError => 'That code isn\'t valid';
+
+  @override
+  String get myReferralCodeTitle => 'Your referral code';
+
+  @override
+  String get myReferralCodeSubtitle =>
+      'Share this code with friends — you\'ll get wallet credit every time someone uses it';
+
+  @override
+  String get copyReferralCodeButton => 'Copy code';
+
+  @override
+  String get shareReferralCodeButton => 'Share';
+
+  @override
+  String get referralCodeCopiedMessage => 'Code copied';
+
+  @override
+  String get referralShareMessageIntro =>
+      'Try Tayar and get a welcome credit when you sign up! Use this referral code:';
+
+  @override
+  String get referralOptionalFieldLabel => 'Referral code (optional)';
+
+  @override
+  String get referralOptionalFieldHint =>
+      'If someone invited you, enter their code here';
+
+  @override
+  String get walletPromoCreditLabel => 'Promo code';
+
+  @override
+  String get walletReferralCreditLabel => 'Referral bonus';
 }

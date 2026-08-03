@@ -2569,6 +2569,102 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم الحفظ بنجاح'**
   String get savedSuccessfully;
+
+  /// No description provided for @redeemCodeSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عندك كود خصم أو كود دعوة؟'**
+  String get redeemCodeSectionTitle;
+
+  /// No description provided for @redeemCodeButtonLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدم الكود'**
+  String get redeemCodeButtonLabel;
+
+  /// No description provided for @enterCodeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب الكود هنا'**
+  String get enterCodeHint;
+
+  /// No description provided for @redeemCodeSubmitButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد'**
+  String get redeemCodeSubmitButton;
+
+  /// No description provided for @codeRedeemedSuccessMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمام! اتضاف {amount} جنيه لمحفظتك'**
+  String codeRedeemedSuccessMessage(String amount);
+
+  /// No description provided for @invalidCodeGenericError.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكود ده مش صحيح'**
+  String get invalidCodeGenericError;
+
+  /// No description provided for @myReferralCodeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود دعوة صحابك'**
+  String get myReferralCodeTitle;
+
+  /// No description provided for @myReferralCodeSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شارك الكود ده مع صحابك، وكل ما حد يدخل بيه هتاخد رصيد في محفظتك'**
+  String get myReferralCodeSubtitle;
+
+  /// No description provided for @copyReferralCodeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ الكود'**
+  String get copyReferralCodeButton;
+
+  /// No description provided for @shareReferralCodeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاركة'**
+  String get shareReferralCodeButton;
+
+  /// No description provided for @referralCodeCopiedMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتنسخ الكود'**
+  String get referralCodeCopiedMessage;
+
+  /// No description provided for @referralShareMessageIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرب تطبيق طيار وخد رصيد هدية أول ما تسجل! استخدم كود الدعوة ده وقت التسجيل:'**
+  String get referralShareMessageIntro;
+
+  /// No description provided for @referralOptionalFieldLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود دعوة (اختياري)'**
+  String get referralOptionalFieldLabel;
+
+  /// No description provided for @referralOptionalFieldHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لو حد دعاك للتطبيق، اكتب كوده هنا'**
+  String get referralOptionalFieldHint;
+
+  /// No description provided for @walletPromoCreditLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود خصم'**
+  String get walletPromoCreditLabel;
+
+  /// No description provided for @walletReferralCreditLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'هدية دعوة صديق'**
+  String get walletReferralCreditLabel;
 }
 
 class _AppLocalizationsDelegate
