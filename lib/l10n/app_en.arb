@@ -618,5 +618,24 @@
   "emergencyContactTitle": "Emergency contact",
   "emergencyContactSubtitle": "This number will get a WhatsApp alert with your location if you tap the SOS button during a trip",
   "emergencyContactHint": "Emergency contact's phone number",
-  "savedSuccessfully": "Saved successfully"
+  "savedSuccessfully": "Saved successfully",
+  "redeemCodeSectionTitle": "Have a promo or referral code?",
+  "redeemCodeButtonLabel": "Redeem code",
+  "enterCodeHint": "Enter the code here",
+  "redeemCodeSubmitButton": "Confirm",
+  "codeRedeemedSuccessMessage": "Nice! {amount} EGP was added to your wallet",
+  "@codeRedeemedSuccessMessage": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "invalidCodeGenericError": "That code isn't valid",
+  "myReferralCodeTitle": "Your referral code",
+  "myReferralCodeSubtitle": "Share this code with friends — you'll get wallet credit every time someone uses it",
+  "copyReferralCodeButton": "Copy code",
+  "shareReferralCodeButton": "Share",
+  "referralCodeCopiedMessage": "Code copied",
+  "referralShareMessageIntro": "Try Tayar and get a welcome credit when you sign up! Use this referral code:",
+  "referralOptionalFieldLabel": "Referral code (optional)",
+  "referralOptionalFieldHint": "If someone invited you, enter their code here",
+  "walletPromoCreditLabel": "Promo code",
+  "walletReferralCreditLabel": "Referral bonus"
 }

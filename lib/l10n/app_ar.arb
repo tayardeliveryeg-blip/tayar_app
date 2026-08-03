@@ -618,5 +618,24 @@
   "emergencyContactTitle": "جهة اتصال الطوارئ",
   "emergencyContactSubtitle": "الرقم ده هيتبعتله تنبيه واتساب فيه موقعك لو دوست زرار الطوارئ وقت الرحلة",
   "emergencyContactHint": "رقم موبايل جهة الطوارئ",
-  "savedSuccessfully": "تم الحفظ بنجاح"
+  "savedSuccessfully": "تم الحفظ بنجاح",
+  "redeemCodeSectionTitle": "عندك كود خصم أو كود دعوة؟",
+  "redeemCodeButtonLabel": "استخدم الكود",
+  "enterCodeHint": "اكتب الكود هنا",
+  "redeemCodeSubmitButton": "تأكيد",
+  "codeRedeemedSuccessMessage": "تمام! اتضاف {amount} جنيه لمحفظتك",
+  "@codeRedeemedSuccessMessage": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "invalidCodeGenericError": "الكود ده مش صحيح",
+  "myReferralCodeTitle": "كود دعوة صحابك",
+  "myReferralCodeSubtitle": "شارك الكود ده مع صحابك، وكل ما حد يدخل بيه هتاخد رصيد في محفظتك",
+  "copyReferralCodeButton": "نسخ الكود",
+  "shareReferralCodeButton": "مشاركة",
+  "referralCodeCopiedMessage": "اتنسخ الكود",
+  "referralShareMessageIntro": "جرب تطبيق طيار وخد رصيد هدية أول ما تسجل! استخدم كود الدعوة ده وقت التسجيل:",
+  "referralOptionalFieldLabel": "كود دعوة (اختياري)",
+  "referralOptionalFieldHint": "لو حد دعاك للتطبيق، اكتب كوده هنا",
+  "walletPromoCreditLabel": "كود خصم",
+  "walletReferralCreditLabel": "هدية دعوة صديق"
 }

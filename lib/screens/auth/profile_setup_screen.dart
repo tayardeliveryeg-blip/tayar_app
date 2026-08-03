@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/services/referral_service.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, PassengerHomeScreen;
 
@@ -23,6 +24,7 @@ class ProfileSetupScreen extends StatefulWidget {
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  final _referralController = TextEditingController();
   bool _isSaving = false;
 
   @override
@@ -37,6 +39,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _referralController.dispose();
     super.dispose();
   }
 
@@ -64,6 +67,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         'role': widget.role,
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+
+      // ====== لو كتب كود دعوة، نحاول نستبدله - لو فشل (كود غلط/مستخدم
+      // قبل كده) منعرقلش تسجيله، بس نوريه رسالة بسيطة ونكمّل عادي ======
+      final referralCode = _referralController.text.trim();
+      if (referralCode.isNotEmpty) {
+        try {
+          await redeemReferralCode(code: referralCode, newUserId: uid);
+        } on ReferralException catch (_) {
+          // ====== صامت عمدًا - مش سبب كافي نوقف تسجيل حساب جديد ======
+        }
+      }
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
@@ -126,6 +140,21 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     }
                     return null;
                   },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _referralController,
+                  textInputAction: TextInputAction.done,
+                  textCapitalization: TextCapitalization.characters,
+                  style: TextStyle(color: context.textColor),
+                  decoration: InputDecoration(
+                    labelText: loc.referralOptionalFieldLabel,
+                    hintText: loc.referralOptionalFieldHint,
+                    hintStyle: TextStyle(color: context.textGreyColor),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
