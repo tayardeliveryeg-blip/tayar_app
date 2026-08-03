@@ -80,6 +80,44 @@ service cloud.firestore {
         order.walletDeducted != true;
     }
 
+    // ====== بتتأكد إن استبدال كود خصم (promo code) بمنح رصيد محفظة صحيح:
+    // الكود لازم يكون موجود وفعّال ومتاح (usedCount < maxUses) ولسه ما
+    // انتهتش صلاحيته، ولسه المستخدم ده ما استخدمهوش قبل كده (بيتأكد منها
+    // برضه create rule بتاعة redeemedPromoCodes)، والمبلغ المضاف للمحفظة
+    // لازم يطابق discountValue المسجّل في الكود بالظبط ======
+    function isValidPromoCredit(userId) {
+      let code = request.resource.data.walletLastPromoCode;
+      let promo = get(/databases/$(database)/documents/promo_codes/$(code)).data;
+      let alreadyUsed = exists(/databases/$(database)/documents/users/$(userId)/redeemedPromoCodes/$(code));
+      return
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['walletBalance', 'walletLastPromoCode']) &&
+        promo.active == true &&
+        promo.usedCount < promo.maxUses &&
+        (!('expiresAt' in promo) || promo.expiresAt == null || promo.expiresAt > request.time) &&
+        alreadyUsed == false &&
+        request.resource.data.walletBalance - resource.data.walletBalance == promo.discountValue &&
+        request.resource.data.walletBalance >= 0;
+    }
+
+    // ====== بتتأكد إن منح "هدية ترحيب" لراكب جديد دخل بكود إحالة صحيح -
+    // مرة واحدة بس (referredByCode لازم يكون مش موجود قبل كده في البروفايل)،
+    // الكود لازم يكون مرتبط بيوزر حقيقي (مش نفسه)، والمبلغ لازم يطابق
+    // referralWelcomeBonus المحدد من الأدمن في settings/config ======
+    function isValidReferralWelcomeCredit(userId) {
+      let referrerCode = request.resource.data.referredByCode;
+      let referrerId = get(/databases/$(database)/documents/referralCodes/$(referrerCode)).data.referrerId;
+      let bonus = get(/databases/$(database)/documents/settings/config).data.referralWelcomeBonus;
+      return
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['walletBalance', 'referredByCode']) &&
+        !('referredByCode' in resource.data) &&
+        referrerId != userId &&
+        bonus is number && bonus > 0 &&
+        request.resource.data.walletBalance - resource.data.walletBalance == bonus &&
+        request.resource.data.walletBalance >= 0;
+    }
+
     // ====== بتتأكد إن طلب انضمام تاجر جديد (vendor_applications) شكله سليم:
     // مربوط باليوزر اللي بعت الطلب، الحقول المطلوبة كلها موجودة وبالشكل
     // الصح، حالة الطلب بتبدأ 'pending' دايمًا (محدش يقدر يبعت طلب ويحطه
@@ -215,8 +253,13 @@ service cloud.firestore {
           request.auth.uid == userId &&
           (
             !request.resource.data.diff(resource.data).affectedKeys()
-              .hasAny(['walletBalance', 'walletLastDeductionOrderId']) ||
-            isValidWalletDeduction(userId)
+              .hasAny([
+                'walletBalance', 'walletLastDeductionOrderId',
+                'walletLastPromoCode', 'referredByCode'
+              ]) ||
+            isValidWalletDeduction(userId) ||
+            isValidPromoCredit(userId) ||
+            isValidReferralWelcomeCredit(userId)
           )
         ) ||
         (
@@ -245,6 +288,18 @@ service cloud.firestore {
           (request.auth.uid == userId && isValidWalletLedgerEntry(userId)) ||
           isAdmin()
         );
+        allow update, delete: if false;
+      }
+
+      // ====== سجل أكواد الخصم اللي الراكب استخدمها - وثيقة واحدة بس لكل
+      // كود (create فقط، الـ document ID هو الكود نفسه) عشان تمنع استخدام
+      // نفس الكود مرتين لنفس الراكب. القيمة المسجلة لازم تطابق قيمة الكود
+      // الحقيقية (isValidPromoCredit بيتأكد من الباقي وقت خصم/إضافة الرصيد) ======
+      match /redeemedPromoCodes/{code} {
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow create: if request.auth != null && request.auth.uid == userId &&
+          request.resource.data.discountValue ==
+            get(/databases/$(database)/documents/promo_codes/$(code)).data.discountValue;
         allow update, delete: if false;
       }
     }
@@ -307,6 +362,50 @@ service cloud.firestore {
       allow update: if isAdmin() &&
         request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(['status', 'resolvedAt', 'resolvedBy']);
+      allow delete: if isAdmin();
+    }
+
+    // ====== أكواد الخصم (promo codes) - إنشاء/تعديل/حذف الكود نفسه محصور
+    // على الأدمن بس من لوحة التحكم. القراءة متاحة لأي مستخدم مسجل دخول عشان
+    // يقدر يتأكد من كود بعينه قبل استبداله. استثناء وحيد: أي مستخدم مسجل
+    // دخول يقدر يزوّد usedCount بمقدار واحد بالظبط (بيحصل في نفس اللحظة اللي
+    // بيتسجل فيها redeemedPromoCodes/{code} - شوف isValidPromoCredit) ======
+    match /promo_codes/{code} {
+      allow read: if request.auth != null;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() ||
+        (
+          request.auth != null &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedCount']) &&
+          request.resource.data.usedCount == resource.data.usedCount + 1
+        );
+    }
+
+    // ====== ربط كود الإحالة الشخصي بصاحبه - كل مستخدم يقدر يسجل كود إحالة
+    // واحد بس ليه (document ID = الكود، referrerId = صاحب الكود). القراءة
+    // عامة لأي مستخدم مسجل دخول عشان يتحقق من كود قبل ما يدخله ======
+    match /referralCodes/{code} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null &&
+        request.resource.data.referrerId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ====== طابور مكافآت الإحالة اللي لسه محتاجة مراجعة/منح يدوي من الأدمن
+    // (لصاحب كود الإحالة نفسه، مش الراكب الجديد اللي بياخد هدية الترحيب
+    // فورًا عبر isValidReferralWelcomeCredit) - بيتم منحها من تاب المحفظة
+    // الموجود بالفعل في لوحة الأدمن، بعد ما الأدمن يراجع الطلب ======
+    match /pendingReferralRewards/{rewardId} {
+      allow create: if request.auth != null &&
+        request.resource.data.refereeId == request.auth.uid &&
+        request.resource.data.status == 'pending';
+      allow read: if request.auth != null &&
+        (resource.data.refereeId == request.auth.uid ||
+         resource.data.referrerId == request.auth.uid ||
+         isAdmin());
+      allow update: if isAdmin() &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'resolvedAt']);
       allow delete: if isAdmin();
     }
 
