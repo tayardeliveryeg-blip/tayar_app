@@ -207,6 +207,10 @@
 
   .badge.pending{background:#3d2f10;color:var(--amber);}
   .badge.contacted{background:var(--success-dim);color:var(--success);}
+  /* promo codes / referral rewards */
+  .badge.resolved{background:var(--success-dim);color:var(--success);}
+  .badge.inactive{background:#2a2f3a;color:var(--text-dim);}
+  .badge.expired{background:var(--danger-dim);color:var(--danger);}
 
   .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
   .chip{
@@ -449,6 +453,33 @@
         </div>
       </div>
 
+      <!-- PROMO CODES & REFERRALS -->
+      <div class="section" id="sec-promoReferrals">
+        <div class="panel-head" style="margin-bottom:14px;">
+          <h3 style="font-size:15px;">Promo codes</h3>
+          <button class="btn primary" onclick="openAddModal('promo')">+ Add code</button>
+        </div>
+        <div class="panel">
+          <table>
+            <thead><tr><th>Code</th><th>Credit (EGP)</th><th>Used / Max</th><th>Expires</th><th>Status</th><th></th></tr></thead>
+            <tbody id="promoCodesBody"></tbody>
+          </table>
+          <div id="promoCodesEmpty" class="hint" style="padding:14px;"></div>
+        </div>
+
+        <div class="panel" style="margin-top:16px;">
+          <div class="panel-head">
+            <h3 style="font-size:15px;">Referral rewards queue</h3>
+            <span class="hint">The new passenger's welcome bonus is credited instantly by the app. This is only the referrer's reward — review each request, grant it from the Wallet tab, then mark it here.</span>
+          </div>
+          <table>
+            <thead><tr><th>Referrer</th><th>New passenger</th><th>Code</th><th>Requested</th><th>Status</th><th></th></tr></thead>
+            <tbody id="referralRewardsBody"></tbody>
+          </table>
+          <div id="referralRewardsEmpty" class="hint" style="padding:14px;"></div>
+        </div>
+      </div>
+
       <!-- SOS ALERTS -->
       <div class="section" id="sec-sosAlerts">
         <div class="panel-head" style="margin-bottom:14px;">
@@ -502,6 +533,10 @@
               <label>Support phone</label>
               <input type="text" id="cfgPhone" value="+201142263460">
             </div>
+            <div class="settings-field">
+              <label>Referral welcome bonus (EGP) <span class="hint">— credited instantly to a new passenger who signs up with a valid referral code</span></label>
+              <input type="number" id="cfgReferralBonus" value="20">
+            </div>
           </div>
           <div style="margin-top:16px;">
             <button class="btn primary" onclick="saveSettings()">Save changes</button>
@@ -547,7 +582,9 @@ const COLLECTIONS = {
   drivers: 'drivers',
   users: 'users',
   vendorApplications: 'vendor_applications',
-  sosAlerts: 'sos_alerts'
+  sosAlerts: 'sos_alerts',
+  promoCodes: 'promo_codes',
+  pendingReferralRewards: 'pendingReferralRewards'
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -614,6 +651,7 @@ const icons = {
   users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>',
   wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M16 12h3"/><path d="M3 9h18"/></svg>',
   vendorApplications: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9z"/><path d="M9 20v-6h6v6"/></svg>',
+  promoReferrals: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 12 22l-9.41-9.41A2 2 0 0 1 2 11.17V4a2 2 0 0 1 2-2h7.17a2 2 0 0 1 1.41.59l9.41 9.41a2 2 0 0 1 0 2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>',
   sosAlerts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
@@ -624,8 +662,10 @@ let drivers = [];
 let users = [];
 let vendorApplications = [];
 let sosAlerts = [];
+let promoCodes = [];
+let pendingReferralRewards = [];
 let orderFilter = 'all';
-let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting' };
+let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting' };
 
 function showConnError(collectionKey, err){
   const banner = document.getElementById('connBanner');
@@ -747,6 +787,49 @@ function startListeners(){
     renderAll();
   }, err => { connectionState.vendorApplications = 'error'; showConnError('vendorApplications', err); });
 
+  // promo_codes: doc ID is the code itself (uppercase). Managed entirely from
+  // this panel - create/delete/update all fields is admin-only, see promo_codes
+  // rule in firestore.rules. usedCount is bumped by the app itself on redemption
+  // (redeemPromoCode in promo_service.dart), never edited here directly.
+  db.collection(COLLECTIONS.promoCodes).onSnapshot(snap => {
+    promoCodes = snap.docs.map(doc => {
+      const d = doc.data();
+      const expiresAt = d.expiresAt ? (d.expiresAt.toDate ? d.expiresAt.toDate() : new Date(d.expiresAt)) : null;
+      return {
+        id: doc.id,
+        discountValue: (d.discountValue != null) ? Number(d.discountValue) : 0,
+        maxUses: (d.maxUses != null) ? Number(d.maxUses) : 0,
+        usedCount: (d.usedCount != null) ? Number(d.usedCount) : 0,
+        active: d.active === true,
+        expiresAt
+      };
+    }).sort((a,b) => a.id < b.id ? -1 : 1);
+    connectionState.promoCodes = 'ok';
+    renderAll();
+  }, err => { connectionState.promoCodes = 'error'; showConnError('promoCodes', err); });
+
+  // pendingReferralRewards: created by redeemReferralCode (referral_service.dart)
+  // the moment a new passenger redeems a valid referral code - the referee's own
+  // welcome bonus is already credited instantly at that point, this queue is only
+  // for the *referrer's* reward, which is reviewed here and granted manually from
+  // the Wallet tab (Security Rules only let admin change status/resolvedAt here,
+  // never the reward amount - there is no fixed amount to enforce).
+  db.collection(COLLECTIONS.pendingReferralRewards).orderBy('createdAt', 'desc').onSnapshot(snap => {
+    pendingReferralRewards = snap.docs.map(doc => {
+      const d = doc.data();
+      return {
+        id: doc.id,
+        referrerId: pick(d, ['referrerId'], null),
+        refereeId: pick(d, ['refereeId'], null),
+        referralCode: pick(d, ['referralCode'], '—'),
+        status: (pick(d, ['status'], 'pending') + '').toLowerCase(),
+        time: relativeTime(pick(d, ['createdAt'], null))
+      };
+    });
+    connectionState.pendingReferralRewards = 'ok';
+    renderAll();
+  }, err => { connectionState.pendingReferralRewards = 'error'; showConnError('pendingReferralRewards', err); });
+
   // sos_alerts: created instantly from the app the moment a passenger or driver
   // taps the SOS button during a trip (SosService.triggerAlert in sos_service.dart).
   // Ordered newest-first so the most urgent/recent alert is always on top.
@@ -794,6 +877,7 @@ const navItems = [
   {key:'drivers', label:'Drivers', count:()=>drivers.length},
   {key:'users', label:'Customers', count:()=>users.length},
   {key:'wallet', label:'Wallet'},
+  {key:'promoReferrals', label:'Promo & Referrals', count:()=>pendingReferralRewards.filter(r=>r.status==='pending').length},
   {key:'vendorApplications', label:'Vendor Requests', count:()=>vendorApplications.filter(v=>v.status==='pending').length},
   {key:'settings', label:'Settings'},
 ];
@@ -814,7 +898,7 @@ function goTo(key){
   currentSection = key;
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+key).classList.add('active');
-  const titles = {overview:'Overview', sosAlerts:'SOS Alerts', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', vendorApplications:'Vendor Requests', settings:'Settings'};
+  const titles = {overview:'Overview', sosAlerts:'SOS Alerts', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', promoReferrals:'Promo & Referrals', vendorApplications:'Vendor Requests', settings:'Settings'};
   document.getElementById('pageTitle').textContent = titles[key];
   document.getElementById('pageBreadcrumb').textContent = 'tayar / ' + key;
   renderNav();
@@ -833,6 +917,7 @@ function loadSettings(){
     document.getElementById('cfgCommission').value = d.commissionPercent ?? 10;
     document.getElementById('cfgRadius').value = d.serviceRadiusKm ?? 15;
     document.getElementById('cfgPhone').value = d.supportPhone ?? '+201142263460';
+    document.getElementById('cfgReferralBonus').value = d.referralWelcomeBonus ?? 20;
     document.getElementById('settingsHint').textContent = doc.exists ? 'live values — the app reads these on startup' : 'no config saved yet — showing app defaults';
   }).catch(err=>{
     document.getElementById('settingsHint').textContent = 'failed to load: ' + err.message;
@@ -845,6 +930,7 @@ function saveSettings(){
     commissionPercent: Number(document.getElementById('cfgCommission').value) || 0,
     serviceRadiusKm: Number(document.getElementById('cfgRadius').value) || 0,
     supportPhone: document.getElementById('cfgPhone').value.trim(),
+    referralWelcomeBonus: Number(document.getElementById('cfgReferralBonus').value) || 0,
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
   db.collection('settings').doc('config').set(payload, {merge:true})
@@ -1256,9 +1342,155 @@ function submitWalletGrant(){
   }).catch(err=>toast('Failed: ' + err.message));
 }
 
-/* ---------------- MODAL (add driver) ---------------- */
+/* ---------------- PROMO CODES ---------------- */
+function fmtDate(d){
+  if(!d) return '—';
+  return d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+}
+function renderPromoCodes(){
+  const body = document.getElementById('promoCodesBody');
+  const empty = document.getElementById('promoCodesEmpty');
+  if(promoCodes.length === 0){
+    body.innerHTML = '';
+    empty.textContent = 'No promo codes yet — add one above.';
+    return;
+  }
+  empty.textContent = '';
+  const now = new Date();
+  body.innerHTML = promoCodes.map(p=>{
+    const isExpired = p.expiresAt && p.expiresAt < now;
+    const isFull = p.maxUses > 0 && p.usedCount >= p.maxUses;
+    let statusLabel, statusClass;
+    if(isExpired){ statusLabel = 'expired'; statusClass = 'expired'; }
+    else if(!p.active){ statusLabel = 'inactive'; statusClass = 'inactive'; }
+    else if(isFull){ statusLabel = 'full'; statusClass = 'inactive'; }
+    else { statusLabel = 'active'; statusClass = 'active'; }
+    return `
+    <tr>
+      <td class="mono">${p.id}</td>
+      <td>${p.discountValue.toFixed(0)}</td>
+      <td>${p.usedCount} / ${p.maxUses}</td>
+      <td style="font-size:12px;color:var(--text-dim);">${fmtDate(p.expiresAt)}</td>
+      <td><span class="badge ${statusClass}">${statusLabel}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn small" onclick="togglePromoActive('${p.id}', ${!p.active})">${p.active ? 'Deactivate' : 'Activate'}</button>
+        <button class="btn small danger-outline" onclick="deletePromoCode('${p.id}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function submitPromoCode(){
+  const code = document.getElementById('f_code').value.trim().toUpperCase();
+  const discountValue = parseFloat(document.getElementById('f_discount').value);
+  const maxUses = parseInt(document.getElementById('f_maxUses').value, 10);
+  const expiresRaw = document.getElementById('f_expiresAt').value;
+  if(!code){ toast('Enter a code'); return; }
+  if(!discountValue || isNaN(discountValue) || discountValue <= 0){ toast('Enter a valid wallet credit amount'); return; }
+  if(!maxUses || isNaN(maxUses) || maxUses <= 0){ toast('Enter a valid max uses count'); return; }
+
+  const payload = {
+    discountValue,
+    maxUses,
+    usedCount: 0,
+    active: true,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  if(expiresRaw){
+    // ====== نهاية اليوم المختار (23:59:59) عشان الكود يفضل شغال طول
+    // آخر يوم بدل ما ينتهي من نص الليل ======
+    const d = new Date(expiresRaw + 'T23:59:59');
+    payload.expiresAt = firebase.firestore.Timestamp.fromDate(d);
+  }
+
+  db.collection(COLLECTIONS.promoCodes).doc(code).get().then(snap=>{
+    if(snap.exists){ throw new Error('This code already exists'); }
+    return db.collection(COLLECTIONS.promoCodes).doc(code).set(payload);
+  }).then(()=>{
+    toast(`Promo code ${code} created`);
+    closeModal();
+  }).catch(err=>toast('Failed: ' + err.message));
+}
+function togglePromoActive(code, newActive){
+  db.collection(COLLECTIONS.promoCodes).doc(code).update({ active: newActive })
+    .then(()=>toast(newActive ? `${code} activated` : `${code} deactivated`))
+    .catch(err=>toast('Failed: ' + err.message));
+}
+function deletePromoCode(code){
+  if(!confirm(`Delete promo code ${code}? This can't be undone.`)) return;
+  db.collection(COLLECTIONS.promoCodes).doc(code).delete()
+    .then(()=>toast(`${code} deleted`))
+    .catch(err=>toast('Failed: ' + err.message));
+}
+
+/* ---------------- REFERRAL REWARDS QUEUE ---------------- */
+// ====== بيدور على بيانات مختصرة (اسم + تليفون) عن مستخدم من الـ users
+// array المحمّل بالفعل، من غير ما نعمل query إضافي ======
+function userBrief(uid){
+  if(!uid) return '—';
+  const u = users.find(x => x.id === uid);
+  if(!u) return uid.slice(0, 8) + '…';
+  return `${u.name} <span class="mono" style="color:var(--text-dimmer);font-size:11px;">${u.phone}</span>`;
+}
+function renderReferralRewards(){
+  const body = document.getElementById('referralRewardsBody');
+  const empty = document.getElementById('referralRewardsEmpty');
+  if(pendingReferralRewards.length === 0){
+    body.innerHTML = '';
+    empty.textContent = 'No referral rewards yet.';
+    return;
+  }
+  empty.textContent = '';
+  body.innerHTML = pendingReferralRewards.map(r=>{
+    const actions = r.status === 'pending'
+      ? `<button class="btn small primary" onclick="grantReferralRewardInWallet('${r.referrerId}', '${r.referralCode}')">Grant in Wallet</button>
+         <button class="btn small" onclick="resolveReferralReward('${r.id}', 'resolved')">Mark resolved</button>
+         <button class="btn small danger-outline" onclick="resolveReferralReward('${r.id}', 'rejected')">Reject</button>`
+      : '';
+    return `
+    <tr>
+      <td>${userBrief(r.referrerId)}</td>
+      <td>${userBrief(r.refereeId)}</td>
+      <td class="mono">${r.referralCode}</td>
+      <td class="mono" style="color:var(--text-dimmer);font-size:12px;">${r.time}</td>
+      <td><span class="badge ${r.status}">${r.status}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap;">${actions}</td>
+    </tr>`;
+  }).join('');
+}
+// ====== بيودّي الأدمن لتاب المحفظة مع اختيار صاحب كود الإحالة تلقائيًا
+// جاهز إنه يحدد المبلغ ويضغط "Apply to wallet" - المبلغ مش ثابت في
+// النظام فلازم الأدمن يحدده يدويًا وقت المراجعة ======
+function grantReferralRewardInWallet(referrerId, code){
+  if(!referrerId){ toast('This request has no referrer on file'); return; }
+  goTo('wallet');
+  const u = users.find(x => x.id === referrerId);
+  if(!u){ toast('Referrer not found in Customers list'); return; }
+  selectWalletUser(referrerId);
+  document.getElementById('walletGrantReason').value = `Referral reward - code ${code}`;
+}
+function resolveReferralReward(id, status){
+  db.collection(COLLECTIONS.pendingReferralRewards).doc(id).update({
+    status,
+    resolvedAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+    .then(()=>toast(status === 'resolved' ? 'Marked resolved' : 'Marked rejected'))
+    .catch(err=>toast('Failed: ' + err.message));
+}
+
+/* ---------------- MODAL (add driver / add promo code) ---------------- */
+let modalMode = 'driver';
 function openAddModal(mode){
+  modalMode = mode;
   document.getElementById('modalOverlay').classList.add('open');
+  if(mode === 'promo'){
+    document.getElementById('modalTitle').textContent = 'Add promo code';
+    document.getElementById('modalFields').innerHTML = `
+      <div class="field"><label>Code *</label><input id="f_code" placeholder="e.g. WELCOME20" style="text-transform:uppercase;"></div>
+      <div class="field"><label>Wallet credit (EGP) *</label><input id="f_discount" type="number" placeholder="e.g. 20"></div>
+      <div class="field"><label>Max uses *</label><input id="f_maxUses" type="number" placeholder="e.g. 100"></div>
+      <div class="field"><label>Expires on <span class="hint">(optional)</span></label><input id="f_expiresAt" type="date"></div>`;
+    return;
+  }
   document.getElementById('modalTitle').textContent = 'Add driver';
   document.getElementById('modalFields').innerHTML = `
     <div class="field"><label>First name</label><input id="f_first" placeholder="e.g. Amr"></div>
@@ -1278,6 +1510,7 @@ function normalizeEgyptPhone(raw){
 }
 
 function submitModal(){
+  if(modalMode === 'promo'){ submitPromoCode(); return; }
   const first = document.getElementById('f_first').value.trim();
   const last = document.getElementById('f_last').value.trim();
   if(!first){ toast('Please enter a first name'); return; }
@@ -1337,6 +1570,7 @@ function renderAll(){
   if(currentSection==='drivers'){ renderDrivers(); }
   if(currentSection==='users'){ renderUsers(); }
   if(currentSection==='vendorApplications'){ renderVendorApplications(); }
+  if(currentSection==='promoReferrals'){ renderPromoCodes(); renderReferralRewards(); }
 }
 
 renderNav();
