@@ -1416,4 +1416,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get walletReferralCreditLabel => 'Referral bonus';
+
+  @override
+  String get rideTimingSectionTitle => 'Ride timing';
+
+  @override
+  String get rideTimingNowOption => 'Now';
+
+  @override
+  String get rideTimingScheduledOption => 'Schedule for later';
+
+  @override
+  String get chooseScheduleDateTimeButton => 'Choose date & time';
+
+  @override
+  String scheduledForLabel(String dateTime) {
+    return 'Scheduled for $dateTime';
+  }
+
+  @override
+  String get scheduleMinLeadError => 'Pick a time at least 10 minutes from now';
+
+  @override
+  String scheduleMaxAdvanceError(int days) {
+    return 'You can\'t schedule a ride more than $days days ahead';
+  }
+
+  @override
+  String scheduledRideSearchingBanner(String dateTime) {
+    return 'Your ride is scheduled for $dateTime - we\'ll start finding a rider now so they can confirm with you';
+  }
 }
