@@ -104,11 +104,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   String _paymentMethod = 'كاش'; // طريقة الدفع الحالية المختارة
   bool _isDraggingMap = false; // بنستخدمها لإخفاء الشريط السفلي وقت سحب الخريطة
 
-  // ====== بانر العرض الترويجي فوق الخريطة: بيقفل محليًا بس (مش متخزن)،
-  // يرجع يظهر تاني لو المستخدم قفل وفتح التطبيق من جديد ======
-  bool _promoDismissed = false;
-  bool _vendorPromoDismissed = false;
-
   LatLng? _liveUserLocation; // موقعك الحقيقي الفعلي، بيتحدث لايف مع تحركك
   double? _liveUserHeading; // اتجاه حركتك الفعلي (0 = شمال)، لسهم النقطة الزرقاء
   double? _liveUserAccuracy; // نطاق دقة الـ GPS بالمتر، لحجم هالة الدقة
@@ -1463,67 +1458,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
             ),
           ),
-
-          // ====== بانر "أول توصيل مجانًا" (للعميل الجديد بس، وبيختفي
-          // نهائيًا بمجرد ما يكمل أول رحلة، مش مجرد إغلاق مؤقت) ======
-          if (!_promoDismissed)
-            Positioned(
-              top: 66 + topSafeArea,
-              right: 16,
-              left: 16,
-              child: AnimatedBuilder(
-                animation: _sheetAnimController,
-                builder: (context, child) => Opacity(
-                  opacity: 1 - _sheetAnimController.value,
-                  child: IgnorePointer(
-                    ignoring: _sheetAnimController.value > 0.5,
-                    child: child,
-                  ),
-                ),
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: _isDraggingMap ? 0 : 1,
-                  child: IgnorePointer(
-                    ignoring: _isDraggingMap,
-                    child: NewCustomerPromoBanner(
-                      onDismiss: () =>
-                          setState(() => _promoDismissed = true),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-          // ====== بانر "لو عايز تبقى شريك تجاري معانا؟" - نفس أسلوب البانر
-          // اللي فوقه بالظبط، بس بيوديه لشاشة فورم انضمام التاجر، وبيختفي
-          // لو المستخدم بعت طلب انضمام قبل كده أو دوس زرار الإغلاق ======
-          if (!_vendorPromoDismissed)
-            Positioned(
-              top: 66 + topSafeArea + 34,
-              right: 16,
-              left: 16,
-              child: AnimatedBuilder(
-                animation: _sheetAnimController,
-                builder: (context, child) => Opacity(
-                  opacity: 1 - _sheetAnimController.value,
-                  child: IgnorePointer(
-                    ignoring: _sheetAnimController.value > 0.5,
-                    child: child,
-                  ),
-                ),
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: _isDraggingMap ? 0 : 1,
-                  child: IgnorePointer(
-                    ignoring: _isDraggingMap,
-                    child: BecomeVendorPromoBanner(
-                      onDismiss: () =>
-                          setState(() => _vendorPromoDismissed = true),
-                    ),
-                  ),
-                ),
-              ),
-            ),
 
           // ====== زرار القايمة الجانبية (بيختفي لفوق وقت سحب الخريطة) ======
           Positioned(
