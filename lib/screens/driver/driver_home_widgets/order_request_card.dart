@@ -14,6 +14,7 @@ class OrderRequestCard extends StatelessWidget {
   final double proposedFare;
   final String paymentMethod;
   final bool alreadyOffered;
+  final DateTime? scheduledFor;
   final VoidCallback? onQuickAccept;
   final VoidCallback? onCustomOffer;
   final VoidCallback? onOpenDetails;
@@ -27,6 +28,7 @@ class OrderRequestCard extends StatelessWidget {
     required this.proposedFare,
     required this.paymentMethod,
     required this.alreadyOffered,
+    this.scheduledFor,
     required this.onQuickAccept,
     required this.onCustomOffer,
     this.onOpenDetails,
@@ -49,6 +51,42 @@ class OrderRequestCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // ====== بادچ "محجوزة لـ..." للطلبات المجدولة مقدمًا - بيظهر بس
+            // لو scheduledFor موجودة (شوف orderType في functions/index.js) ======
+            if (scheduledFor != null) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: TayarColors.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.schedule,
+                      color: TayarColors.primary,
+                      size: 13,
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Text(
+                      AppLocalizations.of(context)!.scheduledForLabel(
+                        formatScheduledForDisplay(scheduledFor!),
+                      ),
+                      style: const TextStyle(
+                        color: TayarColors.primary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
             Row(
               children: [
                 const Icon(
@@ -214,4 +252,13 @@ class OrderRequestCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// ====== تنسيق موحّد لعرض ميعاد الرحلة المجدولة في واجهات السائق (كارت
+// الطلب، شاشة التفاصيل، كارت الرحلة النشطة) - نفس صيغة يوم/شهر - ساعة:دقيقة
+// المستخدمة في order_confirmation_screen.dart و searching_offers_screen.dart
+// بجانب الراكب ======
+String formatScheduledForDisplay(DateTime dt) {
+  final two = (int n) => n.toString().padLeft(2, '0');
+  return '${two(dt.day)}/${two(dt.month)} - ${two(dt.hour)}:${two(dt.minute)}';
 }

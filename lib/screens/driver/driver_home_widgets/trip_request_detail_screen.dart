@@ -12,6 +12,8 @@ import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/offer_sheet.dart'
     show StepButton;
+import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.dart'
+    show formatScheduledForDisplay;
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
 
 // ====== شاشة تفاصيل طلب الرحلة: خريطة بالنقطتين + واجهة المزايدة ======
@@ -27,6 +29,7 @@ class TripRequestDetailScreen extends StatefulWidget {
   final double proposedFare;
   final String paymentMethod;
   final bool alreadyOffered;
+  final DateTime? scheduledFor;
   final VoidCallback? onQuickAccept;
   final ValueChanged<double>? onCustomOffer;
 
@@ -42,6 +45,7 @@ class TripRequestDetailScreen extends StatefulWidget {
     required this.proposedFare,
     required this.paymentMethod,
     required this.alreadyOffered,
+    this.scheduledFor,
     this.onQuickAccept,
     this.onCustomOffer,
   });
@@ -199,6 +203,48 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (widget.scheduledFor != null) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xxs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: TayarColors.primary.withValues(
+                                alpha: 0.15,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.sm,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.schedule,
+                                  color: TayarColors.primary,
+                                  size: 13,
+                                ),
+                                const SizedBox(width: AppSpacing.xs),
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.scheduledForLabel(
+                                    formatScheduledForDisplay(
+                                      widget.scheduledFor!,
+                                    ),
+                                  ),
+                                  style: const TextStyle(
+                                    color: TayarColors.primary,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                        ],
                         Row(
                           children: [
                             const Icon(

@@ -4,6 +4,8 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
 import 'package:tayay_app/services/call_invitation_helper.dart';
+import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.dart'
+    show formatScheduledForDisplay;
 import 'package:tayay_app/theme/theme_extensions.dart';
 
 // ====== كارت الرحلة النشطة فوق قائمة الطلبات + زرار التواصل (شات/مكالمة) ======
@@ -17,6 +19,7 @@ class ActiveTripCard extends StatelessWidget {
   final double fare;
   final String paymentMethod;
   final bool inProgress;
+  final DateTime? scheduledFor;
   final VoidCallback onStart;
   final VoidCallback onComplete;
   final VoidCallback onOpenTracking;
@@ -31,6 +34,7 @@ class ActiveTripCard extends StatelessWidget {
     required this.fare,
     required this.paymentMethod,
     required this.inProgress,
+    this.scheduledFor,
     required this.onStart,
     required this.onComplete,
     required this.onOpenTracking,
@@ -67,6 +71,29 @@ class ActiveTripCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (scheduledFor != null) ...[
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.schedule,
+                          color: TayarColors.primary,
+                          size: 13,
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          AppLocalizations.of(context)!.scheduledForLabel(
+                            formatScheduledForDisplay(scheduledFor!),
+                          ),
+                          style: const TextStyle(
+                            color: TayarColors.primary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                  ],
                   Row(
                     children: [
                       Expanded(

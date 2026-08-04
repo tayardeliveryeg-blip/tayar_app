@@ -21,6 +21,13 @@ GeoPoint? extractGeoPointForRequestsTab(dynamic raw) {
   return null;
 }
 
+// ====== دالة مساعدة لتحويل حقل scheduledFor (Firestore Timestamp) لـ
+// DateTime - null يعني رحلة فورية زي ما كان دايمًا ======
+DateTime? extractScheduledForRequestsTab(dynamic raw) {
+  if (raw is Timestamp) return raw.toDate();
+  return null;
+}
+
 // ====== محتوى تبويب "طلباتي" (الرحلة النشطة + الطلبات المتاحة) ======
 // (كان جوه driver_home_screen.dart كـ _buildRequestsTab واتقسم في ملف منفصل)
 class DriverRequestsTab extends StatelessWidget {
@@ -111,6 +118,9 @@ class DriverRequestsTab extends StatelessWidget {
                   (data['paymentMethod'] as String?) ??
                   AppLocalizations.of(context)!.paymentMethodCash,
               inProgress: inProgress,
+              scheduledFor: extractScheduledForRequestsTab(
+                data['scheduledFor'],
+              ),
               onStart: () => onStartTrip(trip.id),
               onComplete: () => onCompleteTrip(trip.id),
               onOpenTracking: () => Navigator.push(
@@ -208,6 +218,9 @@ class DriverRequestsTab extends StatelessWidget {
                               (data['paymentMethod'] as String?) ??
                               AppLocalizations.of(context)!.paymentMethodCash,
                           alreadyOffered: alreadyOffered,
+                          scheduledFor: extractScheduledForRequestsTab(
+                            data['scheduledFor'],
+                          ),
                           onQuickAccept: alreadyOffered
                               ? null
                               : () => onSubmitOffer(
@@ -250,6 +263,9 @@ class DriverRequestsTab extends StatelessWidget {
                                       context,
                                     )!.paymentMethodCash,
                                 alreadyOffered: alreadyOffered,
+                                scheduledFor: extractScheduledForRequestsTab(
+                                  data['scheduledFor'],
+                                ),
                                 onQuickAccept: alreadyOffered
                                     ? null
                                     : () => onSubmitOffer(
