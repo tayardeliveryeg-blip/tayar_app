@@ -59,6 +59,13 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   // كمان لو الراكب عدّل نقطة الانطلاق أو الوجهة ======
   late double _baseFare;
 
+  // ====== حجز رحلة مقدمًا (Scheduled rides): null يعني رحلة فورية زي ما
+  // كان دايمًا. لو الراكب اختار "حجز لاحقًا" بنحفظ الميعاد هنا ونبعته لـ
+  // createOrder كـ scheduledFor. المطابقة نفسها بتشتغل فورًا في الحالتين
+  // (شوف تعليق orderType في functions/index.js) - الميعاد ده بس بيتسجل
+  // كمعلومة للسائق وبيتعرض في شاشة البحث عن عروض ======
+  DateTime? _scheduledFor;
+
   // ====== true وقت إعادة حساب المسار والسعر بعد تعديل نقطة الانطلاق أو
   // الوجهة (بنعطل التعديل والزرار الرئيسي لحد ما يخلص) ======
   bool _isUpdatingRoute = false;
@@ -223,6 +230,72 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
     });
   }
 
+  // ====== فتح تاريخ ثم وقت لاختيار معاد الرحلة المجدولة. الحدود
+  // (10 دقايق كحد أدنى، AppSettings.instance.maxScheduleAdvanceDays كحد
+  // أقصى) لازم تفضل مطابقة نفس الحدود اللي بيتحقق منها createOrder في
+  // functions/index.js وإلا السيرفر هيرفض الطلب حتى لو الواجهة سمحت بيه ======
+  Future<void> _pickScheduleDateTime() async {
+    final l10n = AppLocalizations.of(context)!;
+    final now = DateTime.now();
+    final minDateTime = now.add(const Duration(minutes: 10));
+    final maxDateTime = now.add(
+      Duration(days: AppSettings.instance.maxScheduleAdvanceDays),
+    );
+
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _scheduledFor != null && _scheduledFor!.isAfter(minDateTime)
+          ? _scheduledFor!
+          : minDateTime,
+      firstDate: DateTime(now.year, now.month, now.day),
+      lastDate: maxDateTime,
+    );
+    if (pickedDate == null || !mounted) return;
+
+    final initialTime = _scheduledFor != null
+        ? TimeOfDay.fromDateTime(_scheduledFor!)
+        : TimeOfDay.fromDateTime(minDateTime);
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+    if (pickedTime == null || !mounted) return;
+
+    final combined = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+
+    if (combined.isBefore(minDateTime)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.scheduleMinLeadError)));
+      return;
+    }
+    if (combined.isAfter(maxDateTime)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.scheduleMaxAdvanceError(
+              AppSettings.instance.maxScheduleAdvanceDays,
+            ),
+          ),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _scheduledFor = combined);
+  }
+
+  String _formatScheduledFor(DateTime dt) {
+    final two = (int n) => n.toString().padLeft(2, '0');
+    return '${two(dt.day)}/${two(dt.month)} - ${two(dt.hour)}:${two(dt.minute)}';
+  }
+
   Future<void> _searchForOffers() async {
     setState(() => _isSubmitting = true);
 
@@ -247,6 +320,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
         'proposedFare': _proposedFare,
         'autoAccept': _autoAccept,
         'paymentMethod': widget.paymentMethod,
+        if (_scheduledFor != null)
+          'scheduledFor': _scheduledFor!.millisecondsSinceEpoch,
       });
 
       final orderId = result.data['orderId'] as String;
@@ -265,6 +340,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             pickupAddress: _pickupAddress,
             pickupLocation: _pickupLocation,
             destinationAddress: _destinationAddress,
+            scheduledFor: _scheduledFor,
           ),
         ),
       );
@@ -454,6 +530,83 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                       style: TextStyle(
                         color: context.textGreyColor,
                         fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // ====== كارت معاد الرحلة: دلوقتي / حجز لاحقًا ======
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.cardColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.rideTimingSectionTitle,
+                    style: TextStyle(color: context.textColor, fontSize: 14),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _TimingOptionChip(
+                          label: l10n.rideTimingNowOption,
+                          selected: _scheduledFor == null,
+                          onTap: () => setState(() => _scheduledFor = null),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _TimingOptionChip(
+                          label: l10n.rideTimingScheduledOption,
+                          selected: _scheduledFor != null,
+                          onTap: _pickScheduleDateTime,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_scheduledFor != null) ...[
+                    const SizedBox(height: 10),
+                    InkWell(
+                      onTap: _pickScheduleDateTime,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.schedule,
+                              size: 18,
+                              color: TayarColors.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                l10n.scheduledForLabel(
+                                  _formatScheduledFor(_scheduledFor!),
+                                ),
+                                style: TextStyle(
+                                  color: context.textColor,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.edit,
+                              size: 16,
+                              color: context.textGreyColor,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -658,6 +811,50 @@ class _DetailRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ====== شريحة اختيار "دلوقتي" / "حجز لاحقًا" في كارت معاد الرحلة ======
+class _TimingOptionChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _TimingOptionChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected
+              ? TayarColors.primary
+              : context.bgColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected
+                ? TayarColors.primary
+                : context.dividerColor2,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? context.onPrimaryColor : context.textColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

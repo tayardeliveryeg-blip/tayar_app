@@ -637,5 +637,22 @@
   "referralOptionalFieldLabel": "كود دعوة (اختياري)",
   "referralOptionalFieldHint": "لو حد دعاك للتطبيق، اكتب كوده هنا",
   "walletPromoCreditLabel": "كود خصم",
-  "walletReferralCreditLabel": "هدية دعوة صديق"
+  "walletReferralCreditLabel": "هدية دعوة صديق",
+  "rideTimingSectionTitle": "معاد الرحلة",
+  "rideTimingNowOption": "دلوقتي",
+  "rideTimingScheduledOption": "حجز لاحقًا",
+  "chooseScheduleDateTimeButton": "اختار التاريخ والوقت",
+  "scheduledForLabel": "محجوزة لـ {dateTime}",
+  "@scheduledForLabel": {
+    "placeholders": { "dateTime": { "type": "String" } }
+  },
+  "scheduleMinLeadError": "لازم تختار معاد بعد 10 دقايق على الأقل من دلوقتي",
+  "scheduleMaxAdvanceError": "مينفعش تحجز رحلة أبعد من {days} أيام قدام",
+  "@scheduleMaxAdvanceError": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "scheduledRideSearchingBanner": "رحلتك محجوزة لـ {dateTime} - هنبدأ ندوّرلك على طيار دلوقتي عشان يتفق معاك",
+  "@scheduledRideSearchingBanner": {
+    "placeholders": { "dateTime": { "type": "String" } }
+  }
 }

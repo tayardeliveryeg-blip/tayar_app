@@ -24,6 +24,9 @@ class SearchingOffersScreen extends StatefulWidget {
   final String pickupAddress;
   final LatLng pickupLocation;
   final String destinationAddress;
+  // ====== لو مش null، الرحلة دي محجوزة مقدمًا. بيتعرض بس كبانر إعلامي
+  // فوق الخريطة - المطابقة الفعلية بتشتغل فورًا زي أي رحلة عادية ======
+  final DateTime? scheduledFor;
 
   const SearchingOffersScreen({
     super.key,
@@ -33,6 +36,7 @@ class SearchingOffersScreen extends StatefulWidget {
     required this.pickupAddress,
     required this.pickupLocation,
     required this.destinationAddress,
+    this.scheduledFor,
   });
 
   @override
@@ -43,6 +47,11 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
     with TickerProviderStateMixin {
   bool _isProcessingAccept = false;
   bool _autoAcceptHandled = false;
+
+  String _formatScheduledFor(DateTime dt) {
+    final two = (int n) => n.toString().padLeft(2, '0');
+    return '${two(dt.day)}/${two(dt.month)} - ${two(dt.hour)}:${two(dt.minute)}';
+  }
 
   // ====== تتبع العروض عشان نظهر إشعار قبول/رفض للعرض الجديد بس ======
   final Set<String> _seenOfferIds = {};
@@ -640,6 +649,62 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                     ],
                   ),
                 ),
+
+                // ====== بانر رحلة مجدولة: بيفضل ظاهر فوق الخريطة طول ما
+                // الراكب بيدوّر على عروض عشان يفتكر إن الرحلة دي محجوزة
+                // لميعاد معين، رغم إن المطابقة نفسها شغالة فورًا (شوف
+                // تعليق orderType في functions/index.js) ======
+                if (widget.scheduledFor != null)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Container(
+                        margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: TayarColors.primary,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.schedule,
+                              size: 18,
+                              color: context.onPrimaryColor,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.of(context)!
+                                    .scheduledRideSearchingBanner(
+                                      _formatScheduledFor(
+                                        widget.scheduledFor!,
+                                      ),
+                                    ),
+                                style: TextStyle(
+                                  color: context.onPrimaryColor,
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
                 // ====== الشيت السفلي + شارة العروض فوقه مباشرة ======
                 Align(

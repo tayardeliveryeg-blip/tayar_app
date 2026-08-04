@@ -637,5 +637,22 @@
   "referralOptionalFieldLabel": "Referral code (optional)",
   "referralOptionalFieldHint": "If someone invited you, enter their code here",
   "walletPromoCreditLabel": "Promo code",
-  "walletReferralCreditLabel": "Referral bonus"
+  "walletReferralCreditLabel": "Referral bonus",
+  "rideTimingSectionTitle": "Ride timing",
+  "rideTimingNowOption": "Now",
+  "rideTimingScheduledOption": "Schedule for later",
+  "chooseScheduleDateTimeButton": "Choose date & time",
+  "scheduledForLabel": "Scheduled for {dateTime}",
+  "@scheduledForLabel": {
+    "placeholders": { "dateTime": { "type": "String" } }
+  },
+  "scheduleMinLeadError": "Pick a time at least 10 minutes from now",
+  "scheduleMaxAdvanceError": "You can't schedule a ride more than {days} days ahead",
+  "@scheduleMaxAdvanceError": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "scheduledRideSearchingBanner": "Your ride is scheduled for {dateTime} - we'll start finding a rider now so they can confirm with you",
+  "@scheduledRideSearchingBanner": {
+    "placeholders": { "dateTime": { "type": "String" } }
+  }
 }
