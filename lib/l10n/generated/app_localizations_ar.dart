@@ -1403,4 +1403,35 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get walletReferralCreditLabel => 'هدية دعوة صديق';
+
+  @override
+  String get rideTimingSectionTitle => 'معاد الرحلة';
+
+  @override
+  String get rideTimingNowOption => 'دلوقتي';
+
+  @override
+  String get rideTimingScheduledOption => 'حجز لاحقًا';
+
+  @override
+  String get chooseScheduleDateTimeButton => 'اختار التاريخ والوقت';
+
+  @override
+  String scheduledForLabel(String dateTime) {
+    return 'محجوزة لـ $dateTime';
+  }
+
+  @override
+  String get scheduleMinLeadError =>
+      'لازم تختار معاد بعد 10 دقايق على الأقل من دلوقتي';
+
+  @override
+  String scheduleMaxAdvanceError(int days) {
+    return 'مينفعش تحجز رحلة أبعد من $days أيام قدام';
+  }
+
+  @override
+  String scheduledRideSearchingBanner(String dateTime) {
+    return 'رحلتك محجوزة لـ $dateTime - هنبدأ ندوّرلك على طيار دلوقتي عشان يتفق معاك';
+  }
 }

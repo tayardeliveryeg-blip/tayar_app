@@ -2665,6 +2665,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'هدية دعوة صديق'**
   String get walletReferralCreditLabel;
+
+  /// No description provided for @rideTimingSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاد الرحلة'**
+  String get rideTimingSectionTitle;
+
+  /// No description provided for @rideTimingNowOption.
+  ///
+  /// In ar, this message translates to:
+  /// **'دلوقتي'**
+  String get rideTimingNowOption;
+
+  /// No description provided for @rideTimingScheduledOption.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجز لاحقًا'**
+  String get rideTimingScheduledOption;
+
+  /// No description provided for @chooseScheduleDateTimeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار التاريخ والوقت'**
+  String get chooseScheduleDateTimeButton;
+
+  /// No description provided for @scheduledForLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'محجوزة لـ {dateTime}'**
+  String scheduledForLabel(String dateTime);
+
+  /// No description provided for @scheduleMinLeadError.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم تختار معاد بعد 10 دقايق على الأقل من دلوقتي'**
+  String get scheduleMinLeadError;
+
+  /// No description provided for @scheduleMaxAdvanceError.
+  ///
+  /// In ar, this message translates to:
+  /// **'مينفعش تحجز رحلة أبعد من {days} أيام قدام'**
+  String scheduleMaxAdvanceError(int days);
+
+  /// No description provided for @scheduledRideSearchingBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'رحلتك محجوزة لـ {dateTime} - هنبدأ ندوّرلك على طيار دلوقتي عشان يتفق معاك'**
+  String scheduledRideSearchingBanner(String dateTime);
 }
 
 class _AppLocalizationsDelegate
