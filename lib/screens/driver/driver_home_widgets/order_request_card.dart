@@ -259,6 +259,8 @@ class OrderRequestCard extends StatelessWidget {
 // المستخدمة في order_confirmation_screen.dart و searching_offers_screen.dart
 // بجانب الراكب ======
 String formatScheduledForDisplay(DateTime dt) {
-  final two = (int n) => n.toString().padLeft(2, '0');
-  return '${two(dt.day)}/${two(dt.month)} - ${two(dt.hour)}:${two(dt.minute)}';
+  return '${_twoDigits(dt.day)}/${_twoDigits(dt.month)} - '
+      '${_twoDigits(dt.hour)}:${_twoDigits(dt.minute)}';
 }
+
+String _twoDigits(int n) => n.toString().padLeft(2, '0');
