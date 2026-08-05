@@ -243,16 +243,24 @@ service cloud.firestore {
           )
         );
       // ====== الكابتن يقدر يعدّل بياناته (بروفايل، رخصة، موتوسيكل، إلخ)
-      // بحرية، لكن حقل status (pending_review/approved/rejected) محصور
-      // على الأدمن بس. قبل كده كان الكابتن يقدر يعدّل الحقل ده مباشرة
-      // وهي ثغرة أمنية خطيرة (أي كابتن كان يقدر "يوافق على نفسه" من غير
-      // ما يمر على مراجعة الأدمن خالص) ======
+      // بحرية. حقل status محصور جزئيًا: الكابتن يقدر بس يحط نفسه
+      // 'pending_review' (وده اللي بيحصل وقت إرسال/إعادة إرسال طلب
+      // التسجيل من driver_registration_screen.dart - المستند بيتعمله
+      // create فاضي من غير status في personal_info_screen.dart، فأول مرة
+      // status بيتحط بتبقى update مش create) - أي قيمة تانية لحقل status
+      // (وأهمها 'approved') محصورة على الأدمن بس. قبل كده كان الكابتن
+      // يقدر يعدّل الحقل ده لأي قيمة مباشرة وهي ثغرة أمنية خطيرة (أي
+      // كابتن كان يقدر "يوافق على نفسه" من غير ما يمر على مراجعة الأدمن
+      // خالص) ======
       allow update: if request.auth != null &&
         (
           isAdmin() ||
           (
             request.auth.uid == driverId &&
-            !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status'])
+            (
+              !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status']) ||
+              request.resource.data.status == 'pending_review'
+            )
           )
         );
       allow update: if request.auth != null &&

@@ -399,6 +399,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get closeButton => 'Close';
 
   @override
+  String get termsAgreementPrefix => 'I agree to the ';
+
+  @override
+  String get termsAndConditionsLinkText => 'Terms and Conditions';
+
+  @override
+  String get termsAgreementRequiredError => 'You must agree to the Terms and Conditions to continue';
+
+  @override
+  String get termsAndConditionsTitle => 'Terms and Conditions';
+
+  @override
+  String get termsAndConditionsBody => 'By using the Tayar app, you agree to be bound by these Terms and Conditions. Please review the full terms on our official website or contact customer support for more details.';
+
+  @override
   String get submitApplicationSuccessTitle => 'Application sent!';
 
   @override

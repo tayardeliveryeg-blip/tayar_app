@@ -836,6 +836,36 @@ abstract class AppLocalizations {
   /// **'إغلاق'**
   String get closeButton;
 
+  /// No description provided for @termsAgreementPrefix.
+  ///
+  /// In ar, this message translates to:
+  /// **'أوافق على '**
+  String get termsAgreementPrefix;
+
+  /// No description provided for @termsAndConditionsLinkText.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشروط والأحكام'**
+  String get termsAndConditionsLinkText;
+
+  /// No description provided for @termsAgreementRequiredError.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم توافق على الشروط والأحكام عشان تكمل'**
+  String get termsAgreementRequiredError;
+
+  /// No description provided for @termsAndConditionsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشروط والأحكام'**
+  String get termsAndConditionsTitle;
+
+  /// No description provided for @termsAndConditionsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'باستخدامك تطبيق طيار، أنت بتوافق على الالتزام بهذه الشروط والأحكام. يرجى مراجعة الشروط الكاملة على موقعنا الرسمي أو التواصل مع خدمة العملاء لمزيد من التفاصيل.'**
+  String get termsAndConditionsBody;
+
   /// No description provided for @submitApplicationSuccessTitle.
   ///
   /// In ar, this message translates to:

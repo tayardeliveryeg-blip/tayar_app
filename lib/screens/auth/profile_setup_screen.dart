@@ -5,6 +5,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/referral_service.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, PassengerHomeScreen;
+import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
 
 // ====================================================
 // ====== شاشة استكمال بيانات الراكب بعد أول تسجيل دخول ======
@@ -26,6 +27,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   late final TextEditingController _nameController;
   final _referralController = TextEditingController();
   bool _isSaving = false;
+  bool _termsAccepted = false;
+  bool _showTermsError = false;
 
   @override
   void initState() {
@@ -45,6 +48,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   Future<void> _saveAndContinue() async {
     if (!_formKey.currentState!.validate()) return;
+    // ====== زي التحقق من باقي حقول الفورم، بنمنع الحفظ لحد ما المستخدم
+    // يعلّم على موافقته على الشروط والأحكام، ونوريه إطار أحمر حوالين
+    // الـ checkbox زي أي حقل فاضي ======
+    if (!_termsAccepted) {
+      setState(() => _showTermsError = true);
+      return;
+    }
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
@@ -66,6 +76,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         },
         'role': widget.role,
         'createdAt': FieldValue.serverTimestamp(),
+        'termsAcceptedAt': FieldValue.serverTimestamp(),
+        'termsVersion': kTermsAndConditionsVersion,
       }, SetOptions(merge: true));
 
       // ====== لو كتب كود دعوة، نحاول نستبدله - لو فشل (كود غلط/مستخدم
@@ -156,7 +168,16 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                TermsAcceptanceCheckbox(
+                  value: _termsAccepted,
+                  showError: _showTermsError,
+                  onChanged: (v) => setState(() {
+                    _termsAccepted = v;
+                    if (v) _showTermsError = false;
+                  }),
+                ),
+                const SizedBox(height: 8),
                 SizedBox(
                   height: 55,
                   child: ElevatedButton(

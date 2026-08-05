@@ -10,6 +10,7 @@ import 'package:tayay_app/screens/driver/registration/driving_license_screen.dar
 import 'package:tayay_app/screens/driver/registration/personal_documents_screen.dart';
 import 'package:tayay_app/screens/driver/registration/bike_info_screen.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
 class DriverRegistrationScreen extends StatefulWidget {
   const DriverRegistrationScreen({super.key});
 
@@ -23,6 +24,8 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
   Map<String, dynamic>? _driverData;
   bool _isLoading = true;
   bool _isSubmitting = false;
+  bool _termsAccepted = false;
+  bool _showTermsError = false;
 
   String? get _uid => FirebaseAuth.instance.currentUser?.uid;
 
@@ -42,6 +45,12 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
       setState(() {
         _driverData = doc.data();
         _isLoading = false;
+        // ====== لو الكابتن كان وافق قبل كده في زيارة سابقة (مثلاً رجع
+        // يعدّل قسم بعد ما وافق ولسه ما بعتش الطلب النهائي)، مفيش داعي
+        // نطلب منه يوافق تاني ======
+        if (_driverData?['termsAcceptedAt'] != null) {
+          _termsAccepted = true;
+        }
       });
     } catch (e) {
       debugPrint('❌ خطأ في تحميل بيانات الطيار: $e');
@@ -66,11 +75,17 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
 
   Future<void> _submitRegistration() async {
     if (_uid == null || !_allSectionsComplete) return;
+    if (!_termsAccepted) {
+      setState(() => _showTermsError = true);
+      return;
+    }
     setState(() => _isSubmitting = true);
     try {
       await FirebaseFirestore.instance.collection('drivers').doc(_uid).set({
         'status': 'pending_review', // pending_review → approved → rejected
         'submittedAt': FieldValue.serverTimestamp(),
+        'termsAcceptedAt': FieldValue.serverTimestamp(),
+        'termsVersion': kTermsAndConditionsVersion,
       }, SetOptions(merge: true));
 
       if (!mounted) return;
@@ -271,6 +286,18 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
                       ],
                     ),
                   ),
+                  if (status != 'pending_review')
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: TermsAcceptanceCheckbox(
+                        value: _termsAccepted,
+                        showError: _showTermsError,
+                        onChanged: (v) => setState(() {
+                          _termsAccepted = v;
+                          if (v) _showTermsError = false;
+                        }),
+                      ),
+                    ),
                   SizedBox(
                     height: 54,
                     child: ElevatedButton(

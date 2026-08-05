@@ -399,6 +399,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get closeButton => 'إغلاق';
 
   @override
+  String get termsAgreementPrefix => 'أوافق على ';
+
+  @override
+  String get termsAndConditionsLinkText => 'الشروط والأحكام';
+
+  @override
+  String get termsAgreementRequiredError => 'لازم توافق على الشروط والأحكام عشان تكمل';
+
+  @override
+  String get termsAndConditionsTitle => 'الشروط والأحكام';
+
+  @override
+  String get termsAndConditionsBody => 'باستخدامك تطبيق طيار، أنت بتوافق على الالتزام بهذه الشروط والأحكام. يرجى مراجعة الشروط الكاملة على موقعنا الرسمي أو التواصل مع خدمة العملاء لمزيد من التفاصيل.';
+
+  @override
   String get submitApplicationSuccessTitle => 'تم إرسال طلبك';
 
   @override
