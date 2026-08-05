@@ -227,7 +227,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsAndConditionsBody =>
-      'By using Tayar, you agree to its terms. The service is provided directly between passenger and driver; the company only provides the platform.';
+      'By using the Tayar app, you agree to be bound by these Terms and Conditions. Please review the full terms on our official website or contact customer support for more details.';
 
   @override
   String get privacyPolicy => 'Privacy Policy';
@@ -405,13 +405,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get termsAndConditionsLinkText => 'Terms and Conditions';
 
   @override
-  String get termsAgreementRequiredError => 'You must agree to the Terms and Conditions to continue';
+  String get termsAgreementRequiredError =>
+      'You must agree to the Terms and Conditions to continue';
 
   @override
   String get termsAndConditionsTitle => 'Terms and Conditions';
-
-  @override
-  String get termsAndConditionsBody => 'By using the Tayar app, you agree to be bound by these Terms and Conditions. Please review the full terms on our official website or contact customer support for more details.';
 
   @override
   String get submitApplicationSuccessTitle => 'Application sent!';

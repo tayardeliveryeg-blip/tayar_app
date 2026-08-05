@@ -509,7 +509,7 @@ abstract class AppLocalizations {
   /// No description provided for @termsAndConditionsBody.
   ///
   /// In ar, this message translates to:
-  /// **'باستخدامك تطبيق طيار أنت موافق على شروط الاستخدام الخاصة بيه، وإن الخدمة مقدَّمة بين الراكب والطيار مباشرة، وإن الشركة بتوفر منصة الربط فقط.'**
+  /// **'باستخدامك تطبيق طيار، أنت بتوافق على الالتزام بهذه الشروط والأحكام. يرجى مراجعة الشروط الكاملة على موقعنا الرسمي أو التواصل مع خدمة العملاء لمزيد من التفاصيل.'**
   String get termsAndConditionsBody;
 
   /// No description provided for @privacyPolicy.
@@ -859,12 +859,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الشروط والأحكام'**
   String get termsAndConditionsTitle;
-
-  /// No description provided for @termsAndConditionsBody.
-  ///
-  /// In ar, this message translates to:
-  /// **'باستخدامك تطبيق طيار، أنت بتوافق على الالتزام بهذه الشروط والأحكام. يرجى مراجعة الشروط الكاملة على موقعنا الرسمي أو التواصل مع خدمة العملاء لمزيد من التفاصيل.'**
-  String get termsAndConditionsBody;
 
   /// No description provided for @submitApplicationSuccessTitle.
   ///

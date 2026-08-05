@@ -227,7 +227,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get termsAndConditionsBody =>
-      'باستخدامك تطبيق طيار أنت موافق على شروط الاستخدام الخاصة بيه، وإن الخدمة مقدَّمة بين الراكب والطيار مباشرة، وإن الشركة بتوفر منصة الربط فقط.';
+      'باستخدامك تطبيق طيار، أنت بتوافق على الالتزام بهذه الشروط والأحكام. يرجى مراجعة الشروط الكاملة على موقعنا الرسمي أو التواصل مع خدمة العملاء لمزيد من التفاصيل.';
 
   @override
   String get privacyPolicy => 'سياسة الخصوصية';
@@ -405,13 +405,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get termsAndConditionsLinkText => 'الشروط والأحكام';
 
   @override
-  String get termsAgreementRequiredError => 'لازم توافق على الشروط والأحكام عشان تكمل';
+  String get termsAgreementRequiredError =>
+      'لازم توافق على الشروط والأحكام عشان تكمل';
 
   @override
   String get termsAndConditionsTitle => 'الشروط والأحكام';
-
-  @override
-  String get termsAndConditionsBody => 'باستخدامك تطبيق طيار، أنت بتوافق على الالتزام بهذه الشروط والأحكام. يرجى مراجعة الشروط الكاملة على موقعنا الرسمي أو التواصل مع خدمة العملاء لمزيد من التفاصيل.';
 
   @override
   String get submitApplicationSuccessTitle => 'تم إرسال طلبك';
