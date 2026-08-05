@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
+import 'package:tayay_app/services/driver_document_upload_service.dart';
 class DrivingLicenseScreen extends StatefulWidget {
   const DrivingLicenseScreen({super.key});
 
@@ -92,10 +93,16 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
     setState(() => _licensePhotoError = false);
     setState(() => _isSaving = true);
     try {
+      final photoUrl = await DriverDocumentUploadService.uploadDocument(
+        driverId: uid,
+        fileName: 'driving_license',
+        bytes: _licensePhoto!,
+      );
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
         'drivingLicense': {
           'expiryDate': _expiryController.text.trim(),
           'hasPhoto': true,
+          'photoUrl': photoUrl,
           'complete': true,
         },
       }, SetOptions(merge: true));

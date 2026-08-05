@@ -231,8 +231,30 @@ service cloud.firestore {
     match /drivers/{driverId} {
       allow read: if request.auth != null &&
         (request.auth.uid == driverId || isAdmin() || isPreInvitedMatch());
-      allow create, update: if request.auth != null &&
-        (request.auth.uid == driverId || isAdmin());
+      // ====== الكابتن يقدر يعمل create لأول مرة بس status لازم يبقى
+      // pending_review أو غير موجود أصلاً - عشان محدش يقدر "يوافق على
+      // نفسه" من غير مراجعة الأدمن ======
+      allow create: if request.auth != null &&
+        (
+          isAdmin() ||
+          (
+            request.auth.uid == driverId &&
+            (!('status' in request.resource.data) || request.resource.data.status == 'pending_review')
+          )
+        );
+      // ====== الكابتن يقدر يعدّل بياناته (بروفايل، رخصة، موتوسيكل، إلخ)
+      // بحرية، لكن حقل status (pending_review/approved/rejected) محصور
+      // على الأدمن بس. قبل كده كان الكابتن يقدر يعدّل الحقل ده مباشرة
+      // وهي ثغرة أمنية خطيرة (أي كابتن كان يقدر "يوافق على نفسه" من غير
+      // ما يمر على مراجعة الأدمن خالص) ======
+      allow update: if request.auth != null &&
+        (
+          isAdmin() ||
+          (
+            request.auth.uid == driverId &&
+            !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status'])
+          )
+        );
       allow update: if request.auth != null &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount']);
       allow delete: if request.auth != null && (isAdmin() || isPreInvitedMatch());

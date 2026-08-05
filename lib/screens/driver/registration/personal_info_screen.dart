@@ -9,6 +9,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/driver_invite_link_helper.dart';
 import 'package:tayay_app/screens/auth/mobile_link_otp_screen.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
+import 'package:tayay_app/services/driver_document_upload_service.dart';
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key});
 
@@ -221,12 +222,22 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       // آمنة تتنادى حتى لو الربط حصل قبل كده ======
       await linkPreInvitedDriverIfNeeded(uid: uid, phoneNumber: mobile);
 
+      String? photoUrl;
+      if (_photoBytes != null) {
+        photoUrl = await DriverDocumentUploadService.uploadDocument(
+          driverId: uid,
+          fileName: 'personal_photo',
+          bytes: _photoBytes!,
+        );
+      }
+
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
         'personalInfo': {
           'firstName': _firstNameController.text.trim(),
           'lastName': _lastNameController.text.trim(),
           'birthDate': _birthDateController.text.trim(),
           'hasPhoto': _photoBytes != null,
+          if (photoUrl != null) 'photoUrl': photoUrl,
           'phone': mobile,
           'complete': true,
         },

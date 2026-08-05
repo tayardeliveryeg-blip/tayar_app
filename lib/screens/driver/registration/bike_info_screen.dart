@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
+import 'package:tayay_app/services/driver_document_upload_service.dart';
 class BikeInfoScreen extends StatefulWidget {
   const BikeInfoScreen({super.key});
 
@@ -101,6 +102,19 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
     setState(() => _bikePhotoError = false);
     setState(() => _isSaving = true);
     try {
+      final bikePhotoUrl = await DriverDocumentUploadService.uploadDocument(
+        driverId: uid,
+        fileName: 'bike_photo',
+        bytes: _bikePhoto!,
+      );
+      String? licensePhotoUrl;
+      if (_licensePhoto != null) {
+        licensePhotoUrl = await DriverDocumentUploadService.uploadDocument(
+          driverId: uid,
+          fileName: 'bike_license_photo',
+          bytes: _licensePhoto!,
+        );
+      }
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
         'bikeInfo': {
           'brand': _brandController.text.trim(),
@@ -109,7 +123,9 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
           'plateNumber': _plateController.text.trim(),
           'year': _yearController.text.trim(),
           'hasBikePhoto': true,
+          'bikePhotoUrl': bikePhotoUrl,
           'hasLicensePhoto': _licensePhoto != null,
+          if (licensePhotoUrl != null) 'licensePhotoUrl': licensePhotoUrl,
           'complete': true,
         },
       }, SetOptions(merge: true));

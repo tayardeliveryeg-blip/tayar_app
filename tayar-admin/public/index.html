@@ -564,6 +564,20 @@
   </div>
 </div>
 
+<!-- DRIVER DOCUMENTS MODAL: بيعرض صور المستندات الفعلية اللي اترفعت على
+     Storage (فيش وتشبيه، رخصة قيادة، صورة الموتوسيكل، ترخيصه) عشان الأدمن
+     يقدر يراجعها فعليًا قبل تغيير حالة الموافقة - قبل كده كان مفيش أي طريقة
+     يشوف بيها المستندات دي خالص ولو موجودة أساسًا -->
+<div class="modal-overlay" id="docsModalOverlay">
+  <div class="modal" style="max-width:640px;">
+    <h3 id="docsModalTitle">Driver documents</h3>
+    <div id="docsModalBody" style="display:flex;flex-wrap:wrap;gap:14px;margin:10px 0;"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeDocsModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-app-compat.min.js"></script>
@@ -741,7 +755,17 @@ function startListeners(){
         rating: pick(d, ['rating'], 5.0),
         deliveries: 0, // computed below once orders are known
         approval: (pick(d, ['status'], 'pending_review')+'').toLowerCase(),
-        online: pick(d, ['isAvailable'], false) === true
+        online: pick(d, ['isAvailable'], false) === true,
+        // ====== روابط المستندات المرفوعة فعليًا (driver_document_upload_service.dart)
+        // عشان مودال "Documents" يقدر يعرضها للمراجعة قبل الموافقة ======
+        docs: {
+          personalPhoto: deepPick(d, 'personalInfo.photoUrl', null),
+          criminalRecordFront: deepPick(d, 'personalDocuments.criminalRecordFrontUrl', null),
+          criminalRecordBack: deepPick(d, 'personalDocuments.criminalRecordBackUrl', null),
+          drivingLicense: deepPick(d, 'drivingLicense.photoUrl', null),
+          bikePhoto: deepPick(d, 'bikeInfo.bikePhotoUrl', null),
+          bikeLicense: deepPick(d, 'bikeInfo.licensePhotoUrl', null)
+        }
       };
     });
     connectionState.drivers = 'ok';
@@ -1093,11 +1117,36 @@ function renderDrivers(){
       </td>
       <td><span class="badge ${d.online?'online':'offline'}" style="cursor:pointer;" title="Click to force offline" onclick="${d.online?`forceDriverOffline('${d.id}')`:''}">${d.online?'online':'offline'}</span></td>
       <td>
+        <button class="btn small" onclick="showDriverDocuments('${d.id}')">Documents</button>
         <button class="btn small danger-outline" onclick="removeDriver('${d.id}')">Remove</button>
       </td>
     </tr>
   `).join('');
 }
+function showDriverDocuments(id){
+  const d = drivers.find(x => x.id === id);
+  if(!d) return;
+  document.getElementById('docsModalTitle').textContent = `Documents — ${d.name}`;
+  const items = [
+    ['Personal photo', d.docs.personalPhoto],
+    ['Criminal record (front)', d.docs.criminalRecordFront],
+    ['Criminal record (back)', d.docs.criminalRecordBack],
+    ['Driving license', d.docs.drivingLicense],
+    ['Bike photo', d.docs.bikePhoto],
+    ['Bike license', d.docs.bikeLicense]
+  ];
+  document.getElementById('docsModalBody').innerHTML = items.map(([label, url]) => `
+    <div style="width:180px;">
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:6px;">${label}</div>
+      ${url
+        ? `<a href="${url}" target="_blank" rel="noopener"><img src="${url}" style="width:100%;height:130px;object-fit:cover;border-radius:8px;border:1px solid var(--border);" /></a>`
+        : `<div style="width:100%;height:130px;border-radius:8px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-dimmer);font-size:12px;">Not uploaded</div>`
+      }
+    </div>
+  `).join('');
+  document.getElementById('docsModalOverlay').classList.add('open');
+}
+function closeDocsModal(){ document.getElementById('docsModalOverlay').classList.remove('open'); }
 function setDriverApproval(id, status){
   db.collection(COLLECTIONS.drivers).doc(id).update({status})
     .then(()=>toast(`Driver approval set to ${status.replace('_',' ')}`))

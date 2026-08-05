@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
+import 'package:tayay_app/services/driver_document_upload_service.dart';
 class PersonalDocumentsScreen extends StatefulWidget {
   const PersonalDocumentsScreen({super.key});
 
@@ -85,11 +86,26 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
     setState(() => _criminalFrontError = false);
     setState(() => _isSaving = true);
     try {
+      final frontUrl = await DriverDocumentUploadService.uploadDocument(
+        driverId: uid,
+        fileName: 'criminal_record_front',
+        bytes: _criminalRecordFront!,
+      );
+      String? backUrl;
+      if (_criminalRecordBack != null) {
+        backUrl = await DriverDocumentUploadService.uploadDocument(
+          driverId: uid,
+          fileName: 'criminal_record_back',
+          bytes: _criminalRecordBack!,
+        );
+      }
       await FirebaseFirestore.instance.collection('drivers').doc(uid).set({
         'personalDocuments': {
           'idNumber': _idNumberController.text.trim(),
           'hasCriminalRecordFront': true,
+          'criminalRecordFrontUrl': frontUrl,
           'hasCriminalRecordBack': _criminalRecordBack != null,
+          if (backUrl != null) 'criminalRecordBackUrl': backUrl,
           'complete': true,
         },
       }, SetOptions(merge: true));

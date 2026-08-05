@@ -1,0 +1,29 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null &&
+        firestore.exists(/databases/(default)/documents/admin/$(request.auth.uid));
+    }
+
+    // ====== مستندات الكابتن (فيش وتشبيه، رخصة قيادة، صورة الموتوسيكل،
+    // ترخيص الموتوسيكل) - بيرفعها الكابتن نفسه وقت التسجيل، وبتتقرأ من
+    // الكابتن نفسه (يتأكد من صورته المرفوعة) والأدمن بس (لمراجعة الموافقة).
+    // ممنوع أي حد تاني يشوفها - دي مستندات هوية حساسة ======
+    match /driver_documents/{driverId}/{fileName} {
+      allow read: if request.auth != null &&
+        (request.auth.uid == driverId || isAdmin());
+      allow write: if request.auth != null &&
+        request.auth.uid == driverId &&
+        request.resource.size < 8 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null && isAdmin();
+    }
+
+    // ====== أي مسار تاني غير معرّف صراحة: ممنوع تمامًا (default-deny) ======
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
