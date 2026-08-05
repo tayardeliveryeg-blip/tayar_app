@@ -438,3 +438,122 @@ exports.createOrder = onCall(async (request) => {
     orderType: scheduledForTimestamp ? "scheduled" : "instant",
   };
 });
+
+// ====================================================================
+// ====== 5) تنبيه زرار الطوارئ (SOS) - إشعار فوري للأدمن ======
+// ====================================================================
+// المسؤولية: بمجرد ما راكب أو طيار يدوس زرار الطوارئ (SosService.triggerAlert
+// في sos_service.dart بيكتب مستند جديد في sos_alerts)، الدالة دي بتشتغل
+// فورًا وتحاول توصل تنبيه للأدمن بطريقتين، سواء كانت لوحة التحكم مفتوحة
+// قدامه دلوقتي أو لأ:
+//   أ) SMS لأرقام الأدمن المسجّلة في لوحة التحكم (تاب Settings -> SOS admin
+//      phone numbers، محفوظة في settings/config.sosAdminPhones)
+//   ب) Push Notification (FCM) لأي أدمن عنده fcmToken مسجّل (مثلاً لو
+//      بيستخدم تطبيق الموبايل نفسه بحساب أدمن)
+//
+// ====== SMS: محتاج ربط فعلي بمزوّد SMS ======
+// الدالة دي مبنية على إنها تنادي sendSmsViaProvider لكل رقم، لكن الدالة
+// دي حاليًا مجرد placeholder بتسجّل log بس - لسه محتاجة ربط فعلي بأي
+// مزوّد SMS (زي SMS Misr, Msegat, 4jawaly, Twilio... إلخ) عن طريق إضافة
+// الـ API key بتاعه كـ Secret (firebase functions:secrets:set) واستدعاء
+// الـ REST endpoint بتاعه هنا. من غير الربط ده، التنبيه هيتسجل في
+// Firestore وهيظهر في تاب SOS Alerts في اللحظة نفسها (زي ما هو شغال
+// دلوقتي بالفعل)، لكن مفيش SMS/Push هيتبعت فعليًا لحد ما يتم الربط.
+const { defineSecret } = require("firebase-functions/params");
+const smsApiKey = defineSecret("SMS_API_KEY");
+
+/**
+ * ====== Placeholder لإرسال SMS - محتاج استبداله بالنداء الفعلي لمزوّد
+ * الـ SMS اللي هيتم اختياره. اتركها زي ما هي دلوقتي (بترجع false بس
+ * وتسجل log) لحد ما يتحدد المزوّد والـ API key. ======
+ */
+async function sendSmsViaProvider(phone, message) {
+  const apiKey = smsApiKey.value();
+  if (!apiKey) {
+    console.warn(
+      `SMS_API_KEY مش متسجّل - مفيش SMS هيتبعت لـ ${phone}. ` +
+        "محتاج تحدد مزوّد SMS وتسجّل الـ API key بتاعه كـ secret."
+    );
+    return false;
+  }
+  // ====== TODO: استبدل السطور دي بالنداء الفعلي لمزوّد الـ SMS المختار.
+  // مثال عام (هيختلف شكل الـ request/response حسب المزوّد الفعلي):
+  //
+  // const res = await fetch("https://api.<provider>.com/v1/sms/send", {
+  //   method: "POST",
+  //   headers: {
+  //     "Authorization": `Bearer ${apiKey}`,
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({ to: phone, text: message, sender: "Tayar" }),
+  // });
+  // return res.ok;
+  console.warn(
+    `sendSmsViaProvider: مزوّد الـ SMS لسه مش متربط فعليًا (${phone})`
+  );
+  return false;
+}
+
+/**
+ * بيدور على كل الأدمنز اللي عندهم fcmToken مسجّل ويبعتلهم Push مباشرة.
+ */
+async function sendPushToAllAdmins(title, body, data) {
+  const db = admin.firestore();
+  const adminsSnap = await db.collection("admin").get();
+  const tokens = adminsSnap.docs
+    .map((d) => d.data().fcmToken)
+    .filter(Boolean);
+
+  if (tokens.length === 0) {
+    console.log("مفيش أي أدمن عنده fcmToken مسجّل - مفيش Push هيتبعت");
+    return;
+  }
+
+  try {
+    await admin.messaging().sendEachForMulticast({
+      tokens,
+      notification: { title, body },
+      data,
+      android: {
+        priority: "high",
+        notification: { channelId: "tayar_chat_channel", sound: "default" },
+      },
+      apns: { payload: { aps: { sound: "default" } } },
+    });
+    console.log(`Push تنبيه SOS اتبعت لـ ${tokens.length} أدمن`);
+  } catch (err) {
+    console.error("فشل إرسال Push تنبيه SOS:", err);
+  }
+}
+
+exports.onSosAlertCreated = onDocumentCreated(
+  { document: "sos_alerts/{alertId}", secrets: [smsApiKey] },
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+
+    const alert = snap.data();
+    const roleLabel = alert.userRole === "driver" ? "طيار" : "راكب";
+    const name = alert.userName || "مستخدم";
+    const phone = alert.userPhone || "بدون رقم";
+    const mapsLink = alert.location
+      ? `https://maps.google.com/?q=${alert.location.latitude},${alert.location.longitude}`
+      : null;
+
+    const message =
+      `🚨 تنبيه طوارئ من ${roleLabel}: ${name} (${phone})` +
+      (mapsLink ? ` - الموقع: ${mapsLink}` : " - الموقع مش متاح");
+
+    const db = admin.firestore();
+    const settingsDoc = await db.collection("settings").doc("config").get();
+    const sosAdminPhones = settingsDoc.data()?.sosAdminPhones || [];
+
+    await Promise.all([
+      ...sosAdminPhones.map((p) => sendSmsViaProvider(p, message)),
+      sendPushToAllAdmins("🚨 تنبيه طوارئ SOS", message, {
+        type: "sos_alert",
+        alertId: event.params.alertId,
+      }),
+    ]);
+  }
+);
