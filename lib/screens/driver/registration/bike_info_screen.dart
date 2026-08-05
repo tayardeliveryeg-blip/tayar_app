@@ -125,7 +125,7 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
           'hasBikePhoto': true,
           'bikePhotoUrl': bikePhotoUrl,
           'hasLicensePhoto': _licensePhoto != null,
-          if (licensePhotoUrl != null) 'licensePhotoUrl': licensePhotoUrl,
+          'licensePhotoUrl': ?licensePhotoUrl,
           'complete': true,
         },
       }, SetOptions(merge: true));

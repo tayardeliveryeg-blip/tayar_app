@@ -237,7 +237,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           'lastName': _lastNameController.text.trim(),
           'birthDate': _birthDateController.text.trim(),
           'hasPhoto': _photoBytes != null,
-          if (photoUrl != null) 'photoUrl': photoUrl,
+          'photoUrl': ?photoUrl,
           'phone': mobile,
           'complete': true,
         },

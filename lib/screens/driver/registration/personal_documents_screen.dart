@@ -105,7 +105,7 @@ class _PersonalDocumentsScreenState extends State<PersonalDocumentsScreen> {
           'hasCriminalRecordFront': true,
           'criminalRecordFrontUrl': frontUrl,
           'hasCriminalRecordBack': _criminalRecordBack != null,
-          if (backUrl != null) 'criminalRecordBackUrl': backUrl,
+          'criminalRecordBackUrl': ?backUrl,
           'complete': true,
         },
       }, SetOptions(merge: true));
