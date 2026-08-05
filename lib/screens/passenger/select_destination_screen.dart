@@ -5,8 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors;
-import 'package:tayay_app/screens/passenger/pick_on_map_screen.dart' show PickOnMapScreen;
+import 'package:tayay_app/screens/passenger/passenger_home.dart'
+    show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/pick_on_map_screen.dart'
+    show PickOnMapScreen;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
@@ -87,12 +89,20 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
   void initState() {
     super.initState();
     _loadRecentSearches();
+    // ====== بنعمل listen على الفوكس عشان إطار خانة البحث كلها (مش بس
+    // مكان الكتابة) يتلون باللون الأساسي وقت ما الحقل يبقى متركز عليه ======
+    _searchFocusNode.addListener(_onSearchFocusChange);
+  }
+
+  void _onSearchFocusChange() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
     _controller.dispose();
+    _searchFocusNode.removeListener(_onSearchFocusChange);
     _searchFocusNode.dispose();
     super.dispose();
   }
@@ -351,6 +361,15 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
               decoration: BoxDecoration(
                 color: context.cardColor,
                 borderRadius: BorderRadius.circular(14),
+                // ====== الإطار بقى محيط بالصندوق كله (زرار البحث + الكتابة
+                // + زرار الخريطة)، مش بس حوالين مكان الكتابة زي ما كان قبل
+                // كده - بيتلون باللون الأساسي وقت التركيز على الحقل ======
+                border: Border.all(
+                  color: _searchFocusNode.hasFocus
+                      ? TayarColors.primary
+                      : context.dividerColor2,
+                  width: _searchFocusNode.hasFocus ? 1.5 : 1,
+                ),
               ),
               child: Row(
                 children: [
@@ -401,14 +420,6 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                         ),
                       ),
                     ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    width: 1,
-                    color: context.dividerColor2,
-                  ),
                   Tooltip(
                     message: loc.pickFromMapLabel,
                     child: Material(
