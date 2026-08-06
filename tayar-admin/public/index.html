@@ -587,6 +587,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-app-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-auth-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-firestore-compat.min.js"></script>
+<!-- ====== OneSignal: تنبيه فوري (Push) للأدمن عند SOS، بديل لـ Cloud
+     Functions اللي محتاجة خطة Blaze. متصل بـ Supabase Database Webhook
+     اللي بيشتغل تلقائي لما تتضاف صف جديد في sos_alerts (اتزرعت من
+     SosService.triggerAlert في التطبيق). لازم الأدمن يوافق على صلاحية
+     الإشعارات في المتصفح أول مرة (بيتطلب بعد تسجيل الدخول تحت). ====== -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(async function (OneSignal) {
+  await OneSignal.init({ appId: "ea5fbe09-34c1-4264-95d9-03554d5dbae8" });
+});
+</script>
 <script>
 /* ================= FIREBASE SETUP =================
    Collection names are set in COLLECTIONS — edit if yours differ. */
@@ -622,6 +634,13 @@ auth.onAuthStateChanged(user => {
     appEl.style.display = 'flex';
     document.getElementById('userEmailTag').textContent = user.email;
     startListeners();
+    // طلب صلاحية إشعارات الطوارئ (OneSignal) - مرة واحدة، هيتجاهل الطلب
+    // تلقائيًا لو الأدمن رافض قبل كده أو موافق بالفعل
+    if (window.OneSignalDeferred) {
+      OneSignalDeferred.push(async function (OneSignal) {
+        try { await OneSignal.Notifications.requestPermission(); } catch (e) {}
+      });
+    }
   } else {
     loginScreen.style.display = 'flex';
     appEl.style.display = 'none';

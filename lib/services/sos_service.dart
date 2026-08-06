@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 
 /// ====== خدمة زر الطوارئ (SOS) ======
 /// بتسجل تنبيه فوري في مجموعة sos_alerts في Firestore بمجرد ما المستخدم
@@ -8,10 +11,23 @@ import 'package:geolocator/geolocator.dart';
 /// واسمه ورقمه وبيانات الرحلة لو موجودة - عشان لوحة تحكم الأدمن تعرضه فورًا.
 /// التسجيل بيحصل بغض النظر عن أي إجراء تاني (اتصال بالشرطة/الدعم/جهة
 /// الطوارئ الشخصية) عشان الأدمن يبقى عارف حتى لو المستخدم قفل الشاشة بسرعة.
+///
+/// بالإضافة لـ Firestore (تخزين دائم + تاب SOS في لوحة الأدمن)، بنكتب
+/// كمان نسخة مبسطة في Supabase (جدول sos_alerts هناك). ده مش بديل عن
+/// Firestore، ده بس "جرس إنذار" إضافي: Supabase عندها Database Webhook
+/// بتشتغل تلقائي عند أي إضافة وبتنادي Edge Function بتبعت Push فوري
+/// للأدمن عن طريق OneSignal - بديل لـ Cloud Functions اللي محتاجة خطة
+/// Blaze. لو كتابة Supabase فشلت (نت، إلخ) إحنا بنكمل عادي من غير ما
+/// نوقف التنبيه الأساسي في Firestore، لأنه هو الأهم والمصدر الرسمي.
 class SosService {
   SosService._();
 
   static final _firestore = FirebaseFirestore.instance;
+
+  static const String _supabaseUrl =
+      'https://pctxhemhytzaufdzuhfz.supabase.co';
+  static const String _supabaseAnonKey =
+      'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
 
   /// بيسجل تنبيه طوارئ جديد ويرجع الـ id بتاعه، أو null لو مفيش يوزر مسجل
   /// دخول. لو تعذر الوصول لموقع الجهاز (مثلاً صلاحية الموقع متبقتش) التنبيه
@@ -48,7 +64,55 @@ class SosService {
       'status': 'open',
       'createdAt': FieldValue.serverTimestamp(),
     });
+
+    // جرس الإنذار الفوري (Supabase -> Push) - غير حرج، فمنستناش نتيجته
+    // ولا بنفشل التنبيه الأساسي لو هو اللي فشل
+    _notifySupabase(
+      firestoreAlertId: doc.id,
+      userId: user.uid,
+      userName: profile.name,
+      userPhone: profile.phone,
+      userRole: userRole,
+      orderId: orderId,
+      location: location,
+    );
+
     return doc.id;
+  }
+
+  static Future<void> _notifySupabase({
+    required String firestoreAlertId,
+    required String userId,
+    required String userName,
+    required String userPhone,
+    required String userRole,
+    String? orderId,
+    GeoPoint? location,
+  }) async {
+    try {
+      await http
+          .post(
+            Uri.parse('$_supabaseUrl/rest/v1/sos_alerts'),
+            headers: {
+              'apikey': _supabaseAnonKey,
+              'Authorization': 'Bearer $_supabaseAnonKey',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'firestore_alert_id': firestoreAlertId,
+              'user_id': userId,
+              'user_name': userName,
+              'user_phone': userPhone,
+              'user_role': userRole,
+              'order_id': orderId,
+              'lat': location?.latitude,
+              'lng': location?.longitude,
+            }),
+          )
+          .timeout(const Duration(seconds: 6));
+    } catch (_) {
+      // مش حرج - Firestore هو المصدر الرسمي، ده بس تنبيه إضافي سريع
+    }
   }
 
   static Future<_ProfileInfo> _loadUserProfile(
