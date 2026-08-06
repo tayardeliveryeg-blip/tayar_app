@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
@@ -44,6 +43,11 @@ class OrderConfirmationScreen extends StatefulWidget {
 
 class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   bool _isSubmitting = false;
+
+  // ====== نفس مشروع/مفتاح Supabase المستخدم في sos_service.dart بالظبط -
+  // مفتاح anon عام آمن يتضاف في كود العميل (client-side)، مش سري. ======
+  static const String _supabaseAnonKey =
+      'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
 
   // ====== نقطتا الانطلاق والوجهة بقيوا قابلين للتعديل من نفس الشاشة (بالضغط
   // على أي منهم)، فبقيوا حالة محلية بدل ما يفضلوا ثابتين من اللي وصل من
@@ -300,31 +304,70 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
     setState(() => _isSubmitting = true);
 
     try {
-      // ====== إنشاء الطلب بالكامل بيحصل دلوقتي على السيرفر (Cloud Function
-      // اسمها createOrder). السيرفر هو اللي بيحسب المسافة والسعر المقترح
-      // الحقيقيين من إحداثيات نقطة الانطلاق والوجهة بس، وبيتأكد إن السعر
-      // اللي الراكب حدده (proposedFare) منطقي قبل ما يكتب أي حاجة في
+      // ====== إنشاء الطلب بالكامل بيحصل دلوقتي على السيرفر - مش عن طريق
+      // Firebase Cloud Functions (محتاجة خطة Blaze)، لكن عن طريق Supabase
+      // Edge Function اسمها create-order (بديل، مجاني بالكامل - نفس فكرة
+      // sos_service.dart بالظبط). السيرفر هو اللي بيحسب المسافة والسعر
+      // المقترح الحقيقيين من إحداثيات نقطة الانطلاق والوجهة بس، وبيتأكد إن
+      // السعر اللي الراكب حدده (proposedFare) منطقي قبل ما يكتب أي حاجة في
       // Firestore - عشان محدش يقدر يتلاعب بالمسافة أو السعر عن طريق تعديل
-      // الموبايل نفسه. اسم ورقم الراكب كمان بيتجابوا من السيرفر مباشرة. ======
-      final callable = FirebaseFunctions.instanceFor(
-        region: 'europe-west1',
-      ).httpsCallable('createOrder');
+      // الموبايل نفسه. اسم ورقم الراكب كمان بيتجابوا من السيرفر مباشرة.
+      // الكتابة في Firestore بتتم بصلاحيات Service Account (بديل Admin
+      // SDK)، فمينفعش حد يعمل نفس الحاجة مباشرة من الموبايل. ======
+      final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      if (idToken == null) {
+        throw StateError('لازم تسجل الدخول الأول عشان تطلب رحلة');
+      }
 
-      final result = await callable.call<Map<String, dynamic>>({
-        'pickupAddress': _pickupAddress,
-        'pickupLat': _pickupLocation.latitude,
-        'pickupLng': _pickupLocation.longitude,
-        'destinationAddress': _destinationAddress,
-        'destinationLat': _destinationLocation.latitude,
-        'destinationLng': _destinationLocation.longitude,
-        'proposedFare': _proposedFare,
-        'autoAccept': _autoAccept,
-        'paymentMethod': widget.paymentMethod,
-        if (_scheduledFor != null)
-          'scheduledFor': _scheduledFor!.millisecondsSinceEpoch,
-      });
+      final response = await http
+          .post(
+            Uri.parse(
+              'https://pctxhemhytzaufdzuhfz.supabase.co/functions/v1/create-order',
+            ),
+            headers: {
+              'apikey': _supabaseAnonKey,
+              'Authorization': 'Bearer $_supabaseAnonKey',
+              'X-Firebase-Id-Token': idToken,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'pickupAddress': _pickupAddress,
+              'pickupLat': _pickupLocation.latitude,
+              'pickupLng': _pickupLocation.longitude,
+              'destinationAddress': _destinationAddress,
+              'destinationLat': _destinationLocation.latitude,
+              'destinationLng': _destinationLocation.longitude,
+              'proposedFare': _proposedFare,
+              'autoAccept': _autoAccept,
+              'paymentMethod': widget.paymentMethod,
+              if (_scheduledFor != null)
+                'scheduledFor': _scheduledFor!.millisecondsSinceEpoch,
+            }),
+          )
+          .timeout(const Duration(seconds: 20));
 
-      final orderId = result.data['orderId'] as String;
+      final responseData =
+          jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (response.statusCode != 200) {
+        // ====== رسالة السيرفر بتوصل هنا لو السعر غير منطقي مثلًا ======
+        final errorMessage = responseData['error'] as String?;
+        debugPrint(
+          '❌ خطأ من create-order: ${response.statusCode} - $errorMessage',
+        );
+        if (!mounted) return;
+        setState(() => _isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              errorMessage ?? AppLocalizations.of(context)!.submitFailedError,
+            ),
+          ),
+        );
+        return;
+      }
+
+      final orderId = responseData['orderId'] as String;
 
       if (!mounted) return;
       setState(() => _isSubmitting = false);
@@ -341,18 +384,6 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             pickupLocation: _pickupLocation,
             destinationAddress: _destinationAddress,
             scheduledFor: _scheduledFor,
-          ),
-        ),
-      );
-    } on FirebaseFunctionsException catch (e) {
-      // ====== رسالة السيرفر بتوصل هنا لو السعر غير منطقي مثلًا (invalid-argument) ======
-      debugPrint('❌ خطأ من createOrder: ${e.code} - ${e.message}');
-      if (!mounted) return;
-      setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.message ?? AppLocalizations.of(context)!.submitFailedError,
           ),
         ),
       );

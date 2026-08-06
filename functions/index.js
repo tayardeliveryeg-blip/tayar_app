@@ -279,6 +279,11 @@ function calculateSuggestedFare(distanceKm) {
   return 10 + 5 * distanceKm;
 }
 
+// ====== ⚠️ الدالة دي بقت غير مستخدمة (superseded) ======
+// محتاجة خطة Blaze عشان تتنشر أصلًا. الموبايل بقى بينادي بديلها:
+// Supabase Edge Function اسمها create-order (supabase/functions/create-order/)
+// نفس المنطق بالظبط، بس شغالة من غير Blaze. سايبينها هنا كمرجع/خطة رجوع لو
+// حبينا نرجع نستخدم Cloud Functions بعد ما Blaze تتفعل يومًا ما.
 exports.createOrder = onCall(async (request) => {
   const uid = request.auth?.uid;
   if (!uid) {
