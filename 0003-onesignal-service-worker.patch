@@ -1,0 +1,28 @@
+From fb8be1a5ff33f6464e8d473fbada1cdc91c92178 Mon Sep 17 00:00:00 2001
+From: Claude <claude@tayar.local>
+Date: Thu, 6 Aug 2026 05:12:15 +0000
+Subject: [PATCH] =?UTF-8?q?fix(sos):=20=D8=A5=D8=B6=D8=A7=D9=81=D8=A9=20On?=
+ =?UTF-8?q?eSignalSDKWorker.js=20=D8=A7=D9=84=D9=85=D8=B7=D9=84=D9=88?=
+ =?UTF-8?q?=D8=A8=20=D9=84=D8=B9=D9=85=D9=84=20Web=20Push=20=D9=81=D9=8A?=
+ =?UTF-8?q?=20=D9=84=D9=88=D8=AD=D8=A9=20=D8=A7=D9=84=D8=A3=D8=AF=D9=85?=
+ =?UTF-8?q?=D9=86?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+من غير الملف ده، اشتراك المتصفح في الإشعارات كان بيفشل بصمت حتى لو ظهر طلب الإذن - OneSignal Web SDK محتاج service worker مستضاف على جذر نفس الدومين.
+---
+ tayar-admin/public/OneSignalSDKWorker.js | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 tayar-admin/public/OneSignalSDKWorker.js
+
+diff --git a/tayar-admin/public/OneSignalSDKWorker.js b/tayar-admin/public/OneSignalSDKWorker.js
+new file mode 100644
+index 0000000..75a133d
+--- /dev/null
++++ b/tayar-admin/public/OneSignalSDKWorker.js
+@@ -0,0 +1 @@
++importScripts("https://cdn.onesignal.com/sdks/OneSignalSDKWorker.js");
+-- 
+2.43.0
+
