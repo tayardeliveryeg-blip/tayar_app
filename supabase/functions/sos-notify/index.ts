@@ -1,9 +1,12 @@
 // ====== Edge Function: sos-notify ======
-// بتشتغل تلقائي عن طريق Supabase Database Webhook لما يتضاف صف جديد في
-// جدول public.sos_alerts (اللي بيتزرع من SosService._notifySupabase في
-// تطبيق Flutter بمجرد ما راكب أو كابتن يدوس زرار الطوارئ).
+// بتتنادى مباشرة من تطبيق Flutter (SosService._notifySupabase) بمجرد ما
+// راكب أو كابتن يدوس زرار الطوارئ - مش عن طريق Database Webhook (تعطيل
+// مؤقت بسبب مشكلة معروفة في منصة Supabase تمنع إنشاء أي webhook على
+// المشروع ده، راجع تعليق SosService لو حابب ترجع لأسلوب الـ webhook
+// لاحقًا).
 //
-// المسؤولية: تاخد بيانات التنبيه من الـ webhook payload وتبعت Push
+// المسؤولية: تاخد بيانات التنبيه (بنفس شكل { record: {...} } اللي كان
+// هيوصل من الـ webhook أصلاً، عشان مانغيّرش شكل الداتا) وتبعت Push
 // Notification فوري لكل الأدمن المشتركين عن طريق OneSignal - بديل لـ
 // Cloud Functions اللي محتاجة خطة Blaze في Firebase.
 //
@@ -12,7 +15,8 @@
 //   ONESIGNAL_APP_ID
 //   ONESIGNAL_REST_API_KEY
 //   SOS_WEBHOOK_SECRET  (سر بسيط بنولده احنا، بيتحقق منه عشان محدش
-//                        يقدر ينادي الدالة دي مباشرة من برة Supabase)
+//                        يقدر ينادي الدالة دي مباشرة من برة التطبيق -
+//                        نفس القيمة مكتوبة في SosService._sosWebhookSecret)
 
 Deno.serve(async (req: Request) => {
   try {
@@ -49,7 +53,10 @@ Deno.serve(async (req: Request) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Basic ${apiKey}`,
+          // ملحوظة: OneSignal غيّرت صيغة مفاتيح الـ REST API الحديثة
+          // (os_v2_app_...) وبقى لازم البادئة "Key" بدل "Basic" القديمة.
+          // "Basic" كانت بتفشل بصمت (401) مع المفاتيح الجديدة.
+          Authorization: `Key ${apiKey}`,
         },
         body: JSON.stringify({
           app_id: appId,

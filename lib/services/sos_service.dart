@@ -13,12 +13,22 @@ import 'package:http/http.dart' as http;
 /// الطوارئ الشخصية) عشان الأدمن يبقى عارف حتى لو المستخدم قفل الشاشة بسرعة.
 ///
 /// بالإضافة لـ Firestore (تخزين دائم + تاب SOS في لوحة الأدمن)، بنكتب
-/// كمان نسخة مبسطة في Supabase (جدول sos_alerts هناك). ده مش بديل عن
-/// Firestore، ده بس "جرس إنذار" إضافي: Supabase عندها Database Webhook
-/// بتشتغل تلقائي عند أي إضافة وبتنادي Edge Function بتبعت Push فوري
-/// للأدمن عن طريق OneSignal - بديل لـ Cloud Functions اللي محتاجة خطة
-/// Blaze. لو كتابة Supabase فشلت (نت، إلخ) إحنا بنكمل عادي من غير ما
-/// نوقف التنبيه الأساسي في Firestore، لأنه هو الأهم والمصدر الرسمي.
+/// كمان نسخة مبسطة في Supabase (جدول sos_alerts هناك) - ده مش بديل عن
+/// Firestore، ده بس "جرس إنذار" إضافي. وبنادي كمان مباشرة Edge Function
+/// اسمها sos-notify بتبعت Push فوري للأدمن عن طريق OneSignal - بديل لـ
+/// Cloud Functions اللي محتاجة خطة Blaze.
+///
+/// ملحوظة: كان المفروض إن Supabase Database Webhook هي اللي تنادي
+/// الـ Edge Function تلقائيًا لما يتزرع صف جديد، لكن مشروع Supabase
+/// عندنا فيه مشكلة معروفة في المنصة (schema supabase_functions مش
+/// متجهزة) بتمنع إنشاء أي Database Webhook خالص. عشان كده التطبيق هنا
+/// بينادي الـ Edge Function مباشرة بنفسه بعد كتابة الصف، بدل ما يعتمد
+/// على الـ webhook. لو Supabase حلّت المشكلة دي مستقبلًا وعايزين نرجع
+/// نستخدم webhook، ده اختياري وليس ضروري - الاتصال المباشر ده كافي.
+///
+/// لو أي من الخطوتين (كتابة Supabase أو نداء الـ Edge Function) فشلت
+/// (نت، إلخ) إحنا بنكمل عادي من غير ما نوقف التنبيه الأساسي في
+/// Firestore، لأنه هو الأهم والمصدر الرسمي.
 class SosService {
   SosService._();
 
@@ -28,6 +38,10 @@ class SosService {
       'https://pctxhemhytzaufdzuhfz.supabase.co';
   static const String _supabaseAnonKey =
       'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
+  // نفس القيمة المسجّلة كـ secret باسم SOS_WEBHOOK_SECRET في إعدادات
+  // الـ Edge Function على Supabase - لازم تفضل مطابقة لها تمامًا.
+  static const String _sosWebhookSecret =
+      'tayar_sos_9f3k7Lp2QxR8mZ4vN6wY1cB5tHj0eDaU';
 
   /// بيسجل تنبيه طوارئ جديد ويرجع الـ id بتاعه، أو null لو مفيش يوزر مسجل
   /// دخول. لو تعذر الوصول لموقع الجهاز (مثلاً صلاحية الموقع متبقتش) التنبيه
@@ -89,6 +103,20 @@ class SosService {
     String? orderId,
     GeoPoint? location,
   }) async {
+    final recordPayload = {
+      'firestore_alert_id': firestoreAlertId,
+      'user_id': userId,
+      'user_name': userName,
+      'user_phone': userPhone,
+      'user_role': userRole,
+      'order_id': orderId,
+      'lat': location?.latitude,
+      'lng': location?.longitude,
+    };
+
+    // 1) نسجل الصف في جدول sos_alerts على Supabase (تخزين/جرس إنذار
+    // إضافي). لو فشلت، منكملش نادي الـ Edge Function ونستخدم
+    // بياناتنا المحلية بدل كده - عشان الـ Push يتبعت في الحالتين.
     try {
       await http
           .post(
@@ -98,18 +126,29 @@ class SosService {
               'Authorization': 'Bearer $_supabaseAnonKey',
               'Content-Type': 'application/json',
             },
-            body: jsonEncode({
-              'firestore_alert_id': firestoreAlertId,
-              'user_id': userId,
-              'user_name': userName,
-              'user_phone': userPhone,
-              'user_role': userRole,
-              'order_id': orderId,
-              'lat': location?.latitude,
-              'lng': location?.longitude,
-            }),
+            body: jsonEncode(recordPayload),
           )
           .timeout(const Duration(seconds: 6));
+    } catch (_) {
+      // مش حرج - Firestore هو المصدر الرسمي، ده بس تنبيه إضافي سريع
+    }
+
+    // 2) ننادي الـ Edge Function مباشرة عشان تبعت الـ Push فورًا -
+    // بدل ما نستنى Database Webhook (معطلة حاليًا بسبب مشكلة في
+    // مشروع Supabase نفسه، راجع التعليق فوق الكلاس).
+    try {
+      await http
+          .post(
+            Uri.parse('$_supabaseUrl/functions/v1/sos-notify'),
+            headers: {
+              'apikey': _supabaseAnonKey,
+              'Authorization': 'Bearer $_supabaseAnonKey',
+              'Content-Type': 'application/json',
+              'x-webhook-secret': _sosWebhookSecret,
+            },
+            body: jsonEncode({'record': recordPayload}),
+          )
+          .timeout(const Duration(seconds: 8));
     } catch (_) {
       // مش حرج - Firestore هو المصدر الرسمي، ده بس تنبيه إضافي سريع
     }
