@@ -22,9 +22,6 @@
   "firestore": {
     "rules": "firestore.rules"
   },
-  "storage": {
-    "rules": "storage.rules"
-  },
   "hosting": {
     "target": "admin",
     "public": "tayar-admin/public",

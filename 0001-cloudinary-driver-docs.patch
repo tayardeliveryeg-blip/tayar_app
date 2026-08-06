@@ -1,0 +1,171 @@
+From 2d21ffd9d2ab1f54778b36d21f6b900ad20e287d Mon Sep 17 00:00:00 2001
+From: Claude <claude@tayar.local>
+Date: Thu, 6 Aug 2026 04:27:14 +0000
+Subject: [PATCH] =?UTF-8?q?feat(driver-docs):=20=D8=A7=D8=B3=D8=AA=D8=A8?=
+ =?UTF-8?q?=D8=AF=D8=A7=D9=84=20Firebase=20Storage=20=D8=A8=D9=80=20Cloudi?=
+ =?UTF-8?q?nary=20=D9=84=D8=B1=D9=81=D8=B9=20=D9=85=D8=B3=D8=AA=D9=86?=
+ =?UTF-8?q?=D8=AF=D8=A7=D8=AA=20=D8=A7=D9=84=D9=83=D8=A7=D8=A8=D8=AA=D9=86?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- driver_document_upload_service.dart: بيرفع دلوقتي على Cloudinary (unsigned upload preset) بدل Firebase Storage عشان Storage محتاج خطة Blaze حتى للاستخدام المجاني
+- شيل firebase_storage dependency من pubspec.yaml
+- شيل إعداد storage من firebase.json وحذف storage.rules غير المستخدم
+- الواجهة (uploadDocument) اتسابت زي ما هي بالظبط، فمفيش تعديل مطلوب في شاشات التسجيل الأربعة اللي بتستخدم الخدمة دي
+- Cloud Name: x7ghgz6x, Preset: tayar_driver_docs (unsigned), Folder: driver_documents
+---
+ firebase.json                                 |  3 -
+ .../driver_document_upload_service.dart       | 62 +++++++++++++++----
+ pubspec.yaml                                  |  1 -
+ storage.rules                                 | 29 ---------
+ 4 files changed, 50 insertions(+), 45 deletions(-)
+ delete mode 100644 storage.rules
+
+diff --git a/firebase.json b/firebase.json
+index 048d3fe..06848af 100644
+--- a/firebase.json
++++ b/firebase.json
+@@ -22,9 +22,6 @@
+   "firestore": {
+     "rules": "firestore.rules"
+   },
+-  "storage": {
+-    "rules": "storage.rules"
+-  },
+   "hosting": {
+     "target": "admin",
+     "public": "tayar-admin/public",
+diff --git a/lib/services/driver_document_upload_service.dart b/lib/services/driver_document_upload_service.dart
+index 069014b..e2d1a01 100644
+--- a/lib/services/driver_document_upload_service.dart
++++ b/lib/services/driver_document_upload_service.dart
+@@ -1,28 +1,66 @@
++import 'dart:convert';
+ import 'dart:typed_data';
+ 
+-import 'package:firebase_storage/firebase_storage.dart';
++import 'package:http/http.dart' as http;
+ 
+ /// ====== خدمة موحدة لرفع مستندات الكابتن (فيش وتشبيه، رخصة قيادة،
+-/// صورة الموتوسيكل، ترخيص الموتوسيكل) فعليًا على Firebase Storage.
++/// صورة الموتوسيكل، ترخيص الموتوسيكل) فعليًا على Cloudinary.
+ /// قبل كده الصور دي كانت بتتاخد من المستخدم وتفضل في الذاكرة بس وبتتضيع
+ /// من غير ما تتحفظ لأي مكان - وده كان معناه إن مراجعة الأدمن للمستندات
+-/// كانت شكلية بالكامل. المسار: driver_documents/{driverId}/{fileName} -
+-/// محمي بقواعد storage.rules (الكابتن نفسه + الأدمن بس يقدروا يشوفوه) ======
++/// كانت شكلية بالكامل.
++///
++/// بدأنا أول مرة بـ Firebase Storage، لكن Storage بيتطلب خطة Blaze حتى
++/// للاستخدام المجاني، فاستبدلناها بـ Cloudinary (خطة مجانية 25GB شهريًا)
++/// عن طريق "unsigned upload preset" - يعني رفع مباشر من التطبيق من غير
++/// ما نحتاج أي مفتاح سري جوه الكود أو سيرفر وسيط.
++///
++/// المسار: driver_documents/{driverId}/{fileName} (بيتحدد كـ public_id
++/// عن طريق الـ folder + context اللي بنبعتهم مع الطلب). ======
+ class DriverDocumentUploadService {
+   DriverDocumentUploadService._();
+ 
+-  /// بيرفع الصورة ويرجع رابط تحميلها. لو الرفع فشل (نت، صلاحيات، إلخ)
+-  /// بيرمي الاستثناء عشان الشاشة اللي بتستدعيه تقدر تعرض رسالة خطأ
+-  /// واضحة للمستخدم بدل ما تفتكر إن الحفظ نجح وهو أصلاً فشل.
++  static const String _cloudName = 'x7ghgz6x';
++  static const String _uploadPreset = 'tayar_driver_docs';
++  static final Uri _uploadUrl = Uri.parse(
++    'https://api.cloudinary.com/v1_1/$_cloudName/image/upload',
++  );
++
++  /// بيرفع الصورة على Cloudinary ويرجع رابط تحميلها (secure_url).
++  /// لو الرفع فشل (نت، إعدادات الـ preset، إلخ) بيرمي الاستثناء عشان
++  /// الشاشة اللي بتستدعيه تقدر تعرض رسالة خطأ واضحة للمستخدم بدل ما
++  /// تفتكر إن الحفظ نجح وهو أصلاً فشل.
+   static Future<String> uploadDocument({
+     required String driverId,
+     required String fileName,
+     required Uint8List bytes,
+   }) async {
+-    final ref = FirebaseStorage.instance.ref(
+-      'driver_documents/$driverId/$fileName.jpg',
+-    );
+-    await ref.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
+-    return ref.getDownloadURL();
++    final request = http.MultipartRequest('POST', _uploadUrl)
++      ..fields['upload_preset'] = _uploadPreset
++      ..fields['public_id'] = '$driverId/$fileName'
++      ..fields['folder'] = 'driver_documents'
++      ..files.add(
++        http.MultipartFile.fromBytes(
++          'file',
++          bytes,
++          filename: '$fileName.jpg',
++        ),
++      );
++
++    final streamedResponse = await request.send();
++    final response = await http.Response.fromStream(streamedResponse);
++
++    if (response.statusCode != 200) {
++      throw Exception(
++        'فشل رفع المستند على Cloudinary (${response.statusCode}): '
++        '${response.body}',
++      );
++    }
++
++    final data = jsonDecode(response.body) as Map<String, dynamic>;
++    final secureUrl = data['secure_url'] as String?;
++    if (secureUrl == null || secureUrl.isEmpty) {
++      throw Exception('رد Cloudinary غير متوقع: مفيش secure_url في الرد.');
++    }
++    return secureUrl;
+   }
+ }
+diff --git a/pubspec.yaml b/pubspec.yaml
+index b94cbde..b888d2a 100644
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -44,7 +44,6 @@ dependencies:
+   firebase_core: ^4.12.0
+   firebase_auth: ^6.5.4
+   firebase_messaging: ^16.4.2 # لازم لخدمة push_notification_service.dart (كانت متسوردة بالفعل بدون ما تتضاف هنا)
+-  firebase_storage: ^13.0.0 # لرفع مستندات الكابتن (فيش، رخصة، صور الموتوسيكل) فعليًا - كانت بتتاخد وتتضيع من غيرها
+   flutter_local_notifications: ^22.0.1 # لعرض إشعار وقت التطبيق فاتح (foreground)
+   google_sign_in: ^7.2.0
+   google_sign_in_web: ^1.1.3 # لازم dependency مباشرة عشان بنستورد web_only.dart بنفسنا في شاشة تسجيل الدخول
+diff --git a/storage.rules b/storage.rules
+deleted file mode 100644
+index 3289380..0000000
+--- a/storage.rules
++++ /dev/null
+@@ -1,29 +0,0 @@
+-rules_version = '2';
+-service firebase.storage {
+-  match /b/{bucket}/o {
+-
+-    function isAdmin() {
+-      return request.auth != null &&
+-        firestore.exists(/databases/(default)/documents/admin/$(request.auth.uid));
+-    }
+-
+-    // ====== مستندات الكابتن (فيش وتشبيه، رخصة قيادة، صورة الموتوسيكل،
+-    // ترخيص الموتوسيكل) - بيرفعها الكابتن نفسه وقت التسجيل، وبتتقرأ من
+-    // الكابتن نفسه (يتأكد من صورته المرفوعة) والأدمن بس (لمراجعة الموافقة).
+-    // ممنوع أي حد تاني يشوفها - دي مستندات هوية حساسة ======
+-    match /driver_documents/{driverId}/{fileName} {
+-      allow read: if request.auth != null &&
+-        (request.auth.uid == driverId || isAdmin());
+-      allow write: if request.auth != null &&
+-        request.auth.uid == driverId &&
+-        request.resource.size < 8 * 1024 * 1024 &&
+-        request.resource.contentType.matches('image/.*');
+-      allow delete: if request.auth != null && isAdmin();
+-    }
+-
+-    // ====== أي مسار تاني غير معرّف صراحة: ممنوع تمامًا (default-deny) ======
+-    match /{allPaths=**} {
+-      allow read, write: if false;
+-    }
+-  }
+-}
+-- 
+2.43.0
+
