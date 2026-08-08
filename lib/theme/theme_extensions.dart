@@ -208,6 +208,7 @@ class TayarTheme {
     colorScheme: const ColorScheme.dark(
       primary: TayarColors.primary,
       secondary: TayarColors.primary,
+      onPrimary: Colors.white,
       surface: TayarColors.cardDarkMode,
       error: TayarColors.error,
     ),
@@ -274,6 +275,7 @@ class TayarTheme {
     colorScheme: const ColorScheme.light(
       primary: TayarColors.primary,
       secondary: TayarColors.primary,
+      onPrimary: Colors.white,
       surface: TayarColors.cardLightMode,
       error: TayarColors.error,
     ),
@@ -293,7 +295,7 @@ class TayarTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: TayarColors.primary,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.white,
         minimumSize: const Size.fromHeight(52),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         textStyle: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.w600),
