@@ -403,7 +403,15 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                       decoration: InputDecoration(
                         hintText: loc.searchPlaceHint,
                         hintStyle: TextStyle(color: context.textGreyColor),
+                        // ====== لازم نلغي enabledBorder/focusedBorder صراحة
+                        // كمان مش بس border - لأن الثيم العام لخانات الإدخال
+                        // (theme_extensions.dart) بيحدد focusedBorder خاص بيه،
+                        // وده بيفضل ظاهر فوق حدود التركيز وقت الكتابة حتى لو
+                        // border الأساسي متلغي، فبيبان إطاران بدل واحد ======
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        filled: false,
                         isCollapsed: true,
                       ),
                     ),
