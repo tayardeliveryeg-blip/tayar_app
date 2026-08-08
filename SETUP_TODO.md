@@ -18,22 +18,21 @@
 3. تتأكد إن الـ App ID بتاعك في Apple Developer portal مفعّل فيه
    "Sign In with Apple" capability.
 
-## 2) إشعار شحن المحفظة (onWalletCredit) — الكود جاهز، محتاج ترقية + deploy (معلّق)
+## ✅ 2) إشعارات الشات/شحن المحفظة/الإشعار العام — خلصوا (بديل Supabase)
 
-دالة `onWalletCredit` في `functions/index.js` مكتوبة وجاهزة (بتبعت إشعار
-تلقائي للراكب لما الأدمن يشحن له رصيد من لوحة الإدارة). لسه مش منشورة لأن
-المشروع محتاج ترقية لخطة **Blaze** على Firebase (شرط أساسي لأي Cloud
-Function من الجيل التاني)، والترقية موقوفة دلوقتي بقرار مقصود. لما يجي وقتها:
-1. فعّل الفوترة من Firebase Console:
-   https://console.firebase.google.com/project/b10-app-1e682/usage/details
-   (Modify plan → Blaze)، واربط حساب فوترة صحيح (لو فيه حساب قديم متعلّق
-   بسبب مشكلة دفع، افتحه من: https://console.cloud.google.com/billing?project=b10-app-1e682)
-2. من مجلد الريبو الرئيسي:
-   ```
-   firebase deploy --only functions:onWalletCredit
-   ```
-3. تأكد إن الدالة ظهرت في Firebase Console → Functions، وجرب شحن محفظة
-   راكب تجريبي من لوحة الأدمن وتأكد إن الإشعار وصله.
+الدوال التلاتة اللي كانت في `functions/index.js` (`onNewChatMessage`،
+`onWalletCredit`، `onNewGeneralNotification`) بقت **غير مستخدمة
+(superseded)** — كانت محتاجة خطة Blaze عشان تتنشر، والترقية موقوفة
+بقرار مقصود. بدلها اتعمل حل بديل مجاني بالكامل عن طريق Supabase Edge
+Functions (نفس فكرة `create-order` و`sos-notify`):
+- `supabase/functions/chat-notify/` — بديل `onNewChatMessage`، بتتنادى
+  من `trip_chat_screen.dart` بعد كل رسالة شات.
+- `supabase/functions/general-notify/` — بديل مدمج لـ `onWalletCredit` +
+  `onNewGeneralNotification`، بتتنادى من لوحة الأدمن بعد شحن المحفظة.
+
+منشورين وشغالين فعليًا (`supabase functions deploy chat-notify` /
+`general-notify`). مفيش أي حاجة متبقية هنا — كل Cloud Functions القديمة
+في `functions/index.js` بقت مجرد مرجع تاريخي.
 
 ## 3) applicationId لسه القيمة الافتراضية (مؤجّل قصدًا لحد قبل النشر)
 

@@ -7,7 +7,10 @@
 
 تطبيق توصيل/مشاوير موتوسيكل مصري (زي أوبر بس للموتوسيكلات)، فيه تطبيقين
 جوه نفس الكود base: **الراكب (Passenger)** و**الطيار (Driver)**. الباك إند
-بالكامل Firebase (Auth, Firestore, Cloud Functions, Cloud Messaging).
+Firebase (Auth, Firestore, Cloud Messaging) + **Supabase Edge Functions**
+كبديل مجاني بالكامل لأي منطق سيرفر كان محتاج Cloud Functions (اللي
+بيحتاج خطة Blaze الموقوفة بقرار مقصود). راجع قسم "الباك إند - Supabase
+Edge Functions" تحت.
 
 - **الاسم التقني للـ package**: `tayay_app` (لاحظ الاسم فيه غلطة إملائية
   مقصودة/تاريخية — `tayay` مش `tayar` — فكل الـ imports بتستخدم
@@ -20,7 +23,14 @@
 - **المكالمات الصوتية/الفيديو**: `zego_uikit_prebuilt_call` + `zego_uikit`
   (نسخة مقفولة `2.29.1` — دي بتحدد أعلى نسخة مسموحة لباكدجات تانية زي
   `connectivity_plus`، راجع قسم "تعارضات باكدجات معروفة" تحت).
-- **Cloud Functions**: مجلد `functions/` (Node.js، `firebase-functions` v6).
+- **الباك إند - Supabase Edge Functions**: مجلد `supabase/functions/`
+  (Deno/TypeScript) — `create-order`، `chat-notify`، `general-notify`،
+  `sos-notify`، + `_shared/firebase-admin.ts` (تحقق من Firebase ID Token
+  + Firestore Admin عن طريق Service Account، بديل خفيف لـ Firebase
+  Admin SDK). مجلد `functions/` (Cloud Functions القديمة، Node.js) لسه
+  موجود كمرجع تاريخي بس **كل الدوال فيه superseded وغير منشورة** -
+  الاعتماد على Blaze خلص خالص. أي فيتشر باك إند جديد يتعمل في
+  `supabase/functions/` مش `functions/`.
 
 ## هيكل المجلدات الأساسي (`lib/`)
 

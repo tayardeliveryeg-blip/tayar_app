@@ -2,8 +2,9 @@
 // Messaging ======
 // المسؤوليات:
 // 1) تسجيل الـ FCM Token بتاع الجهاز في مستند المستخدم في Firestore
-//    (drivers/{uid} أو users/{uid} حسب نوع الحساب) عشان Cloud Function
-//    تعرف تبعتله إشعار.
+//    (drivers/{uid} أو users/{uid} حسب نوع الحساب) عشان Supabase Edge
+//    Functions (chat-notify/general-notify في supabase/functions/) تعرف
+//    تبعتله إشعار.
 // 2) عرض إشعار محلي (system notification) لما رسالة توصل والتطبيق فاتح
 //    في الـ foreground (FCM لوحدها ما بتعرضش إشعار في الـ foreground).
 // 3) التعامل مع الضغط على الإشعار وفتح المحادثة المناسبة.
