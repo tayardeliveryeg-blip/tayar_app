@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors, BackArrowIcon;
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart' show PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
@@ -301,7 +301,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     ),
                   ],
                 ),
-                child: Icon(Icons.arrow_back, color: context.textColor),
+                child: const BackArrowIcon(),
               ),
             ),
           ),
