@@ -31,8 +31,11 @@ Functions (نفس فكرة `create-order` و`sos-notify`):
   `onNewGeneralNotification`، بتتنادى من لوحة الأدمن بعد شحن المحفظة.
 
 منشورين وشغالين فعليًا (`supabase functions deploy chat-notify` /
-`general-notify`). مفيش أي حاجة متبقية هنا — كل Cloud Functions القديمة
-في `functions/index.js` بقت مجرد مرجع تاريخي.
+`general-notify`). مفيش أي حاجة متبقية هنا — مجلد `functions/` القديم
+(Firebase Cloud Functions) اتمسح بالكامل من الريبو بعد ما اتأكد إن كل
+الدوال الخمسة اللي كانت فيه (`onNewChatMessage`، `onWalletCredit`،
+`onNewGeneralNotification`، `createOrder`، `onSosAlertCreated`) بقالها
+بدائل شغالة فعليًا على Supabase Edge Functions.
 
 ## 3) applicationId لسه القيمة الافتراضية (مؤجّل قصدًا لحد قبل النشر)
 

@@ -66,7 +66,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   // ====== حجز رحلة مقدمًا (Scheduled rides): null يعني رحلة فورية زي ما
   // كان دايمًا. لو الراكب اختار "حجز لاحقًا" بنحفظ الميعاد هنا ونبعته لـ
   // createOrder كـ scheduledFor. المطابقة نفسها بتشتغل فورًا في الحالتين
-  // (شوف تعليق orderType في functions/index.js) - الميعاد ده بس بيتسجل
+  // (شوف تعليق orderType في supabase/functions/create-order) - الميعاد ده بس بيتسجل
   // كمعلومة للسائق وبيتعرض في شاشة البحث عن عروض ======
   DateTime? _scheduledFor;
 
@@ -236,8 +236,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
 
   // ====== فتح تاريخ ثم وقت لاختيار معاد الرحلة المجدولة. الحدود
   // (10 دقايق كحد أدنى، AppSettings.instance.maxScheduleAdvanceDays كحد
-  // أقصى) لازم تفضل مطابقة نفس الحدود اللي بيتحقق منها createOrder في
-  // functions/index.js وإلا السيرفر هيرفض الطلب حتى لو الواجهة سمحت بيه ======
+  // أقصى) لازم تفضل مطابقة نفس الحدود اللي بيتحقق منها create-order في
+  // supabase/functions/create-order وإلا السيرفر هيرفض الطلب حتى لو الواجهة سمحت بيه ======
   Future<void> _pickScheduleDateTime() async {
     final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();

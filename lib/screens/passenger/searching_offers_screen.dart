@@ -653,7 +653,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                 // ====== بانر رحلة مجدولة: بيفضل ظاهر فوق الخريطة طول ما
                 // الراكب بيدوّر على عروض عشان يفتكر إن الرحلة دي محجوزة
                 // لميعاد معين، رغم إن المطابقة نفسها شغالة فورًا (شوف
-                // تعليق orderType في functions/index.js) ======
+                // تعليق orderType في supabase/functions/create-order) ======
                 if (widget.scheduledFor != null)
                   Positioned(
                     top: 0,

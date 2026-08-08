@@ -26,14 +26,14 @@ Edge Functions كبديل مجاني للباك إند اللي كان محتا�
 - النشر: `supabase functions deploy <function-name>` من مجلد الريبو
   الرئيسي (يحتاج Supabase CLI في الـ PATH).
 
-## Cloud Functions القديمة (functions/) — مرجع تاريخي فقط
+## Cloud Functions القديمة (functions/) — اتمسحت نهائيًا
 
-المجلد `functions/` (Node.js، `firebase-functions` v6) لسه موجود بس
-**كل الدوال فيه بقت superseded** (محتاجة خطة Blaze الموقوفة بقرار
-مقصود) - `createOrder`، `onNewChatMessage`، `onWalletCredit`،
-`onNewGeneralNotification`، `onSosAlertCreated`. سايبينهم كمرجع/خطة
-رجوع لو Blaze اتفعلت يومًا ما. **أي فيتشر جديد لازم يتعمل في
-`supabase/functions/` مش هنا.**
+مجلد `functions/` (Node.js، `firebase-functions` v6) اتمسح بالكامل من
+الريبو. كان فيه 5 دوال (`createOrder`، `onNewChatMessage`،
+`onWalletCredit`، `onNewGeneralNotification`، `onSosAlertCreated`) كلهم
+superseded (محتاجين خطة Blaze الموقوفة بقرار مقصود) وبدائلهم شغالة
+فعليًا على Supabase. **أي فيتشر جديد لازم يتعمل في `supabase/functions/`
+مش هنا.**
 
 ## بنية Firestore — أهم الـ collections
 

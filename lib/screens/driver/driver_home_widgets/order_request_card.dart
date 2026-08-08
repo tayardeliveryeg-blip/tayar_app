@@ -52,7 +52,7 @@ class OrderRequestCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ====== بادچ "محجوزة لـ..." للطلبات المجدولة مقدمًا - بيظهر بس
-            // لو scheduledFor موجودة (شوف orderType في functions/index.js) ======
+            // لو scheduledFor موجودة (شوف orderType في supabase/functions/create-order) ======
             if (scheduledFor != null) ...[
               Container(
                 padding: const EdgeInsets.symmetric(
