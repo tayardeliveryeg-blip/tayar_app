@@ -63,3 +63,7 @@ functions/lib/
 missing_keys.txt
 android/.kotlin/
 ?????_?????????_Tayar.md
+
+# Firebase Hosting deploy cache & web build output (auto-generated, not source)
+.firebase/
+tayar-admin/build/
