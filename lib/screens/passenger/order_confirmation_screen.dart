@@ -416,7 +416,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
           style: TextStyle(color: context.textColor),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
