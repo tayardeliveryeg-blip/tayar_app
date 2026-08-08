@@ -620,6 +620,31 @@ const COLLECTIONS = {
   promoCodes: 'promo_codes',
   pendingReferralRewards: 'pendingReferralRewards'
 };
+// ====== نفس مشروع Supabase المستخدم في sos_service.dart والموبايل -
+// لبعت إشعار push حقيقي للراكب بعد شحن محفظته (general-notify Edge
+// Function، بديل onWalletCredit/onNewGeneralNotification القديمة). ======
+const SUPABASE_URL = 'https://pctxhemhytzaufdzuhfz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
+
+/** بتنادي general-notify Edge Function - فشلها مش لازم يوقف عملية الشحن
+ * نفسها (اللي خلصت فعليًا في Firestore خلاص)، فبنبلعه بهدوء. */
+async function sendGeneralNotification(userId, title, body, type){
+  try {
+    const idToken = await auth.currentUser.getIdToken();
+    await fetch(`${SUPABASE_URL}/functions/v1/general-notify`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'X-Firebase-Id-Token': idToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId, title, body, type })
+    });
+  } catch (e) {
+    console.warn('فشل إرسال إشعار push (غير حرج):', e);
+  }
+}
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -1418,6 +1443,12 @@ function submitWalletGrant(){
   })).then(newBalance=>{
     toast(`Wallet updated — new balance: ${newBalance.toFixed(0)} EGP`);
     document.getElementById('walletSelectedBalance').textContent = newBalance.toFixed(0);
+    // ====== إشعار push حقيقي للراكب - بديل onWalletCredit/
+    // onNewGeneralNotification القديمة (كانت محتاجة خطة Blaze) ======
+    const notifBody = reason
+      ? `تم إضافة ${amount} جنيه إلى محفظتك (${reason}). رصيدك الحالي: ${newBalance.toFixed(0)} جنيه.`
+      : `تم إضافة ${amount} جنيه إلى محفظتك. رصيدك الحالي: ${newBalance.toFixed(0)} جنيه.`;
+    sendGeneralNotification(walletSelectedUserId, 'تم شحن محفظتك', notifBody, 'wallet');
     document.getElementById('walletGrantAmount').value = '';
     document.getElementById('walletGrantReason').value = '';
   }).catch(err=>toast('Failed: ' + err.message));

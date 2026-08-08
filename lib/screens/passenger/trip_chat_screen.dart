@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/theme/theme_extensions.dart' show AppSpacing, AppRadius;
@@ -34,6 +36,13 @@ class TripChatScreen extends StatefulWidget {
 }
 
 class _TripChatScreenState extends State<TripChatScreen> {
+  // ====== نفس مشروع Supabase المستخدم في sos_service.dart و
+  // create-order - لبعت إشعار push للطرف التاني بعد إرسال رسالة شات،
+  // بديل لـ Cloud Function اسمها onNewChatMessage (محتاجة خطة Blaze). ======
+  static const String _supabaseUrl = 'https://pctxhemhytzaufdzuhfz.supabase.co';
+  static const String _supabaseAnonKey =
+      'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
+
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _sending = false;
@@ -121,7 +130,7 @@ class _TripChatScreenState extends State<TripChatScreen> {
 
     try {
       final user = FirebaseAuth.instance.currentUser;
-      await _messagesRef.add({
+      final messageRef = await _messagesRef.add({
         'senderId': user?.uid,
         'senderName': user?.displayName ?? '',
         'text': text,
@@ -138,6 +147,9 @@ class _TripChatScreenState extends State<TripChatScreen> {
           );
         }
       });
+      // ====== إشعار push للطرف التاني - مش حرج، لو فشل الرسالة نفسها
+      // اتبعتت خلاص ووصلت realtime عن طريق Firestore stream عادي ======
+      unawaited(_notifyRecipient(messageRef.id));
     } catch (e) {
       // ====== نوضح سبب فشل الإرسال بدل ما يختفي بصمت (غالبًا صلاحيات Firestore) ======
       debugPrint('❌ خطأ في إرسال الرسالة: $e');
@@ -153,6 +165,32 @@ class _TripChatScreenState extends State<TripChatScreen> {
       }
     } finally {
       if (mounted) setState(() => _sending = false);
+    }
+  }
+
+  // ====== بتنادي Edge Function اسمها chat-notify (بديل onNewChatMessage
+  // القديمة) عشان تبعت Push Notification حقيقي للطرف التاني - حتى لو
+  // كان التطبيق مقفول تمامًا. فشل النداء ده مش لازم يوقف حاجة تانية،
+  // فبنبلعه بهدوء (الرسالة أصلاً وصلت realtime عن طريق Firestore). ======
+  Future<void> _notifyRecipient(String messageId) async {
+    try {
+      final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      if (idToken == null) return;
+      await http.post(
+        Uri.parse('$_supabaseUrl/functions/v1/chat-notify'),
+        headers: {
+          'apikey': _supabaseAnonKey,
+          'Authorization': 'Bearer $_supabaseAnonKey',
+          'X-Firebase-Id-Token': idToken,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'orderId': widget.orderId,
+          'messageId': messageId,
+        }),
+      );
+    } catch (e) {
+      debugPrint('❌ فشل إرسال إشعار الشات (غير حرج): $e');
     }
   }
 

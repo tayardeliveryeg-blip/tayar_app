@@ -84,6 +84,12 @@ export async function verifyFirebaseIdToken(
 
 let cachedAccessToken: { token: string; expiresAt: number } | null = null;
 
+// ====== النطاقين مع بعض في نفس التوكن: datastore (Firestore) و
+// firebase.messaging (بعت FCM push). أسهل من إدارة كاش منفصل لكل نطاق،
+// وGoogle بتسمح بأكتر من scope في نفس access token عادي. ======
+const GOOGLE_SCOPES =
+  "https://www.googleapis.com/auth/datastore https://www.googleapis.com/auth/firebase.messaging";
+
 async function getGoogleAccessToken(): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   if (cachedAccessToken && cachedAccessToken.expiresAt - 60 > now) {
@@ -97,7 +103,7 @@ async function getGoogleAccessToken(): Promise<string> {
 
   const privateKey = await jose.importPKCS8(PRIVATE_KEY, "RS256");
   const assertion = await new jose.SignJWT({
-    scope: "https://www.googleapis.com/auth/datastore",
+    scope: GOOGLE_SCOPES,
   })
     .setProtectedHeader({ alg: "RS256", typ: "JWT" })
     .setIssuer(CLIENT_EMAIL)
@@ -242,4 +248,85 @@ export class FirestoreClient {
     const parts = String(json.name).split("/");
     return parts[parts.length - 1];
   }
+}
+
+// ====== 3) إرسال Push Notification عن طريق FCM HTTP v1 API ======
+// (بديل admin.messaging().send() اللي كان متاح في Cloud Functions - هنا
+// بننادي REST API مباشرة بنفس Service Account، بنفس النطاق اللي فوق)
+
+export interface FcmPushOptions {
+  token: string;
+  title: string;
+  body: string;
+  data?: Record<string, string>;
+  /** channelId لأندرويد - افتراضيًا نفس القناة المستخدمة في التطبيق فعلاً */
+  androidChannelId?: string;
+}
+
+/**
+ * بتبعت push notification لجهاز واحد عن طريق FCM HTTP v1 API. بترجع true
+ * لو نجحت، وبتطبع تحذير وترجع false لو فشلت (زي ما كانت الدوال القديمة
+ * بتعمل try/catch وتكمل من غير ما توقف كل حاجة).
+ */
+export async function sendFcmPush(options: FcmPushOptions): Promise<boolean> {
+  if (!PROJECT_ID) {
+    throw new Error("FIREBASE_PROJECT_ID secret مش متسجل");
+  }
+  try {
+    const token = await getGoogleAccessToken();
+    const res = await fetch(
+      `https://fcm.googleapis.com/v1/projects/${PROJECT_ID}/messages:send`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: {
+            token: options.token,
+            notification: {
+              title: options.title,
+              body: options.body,
+            },
+            data: options.data ?? {},
+            android: {
+              priority: "high",
+              notification: {
+                channel_id: options.androidChannelId ?? "tayar_chat_channel",
+              },
+            },
+            apns: {
+              payload: { aps: { sound: "default" } },
+            },
+          },
+        }),
+      },
+    );
+    if (!res.ok) {
+      console.warn(`FCM send فشل (${res.status}): ${await res.text()}`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn("FCM send استثناء:", err);
+    return false;
+  }
+}
+
+/**
+ * بتدور على fcmToken بتاع مستخدم معين، سواء كان راكب (users) أو كابتن
+ * (drivers)، من غير ما تحتاج تعرف نوعه مقدمًا - مطابقة لمنطق
+ * getFcmTokenForUser في functions/index.js القديمة.
+ */
+export async function getFcmTokenForUser(
+  db: FirestoreClient,
+  uid: string,
+): Promise<string | null> {
+  if (!uid) return null;
+  const usersDoc = await db.get(`users/${uid}`);
+  if (usersDoc?.fcmToken) return usersDoc.fcmToken as string;
+  const driversDoc = await db.get(`drivers/${uid}`);
+  if (driversDoc?.fcmToken) return driversDoc.fcmToken as string;
+  return null;
 }

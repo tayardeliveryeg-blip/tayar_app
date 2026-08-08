@@ -40,6 +40,12 @@ async function getFcmTokenForUser(uid) {
   return null;
 }
 
+// ====== ⚠️ الدالة دي بقت غير مستخدمة (superseded) ======
+// محتاجة خطة Blaze عشان تتنشر أصلًا. الموبايل بقى بينادي بديلها بعد ما
+// يبعت رسالة شات: Supabase Edge Function اسمها chat-notify
+// (supabase/functions/chat-notify/) - نفس المنطق بالظبط، بس بتتنادى
+// مباشرة من trip_chat_screen.dart بدل ما تكون Firestore Trigger (Supabase
+// مفيهوش Firestore triggers أصلًا). سايبينها هنا كمرجع/خطة رجوع.
 /**
  * ====== 1) إشعار رسالة شات جديدة ======
  * بتتفعّل تلقائيًا لما مستند جديد يتكتب في:
@@ -131,6 +137,12 @@ exports.onNewChatMessage = onDocumentCreated(
  * بتكتب مستند في collection('notifications') عشان الراكب ياخد إشعار فوري،
  * وده هيشغّل onNewGeneralNotification تحت تلقائيًا ويبعت الـ Push الحقيقي -
  * مفيش أي تعديل مطلوب في لوحة الأدمن نفسها.
+ *
+ * ====== ⚠️ الدالة دي بقت غير مستخدمة (superseded) ======
+ * محتاجة خطة Blaze عشان تتنشر. بديلها: Supabase Edge Function اسمها
+ * general-notify (supabase/functions/general-notify/) - بتتنادى مباشرة
+ * من لوحة الأدمن (submitWalletGrant في index.html) بعد نجاح الشحن، وبتعمل
+ * الاتنين مع بعض (كتابة مستند notifications + بعت الـ push) في نداء واحد.
  */
 exports.onWalletCredit = onDocumentCreated(
   "users/{userId}/walletTransactions/{transactionId}",
@@ -165,6 +177,11 @@ exports.onWalletCredit = onDocumentCreated(
   }
 );
 
+// ====== ⚠️ الدالة دي بقت غير مستخدمة (superseded) ======
+// نفس بديل onWalletCredit فوق - general-notify Edge Function دلوقتي هي
+// اللي بتبعت الـ push مباشرة، مفيش حاجة تانية بتستنى الكتابة في
+// collection('notifications') عشان تشغّل push (لأن Supabase مفيهوش
+// Firestore triggers أصلًا).
 /**
  * ====== 3) إشعار عام (طلب اتقبل / الطيار وصل / ... إلخ) ======
  * بتتفعّل تلقائيًا لما مستند جديد يتكتب في collection('notifications')
