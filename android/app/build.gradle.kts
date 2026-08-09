@@ -22,7 +22,7 @@ if (hasKeystoreProperties) {
 }
 
 android {
-    namespace = "com.example.tayay_app"
+    namespace = "com.tayar.app"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -33,7 +33,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.tayay_app"
+        applicationId = "com.tayar.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

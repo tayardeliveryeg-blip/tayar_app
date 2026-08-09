@@ -64,6 +64,42 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354477388400:android:f05fcd5a91d70396c23ab5",
+        "android_client_info": {
+          "package_name": "com.tayar.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354477388400-ir73gp12hplk11kfkim9je588dp0gema.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7CW-3rCVG5lIesTWU_envKbZkNd5zyBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354477388400-ir73gp12hplk11kfkim9je588dp0gema.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "354477388400-06t7huj3ihqf885onb3pgh45kkuudgcg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tayayApp"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

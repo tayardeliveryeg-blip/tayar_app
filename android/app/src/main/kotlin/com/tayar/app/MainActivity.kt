@@ -1,4 +1,4 @@
-package com.example.tayay_app
+package com.tayar.app
 
 import io.flutter.embedding.android.FlutterActivity
 
