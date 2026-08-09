@@ -1,0 +1,8 @@
+## انسخ الملف ده باسم key.properties (بدون .example) في نفس المجلد ده
+## (android/key.properties) وعبّي القيم الحقيقية بتاعتك.
+## الملف ده (key.properties) موجود في .gitignore أصلاً — متتبعش الملف الحقيقي في git.
+
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=tayar
+storeFile=C:/Users/YOUR_USER/tayar-release-key.jks
