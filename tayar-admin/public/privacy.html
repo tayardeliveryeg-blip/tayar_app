@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سياسة الخصوصية | Privacy Policy - طيار Tayar</title>
+<style>
+  :root {
+    --accent: #FF6B00;
+    --dark: #1a1816;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, "Segoe UI", Tahoma, sans-serif;
+    background: #0f0e0d;
+    color: #eee;
+    line-height: 1.8;
+  }
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 6px;
+    font-family: "Arial Black", Arial, sans-serif;
+    font-size: 28px;
+  }
+  header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+  }
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+  .lang-block {
+    background: var(--dark);
+    border-radius: 12px;
+    padding: 24px 26px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .lang-block.en {
+    direction: ltr;
+    text-align: left;
+  }
+  h2 {
+    color: var(--accent);
+    font-size: 20px;
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+  h2:first-child { margin-top: 0; }
+  p, li { font-size: 15px; color: #ddd; }
+  ul { padding-inline-start: 20px; }
+  .updated {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  a { color: var(--accent); }
+  .divider {
+    text-align: center;
+    color: #555;
+    margin: 30px 0;
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>طيار Tayar</h1>
+  <p>سياسة الخصوصية &nbsp;|&nbsp; Privacy Policy</p>
+</header>
+
+<main>
+  <p class="updated">آخر تحديث: أغسطس 2026 &nbsp;·&nbsp; Last updated: August 2026</p>
+
+  <div class="lang-block ar" dir="rtl">
+    <h2>مقدمة</h2>
+    <p>
+      تطبيق طيار (Tayar) هو تطبيق لطلب رحلات ومشاوير عن طريق الدراجات النارية وخدمات التوصيل في جمهورية مصر العربية.
+      نحن نحترم خصوصيتك، وسياسة الخصوصية دي بتوضح إزاي بنجمع البيانات وبنستخدمها وبنحميها.
+    </p>
+
+    <h2>البيانات اللي بنجمعها</h2>
+    <ul>
+      <li>بيانات الحساب: الاسم، رقم الهاتف، البريد الإلكتروني (لو استخدمت تسجيل الدخول بجوجل أو أبل).</li>
+      <li>الموقع الجغرافي: لتحديد نقطة الانطلاق والوجهة، وتتبع الرحلة أثناء تنفيذها، ومطابقة الراكب بأقرب سائق متاح.</li>
+      <li>بيانات المحفظة والمعاملات المالية داخل التطبيق (الرصيد، تاريخ العمليات).</li>
+      <li>صور المستندات الرسمية للسائقين (رخصة القيادة، رخصة المركبة، البطاقة الشخصية) أثناء عملية التسجيل كسائق.</li>
+      <li>سجل الرحلات (نقطة البداية والنهاية، التاريخ، التقييم).</li>
+      <li>رسائل الدردشة بين الراكب والسائق داخل التطبيق.</li>
+      <li>معرّف الجهاز (FCM Token) لإرسال الإشعارات.</li>
+    </ul>
+
+    <h2>إزاي بنستخدم البيانات</h2>
+    <ul>
+      <li>تنفيذ ومطابقة طلبات الرحلات والتوصيل.</li>
+      <li>حساب الأجرة وإدارة المحفظة والمدفوعات.</li>
+      <li>التواصل معك بخصوص الرحلة (إشعارات، تحديثات الحالة).</li>
+      <li>التحقق من هوية السائقين وسلامة الخدمة.</li>
+      <li>دعم حالات الطوارئ (زر SOS) وتحسين الأمان.</li>
+      <li>تحسين جودة الخدمة ودعم العملاء.</li>
+    </ul>
+
+    <h2>مشاركة البيانات</h2>
+    <p>
+      بياناتك بتتخزن باستخدام خدمات Firebase (Google) و Supabase، وهي شركات موثوقة بتلتزم بمعايير حماية بيانات عالمية.
+      بنستخدم كمان خدمة Cloudinary لتخزين صور مستندات السائقين. مبنبيعش ولا بنأجّر بياناتك لأي طرف ثالث لأغراض تسويقية.
+      بيانات الموقع والرحلة بتتشارك فقط بين الراكب والسائق المطابق لتنفيذ الرحلة.
+    </p>
+
+    <h2>حماية البيانات</h2>
+    <p>
+      بنستخدم قواعد أمان صارمة (Firestore Security Rules) للتحكم في مين يقدر يشوف أو يعدّل كل نوع بيانات، وكل الاتصالات
+      بتتم عبر HTTPS مشفّرة.
+    </p>
+
+    <h2>حقوقك</h2>
+    <ul>
+      <li>تقدر تطلب حذف حسابك وبياناتك في أي وقت من داخل التطبيق أو بالتواصل معانا.</li>
+      <li>تقدر تراجع وتعدّل بيانات حسابك من شاشة الملف الشخصي.</li>
+    </ul>
+
+    <h2>التواصل معنا</h2>
+    <p>
+      لأي استفسار عن سياسة الخصوصية دي، تواصل معنا على:
+      <a href="mailto:tayardeliveryeg@gmail.com">tayardeliveryeg@gmail.com</a>
+    </p>
+  </div>
+
+  <div class="divider">• • •</div>
+
+  <div class="lang-block en" dir="ltr">
+    <h2>Introduction</h2>
+    <p>
+      Tayar is a motorcycle ride-hailing and delivery app operating in Egypt. We respect your privacy, and this
+      policy explains how we collect, use, and protect your data.
+    </p>
+
+    <h2>Data We Collect</h2>
+    <ul>
+      <li>Account data: name, phone number, and email (if you sign in with Google or Apple).</li>
+      <li>Location data: to set pickup/drop-off points, track active trips, and match riders with nearby drivers.</li>
+      <li>Wallet and in-app transaction data (balance, transaction history).</li>
+      <li>Driver verification documents (driving license, vehicle license, national ID) during driver registration.</li>
+      <li>Trip history (start/end points, date, ratings).</li>
+      <li>In-app chat messages between rider and driver.</li>
+      <li>Device identifier (FCM token) for push notifications.</li>
+    </ul>
+
+    <h2>How We Use Your Data</h2>
+    <ul>
+      <li>Processing and matching ride and delivery requests.</li>
+      <li>Calculating fares and managing wallet payments.</li>
+      <li>Sending trip-related notifications and updates.</li>
+      <li>Verifying driver identity and platform safety.</li>
+      <li>Supporting emergency situations (SOS feature).</li>
+      <li>Improving service quality and customer support.</li>
+    </ul>
+
+    <h2>Data Sharing</h2>
+    <p>
+      Your data is stored using Firebase (Google) and Supabase, both of which follow international data protection
+      standards. We also use Cloudinary to store driver verification documents. We do not sell or rent your data to
+      third parties for marketing purposes. Location and trip data are shared only between the matched rider and
+      driver for the purpose of completing the trip.
+    </p>
+
+    <h2>Data Protection</h2>
+    <p>
+      We use strict Firestore Security Rules to control access to each type of data, and all communication is
+      encrypted via HTTPS.
+    </p>
+
+    <h2>Your Rights</h2>
+    <ul>
+      <li>You may request deletion of your account and data at any time, from within the app or by contacting us.</li>
+      <li>You may review and update your account information from the profile screen.</li>
+    </ul>
+
+    <h2>Contact Us</h2>
+    <p>
+      For any questions about this privacy policy, contact us at:
+      <a href="mailto:tayardeliveryeg@gmail.com">tayardeliveryeg@gmail.com</a>
+    </p>
+  </div>
+</main>
+
+</body>
+</html>

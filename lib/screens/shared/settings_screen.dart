@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/main.dart';
 
@@ -45,6 +46,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
           .doc(uid)
           .set({'pushNotificationsEnabled': value}, SetOptions(merge: true))
           .catchError((_) {});
+    }
+  }
+
+  // ====== بيفتح صفحة سياسة الخصوصية الكاملة (مستضافة على Firebase Hosting)
+  // في المتصفح، بدل ما يعرض ملخص قصير جوه التطبيق ======
+  static const String _privacyPolicyUrl =
+      'https://b10-app-1e682.web.app/privacy.html';
+
+  Future<void> _openPrivacyPolicy(BuildContext context) async {
+    final uri = Uri.parse(_privacyPolicyUrl);
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
+        ),
+      );
     }
   }
 
@@ -376,10 +394,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icons.chevron_left,
                         color: context.textGreyColor,
                       ),
-                      onTap: () => _showTextDialog(
-                        AppLocalizations.of(context)!.privacyPolicy,
-                        AppLocalizations.of(context)!.privacyPolicyBody,
-                      ),
+                      onTap: () => _openPrivacyPolicy(context),
                     ),
                   ],
                 ),
