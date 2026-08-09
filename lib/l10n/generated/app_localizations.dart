@@ -1301,7 +1301,7 @@ abstract class AppLocalizations {
   /// No description provided for @mobileNumberMatchHint.
   ///
   /// In ar, this message translates to:
-  /// **'لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه'**
+  /// **'لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه — وهيتم ربط حسابك يدويًا من لوحة التحكم'**
   String get mobileNumberMatchHint;
 
   /// No description provided for @credentialAlreadyInUseError.

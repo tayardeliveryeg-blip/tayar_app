@@ -661,7 +661,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mobileNumberMatchHint =>
-      'لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه';
+      'لو حد من الإدارة ضافك قبل كده، اكتب نفس رقم الموبايل بالظبط اللي اتسجل بيه — وهيتم ربط حسابك يدويًا من لوحة التحكم';
 
   @override
   String get credentialAlreadyInUseError =>

@@ -663,7 +663,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mobileNumberMatchHint =>
-      'If an admin already added you, enter the exact same mobile number they used';
+      'If an admin already added you, enter the exact same mobile number they used — your account will be linked manually from the dashboard';
 
   @override
   String get credentialAlreadyInUseError =>
