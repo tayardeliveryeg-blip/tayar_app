@@ -280,7 +280,7 @@
   "autoAcceptCheckboxLabel": "Auto-accept the first offer at the suggested price",
   "searchForDriversButton": "Search for Drivers",
   "phoneNumberFormatError": "Please enter a valid phone number",
-  "mobileNumberMatchHint": "If an admin already added you, enter the exact same mobile number they used",
+  "mobileNumberMatchHint": "If an admin already added you, enter the exact same mobile number they used — your account will be linked manually from the dashboard",
   "credentialAlreadyInUseError": "This mobile number is already linked to another account. Please use a different number",
   "otpSendFailedGenericError": "An error occurred while sending the verification code. Please try again later",
   "tryAgainLabel": "Try Again",

@@ -9,7 +9,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:crypto/crypto.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/auth/phone_auth_screen.dart';
 import 'package:tayay_app/helpers/auth_flow_helpers.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/google_signin_web_button_stub.dart'
@@ -306,23 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 15),
                   ],
-
-                  // زر المتابعة عبر الهاتف
-                  _buildCustomButton(
-                    text: AppLocalizations.of(context)!.continueWithPhoneButton,
-                    icon: Icons.phone,
-                    color: Colors.grey[800]!,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PhoneAuthScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 5),
 
                   // النصوص القانونية في الأسفل
                   Text(
