@@ -12,7 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarSocialLinks, launchSocialUrl;
+import 'package:tayay_app/screens/passenger/passenger_home.dart'
+    show TayarSocialLinks, launchSocialUrl;
 import 'package:tayay_app/screens/passenger/create_delivery_order_screen.dart';
 import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
@@ -306,7 +307,9 @@ class TayarDrawer extends StatelessWidget {
                   ),
                   _DrawerItem(
                     icon: Icons.storefront,
-                    label: AppLocalizations.of(context)!.vendorPartnersDrawerLabel,
+                    label: AppLocalizations.of(
+                      context,
+                    )!.vendorPartnersDrawerLabel,
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(
@@ -522,7 +525,9 @@ class _DrawerItem extends StatelessWidget {
         onTap:
             onTap ??
             () {
-              // TODO: تنقل حسب العنصر
+              // ====== fallback احتياطي بس: كل عناصر الدرج الحالية بتمرر
+              // onTap صريح دايمًا، فالسطر ده عمليًا مش بيتنفذ. سايبينه
+              // كحماية لو اتضاف عنصر جديد بالغلط من غير onTap ======
               Navigator.pop(context);
             },
       ),
