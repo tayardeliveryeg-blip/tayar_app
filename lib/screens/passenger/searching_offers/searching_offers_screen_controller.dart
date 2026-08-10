@@ -236,7 +236,7 @@ class SearchingOffersController extends ChangeNotifier {
       return;
     }
 
-    final offer = pendingOfferNotifications.removeAt(0);
+    pendingOfferNotifications.removeAt(0);
     isShowingOfferNotification = true;
     notifyListeners();
 

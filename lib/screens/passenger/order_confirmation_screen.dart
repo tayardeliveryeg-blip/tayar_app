@@ -166,8 +166,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
         '?overview=false',
       );
       final response = await http.get(url).timeout(const Duration(seconds: 6));
-      if (response.statusCode != 200)
+      if (response.statusCode != 200) {
         throw Exception('فشل الاتصال بسيرفر المسارات');
+      }
       final data = json.decode(response.body);
       final routes = data['routes'] as List?;
       if (routes == null || routes.isEmpty) throw Exception('مفيش مسار متاح');

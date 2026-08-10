@@ -154,6 +154,7 @@ class OrderConfirmationController extends ChangeNotifier {
       lastDate: maxDateTime,
     );
     if (pickedDate == null) return;
+    if (!context.mounted) return;
 
     final initialTime = scheduledFor != null
         ? TimeOfDay.fromDateTime(scheduledFor!)
@@ -245,7 +246,6 @@ class OrderConfirmationController extends ChangeNotifier {
         return;
       }
 
-      final orderId = responseData['orderId'] as String;
       isSubmitting = false;
       notifyListeners();
 
