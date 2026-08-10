@@ -12,7 +12,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
 import 'package:tayay_app/screens/auth/phone_auth_screen.dart' show OtpVerificationScreen;
-import 'package:tayay_app/screens/passenger/passenger_home.dart';
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/sos_service.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/theme/theme_extensions.dart' show AppSpacing, AppRadius;
 import 'package:tayay_app/helpers/auth_flow_helpers.dart';
 

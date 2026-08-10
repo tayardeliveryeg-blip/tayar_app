@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart';
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
 
 // ====== شاشة مساعدة: أسئلة شائعة عن استخدام طيار (راكب وطيار) ======
 class HelpScreen extends StatelessWidget {

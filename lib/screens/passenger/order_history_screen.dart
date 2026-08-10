@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
 
 // ====== شاشة سجل الطلبات: بتعرض كل طلبات الراكب الحالي (رحلات + توصيل) ======
 // بنجيب كل حاجة من collection('orders') فلترة على customerId، وبنرتب

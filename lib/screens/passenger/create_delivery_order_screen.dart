@@ -8,10 +8,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart' show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
-import 'package:tayay_app/screens/passenger/searching_offers_screen.dart';
+import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen.dart';
+import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_controller.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/location_pick_row.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/labeled_text_field.dart';

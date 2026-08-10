@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 
 // ====== شاشة قفل التطبيق: بتظهر فوق كل حاجة لو القفل مفعّل، وبتفضل
 // ظاهرة لحد ما المستخدم يدخل الرقم السري الصح ======

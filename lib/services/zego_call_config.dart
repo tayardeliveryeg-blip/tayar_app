@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors;
 
 /// ====== إعدادات ZegoCloud لخدمة المكالمات الصوتية داخل التطبيق ======
 /// لازم تستبدل القيمتين دول ببيانات مشروعك من ZegoCloud Admin Console:
