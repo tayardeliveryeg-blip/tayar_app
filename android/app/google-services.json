@@ -7,72 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:354477388400:android:811a99f009bde19dc23ab5",
-        "android_client_info": {
-          "package_name": "com.example.tayay_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "354477388400-4tu07gbvoogur43e7d7s0usaenbsorc5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.tayay_app",
-            "certificate_hash": "bf1354ec64338db18969abd34df2dd709381d425"
-          }
-        },
-        {
-          "client_id": "354477388400-iqlcifpim513n35umrlti63q013i732t.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.tayay_app",
-            "certificate_hash": "bd94b1025cb287a1957c21d7a9fc525271b1320c"
-          }
-        },
-        {
-          "client_id": "354477388400-s6f3tfohme5uc2574jros0okfd7qaes2.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.tayay_app",
-            "certificate_hash": "dda8b146b70fdd59c602760feda320ef8a9dab09"
-          }
-        },
-        {
-          "client_id": "354477388400-ir73gp12hplk11kfkim9je588dp0gema.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC7CW-3rCVG5lIesTWU_envKbZkNd5zyBQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "354477388400-ir73gp12hplk11kfkim9je588dp0gema.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "354477388400-06t7huj3ihqf885onb3pgh45kkuudgcg.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.tayayApp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:354477388400:android:f05fcd5a91d70396c23ab5",
         "android_client_info": {
           "package_name": "com.tayar.app"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "354477388400-s6d5bafhuvrumvg7ltgdgj8ps1uhb6pg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tayar.app",
+            "certificate_hash": "bf1354ec64338db18969abd34df2dd709381d425"
+          }
+        },
         {
           "client_id": "354477388400-ir73gp12hplk11kfkim9je588dp0gema.apps.googleusercontent.com",
           "client_type": 3

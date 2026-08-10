@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors, BackArrowIcon;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 
 class FormTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -164,10 +164,6 @@ class SectionScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        leading: IconButton(
-          icon: const BackArrowIcon(),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: Text(title, style: TextStyle(color: context.textColor)),
         actions: [
           TextButton(

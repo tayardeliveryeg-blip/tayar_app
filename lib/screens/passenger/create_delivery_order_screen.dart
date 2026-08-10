@@ -9,7 +9,7 @@ import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
-    show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
+    show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
     show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
@@ -275,10 +275,6 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        leading: IconButton(
-          icon: const BackArrowIcon(),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: Text(
           loc.deliveryOrderTitle,
           style: TextStyle(color: context.textColor),

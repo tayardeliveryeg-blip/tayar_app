@@ -75,34 +75,6 @@ extension TayarThemeColors on BuildContext {
       isDarkMode ? Colors.grey.shade700 : Colors.grey.shade400;
 }
 
-// ====== أيقونة زرار الرجوع الموحّدة ======
-// المشكلة: Icon(Icons.arrow_back) العادية بتتقلب تلقائيًا (بتبص لليمين
-// بدل الشمال) في اللغة العربية بسبب خاصية "المرايا" (bidi mirroring) اللي
-// بيطبقها Flutter على رموز السهم في سياق RTL. ده بيخلي زرار الرجوع (اللي
-// المفروض يفضل ثابت وباصص لبرا الشاشة على الشمال) يبقى باصص لجوة/غلط.
-// الحل: نلف الأيقونة بـ Directionality ثابتة LTR عشان تفضل باصّة لبرا
-// (لليسار) دايمًا، في العربي والإنجليزي على حد سواء. الاستخدام:
-//   leading: IconButton(icon: const BackArrowIcon(), onPressed: ...)
-// أو لو محتاج تلوين مخصص: const BackArrowIcon(color: Colors.white)
-class BackArrowIcon extends StatelessWidget {
-  final Color? color;
-  final double? size;
-
-  const BackArrowIcon({super.key, this.color, this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Icon(
-        Icons.arrow_back,
-        color: color ?? context.textColor,
-        size: size,
-      ),
-    );
-  }
-}
-
 // ====== قيم الاستدارة الموحّدة (Border Radius Scale) ======
 // القيم دي مستخرجة من أكتر قيم كانت متكررة يدويًا في شاشات المشروع (10, 12,
 // 14, 16, 30)، عشان أي شاشة جديدة أو بتتحول تستخدم AppRadius.xxx بدل ما

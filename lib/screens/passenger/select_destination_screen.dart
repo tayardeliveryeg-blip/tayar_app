@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
-    show TayarColors, TayarThemeColors, BackArrowIcon;
+    show TayarColors, TayarThemeColors;
 import 'package:tayay_app/screens/passenger/pick_on_map_screen.dart'
     show PickOnMapScreen;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
@@ -339,10 +339,6 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        leading: IconButton(
-          icon: const BackArrowIcon(),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: Text(
           widget.title ?? loc.whereDoYouWantToGoTitle,
           style: TextStyle(color: context.textColor),

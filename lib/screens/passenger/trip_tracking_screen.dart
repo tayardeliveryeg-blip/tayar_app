@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors, BackArrowIcon;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
@@ -713,10 +713,11 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               ),
             ),
 
-          // ====== زرار الرجوع: على الشمال دايمًا زي كل شاشات التطبيق ======
-          Positioned(
+          // ====== زرار الرجوع: بيستخدم الاتجاه الافتراضي (يمين في العربي،
+          // شمال في الإنجليزي) زي باقي شاشات التطبيق ======
+          PositionedDirectional(
             top: 50,
-            left: 16,
+            start: 16,
             child: GestureDetector(
               onTap: () => Navigator.of(context).maybePop(),
               child: Container(
@@ -732,16 +733,16 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     ),
                   ],
                 ),
-                child: const BackArrowIcon(),
+                child: Icon(Icons.arrow_back, color: context.textColor),
               ),
             ),
           ),
 
-          // ====== زرار الطوارئ (SOS): بقى على اليمين عشان مايتصدمش مع
-          // زرار الرجوع اللي بقى ثابت على الشمال ======
-          Positioned(
+          // ====== زرار الطوارئ (SOS): بيفضل في الجهة المقابلة لزرار الرجوع
+          // عشان مايتصدمش معاه في أي اتجاه ======
+          PositionedDirectional(
             top: 50,
-            right: 16,
+            end: 16,
             child: SosFloatingButton(
               userRole: 'passenger',
               orderId: widget.orderId,
@@ -749,9 +750,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
           ),
 
           // ====== زرار مشاركة موقع الرحلة اللحظي مع شخص تاني عبر واتساب ======
-          Positioned(
+          PositionedDirectional(
             top: 104,
-            right: 16,
+            end: 16,
             child: GestureDetector(
               onTap: () async {
                 final message = buildTripShareMessage(

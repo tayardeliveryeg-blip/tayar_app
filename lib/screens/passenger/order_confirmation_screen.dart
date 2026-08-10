@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
-    show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
+    show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_screen.dart';
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
     show SelectDestinationScreen, PlaceResult;
@@ -408,10 +408,6 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        leading: IconButton(
-          icon: const BackArrowIcon(),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: Text(
           l10n.setYourFareTitle,
           style: TextStyle(color: context.textColor),
