@@ -1,35 +1,9 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:tayay_app/screens/passenger/select_destination_screen.dart';
-import 'package:tayay_app/screens/passenger/order_confirmation_screen.dart';
-import 'package:tayay_app/screens/passenger/create_delivery_order_screen.dart';
-import 'package:tayay_app/screens/shared/notifications_screen.dart';
-import 'package:tayay_app/screens/passenger/passenger_bottom_sheets.dart';
-import 'package:tayay_app/widgets/tayar_drawer.dart';
-import 'package:tayay_app/theme/theme_extensions.dart';
-import 'package:tayay_app/widgets/pin_marker.dart';
-import 'package:tayay_app/widgets/map_tile_layer.dart';
-import 'package:tayay_app/main.dart' show navigatorKey;
-import 'package:tayay_app/services/call_invitation_setup.dart';
-import 'package:tayay_app/services/push_notification_service.dart';
-import 'package:tayay_app/services/wallet_service.dart';
-import 'package:tayay_app/services/vendor_service.dart';
-import 'package:tayay_app/screens/passenger/become_vendor_screen.dart'
-import 'package:tayay_app/theme/app_settings.dart';
-export 'package:tayay_app/theme/theme_extensions.dart'; // مصدر TayarColors / TayarTheme / TayarThemeColors الوحيد
-
-class PassengerHomeScreen extends StatefulWidget {
-  const PassengerHomeScreen({super.key});
-
-  @override
-  State<PassengerHomeScreen> createState() => _PassengerHomeScreenState();
-}
+// ====== هذا الملف كان جزء من محاولة تقسيم passenger_home.dart لهيكلة
+// مجلدات (screen/controller/widgets/models)، لكن التقسيم اتوقف في نص
+// الطريق وسابنا نسخة مكررة من تعريف الكلاس من غير جسم State الحقيقي
+// (اللي لسه في passenger_home.dart الأصلي). بدل ما نكرر 1600+ سطر أو
+// نخاطر بنقل جزئي غير مكتمل، الملف ده بيعمل export للتعريف الأصلي
+// الشغال بالكامل. لو حبينا نكمل التقسيم الحقيقي (نقل الـ State وتفكيكه
+// لـ controller/widgets فعليًا) ده محتاج جلسة منفصلة مركزة على الملف ده
+// بس ======
+export 'package:tayay_app/screens/passenger/passenger_home.dart';
