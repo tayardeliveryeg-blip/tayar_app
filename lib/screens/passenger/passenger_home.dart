@@ -11,8 +11,8 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart';
-import 'package:tayay_app/screens/passenger/order_confirmation/order_confirmation_screen.dart';
-import 'package:tayay_app/screens/passenger/order_confirmation/order_confirmation_controller.dart';
+import 'package:tayay_app/screens/passenger/order_confirmation/order_confirmation_screen_screen.dart';
+import 'package:tayay_app/screens/passenger/order_confirmation/order_confirmation_screen_controller.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_screen.dart';
 import 'package:tayay_app/screens/shared/notifications_screen.dart';
 

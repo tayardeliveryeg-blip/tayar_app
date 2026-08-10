@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarSocialLinks, launchSocialUrl;
+import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarSocialLinks, launchSocialUrl;
 import 'package:tayay_app/screens/passenger/create_delivery_order_screen.dart';
 import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';

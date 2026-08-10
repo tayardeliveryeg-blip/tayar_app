@@ -6,8 +6,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
-import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen.dart';
-import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_controller.dart';
+import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_screen.dart';
+import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_controller.dart';
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
     show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
