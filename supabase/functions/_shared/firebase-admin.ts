@@ -248,6 +248,93 @@ export class FirestoreClient {
     const parts = String(json.name).split("/");
     return parts[parts.length - 1];
   }
+
+  /**
+   * بيبحث في collection معينة بشروط equality/range/in بسيطة (structured
+   * query عن طريق Firestore REST :runQuery). محتاجينها عشان
+   * scheduled-ride-reminder تدور على الرحلات المجدولة القريبة الميعاد.
+   * ملحوظة: أي تركيبة equality + IN + range هتحتاج على الأغلب composite
+   * index في Firestore أول مرة تتنادى - Firestore بترجع خطأ فيه رابط
+   * لإنشائه بضغطة واحدة من الكونسول، ده طبيعي ومتوقع لأي query جديدة. */
+  async query(
+    collectionId: string,
+    filters: Array<{ field: string; op: string; value: unknown }>,
+    options?: { limit?: number },
+  ): Promise<Array<{ id: string; data: Record<string, unknown> }>> {
+    const token = await getGoogleAccessToken();
+    // deno-lint-ignore no-explicit-any
+    const structuredQuery: Record<string, any> = {
+      from: [{ collectionId }],
+      where: {
+        compositeFilter: {
+          op: "AND",
+          filters: filters.map((f) => ({
+            fieldFilter: {
+              field: { fieldPath: f.field },
+              op: f.op,
+              value: toFirestoreValue(f.value),
+            },
+          })),
+        },
+      },
+    };
+    if (options?.limit) structuredQuery.limit = options.limit;
+
+    const res = await fetch(`${FIRESTORE_BASE}:runQuery`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ structuredQuery }),
+    });
+    if (!res.ok) {
+      throw new Error(
+        `Firestore query فشل (${res.status}): ${await res.text()}`,
+      );
+    }
+    const json = await res.json();
+    const results: Array<{ id: string; data: Record<string, unknown> }> = [];
+    for (const item of json as Array<{ document?: { name: string; fields?: unknown } }>) {
+      if (!item.document) continue;
+      const parts = String(item.document.name).split("/");
+      results.push({
+        id: parts[parts.length - 1],
+        // deno-lint-ignore no-explicit-any
+        data: fromFirestoreFields((item.document.fields as any) ?? {}),
+      });
+    }
+    return results;
+  }
+
+  /**
+   * بيعدّل حقول محددة بس في مستند موجود (زي .update() في Admin SDK)،
+   * من غير ما يمسح باقي الحقول اللي مش مذكورة (عن طريق updateMask).
+   * path مثلاً: "orders/abc123"
+   */
+  async update(
+    path: string,
+    // deno-lint-ignore no-explicit-any
+    data: Record<string, any>,
+  ): Promise<void> {
+    const token = await getGoogleAccessToken();
+    const maskParams = Object.keys(data)
+      .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
+      .join("&");
+    const res = await fetch(`${FIRESTORE_BASE}/${path}?${maskParams}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ fields: toFirestoreFields(data) }),
+    });
+    if (!res.ok) {
+      throw new Error(
+        `Firestore update فشل (${res.status}): ${await res.text()}`,
+      );
+    }
+  }
 }
 
 // ====== 3) إرسال Push Notification عن طريق FCM HTTP v1 API ======
