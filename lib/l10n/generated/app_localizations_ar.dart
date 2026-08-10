@@ -393,6 +393,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get orderHistoryLabel => 'سجل الطلبات';
 
   @override
+  String get myScheduledRidesLabel => 'الرحلات المجدولة';
+
+  @override
+  String get noScheduledRidesTitle => 'مفيش رحلات مجدولة';
+
+  @override
+  String get noScheduledRidesSubtitle =>
+      'الرحلات اللي هتحجزها مقدمًا هتظهر هنا';
+
+  @override
+  String get cancelScheduledRideTitle => 'إلغاء الرحلة المجدولة؟';
+
+  @override
+  String get cancelScheduledRideBody =>
+      'هيتم إلغاء الرحلة دي نهائيًا ومش هتقدر ترجعها';
+
+  @override
+  String get scheduledRideCancelledSuccess => 'اتلغت الرحلة المجدولة';
+
+  @override
   String get driverRegistrationTitle => 'تسجيل الطيار';
 
   @override

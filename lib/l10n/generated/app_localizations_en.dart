@@ -393,6 +393,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderHistoryLabel => 'Order History';
 
   @override
+  String get myScheduledRidesLabel => 'Scheduled Rides';
+
+  @override
+  String get noScheduledRidesTitle => 'No scheduled rides';
+
+  @override
+  String get noScheduledRidesSubtitle =>
+      'Rides you book in advance will show up here';
+
+  @override
+  String get cancelScheduledRideTitle => 'Cancel scheduled ride?';
+
+  @override
+  String get cancelScheduledRideBody =>
+      'This ride will be cancelled permanently and can\'t be undone';
+
+  @override
+  String get scheduledRideCancelledSuccess => 'Scheduled ride cancelled';
+
+  @override
   String get driverRegistrationTitle => 'Driver Registration';
 
   @override

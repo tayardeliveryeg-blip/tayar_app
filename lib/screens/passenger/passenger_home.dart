@@ -12,7 +12,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart';
 import 'package:tayay_app/screens/passenger/order_confirmation/order_confirmation_screen_screen.dart';
-import 'package:tayay_app/screens/passenger/order_confirmation/order_confirmation_screen_controller.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_screen.dart';
 import 'package:tayay_app/screens/shared/notifications_screen.dart';
 
@@ -106,7 +105,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   bool _isDraggingMap = false; // بنستخدمها لإخفاء الشريط السفلي وقت سحب الخريطة
 
   LatLng? _liveUserLocation; // موقعك الحقيقي الفعلي، بيتحدث لايف مع تحركك
-  double? _liveUserHeading; // اتجاه حركتك الفعلي (0 = شمال)، لسهم النقطة الزرقاء
+  double?
+  _liveUserHeading; // اتجاه حركتك الفعلي (0 = شمال)، لسهم النقطة الزرقاء
   double? _liveUserAccuracy; // نطاق دقة الـ GPS بالمتر، لحجم هالة الدقة
   StreamSubscription<Position>? _liveLocationSub;
 
@@ -129,6 +129,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           _nearbyDriversRadiusKm;
     }).length;
   }
+
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _nearbyDriversSub;
   late final AnimationController _driversMoveController;
 
@@ -138,7 +139,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   // 1 = وضع ملء الشاشة (Expanded) بعد السحب لفوق. بيتشارك بين TayarIdleBottomSheet
   // و TayarBottomSheet، وبيترجع لـ 0 تلقائيًا كل ما الوجهة تتحدد أو تتلغي ======
   late final AnimationController _sheetAnimController;
-  double _sheetDragRange = 300; // بيتحسب فعليًا وقت بداية السحب (فرق الارتفاعين)
+  double _sheetDragRange =
+      300; // بيتحسب فعليًا وقت بداية السحب (فرق الارتفاعين)
 
   // ====== مفتاح لقياس الارتفاع الحقيقي للشريط السفلي بعد ما يتبني فعليًا
   // (المحتوى بيحدد ارتفاعه لوحده جوه ConstrainedBox، فمش دايمًا بياخد كل
@@ -213,10 +215,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
           ).listen((position) {
             if (!mounted) return;
             setState(() {
-              _liveUserLocation = LatLng(
-                position.latitude,
-                position.longitude,
-              );
+              _liveUserLocation = LatLng(position.latitude, position.longitude);
               _liveUserAccuracy = position.accuracy;
               // ====== الاتجاه بييجي من الـ GPS بس وقت الحركة الفعلية،
               // فلو مفيش قراءة موثوقة (heading سالب) بنسيب آخر اتجاه معروف
@@ -769,9 +768,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     } catch (e) {
       debugPrint('❌ خطأ في حفظ مكان محفوظ مخصص ($key): $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.savedAddressSaveError)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.savedAddressSaveError)));
     }
   }
 
@@ -1181,7 +1180,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                               decoration: BoxDecoration(
                                 color: TayarColors.primary,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
                                 boxShadow: const [
                                   BoxShadow(
                                     color: Colors.black26,
@@ -1547,7 +1549,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   : Offset.zero,
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 200),
-                opacity: (_isDraggingMap || _destinationAddress != null) ? 0 : 1,
+                opacity: (_isDraggingMap || _destinationAddress != null)
+                    ? 0
+                    : 1,
                 child: IgnorePointer(
                   ignoring: _isDraggingMap || _destinationAddress != null,
                   child: GestureDetector(

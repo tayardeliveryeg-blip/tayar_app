@@ -7,7 +7,6 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
 import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_screen.dart';
-import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_controller.dart';
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
     show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
@@ -167,7 +166,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
         '?overview=false',
       );
       final response = await http.get(url).timeout(const Duration(seconds: 6));
-      if (response.statusCode != 200) throw Exception('فشل الاتصال بسيرفر المسارات');
+      if (response.statusCode != 200)
+        throw Exception('فشل الاتصال بسيرفر المسارات');
       final data = json.decode(response.body);
       final routes = data['routes'] as List?;
       if (routes == null || routes.isEmpty) throw Exception('مفيش مسار متاح');
@@ -347,8 +347,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
           )
           .timeout(const Duration(seconds: 20));
 
-      final responseData =
-          jsonDecode(response.body) as Map<String, dynamic>;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
 
       if (response.statusCode != 200) {
         // ====== رسالة السيرفر بتوصل هنا لو السعر غير منطقي مثلًا ======
@@ -476,9 +475,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                 children: [
                   _DetailRow(
                     label: l10n.distanceLabel,
-                    value: l10n.distanceKmLabel(
-                      _distanceKm.toStringAsFixed(1),
-                    ),
+                    value: l10n.distanceKmLabel(_distanceKm.toStringAsFixed(1)),
                   ),
                   Divider(color: context.dividerColor2),
                   _DetailRow(
@@ -517,7 +514,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     children: [
                       _FareStepButton(
                         icon: Icons.remove,
-                        onTap: !_isUpdatingRoute && _proposedFare - _step >= _minFare
+                        onTap:
+                            !_isUpdatingRoute &&
+                                _proposedFare - _step >= _minFare
                             ? _decreaseFare
                             : null,
                       ),
@@ -869,14 +868,10 @@ class _TimingOptionChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected
-              ? TayarColors.primary
-              : context.bgColor,
+          color: selected ? TayarColors.primary : context.bgColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected
-                ? TayarColors.primary
-                : context.dividerColor2,
+            color: selected ? TayarColors.primary : context.dividerColor2,
           ),
         ),
         child: Text(

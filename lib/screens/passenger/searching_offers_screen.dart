@@ -5,11 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart'
+    show TayarColors, TayarThemeColors;
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/screens/passenger/trip_tracking/trip_tracking_screen_screen.dart';
-import 'package:tayay_app/screens/passenger/trip_tracking/trip_tracking_screen_controller.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/searching_offers_widgets/driver_moto_marker.dart';
 import 'package:tayay_app/screens/passenger/searching_offers_widgets/offer_cards.dart';
@@ -230,10 +230,8 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
   // ====== الحد الأقصى مبني على widget.proposedFare (قيمة الكونستركتور
   // الثابتة، وهي السعر الأصلي وقت فتح الشاشة) مش على _proposedFare
   // المتغيّرة، عشان السقف يفضل ثابت ومايزحفش لفوق مع كل تعديل ======
-  double get _maxFare =>
-      FareNegotiationRules.maxFareFor(widget.proposedFare);
-  double get _minFare =>
-      FareNegotiationRules.minFareFor(widget.proposedFare);
+  double get _maxFare => FareNegotiationRules.maxFareFor(widget.proposedFare);
+  double get _minFare => FareNegotiationRules.minFareFor(widget.proposedFare);
 
   void _increaseFare() {
     final next = _proposedFare + _fareStep;
@@ -688,12 +686,11 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                AppLocalizations.of(context)!
-                                    .scheduledRideSearchingBanner(
-                                      _formatScheduledFor(
-                                        widget.scheduledFor!,
-                                      ),
-                                    ),
+                                AppLocalizations.of(
+                                  context,
+                                )!.scheduledRideSearchingBanner(
+                                  _formatScheduledFor(widget.scheduledFor!),
+                                ),
                                 style: TextStyle(
                                   color: context.onPrimaryColor,
                                   fontSize: 12.5,

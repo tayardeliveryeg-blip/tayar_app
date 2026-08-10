@@ -824,6 +824,42 @@ abstract class AppLocalizations {
   /// **'سجل الطلبات'**
   String get orderHistoryLabel;
 
+  /// No description provided for @myScheduledRidesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرحلات المجدولة'**
+  String get myScheduledRidesLabel;
+
+  /// No description provided for @noScheduledRidesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش رحلات مجدولة'**
+  String get noScheduledRidesTitle;
+
+  /// No description provided for @noScheduledRidesSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرحلات اللي هتحجزها مقدمًا هتظهر هنا'**
+  String get noScheduledRidesSubtitle;
+
+  /// No description provided for @cancelScheduledRideTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الرحلة المجدولة؟'**
+  String get cancelScheduledRideTitle;
+
+  /// No description provided for @cancelScheduledRideBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيتم إلغاء الرحلة دي نهائيًا ومش هتقدر ترجعها'**
+  String get cancelScheduledRideBody;
+
+  /// No description provided for @scheduledRideCancelledSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتلغت الرحلة المجدولة'**
+  String get scheduledRideCancelledSuccess;
+
   /// No description provided for @driverRegistrationTitle.
   ///
   /// In ar, this message translates to:

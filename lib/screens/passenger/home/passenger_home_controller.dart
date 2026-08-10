@@ -6,12 +6,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/services/call_invitation_setup.dart';
-import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/services/vendor_service.dart';
 import 'package:tayay_app/main.dart' show navigatorKey;
 

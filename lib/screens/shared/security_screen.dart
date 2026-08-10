@@ -11,9 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
-import 'package:tayay_app/screens/auth/phone_auth_screen.dart' show OtpVerificationScreen;
+import 'package:tayay_app/screens/auth/phone_auth_screen.dart'
+    show OtpVerificationScreen;
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/sos_service.dart';
 
@@ -66,7 +66,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
       await SosService.setEmergencyContact(_userRole, phone);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.savedSuccessfully)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.savedSuccessfully),
+        ),
       );
     } finally {
       if (mounted) setState(() => _savingEmergencyContact = false);
@@ -251,9 +253,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
     if (!reauthenticated) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.reauthRequiredForDeleteError)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.reauthRequiredForDeleteError)));
       return;
     }
 
@@ -276,9 +278,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
           if (kIsWeb) {
             await GoogleSignIn.instance.initialize(clientId: webClientId);
           } else {
-            await GoogleSignIn.instance.initialize(
-              serverClientId: webClientId,
-            );
+            await GoogleSignIn.instance.initialize(serverClientId: webClientId);
           }
         } catch (e) {
           if (!e.toString().contains('has already been called')) rethrow;

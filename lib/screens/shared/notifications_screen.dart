@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
 // كل إشعار بيتخزن في collection('notifications') وفيه الحقول:
@@ -62,10 +61,10 @@ class NotificationsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme:  IconThemeData(color: context.textColor),
+        iconTheme: IconThemeData(color: context.textColor),
         title: Text(
           l10n.navNotifications,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
         actions: [
           if (uid != null)
@@ -95,7 +94,7 @@ class NotificationsScreen extends StatelessWidget {
           ? Center(
               child: Text(
                 l10n.mustSignInToViewNotifications,
-                style:  TextStyle(color: context.textGreyColor),
+                style: TextStyle(color: context.textGreyColor),
               ),
             )
           : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -153,7 +152,7 @@ class NotificationsScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         Text(
                           l10n.noNotificationsYet,
-                          style:  TextStyle(color: context.textGreyColor),
+                          style: TextStyle(color: context.textGreyColor),
                         ),
                       ],
                     ),
@@ -225,7 +224,7 @@ class NotificationsScreen extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     body,
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       color: context.textGreyColor,
                                       fontSize: 14,
                                     ),
@@ -233,7 +232,7 @@ class NotificationsScreen extends StatelessWidget {
                                   const SizedBox(height: 6),
                                   Text(
                                     _timeAgo(createdAt, l10n),
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       color: context.textGreyColor,
                                       fontSize: 12,
                                     ),

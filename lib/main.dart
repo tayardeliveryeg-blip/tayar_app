@@ -8,14 +8,14 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/firebase_options.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/screens/auth/app_lock_screen.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/widgets/no_internet_banner.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 
-export 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarTheme, TayarThemeColors;
+export 'package:tayay_app/screens/passenger/passenger_home.dart'
+    show TayarColors, TayarTheme, TayarThemeColors;
 
 // ====== مفتاح Navigator عام: محتاجه خدمة دعوة المكالمات (ZegoCloud) عشان
 // تقدر تعرض واجهة "مكالمة واردة" فوق أي شاشة في التطبيق، حتى لو
@@ -224,13 +224,18 @@ class AuthGate extends StatelessWidget {
         if (snapshot.hasData) {
           final uid = snapshot.data!.uid;
           return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-            future: FirebaseFirestore.instance.collection('users').doc(uid).get(),
+            future: FirebaseFirestore.instance
+                .collection('users')
+                .doc(uid)
+                .get(),
             builder: (context, userDocSnap) {
               if (userDocSnap.connectionState == ConnectionState.waiting) {
                 return Scaffold(
                   backgroundColor: context.bgColor,
                   body: const Center(
-                    child: CircularProgressIndicator(color: TayarColors.primary),
+                    child: CircularProgressIndicator(
+                      color: TayarColors.primary,
+                    ),
                   ),
                 );
               }
@@ -245,7 +250,9 @@ class AuthGate extends StatelessWidget {
                     return Scaffold(
                       backgroundColor: context.bgColor,
                       body: const Center(
-                        child: CircularProgressIndicator(color: TayarColors.primary),
+                        child: CircularProgressIndicator(
+                          color: TayarColors.primary,
+                        ),
                       ),
                     );
                   }
@@ -307,7 +314,9 @@ class _BannedAccountScreenState extends State<_BannedAccountScreen> {
               const SizedBox(height: 8),
               Text(
                 'لو حاسس إن ده حصل بالغلط، تواصل مع الدعم.',
-                style: TextStyle(color: context.textColor.withValues(alpha: 0.7)),
+                style: TextStyle(
+                  color: context.textColor.withValues(alpha: 0.7),
+                ),
                 textAlign: TextAlign.center,
               ),
             ],

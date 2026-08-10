@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
 import 'package:tayay_app/screens/shared/security_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/sos_service.dart';
@@ -45,7 +44,9 @@ Future<void> _launch(BuildContext context, Uri uri) async {
   final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
   if (!ok && context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.failedToOpenAppError)),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
+      ),
     );
   }
 }
@@ -77,7 +78,11 @@ class _SosSheetContent extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.warning_rounded, color: Colors.redAccent, size: 26),
+                const Icon(
+                  Icons.warning_rounded,
+                  color: Colors.redAccent,
+                  size: 26,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -103,7 +108,8 @@ class _SosSheetContent extends StatelessWidget {
               color: Colors.redAccent,
               title: loc.sosCallPoliceLabel,
               subtitle: _kEgyptPoliceNumber,
-              onTap: () => _launch(context, Uri.parse('tel:$_kEgyptPoliceNumber')),
+              onTap: () =>
+                  _launch(context, Uri.parse('tel:$_kEgyptPoliceNumber')),
             ),
             const SizedBox(height: 10),
             _SosOptionTile(
@@ -205,7 +211,10 @@ class _SosOptionTile extends StatelessWidget {
                   ),
                   Text(
                     subtitle,
-                    style: TextStyle(color: context.textGreyColor, fontSize: 12),
+                    style: TextStyle(
+                      color: context.textGreyColor,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),

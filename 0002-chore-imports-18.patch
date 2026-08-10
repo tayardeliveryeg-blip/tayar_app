@@ -1,0 +1,214 @@
+From 1334bae67fa0ab99ce0c1905a2a78f1f928b7b43 Mon Sep 17 00:00:00 2001
+From: Claude <claude@tayar.app>
+Date: Mon, 10 Aug 2026 09:10:01 +0000
+Subject: [PATCH 2/2] =?UTF-8?q?chore:=20=D8=AA=D9=86=D8=B8=D9=8A=D9=81=20i?=
+ =?UTF-8?q?mports=20=D8=BA=D9=8A=D8=B1=20=D9=85=D8=B3=D8=AA=D8=AE=D8=AF?=
+ =?UTF-8?q?=D9=85=D8=A9=20(18=20=D8=B3=D8=B7=D8=B1)=20=D9=81=D9=8A=20?=
+ =?UTF-8?q?=D8=A7=D9=84=D9=85=D9=84=D9=81=D8=A7=D8=AA=20=D8=A7=D9=84=D9=85?=
+ =?UTF-8?q?=D8=AA=D8=A8=D9=82=D9=8A=D8=A9=20=D8=A8=D8=B9=D8=AF=20=D8=A5?=
+ =?UTF-8?q?=D8=B5=D9=84=D8=A7=D8=AD=20=D8=A7=D9=86=D9=87=D9=8A=D8=A7=D8=B1?=
+ =?UTF-8?q?=20=D8=A7=D9=84=D8=AA=D9=82=D8=B3=D9=8A=D9=85?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ lib/helpers/auth_flow_helpers.dart                             | 1 -
+ lib/main.dart                                                  | 1 -
+ lib/screens/driver/driver_home_screen.dart                     | 1 -
+ lib/screens/passenger/create_delivery_order_screen.dart        | 1 -
+ lib/screens/passenger/home/passenger_home_controller.dart      | 3 ---
+ lib/screens/passenger/order_confirmation_screen.dart           | 1 -
+ lib/screens/passenger/passenger_home.dart                      | 1 -
+ lib/screens/passenger/searching_offers_screen.dart             | 1 -
+ .../trip_tracking/trip_tracking_screen_controller.dart         | 3 ---
+ lib/screens/shared/help_screen.dart                            | 1 -
+ lib/screens/shared/notifications_screen.dart                   | 1 -
+ lib/screens/shared/security_screen.dart                        | 1 -
+ lib/screens/shared/support_screen.dart                         | 1 -
+ lib/widgets/sos_action_sheet.dart                              | 1 -
+ 14 files changed, 18 deletions(-)
+
+diff --git a/lib/helpers/auth_flow_helpers.dart b/lib/helpers/auth_flow_helpers.dart
+index 0320a97..2a8ec21 100644
+--- a/lib/helpers/auth_flow_helpers.dart
++++ b/lib/helpers/auth_flow_helpers.dart
+@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
+ import 'package:firebase_auth/firebase_auth.dart';
+ import 'package:tayay_app/screens/auth/role_selection_screen.dart';
+ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
+ import 'package:tayay_app/screens/driver/driver_home_screen.dart';
+ import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
+ import 'package:tayay_app/services/driver_invite_link_helper.dart';
+diff --git a/lib/main.dart b/lib/main.dart
+index 133a246..fd692c9 100644
+--- a/lib/main.dart
++++ b/lib/main.dart
+@@ -8,7 +8,6 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/firebase_options.dart';
+ import 'package:tayay_app/screens/auth/login_screen.dart';
+ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
+ import 'package:tayay_app/screens/driver/driver_home_screen.dart';
+ import 'package:tayay_app/screens/auth/app_lock_screen.dart';
+ import 'package:tayay_app/services/push_notification_service.dart';
+diff --git a/lib/screens/driver/driver_home_screen.dart b/lib/screens/driver/driver_home_screen.dart
+index 9d4e9ae..fad09fa 100644
+--- a/lib/screens/driver/driver_home_screen.dart
++++ b/lib/screens/driver/driver_home_screen.dart
+@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
+ import 'package:latlong2/latlong.dart';
+ import 'package:google_sign_in/google_sign_in.dart';
+ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
+ import 'package:tayay_app/screens/auth/login_screen.dart';
+ import 'package:tayay_app/main.dart';
+ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+diff --git a/lib/screens/passenger/create_delivery_order_screen.dart b/lib/screens/passenger/create_delivery_order_screen.dart
+index 110b7b6..ddfae2d 100644
+--- a/lib/screens/passenger/create_delivery_order_screen.dart
++++ b/lib/screens/passenger/create_delivery_order_screen.dart
+@@ -12,7 +12,6 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColor
+ import 'package:tayay_app/screens/passenger/select_destination_screen.dart' show SelectDestinationScreen, PlaceResult;
+ import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
+ import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_screen.dart';
+-import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_controller.dart';
+ import 'package:tayay_app/theme/app_settings.dart';
+ import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/location_pick_row.dart';
+ import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/labeled_text_field.dart';
+diff --git a/lib/screens/passenger/home/passenger_home_controller.dart b/lib/screens/passenger/home/passenger_home_controller.dart
+index afd0867..f83f714 100644
+--- a/lib/screens/passenger/home/passenger_home_controller.dart
++++ b/lib/screens/passenger/home/passenger_home_controller.dart
+@@ -6,12 +6,9 @@ import 'package:latlong2/latlong.dart';
+ import 'package:geolocator/geolocator.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:http/http.dart' as http;
+-import 'package:firebase_auth/firebase_auth.dart';
+-import 'package:tayay_app/theme/theme_extensions.dart';
+ import 'package:tayay_app/theme/app_settings.dart';
+ import 'package:tayay_app/services/push_notification_service.dart';
+ import 'package:tayay_app/services/call_invitation_setup.dart';
+-import 'package:tayay_app/services/wallet_service.dart';
+ import 'package:tayay_app/services/vendor_service.dart';
+ import 'package:tayay_app/main.dart' show navigatorKey;
+ 
+diff --git a/lib/screens/passenger/order_confirmation_screen.dart b/lib/screens/passenger/order_confirmation_screen.dart
+index 16c1d25..342bd9e 100644
+--- a/lib/screens/passenger/order_confirmation_screen.dart
++++ b/lib/screens/passenger/order_confirmation_screen.dart
+@@ -7,7 +7,6 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/screens/passenger/passenger_home.dart'
+     show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
+ import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_screen.dart';
+-import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_controller.dart';
+ import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
+     show SelectDestinationScreen, PlaceResult;
+ import 'package:tayay_app/services/fare_negotiation_rules.dart';
+diff --git a/lib/screens/passenger/passenger_home.dart b/lib/screens/passenger/passenger_home.dart
+index a3f47b2..460cb80 100644
+--- a/lib/screens/passenger/passenger_home.dart
++++ b/lib/screens/passenger/passenger_home.dart
+@@ -12,7 +12,6 @@ import 'package:url_launcher/url_launcher.dart';
+ 
+ import 'package:tayay_app/screens/passenger/select_destination_screen.dart';
+ import 'package:tayay_app/screens/passenger/order_confirmation/order_confirmation_screen_screen.dart';
+-import 'package:tayay_app/screens/passenger/order_confirmation/order_confirmation_screen_controller.dart';
+ import 'package:tayay_app/screens/passenger/create_delivery_order_screen.dart';
+ import 'package:tayay_app/screens/shared/notifications_screen.dart';
+ 
+diff --git a/lib/screens/passenger/searching_offers_screen.dart b/lib/screens/passenger/searching_offers_screen.dart
+index bd51121..fea7d2e 100644
+--- a/lib/screens/passenger/searching_offers_screen.dart
++++ b/lib/screens/passenger/searching_offers_screen.dart
+@@ -9,7 +9,6 @@ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' sho
+ import 'package:tayay_app/widgets/map_tile_layer.dart';
+ import 'package:tayay_app/theme/app_settings.dart';
+ import 'package:tayay_app/screens/passenger/trip_tracking/trip_tracking_screen_screen.dart';
+-import 'package:tayay_app/screens/passenger/trip_tracking/trip_tracking_screen_controller.dart';
+ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/screens/passenger/searching_offers_widgets/driver_moto_marker.dart';
+ import 'package:tayay_app/screens/passenger/searching_offers_widgets/offer_cards.dart';
+diff --git a/lib/screens/passenger/trip_tracking/trip_tracking_screen_controller.dart b/lib/screens/passenger/trip_tracking/trip_tracking_screen_controller.dart
+index 73ecc34..0bcbdfb 100644
+--- a/lib/screens/passenger/trip_tracking/trip_tracking_screen_controller.dart
++++ b/lib/screens/passenger/trip_tracking/trip_tracking_screen_controller.dart
+@@ -1,14 +1,11 @@
+ import 'dart:async';
+ import 'dart:convert';
+-import 'dart:math' as math;
+ import 'package:flutter/material.dart';
+ import 'package:flutter/services.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
+-import 'package:firebase_auth/firebase_auth.dart';
+ import 'package:flutter_map/flutter_map.dart';
+ import 'package:latlong2/latlong.dart';
+ import 'package:http/http.dart' as http;
+-import 'package:tayay_app/services/wallet_service.dart';
+ 
+ /// Controller لشاشة تتبع الرحلة
+ class TripTrackingController extends ChangeNotifier {
+diff --git a/lib/screens/shared/help_screen.dart b/lib/screens/shared/help_screen.dart
+index 0b06752..38f7483 100644
+--- a/lib/screens/shared/help_screen.dart
++++ b/lib/screens/shared/help_screen.dart
+@@ -1,7 +1,6 @@
+ import 'package:flutter/material.dart';
+ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
+ 
+ // ====== شاشة مساعدة: أسئلة شائعة عن استخدام طيار (راكب وطيار) ======
+ class HelpScreen extends StatelessWidget {
+diff --git a/lib/screens/shared/notifications_screen.dart b/lib/screens/shared/notifications_screen.dart
+index 5400d55..c2d3fd2 100644
+--- a/lib/screens/shared/notifications_screen.dart
++++ b/lib/screens/shared/notifications_screen.dart
+@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:firebase_auth/firebase_auth.dart';
+ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
+ 
+ // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
+ // كل إشعار بيتخزن في collection('notifications') وفيه الحقول:
+diff --git a/lib/screens/shared/security_screen.dart b/lib/screens/shared/security_screen.dart
+index c7b7385..a3e7222 100644
+--- a/lib/screens/shared/security_screen.dart
++++ b/lib/screens/shared/security_screen.dart
+@@ -13,7 +13,6 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+ import 'package:tayay_app/screens/auth/login_screen.dart';
+ import 'package:tayay_app/screens/auth/phone_auth_screen.dart' show OtpVerificationScreen;
+ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
+ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/services/sos_service.dart';
+ 
+diff --git a/lib/screens/shared/support_screen.dart b/lib/screens/shared/support_screen.dart
+index 7204017..4c51106 100644
+--- a/lib/screens/shared/support_screen.dart
++++ b/lib/screens/shared/support_screen.dart
+@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
+ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
+ import 'package:tayay_app/theme/app_settings.dart';
+ 
+ // ====== شاشة الدعم: تواصل مباشر (واتساب/اتصال/إيميل) + إرسال شكوى/استفسار ======
+diff --git a/lib/widgets/sos_action_sheet.dart b/lib/widgets/sos_action_sheet.dart
+index 3667b87..c975f3a 100644
+--- a/lib/widgets/sos_action_sheet.dart
++++ b/lib/widgets/sos_action_sheet.dart
+@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
+ import 'package:url_launcher/url_launcher.dart';
+ 
+ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
+ import 'package:tayay_app/screens/shared/security_screen.dart';
+ import 'package:tayay_app/l10n/generated/app_localizations.dart';
+ import 'package:tayay_app/services/sos_service.dart';
+-- 
+2.43.0
+

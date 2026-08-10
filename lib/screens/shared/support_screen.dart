@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 
 // ====== شاشة الدعم: تواصل مباشر (واتساب/اتصال/إيميل) + إرسال شكوى/استفسار ======
@@ -99,18 +98,15 @@ class _SupportScreenState extends State<SupportScreen> {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme:  IconThemeData(color: context.textColor),
-        title: Text(
-          loc.navSupport,
-          style:  TextStyle(color: context.textColor),
-        ),
+        iconTheme: IconThemeData(color: context.textColor),
+        title: Text(loc.navSupport, style: TextStyle(color: context.textColor)),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Text(
             loc.contactUsDirectlyLabel,
-            style:  TextStyle(
+            style: TextStyle(
               color: context.textColor,
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -147,7 +143,7 @@ class _SupportScreenState extends State<SupportScreen> {
           const SizedBox(height: 28),
           Text(
             loc.orSendMessageHereLabel,
-            style:  TextStyle(
+            style: TextStyle(
               color: context.textColor,
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -163,11 +159,11 @@ class _SupportScreenState extends State<SupportScreen> {
             child: TextField(
               controller: _messageController,
               maxLines: 5,
-              style:  TextStyle(color: context.textColor),
+              style: TextStyle(color: context.textColor),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: loc.supportMessageHint,
-                hintStyle:  TextStyle(color: context.textGreyColor),
+                hintStyle: TextStyle(color: context.textGreyColor),
               ),
             ),
           ),
@@ -184,7 +180,7 @@ class _SupportScreenState extends State<SupportScreen> {
                 ),
               ),
               child: _sending
-                  ?  SizedBox(
+                  ? SizedBox(
                       width: 22,
                       height: 22,
                       child: CircularProgressIndicator(
@@ -194,7 +190,7 @@ class _SupportScreenState extends State<SupportScreen> {
                     )
                   : Text(
                       loc.sendButton,
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: context.textColor,
                         fontWeight: FontWeight.bold,
                       ),

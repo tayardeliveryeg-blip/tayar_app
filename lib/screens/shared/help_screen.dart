@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_controller.dart';
 
 // ====== شاشة مساعدة: أسئلة شائعة عن استخدام طيار (راكب وطيار) ======
 class HelpScreen extends StatelessWidget {
@@ -53,10 +52,10 @@ class HelpScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme:  IconThemeData(color: context.textColor),
+        iconTheme: IconThemeData(color: context.textColor),
         title: Text(
           l10n.helpScreenTitle,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: ListView.separated(
@@ -88,7 +87,7 @@ class HelpScreen extends StatelessWidget {
                 children: [
                   Text(
                     faq.answer,
-                    style:  TextStyle(
+                    style: TextStyle(
                       color: context.textGreyColor,
                       fontSize: 14,
                       height: 1.6,

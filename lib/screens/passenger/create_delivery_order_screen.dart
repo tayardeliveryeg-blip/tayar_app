@@ -8,11 +8,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
-import 'package:tayay_app/screens/passenger/select_destination_screen.dart' show SelectDestinationScreen, PlaceResult;
+import 'package:tayay_app/screens/passenger/passenger_home.dart'
+    show TayarColors, TayarThemeColors, paymentMethodDisplay, BackArrowIcon;
+import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
+    show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_screen.dart';
-import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_controller.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/location_pick_row.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/labeled_text_field.dart';
@@ -38,8 +39,7 @@ class CreateDeliveryOrderScreen extends StatefulWidget {
       _CreateDeliveryOrderScreenState();
 }
 
-class _CreateDeliveryOrderScreenState
-    extends State<CreateDeliveryOrderScreen> {
+class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
   LatLng? _pickupLocation;
   String? _pickupAddress;
   LatLng? _dropoffLocation;
@@ -49,8 +49,7 @@ class _CreateDeliveryOrderScreenState
       TextEditingController();
   final TextEditingController _dropoffDetailsController =
       TextEditingController();
-  final TextEditingController _senderPhoneController =
-      TextEditingController();
+  final TextEditingController _senderPhoneController = TextEditingController();
   final TextEditingController _receiverPhoneController =
       TextEditingController();
 
@@ -71,7 +70,8 @@ class _CreateDeliveryOrderScreenState
     super.initState();
     _pickupLocation = widget.initialPickupLocation;
     _pickupAddress = widget.initialPickupAddress;
-    _senderPhoneController.text = FirebaseAuth.instance.currentUser?.phoneNumber ?? '';
+    _senderPhoneController.text =
+        FirebaseAuth.instance.currentUser?.phoneNumber ?? '';
   }
 
   @override
@@ -192,9 +192,9 @@ class _CreateDeliveryOrderScreenState
   Future<void> _saveOrder() async {
     final loc = AppLocalizations.of(context)!;
     if (!_canSubmit) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.fillAllFieldsError)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.fillAllFieldsError)));
       return;
     }
 
@@ -211,33 +211,35 @@ class _CreateDeliveryOrderScreenState
 
       final fare = _estimatedFare;
 
-      final orderRef = await FirebaseFirestore.instance.collection('orders').add({
-        'customerId': user?.uid,
-        'customerName': user?.displayName ?? loc.defaultCustomerName,
-        'customerPhone': user?.phoneNumber,
-        'pickupAddress': _pickupAddress ?? '',
-        'pickupLocation': pickupGeoFirePoint.data,
-        'pickupAddressDetails': _pickupDetailsController.text.trim(),
-        'destinationAddress': _dropoffAddress ?? '',
-        'destinationLocation': dropoffGeoFirePoint.data,
-        'deliveryAddressDetails': _dropoffDetailsController.text.trim(),
-        'senderPhone': _senderPhoneController.text.trim(),
-        'receiverPhone': _receiverPhoneController.text.trim(),
-        'distanceKm': _distanceKm ?? 0,
-        'durationMin': _durationMin ?? 0,
-        'suggestedFare': fare,
-        'proposedFare': fare,
-        // ====== ثابتة من لحظة إنشاء الطلب ومتتغيرش تاني، عكس proposedFare
-        // اللي بتتحدث كل مرة أي طرف يغيّر السعر. دي المرجع اللي بيتحسب
-        // عليه حد أقصى/أدنى المفاوضة (شوف fare_negotiation_rules.dart) ======
-        'initialFare': fare,
-        'autoAccept': false,
-        'paymentMethod': _paymentMethod,
-        'serviceType': 'delivery',
-        'status': 'searching',
-        'driverId': null,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      final orderRef = await FirebaseFirestore.instance.collection('orders').add(
+        {
+          'customerId': user?.uid,
+          'customerName': user?.displayName ?? loc.defaultCustomerName,
+          'customerPhone': user?.phoneNumber,
+          'pickupAddress': _pickupAddress ?? '',
+          'pickupLocation': pickupGeoFirePoint.data,
+          'pickupAddressDetails': _pickupDetailsController.text.trim(),
+          'destinationAddress': _dropoffAddress ?? '',
+          'destinationLocation': dropoffGeoFirePoint.data,
+          'deliveryAddressDetails': _dropoffDetailsController.text.trim(),
+          'senderPhone': _senderPhoneController.text.trim(),
+          'receiverPhone': _receiverPhoneController.text.trim(),
+          'distanceKm': _distanceKm ?? 0,
+          'durationMin': _durationMin ?? 0,
+          'suggestedFare': fare,
+          'proposedFare': fare,
+          // ====== ثابتة من لحظة إنشاء الطلب ومتتغيرش تاني، عكس proposedFare
+          // اللي بتتحدث كل مرة أي طرف يغيّر السعر. دي المرجع اللي بيتحسب
+          // عليه حد أقصى/أدنى المفاوضة (شوف fare_negotiation_rules.dart) ======
+          'initialFare': fare,
+          'autoAccept': false,
+          'paymentMethod': _paymentMethod,
+          'serviceType': 'delivery',
+          'status': 'searching',
+          'driverId': null,
+          'createdAt': FieldValue.serverTimestamp(),
+        },
+      );
 
       if (!mounted) return;
       setState(() => _isSubmitting = false);
@@ -259,9 +261,9 @@ class _CreateDeliveryOrderScreenState
       debugPrint('❌ خطأ في حفظ طلب التوصيل: $e');
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.submitFailedError)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.submitFailedError)));
     }
   }
 
@@ -279,7 +281,7 @@ class _CreateDeliveryOrderScreenState
         ),
         title: Text(
           loc.deliveryOrderTitle,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: SingleChildScrollView(
@@ -308,7 +310,11 @@ class _CreateDeliveryOrderScreenState
                     child: Row(
                       children: [
                         const SizedBox(width: 10),
-                        Container(width: 2, height: 24, color: context.dividerColor2),
+                        Container(
+                          width: 2,
+                          height: 24,
+                          color: context.dividerColor2,
+                        ),
                       ],
                     ),
                   ),
@@ -382,7 +388,7 @@ class _CreateDeliveryOrderScreenState
                     Expanded(
                       child: Text(
                         loc.paymentMethodLabel,
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: context.textGreyColor,
                           fontSize: 14,
                         ),
@@ -390,14 +396,14 @@ class _CreateDeliveryOrderScreenState
                     ),
                     Text(
                       paymentMethodDisplay(context, _paymentMethod),
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: context.textColor,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(width: 6),
-                     Icon(
+                    Icon(
                       Icons.chevron_left,
                       color: context.textGreyColor,
                       size: 20,
@@ -431,7 +437,7 @@ class _CreateDeliveryOrderScreenState
                   ),
                 ),
                 child: _isSubmitting
-                    ?  SizedBox(
+                    ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
@@ -441,7 +447,7 @@ class _CreateDeliveryOrderScreenState
                       )
                     : Text(
                         loc.saveOrderButton,
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: context.textColor,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
