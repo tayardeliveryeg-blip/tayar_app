@@ -13,6 +13,7 @@ import 'package:tayay_app/main.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/call_invitation_setup.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
+import 'package:tayay_app/widgets/pulsing_dot.dart';
 import 'package:tayay_app/screens/driver/driver_trip_tracking_screen.dart';
 import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
@@ -732,12 +733,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       color: context.textColor,
                     ),
                   )
+                else if (_isOnline)
+                  const PulsingDot(color: TayarColors.primary, size: 10)
                 else
-                  Icon(
-                    Icons.circle,
-                    size: 10,
-                    color: _isOnline ? TayarColors.primary : Colors.grey,
-                  ),
+                  const Icon(Icons.circle, size: 10, color: Colors.grey),
                 const SizedBox(width: AppSpacing.sm),
                 Text(
                   _isOnline

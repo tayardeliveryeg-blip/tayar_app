@@ -8,6 +8,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.
 import 'package:tayay_app/screens/driver/driver_home_widgets/offer_sheet.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/active_trip_card.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/trip_request_detail_screen.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
 
 // ====== دالة مساعدة موحّدة لاستخراج GeoPoint من حقول الموقع ======
 // (نسخة مستقلة بتخدم التبويب ده بس، النسخة الأصلية لسه موجودة في
@@ -183,11 +184,9 @@ class DriverRequestsTab extends StatelessWidget {
                       snapshot.data!.docs,
                     );
                     if (orders.isEmpty) {
-                      return Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.driverNoOrders,
-                          style: TextStyle(color: context.textGreyColor),
-                        ),
+                      return EmptyState(
+                        icon: Icons.moped_outlined,
+                        title: AppLocalizations.of(context)!.driverNoOrders,
                       );
                     }
 

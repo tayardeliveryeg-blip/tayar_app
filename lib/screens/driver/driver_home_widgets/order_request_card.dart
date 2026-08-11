@@ -3,6 +3,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show paymentMethodDisplay;
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== كارت طلب واحد في تبويب "الطلبات" الخاص بالسائق ======
 // (كان قبل كده private class جوه driver_home_screen.dart واتقسم في ملف منفصل)
@@ -228,7 +229,7 @@ class OrderRequestCard extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
-                    child: ElevatedButton(
+                    child: AppPrimaryButton(
                       onPressed: onQuickAccept,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TayarColors.primary,

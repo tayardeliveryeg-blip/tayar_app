@@ -94,6 +94,40 @@ class AppRadius {
   static const double handle = 2;
 }
 
+// ====== ظلال موحّدة (Shadow Presets) ======
+// بدل ما كل شاشة تكتب BoxShadow يدويًا بقيم عشوائية (أو من غير ظل خالص
+// زي ما كان حادث قبل كده)، أي كارت أو عنصر محتاج عمق بصري ياخد الظل بتاعه
+// من هنا. أي تعديل مستقبلي على شكل الظل (قوته، اتجاهه) بيحصل في مكان واحد
+// وينعكس على كل التطبيق. الاستخدام: boxShadow: AppShadows.soft(context)
+class AppShadows {
+  // ظل ناعم عام لأي كارت (البطاقات، الكروت، الحاويات)
+  static List<BoxShadow> soft(BuildContext context) => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: context.isDarkMode ? 0.35 : 0.08),
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+  ];
+
+  // توهّج برتقالي خفيف تحت الأزرار/العناصر الأساسية بلون البراند
+  static const List<BoxShadow> primaryGlow = [
+    BoxShadow(
+      color: Color(0x59FF6B00), // TayarColors.primary بشفافية ~35%
+      blurRadius: 16,
+      offset: Offset(0, 6),
+    ),
+  ];
+
+  // ظل أقوى للعناصر الطافية فوق كل حاجة (Bottom Sheets، الكارت العائم على الخريطة)
+  static List<BoxShadow> elevated(BuildContext context) => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: context.isDarkMode ? 0.5 : 0.15),
+      blurRadius: 24,
+      offset: const Offset(0, -4),
+    ),
+  ];
+}
+
 // ====== قيم المسافات الموحّدة (Spacing Scale) ======
 // نفس فكرة AppRadius بس للـ padding/margin/SizedBox، مبنية على أكتر قيم
 // كانت متكررة فعليًا (4, 8, 12, 16, 20, 24). الاستخدام:
@@ -252,10 +286,12 @@ class TayarTheme {
       ),
       hintStyle: GoogleFonts.cairo(color: TayarColors.textGreyDark, fontSize: 14),
     ),
-    // ====== شكل موحّد للكروت ======
+    // ====== شكل موحّد للكروت (بظل ناعم ثابت بدل ما كانت مسطحة تمامًا) ======
     cardTheme: CardThemeData(
       color: TayarColors.cardDarkMode,
-      elevation: 0,
+      elevation: 3,
+      shadowColor: Colors.black.withValues(alpha: 0.4),
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     switchTheme: SwitchThemeData(
@@ -318,7 +354,9 @@ class TayarTheme {
     ),
     cardTheme: CardThemeData(
       color: TayarColors.cardLightMode,
-      elevation: 0.5,
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.12),
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     switchTheme: SwitchThemeData(
