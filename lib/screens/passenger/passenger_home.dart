@@ -21,6 +21,8 @@ import 'package:tayay_app/widgets/tayar_drawer.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/main.dart' show navigatorKey;
 import 'package:tayay_app/services/call_invitation_setup.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
@@ -366,7 +368,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: ElevatedButton(
+                child: AppPrimaryButton(
                   onPressed: () {
                     Navigator.pop(sheetContext);
                     Navigator.push(
@@ -860,7 +862,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                         },
                       ),
                       const SizedBox(height: AppSpacing.lg),
-                      ElevatedButton(
+                      AppPrimaryButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: TayarColors.primary,
                           foregroundColor: Colors.white,
@@ -1320,20 +1322,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     AnimatedOpacity(
                       duration: const Duration(milliseconds: 200),
                       opacity: _isDraggingMap ? 0 : 1,
-                      child: Container(
+                      child: AppCard(
+                        radius: AppRadius.lg,
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.lg,
                           vertical: AppSpacing.md,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.cardColor,
-                          borderRadius: BorderRadius.circular(AppRadius.lg),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              blurRadius: 8,
-                            ),
-                          ],
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

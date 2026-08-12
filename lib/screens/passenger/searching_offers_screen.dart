@@ -14,6 +14,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/searching_offers_widgets/driver_moto_marker.dart';
 import 'package:tayay_app/screens/passenger/searching_offers_widgets/offer_cards.dart';
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 /// ====== شاشة البحث عن عروض الطيارين (زي InDrive) ======
 /// بتستنى عروض من مجموعة orders/{orderId}/offers وتعرضهم لايف،
@@ -662,43 +663,37 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                       bottom: false,
                       child: Container(
                         margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
+                        child: AppCard(
                           color: TayarColors.primary,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 8,
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.schedule,
-                              size: 18,
-                              color: context.onPrimaryColor,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.scheduledRideSearchingBanner(
-                                  _formatScheduledFor(widget.scheduledFor!),
-                                ),
-                                style: TextStyle(
-                                  color: context.onPrimaryColor,
-                                  fontSize: 12.5,
-                                  fontWeight: FontWeight.w600,
+                          radius: 12,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.schedule,
+                                size: 18,
+                                color: context.onPrimaryColor,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.scheduledRideSearchingBanner(
+                                    _formatScheduledFor(widget.scheduledFor!),
+                                  ),
+                                  style: TextStyle(
+                                    color: context.onPrimaryColor,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -834,58 +829,51 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                             const SizedBox(height: 6),
 
                             // ====== خانة القبول التلقائي ======
-                            InkWell(
+                            AppCard(
                               onTap: () => _toggleAutoAccept(!_autoAccept),
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: context.cardColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.flash_on,
-                                      color: TayarColors.primary,
-                                      size: 18,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        loc.autoAcceptNearestDriverLabel(
-                                          _proposedFare.toStringAsFixed(0),
-                                        ),
-                                        style: TextStyle(
-                                          color: context.textColor,
-                                          fontSize: 14,
-                                        ),
+                              radius: 12,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              showShadow: false,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.flash_on,
+                                    color: TayarColors.primary,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      loc.autoAcceptNearestDriverLabel(
+                                        _proposedFare.toStringAsFixed(0),
+                                      ),
+                                      style: TextStyle(
+                                        color: context.textColor,
+                                        fontSize: 14,
                                       ),
                                     ),
-                                    Switch(
-                                      value: _autoAccept,
-                                      activeThumbColor: TayarColors.primary,
-                                      onChanged: _toggleAutoAccept,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  Switch(
+                                    value: _autoAccept,
+                                    activeThumbColor: TayarColors.primary,
+                                    onChanged: _toggleAutoAccept,
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 8),
 
                             // ====== طريقة الدفع ======
-                            Container(
+                            AppCard(
+                              radius: 12,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 14,
                                 vertical: 10,
                               ),
-                              decoration: BoxDecoration(
-                                color: context.cardColor,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              showShadow: false,
                               child: Row(
                                 children: [
                                   const Icon(
@@ -910,15 +898,13 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                             const SizedBox(height: 8),
 
                             // ====== المسار: من - إلى ======
-                            Container(
+                            AppCard(
+                              radius: 12,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 14,
                                 vertical: 12,
                               ),
-                              decoration: BoxDecoration(
-                                color: context.cardColor,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              showShadow: false,
                               child: Column(
                                 children: [
                                   Row(
@@ -1063,18 +1049,10 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
+      child: AppCard(
+        color: context.bgColor.withValues(alpha: 0.95),
+        radius: 30,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: context.bgColor.withValues(alpha: 0.95),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 8,
-            ),
-          ],
-        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

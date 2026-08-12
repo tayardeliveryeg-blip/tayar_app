@@ -19,6 +19,7 @@ import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/services/trip_share_helper.dart';
 import 'package:tayay_app/widgets/contact_action_button.dart';
 import 'package:tayay_app/widgets/sos_floating_button.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -585,20 +586,12 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               top: 120,
               left: 16,
               right: 16,
-              child: Container(
+              child: AppCard(
+                color: TayarColors.primary,
+                radius: 14,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: TayarColors.primary,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                    ),
-                  ],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -631,20 +624,12 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               top: 120,
               left: 16,
               right: 16,
-              child: Container(
+              child: AppCard(
+                color: TayarColors.primary,
+                radius: 14,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: TayarColors.primary,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                    ),
-                  ],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -677,20 +662,12 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
               top: 120,
               left: 16,
               right: 16,
-              child: Container(
+              child: AppCard(
+                color: context.bgColor.withValues(alpha: 0.95),
+                radius: 14,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: context.bgColor.withValues(alpha: 0.95),
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                    ),
-                  ],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
