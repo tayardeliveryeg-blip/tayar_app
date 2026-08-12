@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/main.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== شاشة الإعدادات: اللغة، الإشعارات، ونبذة عن التطبيق ======
 class SettingsScreen extends StatefulWidget {
@@ -429,11 +430,10 @@ class _SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(14),
-      ),
+    return AppCard(
+      radius: 14,
+      padding: EdgeInsets.zero,
+      showShadow: false,
       child: Column(children: children),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== شاشة مساعدة: أسئلة شائعة عن استخدام طيار (راكب وطيار) ======
 class HelpScreen extends StatelessWidget {
@@ -66,11 +67,10 @@ class HelpScreen extends StatelessWidget {
           final faq = faqs[index];
           return Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: Container(
-              decoration: BoxDecoration(
-                color: context.cardColor,
-                borderRadius: BorderRadius.circular(14),
-              ),
+            child: AppCard(
+              radius: 14,
+              padding: EdgeInsets.zero,
+              showShadow: false,
               child: ExpansionTile(
                 iconColor: TayarColors.primary,
                 collapsedIconColor: context.textGreyColor,

@@ -16,6 +16,8 @@ import 'package:tayay_app/screens/auth/phone_auth_screen.dart'
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/sos_service.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== شاشة الأمان: قفل التطبيق برقم سري + عرض وسيلة تسجيل الدخول + حذف
 // الحساب + جهة اتصال الطوارئ. شاشة مشتركة بين الراكب والطيار - isDriver
@@ -580,7 +582,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                           SizedBox(
                             width: double.infinity,
                             height: 44,
-                            child: ElevatedButton(
+                            child: AppPrimaryButton(
                               onPressed: _savingEmergencyContact
                                   ? null
                                   : _saveEmergencyContact,
@@ -641,11 +643,10 @@ class _SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(14),
-      ),
+    return AppCard(
+      radius: 14,
+      padding: EdgeInsets.zero,
+      showShadow: false,
       child: Column(children: children),
     );
   }

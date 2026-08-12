@@ -6,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== شاشة الدعم: تواصل مباشر (واتساب/اتصال/إيميل) + إرسال شكوى/استفسار ======
 // رقم الواتساب/الاتصال بييجي من إعدادات لوحة الأدمن (AppSettings)، والإيميل ثابت تحت
@@ -150,12 +152,10 @@ class _SupportScreenState extends State<SupportScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Container(
+          AppCard(
+            radius: 14,
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: context.cardColor,
-              borderRadius: BorderRadius.circular(14),
-            ),
+            showShadow: false,
             child: TextField(
               controller: _messageController,
               maxLines: 5,
@@ -171,7 +171,7 @@ class _SupportScreenState extends State<SupportScreen> {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: ElevatedButton(
+            child: AppPrimaryButton(
               onPressed: _sending ? null : _sendMessage,
               style: ElevatedButton.styleFrom(
                 backgroundColor: TayarColors.primary,
@@ -216,28 +216,23 @@ class _SupportActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(14),
+    return AppCard(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: context.cardColor,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          children: [
-            IconTheme(
-              data: const IconThemeData(color: TayarColors.primary, size: 26),
-              child: icon,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(color: context.textColor, fontSize: 14),
-            ),
-          ],
-        ),
+      radius: 14,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      showShadow: false,
+      child: Column(
+        children: [
+          IconTheme(
+            data: const IconThemeData(color: TayarColors.primary, size: 26),
+            child: icon,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(color: context.textColor, fontSize: 14),
+          ),
+        ],
       ),
     );
   }
