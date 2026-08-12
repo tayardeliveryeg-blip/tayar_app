@@ -3,6 +3,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show paymentMethodDisplay;
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== كارت طلب واحد في تبويب "الطلبات" الخاص بالسائق ======
@@ -55,15 +56,14 @@ class OrderRequestCard extends StatelessWidget {
             // ====== بادچ "محجوزة لـ..." للطلبات المجدولة مقدمًا - بيظهر بس
             // لو scheduledFor موجودة (شوف orderType في supabase/functions/create-order) ======
             if (scheduledFor != null) ...[
-              Container(
+              AppCard(
+                color: TayarColors.primary.withValues(alpha: 0.15),
+                radius: AppRadius.sm,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
                   vertical: AppSpacing.xxs,
                 ),
-                decoration: BoxDecoration(
-                  color: TayarColors.primary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
-                ),
+                showShadow: false,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -160,15 +160,14 @@ class OrderRequestCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xxs),
-                    Container(
+                    AppCard(
+                      color: context.textColor.withValues(alpha: 0.08),
+                      radius: AppRadius.xxl,
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.sm,
                         vertical: AppSpacing.xxs,
                       ),
-                      decoration: BoxDecoration(
-                        color: context.textColor.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(AppRadius.xxl),
-                      ),
+                      showShadow: false,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

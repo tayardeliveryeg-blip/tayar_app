@@ -8,6 +8,8 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show paymentMethodDisplay;
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/offer_sheet.dart'
@@ -194,29 +196,23 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
+                  AppCard(
                     padding: const EdgeInsets.all(AppSpacing.lg),
-                    decoration: BoxDecoration(
-                      color: context.cardColor,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                    ),
+                    radius: AppRadius.lg,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (widget.scheduledFor != null) ...[
-                          Container(
+                          AppCard(
+                            color: TayarColors.primary.withValues(
+                              alpha: 0.15,
+                            ),
+                            radius: AppRadius.sm,
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.sm,
                               vertical: AppSpacing.xxs,
                             ),
-                            decoration: BoxDecoration(
-                              color: TayarColors.primary.withValues(
-                                alpha: 0.15,
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                AppRadius.sm,
-                              ),
-                            ),
+                            showShadow: false,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -385,7 +381,7 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                         ),
                         const SizedBox(width: AppSpacing.md),
                         Expanded(
-                          child: ElevatedButton(
+                          child: AppPrimaryButton(
                             onPressed: () {
                               widget.onQuickAccept?.call();
                               Navigator.pop(context);

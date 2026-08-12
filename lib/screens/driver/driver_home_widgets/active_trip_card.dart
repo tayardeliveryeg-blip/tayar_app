@@ -7,6 +7,7 @@ import 'package:tayay_app/services/call_invitation_helper.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.dart'
     show formatScheduledForDisplay;
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== كارت الرحلة النشطة فوق قائمة الطلبات + زرار التواصل (شات/مكالمة) ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
@@ -219,7 +220,7 @@ class ActiveTripCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   height: 44,
-                  child: ElevatedButton(
+                  child: AppPrimaryButton(
                     onPressed: inProgress ? onComplete : onStart,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TayarColors.primary,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== شيت تقديم عرض بسعر مخصص من السائق على طلب ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
@@ -112,7 +113,7 @@ class OfferSheetState extends State<OfferSheet> {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: ElevatedButton(
+            child: AppPrimaryButton(
               onPressed: () => widget.onSubmit(_price),
               style: ElevatedButton.styleFrom(
                 backgroundColor: TayarColors.primary,
