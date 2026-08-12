@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 class FormTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -110,15 +112,14 @@ class PhotoUploadTile extends StatelessWidget {
                 Positioned(
                   top: 6,
                   right: 6,
-                  child: Container(
+                  child: AppCard(
+                    color: Colors.black54,
+                    radius: 6,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 6,
                       vertical: 2,
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
+                    showShadow: false,
                     child: Text(
                       AppLocalizations.of(context)!.optionalLabel,
                       style: const TextStyle(color: Colors.white, fontSize: 12),
@@ -183,7 +184,7 @@ class SectionScaffold extends StatelessWidget {
             Expanded(child: ListView(children: children)),
             SizedBox(
               height: 54,
-              child: ElevatedButton(
+              child: AppPrimaryButton(
                 onPressed: isSaving ? null : onSave,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,

@@ -6,6 +6,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/theme/theme_extensions.dart' show AppSpacing, AppRadius;
 import 'package:tayay_app/helpers/auth_flow_helpers.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====================================================
 // ====== شاشة إدخال رقم الموبايل ======
@@ -151,7 +152,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
             // ====== زرار إرسال الكود ======
             SizedBox(
               height: 55,
-              child: ElevatedButton(
+              child: AppPrimaryButton(
                 onPressed: _isLoading ? null : _sendOtp,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,
@@ -609,7 +610,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                   // ====== زرار التأكيد ======
                   SizedBox(
                     height: 55,
-                    child: ElevatedButton(
+                    child: AppPrimaryButton(
                       onPressed: (_isLoading ||
                               _hiddenController.text.length != _codeLength)
                           ? null

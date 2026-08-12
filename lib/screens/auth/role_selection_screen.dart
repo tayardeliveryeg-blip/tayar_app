@@ -5,6 +5,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
 import 'package:tayay_app/screens/auth/profile_setup_screen.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====================================================
 // ====== شاشة اختيار نوع الحساب بعد أول تسجيل دخول ======
@@ -150,15 +151,14 @@ class _RoleCard extends StatelessWidget {
                   ),
                   if (badge != null) ...[
                     const SizedBox(height: 8),
-                    Container(
+                    AppCard(
+                      color: TayarColors.primary.withValues(alpha: 0.15),
+                      radius: 20,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 4,
                       ),
-                      decoration: BoxDecoration(
-                        color: TayarColors.primary.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      showShadow: false,
                       child: Text(
                         badge!,
                         style: const TextStyle(

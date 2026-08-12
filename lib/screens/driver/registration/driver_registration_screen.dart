@@ -11,6 +11,8 @@ import 'package:tayay_app/screens/driver/registration/personal_documents_screen.
 import 'package:tayay_app/screens/driver/registration/bike_info_screen.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 class DriverRegistrationScreen extends StatefulWidget {
   const DriverRegistrationScreen({super.key});
 
@@ -190,38 +192,39 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
                   // التطبيقات — بيظهر طول الوقت (قبل وبعد إرسال الطلب
                   // ووقت المراجعة) عشان يفضل يعزّز نفس الرسالة ======
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
                     margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
+                    child: AppCard(
                       color: TayarColors.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.local_offer_outlined,
-                          color: TayarColors.primary,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .driverCommissionHighlightDetail(
-                                  (AppSettings.instance.commissionRate * 100)
-                                      .round()
-                                      .toString(),
-                                ),
-                            style: TextStyle(
-                              color: context.textColor,
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w600,
+                      radius: 14,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      showShadow: false,
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.local_offer_outlined,
+                            color: TayarColors.primary,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .driverCommissionHighlightDetail(
+                                    (AppSettings.instance.commissionRate * 100)
+                                        .round()
+                                        .toString(),
+                                  ),
+                              style: TextStyle(
+                                color: context.textColor,
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   if (status == 'pending_review')
@@ -300,7 +303,7 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
                     ),
                   SizedBox(
                     height: 54,
-                    child: ElevatedButton(
+                    child: AppPrimaryButton(
                       onPressed:
                           (_allSectionsComplete &&
                               !_isSubmitting &&
