@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/driver/driver_wallet_topup_screen.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== تبويب "محفظتي": الرصيد الصافي بعد عمولة الشركة + سجل الحركات ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
@@ -74,22 +76,11 @@ class DriverWalletTab extends StatelessWidget {
             // ====== زرار شحن المحفظة ======
             SizedBox(
               height: 50,
-              child: ElevatedButton.icon(
+              child: AppPrimaryButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppRadius.lg),
-                  ),
-                ),
-                icon: Icon(
-                  Icons.add_card_outlined,
-                  color: context.onPrimaryColor,
-                ),
-                label: Text(
-                  loc.topUpWalletButton,
-                  style: TextStyle(
-                    color: context.onPrimaryColor,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 onPressed: () {
@@ -100,6 +91,23 @@ class DriverWalletTab extends StatelessWidget {
                     ),
                   );
                 },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_card_outlined,
+                      color: context.onPrimaryColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      loc.topUpWalletButton,
+                      style: TextStyle(
+                        color: context.onPrimaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.xxl),
@@ -202,30 +210,30 @@ class WalletTransactionTile extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(color: context.textColor, fontSize: 14),
+      child: AppCard(
+        radius: AppRadius.xl,
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        showShadow: false,
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 22),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(color: context.textColor, fontSize: 14),
+              ),
             ),
-          ),
-          Text(
-            '$sign${loc.currencyEGP(displayAmount.abs().toStringAsFixed(0))}',
-            style: TextStyle(
-              color: color,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+            Text(
+              '$sign${loc.currencyEGP(displayAmount.abs().toStringAsFixed(0))}',
+              style: TextStyle(
+                color: color,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

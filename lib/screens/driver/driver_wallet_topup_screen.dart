@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/services/wallet_service.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====================================================
 // ====== شاشة شحن رصيد محفظة الطيار ======
@@ -209,7 +210,7 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
                 // ====== زرار الإرسال ======
                 SizedBox(
                   height: 55,
-                  child: ElevatedButton(
+                  child: AppPrimaryButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TayarColors.primary,
                       shape: RoundedRectangleBorder(

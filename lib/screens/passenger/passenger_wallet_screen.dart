@@ -7,6 +7,8 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/services/promo_service.dart';
 import 'package:tayay_app/services/referral_service.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== شاشة "محفظتي" للراكب: الرصيد الحالي + سجل الحركات - نفس فكرة
 // DriverWalletTab بالظبط، بس من غير زرار شحن (رصيد الراكب بيتزود من
@@ -80,12 +82,10 @@ class PassengerWalletScreen extends StatelessWidget {
                       future: ensureReferralCode(uid),
                       builder: (context, codeSnapshot) {
                         final code = codeSnapshot.data;
-                        return Container(
+                        return AppCard(
+                          radius: AppRadius.xl,
                           padding: const EdgeInsets.all(AppSpacing.lg),
-                          decoration: BoxDecoration(
-                            color: context.cardColor,
-                            borderRadius: BorderRadius.circular(AppRadius.xl),
-                          ),
+                          showShadow: false,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -121,18 +121,15 @@ class PassengerWalletScreen extends StatelessWidget {
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: Container(
+                                      child: AppCard(
+                                        color: TayarColors.primary
+                                            .withValues(alpha: 0.1),
+                                        radius: AppRadius.md,
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: AppSpacing.md,
                                           vertical: AppSpacing.sm,
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: TayarColors.primary
-                                              .withValues(alpha: 0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            AppRadius.md,
-                                          ),
-                                        ),
+                                        showShadow: false,
                                         child: Text(
                                           code,
                                           style: const TextStyle(
@@ -379,7 +376,7 @@ void _showRedeemCodeSheet(BuildContext context, String uid) {
                 const SizedBox(height: AppSpacing.lg),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: AppPrimaryButton(
                     onPressed: isSubmitting ? null : submit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TayarColors.primary,
@@ -448,30 +445,30 @@ class PassengerWalletTransactionTile extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(color: context.textColor, fontSize: 14),
+      child: AppCard(
+        radius: AppRadius.xl,
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        showShadow: false,
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 22),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(color: context.textColor, fontSize: 14),
+              ),
             ),
-          ),
-          Text(
-            '$sign${loc.currencyEGP(amount.abs().toStringAsFixed(0))}',
-            style: TextStyle(
-              color: color,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+            Text(
+              '$sign${loc.currencyEGP(amount.abs().toStringAsFixed(0))}',
+              style: TextStyle(
+                color: color,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
