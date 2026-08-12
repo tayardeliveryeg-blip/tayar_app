@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== كارت اقتراح رفع السعر بعد ما البحث ياخد وقت طويل ======
 // (كانت private class _RaiseFareCard جوه searching_offers_screen.dart)
@@ -55,7 +56,7 @@ class RaiseFareCard extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           height: 50,
-          child: ElevatedButton(
+          child: AppPrimaryButton(
             onPressed: onRaiseFare,
             style: ElevatedButton.styleFrom(
               backgroundColor: TayarColors.primary,
@@ -198,7 +199,7 @@ class OfferCard extends StatelessWidget {
           const SizedBox(width: 10),
           SizedBox(
             height: 32,
-            child: ElevatedButton(
+            child: AppPrimaryButton(
               onPressed: isProcessing ? null : onAccept,
               style: ElevatedButton.styleFrom(
                 backgroundColor: TayarColors.primary,
@@ -407,7 +408,7 @@ class OfferNotificationSheet extends StatelessWidget {
                     Expanded(
                       child: SizedBox(
                         height: 46,
-                        child: ElevatedButton(
+                        child: AppPrimaryButton(
                           onPressed: onAccept,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: TayarColors.primary,
