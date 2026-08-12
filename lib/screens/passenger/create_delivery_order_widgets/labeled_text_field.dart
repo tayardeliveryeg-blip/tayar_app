@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== خانة نص بعنوان فوقها (تفاصيل عنوان / رقم موبايل) ======
 class LabeledTextField extends StatelessWidget {
@@ -24,12 +25,9 @@ class LabeledTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
+      radius: 16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -19,6 +19,8 @@ import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/locati
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/labeled_text_field.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/route_summary_card.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/payment_method_sheet.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 /// ====== شاشة إنشاء طلب "وصل طلباتي" (توصيل طرد/بضاعة) ======
 /// بتاخد مكان استلام + مكان تسليم + تفاصيل العناوين + أرقام موبايل
@@ -286,12 +288,9 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ====== كارت المسار: استلام + تسليم ======
-            Container(
+            AppCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: context.cardColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
+              radius: 16,
               child: Column(
                 children: [
                   LocationPickRow(
@@ -365,47 +364,41 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
             const SizedBox(height: 16),
 
             // ====== طريقة الدفع ======
-            InkWell(
+            AppCard(
               onTap: _showPaymentMethodSheet,
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: context.cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.payments_outlined,
-                      color: TayarColors.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        loc.paymentMethodLabel,
-                        style: TextStyle(
-                          color: context.textGreyColor,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      paymentMethodDisplay(context, _paymentMethod),
+              padding: const EdgeInsets.all(16),
+              radius: 16,
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.payments_outlined,
+                    color: TayarColors.primary,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      loc.paymentMethodLabel,
                       style: TextStyle(
-                        color: context.textColor,
+                        color: context.textGreyColor,
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.chevron_left,
-                      color: context.textGreyColor,
-                      size: 20,
+                  ),
+                  Text(
+                    paymentMethodDisplay(context, _paymentMethod),
+                    style: TextStyle(
+                      color: context.textColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(
+                    Icons.chevron_left,
+                    color: context.textGreyColor,
+                    size: 20,
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -421,7 +414,7 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
             // ====== زرار حفظ الطلب ======
             SizedBox(
               height: 54,
-              child: ElevatedButton(
+              child: AppPrimaryButton(
                 onPressed: _canSubmit ? _saveOrder : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,
