@@ -4,6 +4,8 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 /// ====== شاشة تقييم الراكب بعد انتهاء الرحلة (من ناحية الطيار) ======
 /// نفس فكرة RateTripScreen بالظبط لكن بالعكس: الطيار هو اللي بيقيّم الراكب.
@@ -166,49 +168,50 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
                 const SizedBox(height: 28),
 
                 // ====== كارت الراكب ======
-                Container(
+                SizedBox(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: context.cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundColor: TayarColors.primary,
-                        child: Icon(
-                          Icons.person,
-                          color: context.onPrimaryColor,
-                          size: 30,
+                  child: AppCard(
+                    padding: const EdgeInsets.all(16),
+                    radius: 16,
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor: TayarColors.primary,
+                          child: Icon(
+                            Icons.person,
+                            color: context.onPrimaryColor,
+                            size: 30,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.customerName,
-                              style: TextStyle(
-                                color: context.textColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.customerName,
+                                style: TextStyle(
+                                  color: context.textColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              loc.currencyEGP(widget.fare.toStringAsFixed(0)),
-                              style: TextStyle(
-                                color: context.textGreyColor,
-                                fontSize: 14,
+                              const SizedBox(height: 4),
+                              Text(
+                                loc.currencyEGP(
+                                  widget.fare.toStringAsFixed(0),
+                                ),
+                                style: TextStyle(
+                                  color: context.textGreyColor,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
 
@@ -263,7 +266,7 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 54,
-                  child: ElevatedButton(
+                  child: AppPrimaryButton(
                     onPressed: _isSubmitting ? null : _submitRating,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TayarColors.primary,

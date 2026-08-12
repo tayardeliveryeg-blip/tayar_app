@@ -6,6 +6,8 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show paymentMethodDisplay;
 import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
 import 'package:tayay_app/services/call_invitation_helper.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/contact_action_button.dart';
 
 // ====== كارت تفاصيل الرحلة أسفل شاشة تتبع الطيار: بيانات الراكب، العنوانين،
@@ -143,12 +145,10 @@ class TripDetailsCard extends StatelessWidget {
               const SizedBox(height: 12),
 
               // ====== العنوانين ======
-              Container(
+              AppCard(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: context.cardColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                radius: 12,
+                showShadow: false,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -274,7 +274,7 @@ class TripDetailsCard extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 height: 46,
-                child: ElevatedButton(
+                child: AppPrimaryButton(
                   onPressed: inProgress ? onCompleteTrip : onStartTrip,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,
