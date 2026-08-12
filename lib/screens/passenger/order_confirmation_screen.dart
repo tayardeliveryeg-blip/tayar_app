@@ -12,6 +12,8 @@ import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 
 class OrderConfirmationScreen extends StatefulWidget {
@@ -419,12 +421,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ====== كارت المسار: من - إلى (كل صف قابل للضغط لتغييره) ======
-            Container(
+            AppCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: context.cardColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
+              radius: 16,
               child: Column(
                 children: [
                   _RouteRow(
@@ -462,12 +461,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             const SizedBox(height: 16),
 
             // ====== كارت تفاصيل الرحلة ======
-            Container(
+            AppCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: context.cardColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
+              radius: 16,
               child: Column(
                 children: [
                   _DetailRow(
@@ -568,12 +564,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             const SizedBox(height: 16),
 
             // ====== كارت معاد الرحلة: دلوقتي / حجز لاحقًا ======
-            Container(
+            AppCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: context.cardColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
+              radius: 16,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -677,7 +670,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
             // ====== زرار البحث عن عروض ======
             SizedBox(
               height: 54,
-              child: ElevatedButton.icon(
+              child: AppPrimaryButton(
                 onPressed: (_isSubmitting || _isUpdatingRoute)
                     ? null
                     : _searchForOffers,
@@ -687,10 +680,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                icon: _isSubmitting
-                    ? const SizedBox.shrink()
-                    : Icon(Icons.search, color: context.onPrimaryColor),
-                label: _isSubmitting
+                child: _isSubmitting
                     ? SizedBox(
                         width: 22,
                         height: 22,
@@ -699,13 +689,20 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                           strokeWidth: 2,
                         ),
                       )
-                    : Text(
-                        l10n.searchForDriversButton,
-                        style: TextStyle(
-                          color: context.textColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search, color: context.onPrimaryColor),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.searchForDriversButton,
+                            style: TextStyle(
+                              color: context.textColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
               ),
             ),
