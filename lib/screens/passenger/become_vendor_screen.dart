@@ -9,6 +9,8 @@ import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
     show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/services/vendor_service.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 /// ====== شاشة فورم "عايز تبقى شريك تجاري معانا؟" ======
 /// فورم خفيف بخمس حقول: اسم المحل، نوع النشاط (Dropdown)، رقم موبايل/واتساب،
@@ -207,38 +209,32 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
             const SizedBox(height: 12),
 
             // ====== نوع النشاط (Dropdown) ======
-            InkWell(
+            AppCard(
               onTap: _showBusinessTypeSheet,
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: context.cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.storefront, color: TayarColors.primary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        loc.vendorBusinessTypeLabel,
-                        style: TextStyle(
-                          color: context.textGreyColor,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      vendorBusinessTypeDisplay(loc, _businessType),
+              padding: const EdgeInsets.all(16),
+              radius: 16,
+              child: Row(
+                children: [
+                  const Icon(Icons.storefront, color: TayarColors.primary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      loc.vendorBusinessTypeLabel,
                       style: TextStyle(
-                        color: context.textColor,
-                        fontWeight: FontWeight.w600,
+                        color: context.textGreyColor,
+                        fontSize: 14,
                       ),
                     ),
-                    Icon(Icons.chevron_left, color: context.textGreyColor),
-                  ],
-                ),
+                  ),
+                  Text(
+                    vendorBusinessTypeDisplay(loc, _businessType),
+                    style: TextStyle(
+                      color: context.textColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Icon(Icons.chevron_left, color: context.textGreyColor),
+                ],
               ),
             ),
             const SizedBox(height: 12),
@@ -259,48 +255,42 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
             const SizedBox(height: 12),
 
             // ====== الموقع ======
-            InkWell(
+            AppCard(
               onTap: _pickLocation,
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: context.cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.location_on, color: TayarColors.primary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            loc.vendorLocationLabel,
-                            style: TextStyle(
-                              color: context.textGreyColor,
-                              fontSize: 12,
-                            ),
+              padding: const EdgeInsets.all(16),
+              radius: 16,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.location_on, color: TayarColors.primary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          loc.vendorLocationLabel,
+                          style: TextStyle(
+                            color: context.textGreyColor,
+                            fontSize: 12,
                           ),
-                          Text(
-                            _locationAddress ?? loc.tapToSelectLocationLabel,
-                            style: TextStyle(
-                              color: _locationAddress != null
-                                  ? context.textColor
-                                  : context.textGreyColor,
-                              fontWeight: _locationAddress != null
-                                  ? FontWeight.w600
-                                  : FontWeight.normal,
-                            ),
+                        ),
+                        Text(
+                          _locationAddress ?? loc.tapToSelectLocationLabel,
+                          style: TextStyle(
+                            color: _locationAddress != null
+                                ? context.textColor
+                                : context.textGreyColor,
+                            fontWeight: _locationAddress != null
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Icon(Icons.chevron_left, color: context.textGreyColor),
-                  ],
-                ),
+                  ),
+                  Icon(Icons.chevron_left, color: context.textGreyColor),
+                ],
               ),
             ),
             const SizedBox(height: 12),
@@ -318,7 +308,7 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
 
             SizedBox(
               height: 54,
-              child: ElevatedButton(
+              child: AppPrimaryButton(
                 onPressed: _canSubmit ? _submit : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,
@@ -396,12 +386,9 @@ class _VendorLabeledTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
+      radius: 16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

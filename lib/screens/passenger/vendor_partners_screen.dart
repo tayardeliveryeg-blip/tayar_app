@@ -7,6 +7,8 @@ import 'package:tayay_app/screens/passenger/create_delivery_order_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
 import 'package:tayay_app/services/vendor_service.dart';
+import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 /// ====== شاشة "شركاؤنا التجاريين": بتعرض كل المحلات اللي اتأكدت كشريك
 /// تجاري (بعد ما الأدمن ينشرها من تاب Vendor Requests)، مرتبة حسب الأقرب
@@ -152,12 +154,9 @@ class _VendorPartnersScreenState extends State<VendorPartnersScreen> {
                             partner.location,
                           );
 
-                    return Container(
+                    return AppCard(
                       padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: context.cardColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      radius: 16,
                       child: Row(
                         children: [
                           Container(
@@ -210,7 +209,7 @@ class _VendorPartnersScreenState extends State<VendorPartnersScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          ElevatedButton(
+                          AppPrimaryButton(
                             onPressed: () => _orderFrom(partner),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: TayarColors.primary,
