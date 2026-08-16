@@ -371,13 +371,6 @@ class TayarIdleBottomSheet extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: context.cardColor,
                             borderRadius: BorderRadius.circular(AppRadius.md),
-                            // ====== إطار برتقالي ثابت محيط بالخانة كلها
-                            // (الأيقونة + النص)، مش بس مكان الكتابة - نفس
-                            // منطق خانة اختيار الوجهة بالظبط ======
-                            border: Border.all(
-                              color: TayarColors.primary,
-                              width: 1.5,
-                            ),
                           ),
                           child: Row(
                             children: [
