@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/sos_action_sheet.dart';
 
 /// ====== زرار الطوارئ العائم اللي بيظهر أثناء أي رحلة شغالة (راكب أو
@@ -28,12 +29,7 @@ class SosFloatingButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.redAccent.withValues(alpha: 0.95),
           shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 8,
-            ),
-          ],
+          boxShadow: AppShadows.floating(context),
         ),
         child: const Icon(Icons.warning_rounded, color: Colors.white),
       ),
