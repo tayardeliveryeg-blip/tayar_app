@@ -4,6 +4,8 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show paymentMethodDisplay;
+import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== كارت ملخص الرحلة (المسافة + الوقت + السعر + زرار الطلب) ======
 class TripSummaryCard extends StatelessWidget {
@@ -40,13 +42,10 @@ class TripSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: TayarColors.primary.withValues(alpha: 0.3)),
-      ),
+      radius: AppRadius.xl,
+      border: Border.all(color: TayarColors.primary.withValues(alpha: 0.3)),
       child: Column(
         children: [
           Row(
@@ -142,7 +141,7 @@ class TripSummaryCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 flex: 2,
-                child: ElevatedButton(
+                child: AppPrimaryButton(
                   onPressed: onConfirm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,

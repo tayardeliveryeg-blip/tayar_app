@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 class ProfilePhotoEditScreen extends StatefulWidget {
   final Uint8List imageBytes;
@@ -141,7 +142,7 @@ class _ProfilePhotoEditScreenState extends State<ProfilePhotoEditScreen> {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
+                  child: AppPrimaryButton(
                     onPressed: _isSaving ? null : _saveCroppedImage,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TayarColors.primary,

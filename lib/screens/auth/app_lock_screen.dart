@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== شاشة قفل التطبيق: بتظهر فوق كل حاجة لو القفل مفعّل، وبتفضل
 // ظاهرة لحد ما المستخدم يدخل الرقم السري الصح ======
@@ -70,7 +71,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
                   Text(_error!, style: const TextStyle(color: Colors.redAccent)),
                 ],
                 const SizedBox(height: 24),
-                ElevatedButton(
+                AppPrimaryButton(
                   onPressed: _checkPin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TayarColors.primary,

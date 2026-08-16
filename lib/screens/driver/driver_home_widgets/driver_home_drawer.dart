@@ -15,6 +15,7 @@ import 'package:tayay_app/screens/driver/driver_profile_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_drawer_item.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====== القايمة الجانبية (Drawer) لشاشة الطيار الرئيسية ======
 // (كانت جوه driver_home_screen.dart واتقسمت في ملف منفصل زي ما حصل مع
@@ -277,7 +278,7 @@ class DriverHomeDrawer extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
-                child: ElevatedButton(
+                child: AppPrimaryButton(
                   onPressed: () async {
                     // ====== نحفظ إن آخر وضع بقى "راكب" عشان يفتح عليه المرة الجاية ======
                     await _saveLastMode('passenger');

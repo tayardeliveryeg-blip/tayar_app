@@ -11,6 +11,7 @@ import 'package:tayay_app/theme/theme_extensions.dart' show AppShadows;
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart' show PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 /// ====== شاشة اختيار الوجهة من الخريطة ======
 /// خريطة كاملة الشاشة فيها دبوس ثابت في النص، المستخدم بيحرك الخريطة لحد
@@ -305,7 +306,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
             bottom: 24,
             child: SafeArea(
               top: false,
-              child: ElevatedButton(
+              child: AppPrimaryButton(
                 onPressed: _isLoadingAddress ? null : _confirmSelection,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,

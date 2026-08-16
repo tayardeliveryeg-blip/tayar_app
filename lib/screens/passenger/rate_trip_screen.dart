@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors, PassengerHomeScreen;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 /// ====== شاشة تقييم الطيار بعد انتهاء الرحلة ======
 /// بتظهر تلقائيًا لما الأوردر يوصل لحالة completed، وبتسمح للراكب
@@ -263,7 +264,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 54,
-                  child: ElevatedButton(
+                  child: AppPrimaryButton(
                     onPressed: _isSubmitting ? null : _submitRating,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TayarColors.primary,

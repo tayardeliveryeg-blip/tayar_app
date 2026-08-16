@@ -10,6 +10,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 import 'package:tayay_app/services/profile_photo_validator.dart';
 import 'package:tayay_app/screens/shared/profile_widgets.dart';
 import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====================================================
 // ====== شاشة بروفايل الطيار: قابلة للتعديل ======
@@ -381,7 +382,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                   ),
                   SizedBox(
                     height: 54,
-                    child: ElevatedButton(
+                    child: AppPrimaryButton(
                       onPressed: _isSaving ? null : _save,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TayarColors.primary,

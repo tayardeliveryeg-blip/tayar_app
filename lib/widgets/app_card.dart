@@ -16,6 +16,7 @@ class AppCard extends StatefulWidget {
   final double radius;
   final Color? color;
   final bool showShadow;
+  final BoxBorder? border;
 
   const AppCard({
     super.key,
@@ -25,6 +26,7 @@ class AppCard extends StatefulWidget {
     this.radius = AppRadius.xl,
     this.color,
     this.showShadow = true,
+    this.border,
   });
 
   @override
@@ -50,6 +52,7 @@ class _AppCardState extends State<AppCard> {
         decoration: BoxDecoration(
           color: widget.color ?? context.cardColor,
           borderRadius: BorderRadius.circular(widget.radius),
+          border: widget.border,
           boxShadow: widget.showShadow ? AppShadows.soft(context) : null,
         ),
         child: widget.child,

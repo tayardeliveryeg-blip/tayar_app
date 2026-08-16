@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
 // كل إشعار بيتخزن في collection('notifications') وفيه الحقول:
@@ -174,23 +175,18 @@ class NotificationsScreen extends StatelessWidget {
                         ? ts.toDate()
                         : DateTime.now();
 
-                    return InkWell(
-                      borderRadius: BorderRadius.circular(14),
+                    return AppCard(
                       onTap: () => _markAsRead(doc.id),
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: context.cardColor,
-                          borderRadius: BorderRadius.circular(14),
-                          border: isRead
-                              ? null
-                              : Border.all(
-                                  color: TayarColors.primary.withValues(
-                                    alpha: 0.4,
-                                  ),
-                                ),
-                        ),
-                        child: Row(
+                      padding: const EdgeInsets.all(14),
+                      radius: 14,
+                      border: isRead
+                          ? null
+                          : Border.all(
+                              color: TayarColors.primary.withValues(
+                                alpha: 0.4,
+                              ),
+                            ),
+                      child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CircleAvatar(
@@ -252,7 +248,6 @@ class NotificationsScreen extends StatelessWidget {
                               ),
                           ],
                         ),
-                      ),
                     );
                   },
                 );

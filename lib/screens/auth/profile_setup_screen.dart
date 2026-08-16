@@ -6,6 +6,7 @@ import 'package:tayay_app/services/referral_service.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, PassengerHomeScreen;
 import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 // ====================================================
 // ====== شاشة استكمال بيانات الراكب بعد أول تسجيل دخول ======
@@ -180,7 +181,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 const SizedBox(height: 8),
                 SizedBox(
                   height: 55,
-                  child: ElevatedButton(
+                  child: AppPrimaryButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TayarColors.primary,
                       shape: RoundedRectangleBorder(
