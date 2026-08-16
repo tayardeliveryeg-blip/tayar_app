@@ -697,7 +697,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                           Text(
                             l10n.searchForDriversButton,
                             style: TextStyle(
-                              color: context.textColor,
+                              color: context.onPrimaryColor,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),

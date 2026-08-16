@@ -319,7 +319,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                 child: Text(
                   AppLocalizations.of(context)!.doneButton,
                   style:  TextStyle(
-                    color: context.textColor,
+                    color: context.onPrimaryColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
