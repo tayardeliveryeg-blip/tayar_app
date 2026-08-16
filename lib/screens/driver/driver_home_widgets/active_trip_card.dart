@@ -8,6 +8,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.
     show formatScheduledForDisplay;
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== كارت الرحلة النشطة فوق قائمة الطلبات + زرار التواصل (شات/مكالمة) ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
@@ -43,18 +44,17 @@ class ActiveTripCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppCard(
       margin: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
         AppSpacing.lg,
         AppSpacing.lg,
         0,
       ),
-      decoration: BoxDecoration(
-        color: TayarColors.primary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
-      ),
+      padding: EdgeInsets.zero,
+      color: TayarColors.primary.withValues(alpha: 0.12),
+      radius: AppRadius.xl,
+      border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -8,6 +8,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====================================================
 // ====== شاشة شحن رصيد محفظة الطيار ======
@@ -166,16 +167,14 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                GestureDetector(
+                AppCard(
                   onTap: _pickProof,
-                  child: Container(
+                  padding: EdgeInsets.zero,
+                  radius: 14,
+                  border: Border.all(color: context.dividerColor2),
+                  child: SizedBox(
                     height: 180,
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: context.cardColor,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: context.dividerColor2),
-                    ),
                     child: _proofBytes == null
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.center,

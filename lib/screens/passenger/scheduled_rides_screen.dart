@@ -6,6 +6,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
 import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.dart'
     show formatScheduledForDisplay;
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====================================================
 // ====== شاشة "الرحلات المجدولة": بتعرض بس رحلات الراكب المحجوزة
@@ -202,14 +203,11 @@ class ScheduledRidesScreen extends StatelessWidget {
                         (data['acceptedFare'] ?? data['proposedFare']) as num?;
                     final driverName = data['driverName'] as String?;
 
-                    return Container(
+                    return AppCard(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: context.cardColor,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: TayarColors.primary.withValues(alpha: 0.15),
-                        ),
+                      radius: 16,
+                      border: Border.all(
+                        color: TayarColors.primary.withValues(alpha: 0.15),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

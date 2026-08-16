@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== كارت المسافة/الوقت/السعر (بيظهر بعد ما نحدد الموقعين) - أو مؤشر
 // تحميل لو المسار لسه بيتحسب ======
@@ -31,13 +32,11 @@ class RouteSummaryCard extends StatelessWidget {
     if (distanceKm == null) return const SizedBox.shrink();
 
     final loc = AppLocalizations.of(context)!;
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: TayarColors.primary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
-      ),
+      color: TayarColors.primary.withValues(alpha: 0.12),
+      radius: 16,
+      border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
       child: Column(
         children: [
           Row(

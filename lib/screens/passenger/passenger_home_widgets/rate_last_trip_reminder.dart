@@ -5,6 +5,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/screens/passenger/rate_trip_screen.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== تذكير تقييم آخر رحلة: بيجيب آخر رحلة مكتملة للراكب، ولو مفيش
 // حقل 'rating' عليها (يعني اتخطّت التقييم التلقائي على trip_tracking_screen،
@@ -57,7 +58,7 @@ class RateLastTripReminder extends StatelessWidget {
 
         return Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: GestureDetector(
+          child: AppCard(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -69,19 +70,15 @@ class RateLastTripReminder extends StatelessWidget {
                 ),
               ),
             ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
-              ),
-              decoration: BoxDecoration(
-                color: context.cardColor,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                border: Border.all(
-                  color: TayarColors.primary.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
+            ),
+            radius: AppRadius.md,
+            border: Border.all(
+              color: TayarColors.primary.withValues(alpha: 0.3),
+            ),
+            child: Row(
                 children: [
                   const Icon(
                     Icons.star_outline,
@@ -109,7 +106,6 @@ class RateLastTripReminder extends StatelessWidget {
                 ],
               ),
             ),
-          ),
         );
       },
     );

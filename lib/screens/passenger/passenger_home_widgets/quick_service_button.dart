@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== زرار خدمة سريعة (وصلني / وصل طلباتي) — أيقونة ونص بس، جوه
 // الشريط السفلي تحت الأماكن المحفوظة ======
@@ -18,35 +19,30 @@ class QuickServiceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return AppCard(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: AppSpacing.md,
-          horizontal: AppSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: context.cardColor,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: context.dividerColor2),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: TayarColors.primary, size: 24),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              label,
-              style: TextStyle(
-                color: context.textColor,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSpacing.md,
+        horizontal: AppSpacing.sm,
+      ),
+      radius: AppRadius.lg,
+      border: Border.all(color: context.dividerColor2),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: TayarColors.primary, size: 24),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            label,
+            style: TextStyle(
+              color: context.textColor,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
             ),
-          ],
-        ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

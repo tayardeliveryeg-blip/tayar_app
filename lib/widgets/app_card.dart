@@ -17,6 +17,8 @@ class AppCard extends StatefulWidget {
   final Color? color;
   final bool showShadow;
   final BoxBorder? border;
+  final EdgeInsetsGeometry? margin;
+  final Clip clipBehavior;
 
   const AppCard({
     super.key,
@@ -27,6 +29,8 @@ class AppCard extends StatefulWidget {
     this.color,
     this.showShadow = true,
     this.border,
+    this.margin,
+    this.clipBehavior = Clip.none,
   });
 
   @override
@@ -48,7 +52,9 @@ class _AppCardState extends State<AppCard> {
       duration: const Duration(milliseconds: 100),
       curve: Curves.easeOut,
       child: Container(
+        margin: widget.margin,
         padding: widget.padding,
+        clipBehavior: widget.clipBehavior,
         decoration: BoxDecoration(
           color: widget.color ?? context.cardColor,
           borderRadius: BorderRadius.circular(widget.radius),

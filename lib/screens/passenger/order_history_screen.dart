@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
+import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== شاشة سجل الطلبات: بتعرض كل طلبات الراكب الحالي (رحلات + توصيل) ======
 // بنجيب كل حاجة من collection('orders') فلترة على customerId، وبنرتب
@@ -158,14 +159,11 @@ class OrderHistoryScreen extends StatelessWidget {
                     final rating = data['rating'];
                     final createdAt = data['createdAt'] as Timestamp?;
 
-                    return Container(
+                    return AppCard(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: context.cardColor,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: TayarColors.primary.withValues(alpha: 0.15),
-                        ),
+                      radius: 16,
+                      border: Border.all(
+                        color: TayarColors.primary.withValues(alpha: 0.15),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
