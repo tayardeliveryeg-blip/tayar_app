@@ -12,8 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Tayar - Instantly There';
 
   @override
-  String get noInternetConnectionMessage =>
-      'No internet connection';
+  String get noInternetConnectionMessage => 'No internet connection';
 
   @override
   String get clientOrderPriority =>

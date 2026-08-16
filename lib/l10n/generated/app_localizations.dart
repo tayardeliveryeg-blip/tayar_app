@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @noInternetConnectionMessage.
   ///
   /// In ar, this message translates to:
-  /// **'مفيش اتصال بالإنترنت، تأكد من اتصالك وحاول تاني'**
+  /// **'مفيش اتصال بالإنترنت'**
   String get noInternetConnectionMessage;
 
   /// No description provided for @clientOrderPriority.

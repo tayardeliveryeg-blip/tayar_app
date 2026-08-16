@@ -12,8 +12,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'طيار - وصلك في لحظة';
 
   @override
-  String get noInternetConnectionMessage =>
-      'مفيش اتصال بالإنترنت';
+  String get noInternetConnectionMessage => 'مفيش اتصال بالإنترنت';
 
   @override
   String get clientOrderPriority =>

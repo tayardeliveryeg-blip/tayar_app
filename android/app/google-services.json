@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "354477388400-s6d5bafhuvrumvg7ltgdgj8ps1uhb6pg.apps.googleusercontent.com",
+          "client_id": "354477388400-p2boieu1ltq77bjluo28iqnevkknlpu7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.tayar.app",
-            "certificate_hash": "bf1354ec64338db18969abd34df2dd709381d425"
+            "certificate_hash": "bd94b1025cb287a1957c21d7a9fc525271b1320c"
           }
         },
         {
