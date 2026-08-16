@@ -71,3 +71,10 @@ android/.kotlin/
 # Firebase Hosting deploy cache & web build output (auto-generated, not source)
 .firebase/
 tayar-admin/build/
+
+# Supabase CLI local cache/state (project-specific, regenerated per machine)
+supabase/.temp/
+
+# Leftover analysis/patch artifacts (not source, shouldn't live in the repo)
+analyze_output.txt
+*.patch
