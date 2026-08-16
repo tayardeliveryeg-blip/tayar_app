@@ -82,13 +82,18 @@ class _NoInternetBannerState extends State<NoInternetBanner> {
               child: Material(
                 type: MaterialType.transparency,
                 child: Container(
+                  // ====== الهامش الأفقي 70 محسوب عشان يمشي بالظبط بعد
+                  // آخر حافة لزرار الجرس/القايمة الجانبية (left/right: 16 +
+                  // عرض 50 = 66) مع فراغ بسيط 4، فالبانر يفضل متمركز بينهم
+                  // تمامًا في الشاشة الرئيسية، وبردو شكله كويس ومتناسق فوق
+                  // باقي الشاشات (بانر مضغوط وسط الشاشة بدل ما يمتد لطرفها) ======
                   margin: const EdgeInsets.symmetric(
-                    horizontal: 12,
+                    horizontal: 70,
                     vertical: 8,
                   ),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
+                    horizontal: 12,
+                    vertical: 8,
                   ),
                   decoration: BoxDecoration(
                     color: TayarColors.error,
@@ -107,9 +112,9 @@ class _NoInternetBannerState extends State<NoInternetBanner> {
                       const Icon(
                         Icons.wifi_off_rounded,
                         color: Colors.white,
-                        size: 20,
+                        size: 18,
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           AppLocalizations.of(
@@ -118,7 +123,7 @@ class _NoInternetBannerState extends State<NoInternetBanner> {
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontSize: 12,
                           ),
                         ),
                       ),
