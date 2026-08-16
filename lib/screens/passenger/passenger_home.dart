@@ -1434,13 +1434,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           color: context.cardColor,
                           shape: BoxShape.circle,
                           border: Border.all(color: context.dividerColor2),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.25),
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
+                          boxShadow: AppShadows.floating(context),
                         ),
                         child: Icon(
                           Icons.notifications_none,
@@ -1487,13 +1481,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                             color: context.cardColor,
                             shape: BoxShape.circle,
                             border: Border.all(color: context.dividerColor2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.25),
-                                blurRadius: 10,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
+                            boxShadow: AppShadows.floating(context),
                           ),
                           child: Icon(Icons.menu, color: context.textColor),
                         ),
@@ -1559,13 +1547,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           color: context.dividerColor2,
                           width: 1,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
+                        boxShadow: AppShadows.floating(context),
                       ),
                       child: Icon(
                         Icons.my_location,

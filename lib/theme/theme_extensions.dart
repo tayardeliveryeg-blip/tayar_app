@@ -126,6 +126,17 @@ class AppShadows {
       offset: const Offset(0, -4),
     ),
   ];
+
+  // ظل الأزرار الدائرية العائمة فوق الخريطة (الجرس، القايمة الجانبية، موقعي،
+  // الرجوع، المشاركة...). كانت كل شاشة بتكتب قيم مختلفة شوية (blur 8 أو 10،
+  // alpha 0.25 أو 0.3) لنفس فكرة الزرار، فاتوحدت هنا في قيمة واحدة متسقة.
+  static List<BoxShadow> floating(BuildContext context) => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: context.isDarkMode ? 0.4 : 0.25),
+      blurRadius: 10,
+      offset: const Offset(0, 3),
+    ),
+  ];
 }
 
 // ====== قيم المسافات الموحّدة (Spacing Scale) ======

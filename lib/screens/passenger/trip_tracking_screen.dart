@@ -703,12 +703,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                 decoration: BoxDecoration(
                   color: context.bgColor.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                    ),
-                  ],
+                  boxShadow: AppShadows.floating(context),
                 ),
                 child: Icon(Icons.arrow_back, color: context.textColor),
               ),
@@ -756,12 +751,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                 decoration: BoxDecoration(
                   color: context.bgColor.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                    ),
-                  ],
+                  boxShadow: AppShadows.floating(context),
                 ),
                 child: Icon(Icons.share_outlined, color: context.textColor),
               ),
