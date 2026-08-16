@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/theme/theme_extensions.dart' show AppShadows;
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart' show PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
