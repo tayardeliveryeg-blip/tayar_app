@@ -58,6 +58,9 @@ key.properties
 functions/node_modules/
 functions/lib/
 **/npm-debug.log*
+# أي مجلد node_modules في أي مكان بالمشروع (جذر المشروع، tayar-admin،
+# أي أداة CLI متثبتة بـ npm محليًا زي Supabase CLI...) - أبدًا متتبع في git
+node_modules/
 # --- cleanup additions ---
 *.log
 missing_keys.txt
