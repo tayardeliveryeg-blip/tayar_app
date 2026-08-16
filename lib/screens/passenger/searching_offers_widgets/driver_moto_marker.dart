@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors;
+import 'package:tayay_app/theme/theme_extensions.dart' show AppShadows;
 
 // ====== أيقونة موتوسيكل طيار واحد على الخريطة: بتنبض باستمرار عشان تحس إنها
 // "شغالة" حتى وهي مش بتتحرك، ولو الطيار عمل عرض سعر على الطلب ده بتظهر
@@ -73,12 +74,7 @@ class DriverMotoMarker extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: TayarColors.primary,
                     borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.35),
-                        blurRadius: 4,
-                      ),
-                    ],
+                    boxShadow: AppShadows.marker,
                   ),
                   child: Text(
                     price!.toStringAsFixed(0),

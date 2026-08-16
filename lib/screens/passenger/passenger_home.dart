@@ -1186,12 +1186,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                                   color: Colors.white,
                                   width: 2,
                                 ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 4,
-                                  ),
-                                ],
+                                boxShadow: AppShadows.marker,
                               ),
                               child: const Icon(
                                 Icons.storefront,

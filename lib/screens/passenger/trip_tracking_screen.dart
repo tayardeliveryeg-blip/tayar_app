@@ -560,12 +560,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                             color: TayarColors.primary,
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 3),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 8,
-                              ),
-                            ],
+                            boxShadow: AppShadows.marker,
                           ),
                           child: const Icon(
                             Icons.navigation,

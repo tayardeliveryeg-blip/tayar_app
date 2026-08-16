@@ -25,9 +25,7 @@ class PinMarker extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.textColor,
         borderRadius: BorderRadius.circular(size * 0.27),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 6),
-        ],
+        boxShadow: AppShadows.marker,
       ),
       child: Icon(
         type == PinType.pickup ? Icons.location_on : Icons.flag,
@@ -90,12 +88,7 @@ class LiveLocationDot extends StatelessWidget {
               color: Colors.blue,
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white, width: 2.5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.25),
-                  blurRadius: 3,
-                ),
-              ],
+              boxShadow: AppShadows.marker,
             ),
           ),
         ],

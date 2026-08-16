@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
+import 'package:tayay_app/theme/theme_extensions.dart' show AppShadows;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 
@@ -302,12 +303,7 @@ class OfferNotificationSheet extends StatelessWidget {
             decoration: BoxDecoration(
               color: context.cardColor,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.4),
-                  blurRadius: 16,
-                ),
-              ],
+              boxShadow: AppShadows.elevated(context),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

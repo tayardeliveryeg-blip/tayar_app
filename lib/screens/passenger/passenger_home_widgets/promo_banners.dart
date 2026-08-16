@@ -41,12 +41,7 @@ class NewCustomerPromoBanner extends StatelessWidget {
           decoration: BoxDecoration(
             color: TayarColors.primary,
             borderRadius: BorderRadius.circular(AppRadius.lg),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.25),
-                blurRadius: 8,
-              ),
-            ],
+            boxShadow: AppShadows.soft(context),
           ),
           child: Row(
             children: [
@@ -122,12 +117,7 @@ class BecomeVendorPromoBanner extends StatelessWidget {
             decoration: BoxDecoration(
               color: TayarColors.primary,
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.25),
-                  blurRadius: 8,
-                ),
-              ],
+              boxShadow: AppShadows.soft(context),
             ),
             child: Row(
               children: [

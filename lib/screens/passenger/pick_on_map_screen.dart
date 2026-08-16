@@ -202,12 +202,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                     decoration: BoxDecoration(
                       color: context.bgColor,
                       borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                        ),
-                      ],
+                      boxShadow: AppShadows.floating(context),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
