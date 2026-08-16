@@ -13,7 +13,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noInternetConnectionMessage =>
-      'مفيش اتصال بالإنترنت، تأكد من اتصالك وحاول تاني';
+      'مفيش اتصال بالإنترنت';
 
   @override
   String get clientOrderPriority =>

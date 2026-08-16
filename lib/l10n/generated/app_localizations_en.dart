@@ -13,7 +13,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noInternetConnectionMessage =>
-      'No internet connection. Please check your connection and try again';
+      'No internet connection';
 
   @override
   String get clientOrderPriority =>

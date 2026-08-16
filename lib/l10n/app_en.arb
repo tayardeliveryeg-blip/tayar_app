@@ -1,6 +1,6 @@
 {
   "appName": "Tayar - Instantly There",
-  "noInternetConnectionMessage": "No internet connection. Please check your connection and try again",
+  "noInternetConnectionMessage": "No internet connection",
   "clientOrderPriority": "Sent to nearby drivers; best price gets priority",
   "driverNoOrders": "No orders available",
   "driverOfflineHint": "You're offline. Tap \"Online\" to see orders",
