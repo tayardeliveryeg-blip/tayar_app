@@ -501,7 +501,8 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                   _driverDisplayedPosition ??
                   _pickupLocation ??
                   const LatLng(30.7, 31.7),
-              initialZoom: 15,
+              // ====== 17 بدل 15 (18 أغسطس 2026): تسميات شوارع فرعية أوضح ======
+              initialZoom: 17,
               minZoom: 4,
               cameraConstraint: tayarMapCameraConstraint,
               // نمنع الدوران خالص، بيفضل بس سحب وزوم (نفس باقي خرائط التطبيق)

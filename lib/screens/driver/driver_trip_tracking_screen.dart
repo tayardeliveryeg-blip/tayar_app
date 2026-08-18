@@ -401,7 +401,8 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                   _pickupLocation ??
                   _driverDisplayedPosition ??
                   const LatLng(30.296, 31.742),
-              initialZoom: 15,
+              // ====== 17 بدل 15 (18 أغسطس 2026): تسميات شوارع فرعية أوضح ======
+              initialZoom: 17,
               minZoom: 4,
               cameraConstraint: tayarMapCameraConstraint,
               // نمنع الدوران خالص، بيفضل بس سحب وزوم (نفس باقي خرائط التطبيق)

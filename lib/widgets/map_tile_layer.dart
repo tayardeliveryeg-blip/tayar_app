@@ -18,14 +18,14 @@ final tayarMapCameraConstraint = CameraConstraint.contain(
 );
 
 /// ====== طبقة الخريطة الموحّدة لكل شاشات الخريطة في التطبيق ======
-/// الوضع الغامق بيستخدم Esri World Dark Gray Canvas — ستايل رمادي غامق
-/// أدفى وأقل قتامة من CartoDB Dark Matter. الخريطة دي عند Esri متقسّمة
-/// طبقتين لازم يتحطوا فوق بعض:
-/// 1) Base: الخلفية الرمادية بس (شوارع/مباني/مسطحات مائية من غير أسماء)
-/// 2) Reference: أسماء الشوارع والمناطق والحدود (خلفيتها شفافة عشان
-///    تتراكب فوق الـ Base وتبان الأسماء واضحة)
-/// الاتنين مجانيين بالكامل من غير أي API key. ملحوظة: ترتيب الإحداثيات
-/// عند Esri هو {z}/{y}/{x} مش {z}/{x}/{y} زي OSM/CartoDB.
+/// الوضع الغامق كان بيستخدم Esri World Dark Gray Canvas (ستايل minimal
+/// بتصميمه، بيانات HERE/Garmin ضعيفة في الشوارع الفرعية بمصر). اتبدّل
+/// لـ CartoDB Dark Matter (18 أغسطس 2026) كحل مؤقت: بيستخدم بيانات OSM
+/// نفسها المستخدمة في الوضع الفاتح، فالتسميات بقت غنية بنفس مستوى
+/// الفاتح تقريبًا. الحل ده مؤقت لحد ما مفتاح Mapbox يتفعّل، وقتها
+/// هيتبدّل الوضعين (فاتح وغامق) لـ Mapbox مع بعض عشان تناسق كامل.
+/// مجاني بالكامل من غير أي API key، ومحتاج إسناد "© OpenStreetMap
+/// contributors © CARTO" (اتضاف في TayarMapAttribution).
 class TayarTileLayer extends StatelessWidget {
   const TayarTileLayer({super.key});
 
@@ -34,25 +34,14 @@ class TayarTileLayer extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (isDark) {
-      return Stack(
-        children: [
-          TileLayer(
-            urlTemplate:
-                'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-            userAgentPackageName: 'com.tayar.app',
-            tileDisplay: const TileDisplay.fadeIn(
-              duration: Duration(milliseconds: 200),
-            ),
-          ),
-          TileLayer(
-            urlTemplate:
-                'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
-            userAgentPackageName: 'com.tayar.app',
-            tileDisplay: const TileDisplay.fadeIn(
-              duration: Duration(milliseconds: 200),
-            ),
-          ),
-        ],
+      return TileLayer(
+        urlTemplate:
+            'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        subdomains: const ['a', 'b', 'c', 'd'],
+        userAgentPackageName: 'com.tayar.app',
+        tileDisplay: const TileDisplay.fadeIn(
+          duration: Duration(milliseconds: 200),
+        ),
       );
     }
 
@@ -81,31 +70,54 @@ class TayarTileLayer extends StatelessWidget {
 /// يدوس على الأيقونة، وده كافي قانونيًا لأن شروط OSM/Esri بتطلب إسناد
 /// "متاح ومرئي للمستخدم"، مش إنه يفضل مكتوب بالكامل طول الوقت. ======
 class TayarMapAttribution extends StatelessWidget {
-  const TayarMapAttribution({super.key});
+  /// [alignment] بيتحكم في مكان الأيقونة لما الويدجت مستخدم كـ child مباشر
+  /// جوه FlutterMap (بيملى مساحة الخريطة بالكامل، فالـ Align هو اللي بيحدد
+  /// مكانها). لو الويدجت اتحط برا FlutterMap جوه Positioned (زي شاشة
+  /// passenger_home اللي بتحاذيها مع زرار تحديد الموقع)، الـ alignment
+  /// بيتسابله القيمة الافتراضية (centerRight/centerLeft) عادي من غير تأثير
+  /// عملي لأن الـ Positioned هو اللي بيحدد المكان الفعلي.
+  ///
+  /// [hidden] بيستخدم نفس منطق الإخفاء بتاع زرار تحديد الموقع (بيتلغي وقت
+  /// سحب الخريطة) - AnimatedOpacity + IgnorePointer.
+  const TayarMapAttribution({
+    super.key,
+    this.alignment = Alignment.topLeft,
+    this.hidden = false,
+  });
+
+  final Alignment alignment;
+  final bool hidden;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final source = isDark
-        ? 'Esri, HERE, Garmin • OpenStreetMap contributors'
+        ? 'OpenStreetMap contributors • CARTO'
         : 'OpenStreetMap contributors';
 
     return Align(
-      alignment: Alignment.topLeft,
-      child: GestureDetector(
-        onTap: () => _showAttributionSheet(context, source),
-        child: Container(
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            color: context.bgColor.withValues(alpha: 0.7),
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: Icon(
-            Icons.info_outline,
-            size: 16,
-            color: context.textGreyColor,
+      alignment: alignment,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 200),
+        opacity: hidden ? 0 : 1,
+        child: IgnorePointer(
+          ignoring: hidden,
+          child: GestureDetector(
+            onTap: () => _showAttributionSheet(context, source),
+            child: Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: context.bgColor.withValues(alpha: 0.7),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.info_outline,
+                size: 16,
+                color: context.textGreyColor,
+              ),
+            ),
           ),
         ),
       ),

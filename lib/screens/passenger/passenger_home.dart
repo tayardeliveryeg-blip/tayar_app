@@ -1148,7 +1148,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               mapController: _mapController,
               options: MapOptions(
                 initialCenter: _currentLocation,
-                initialZoom: 15,
+                // ====== 17 بدل 15 (18 أغسطس 2026): مستوى بيبان فيه أسماء
+                // الشوارع الفرعية من أول ما الشاشة تفتح من غير ما المستخدم
+                // يزوم يدويًا ======
+                initialZoom: 17,
                 // ====== minZoom بيمنع اليوزر إنه يزوم آوت لحد ما الخريطة
                 // تتكرر جنب بعضها (بيحصل في flutter_map/OSM لو الزوم قل
                 // عن حوالي 3). 4 رقم آمن كافي إنه يمنع التكرار ولسه
@@ -1163,8 +1166,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
               children: [
                 const TayarTileLayer(),
-                const TayarMapAttribution(),
-                // ====== دبابيس الشركاء التجاريين المؤكدين (محلات/مطاعم/
+                // ====== أيقونة إسناد مصدر الخريطة اتنقلت برا هنا لتحت
+                // يمين، محاذية لزرار تحديد الموقع (شوف الـ Positioned
+                // بعد نهاية الخريطة) عشان تقدر تاخد نفس ارتفاع الشيت
+                // الديناميكي ونفس منطق الاختفاء وقت السحب ======
+                // دبابيس الشركاء التجاريين المؤكدين (محلات/مطاعم/
                 // صيدليات) - بتتحدث لايف مع أي تحديث من لوحة الأدمن ======
                 StreamBuilder<List<VendorPartner>>(
                   stream: streamVendorPartners(),
@@ -1553,6 +1559,41 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+
+          // ====== أيقونة إسناد مصدر الخريطة: بقت تحت يمين، محاذية بنفس
+          // ارتفاع زرار تحديد الموقع (نفس sheetHeight+16)، وبتختفي بنفس
+          // منطق السحب/اختيار الوجهة بتاع الزرار بالظبط ======
+          AnimatedBuilder(
+            animation: _sheetAnimController,
+            builder: (context, child) {
+              final sheetHeight = _measuredSheetHeight > 0
+                  ? _measuredSheetHeight
+                  : _sheetHeights(context, topSafeArea).current;
+              final t = _sheetAnimController.value;
+              final hasDestination = _destinationAddress != null;
+              return Positioned(
+                right: 16,
+                bottom: sheetHeight + 16,
+                child: Opacity(
+                  opacity: 1 - t,
+                  child: IgnorePointer(
+                    ignoring: hasDestination || t > 0.5,
+                    child: child,
+                  ),
+                ),
+              );
+            },
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              offset: (_isDraggingMap || _destinationAddress != null)
+                  ? const Offset(0, 2)
+                  : Offset.zero,
+              child: TayarMapAttribution(
+                hidden: _isDraggingMap || _destinationAddress != null,
               ),
             ),
           ),
