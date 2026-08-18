@@ -1163,6 +1163,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               ),
               children: [
                 const TayarTileLayer(),
+                const TayarMapAttribution(),
                 // ====== دبابيس الشركاء التجاريين المؤكدين (محلات/مطاعم/
                 // صيدليات) - بتتحدث لايف مع أي تحديث من لوحة الأدمن ======
                 StreamBuilder<List<VendorPartner>>(

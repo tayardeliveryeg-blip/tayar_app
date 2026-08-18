@@ -517,6 +517,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
             ),
             children: [
               const TayarTileLayer(),
+              const TayarMapAttribution(),
               if (_routePoints.isNotEmpty)
                 PolylineLayer(
                   polylines: [

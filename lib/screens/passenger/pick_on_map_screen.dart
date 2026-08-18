@@ -182,6 +182,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
               ),
               children: [
                 const TayarTileLayer(),
+                const TayarMapAttribution(),
               ],
             ),
           ),

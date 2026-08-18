@@ -146,6 +146,7 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                     ),
                     children: [
                       const TayarTileLayer(),
+                      const TayarMapAttribution(),
                       if (_routePoints.isNotEmpty)
                         PolylineLayer(
                           polylines: [

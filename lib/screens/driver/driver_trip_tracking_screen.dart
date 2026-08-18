@@ -415,6 +415,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
             ),
             children: [
               const TayarTileLayer(),
+              const TayarMapAttribution(),
               if (_routePoints.isNotEmpty)
                 PolylineLayer(
                   polylines: [

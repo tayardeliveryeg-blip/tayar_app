@@ -573,6 +573,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                     ),
                     children: [
                       const TayarTileLayer(),
+                      const TayarMapAttribution(),
                       // ====== الدبوس + دوائر الرادار مربوطين بإحداثيات نقطة
                       // الانطلاق الحقيقية (widget.pickupLocation) ======
                       MarkerLayer(
