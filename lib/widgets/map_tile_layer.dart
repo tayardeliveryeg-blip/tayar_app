@@ -75,27 +75,103 @@ class TayarTileLayer extends StatelessWidget {
 /// المكان topLeft (مش bottomLeft/bottomRight) مقصود: في 4 من الـ 6
 /// شاشات فيه bottom sheet أو زرار ملتصق بأسفل الشاشة بعرضها بالكامل،
 /// بينما زاوية أعلى يسار فاضية في الـ 6 شاشات كلها.
-/// ملحوظة: استخدمنا SimpleAttributionWidget مش RichAttributionWidget
-/// لأن RichAttributionWidget بيقبل بس AttributionAlignment.bottomLeft/
-/// bottomRight (مفيش قيمة top خالص)، بينما SimpleAttributionWidget
-/// بياخد Alignment العادي اللي بيدعم topLeft. ======
+/// ====== شكل الأيقونة: أيقونة دائرية صغيرة (i) بدل النص الطويل اللي
+/// كان بيتكسر ويتداخل مع عناصر تانية على شاشات الموبايل الصغيرة. النص
+/// الكامل (المصدر + رابط الترخيص) بيظهر في BottomSheet لما المستخدم
+/// يدوس على الأيقونة، وده كافي قانونيًا لأن شروط OSM/Esri بتطلب إسناد
+/// "متاح ومرئي للمستخدم"، مش إنه يفضل مكتوب بالكامل طول الوقت. ======
 class TayarMapAttribution extends StatelessWidget {
   const TayarMapAttribution({super.key});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final source = isDark
+        ? 'Esri, HERE, Garmin • OpenStreetMap contributors'
+        : 'OpenStreetMap contributors';
 
-    return SimpleAttributionWidget(
+    return Align(
       alignment: Alignment.topLeft,
-      backgroundColor: context.bgColor.withValues(alpha: 0.7),
-      source: Text(
-        isDark
-            ? 'Esri, HERE, Garmin • OpenStreetMap contributors'
-            : 'OpenStreetMap contributors',
+      child: GestureDetector(
+        onTap: () => _showAttributionSheet(context, source),
+        child: Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: context.bgColor.withValues(alpha: 0.7),
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Icon(
+            Icons.info_outline,
+            size: 16,
+            color: context.textGreyColor,
+          ),
+        ),
       ),
-      onTap: () =>
-          launchUrl(Uri.parse('https://www.openstreetmap.org/copyright')),
+    );
+  }
+
+  void _showAttributionSheet(BuildContext context, String source) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.cardColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.xl),
+        ),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 40,
+                height: AppRadius.handle,
+                margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: sheetContext.handleColor,
+                  borderRadius: BorderRadius.circular(AppRadius.handle),
+                ),
+                alignment: Alignment.center,
+              ),
+              Text(
+                'مصدر بيانات الخريطة',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: sheetContext.textColor,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                source,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: sheetContext.textGreyColor,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              GestureDetector(
+                onTap: () => launchUrl(
+                  Uri.parse('https://www.openstreetmap.org/copyright'),
+                ),
+                child: const Text(
+                  'تفاصيل الترخيص',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: TayarColors.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
