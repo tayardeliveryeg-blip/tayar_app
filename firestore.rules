@@ -9,7 +9,7 @@ service cloud.firestore {
     }
 
     // ====== بتتأكد إن أي تعديل الراكب بيعمله على طلبه محصور في السيناريوهات
-    // الخمسة المعروفة بالظبط (مش أي حقل تاني زي distanceKm أو suggestedFare
+    // الستة المعروفة بالظبط (مش أي حقل تاني زي distanceKm أو suggestedFare
     // اللي المفروض تتحسب من السيرفر بس) ======
     function isValidCustomerOrderUpdate(orderId) {
       let changedKeys = request.resource.data.diff(resource.data).affectedKeys();
@@ -42,6 +42,13 @@ service cloud.firestore {
           request.resource.data.walletDeducted == true &&
           resource.data.walletDeducted != true &&
           resource.data.paymentMethod == 'محفظة إلكترونية' &&
+          resource.data.status == 'completed'
+        ) ||
+        (
+          // ====== الراكب بيقيّم الطيار بعد ما الرحلة تخلص - نفس فكرة
+          // driverRating/driverRatingComment/driverRatedAt بتاعة الطيار
+          // (شوف قاعدة update بتاعة orders فوق) بس في الاتجاه المعاكس ======
+          changedKeys.hasOnly(['rating', 'ratingComment', 'ratedAt']) &&
           resource.data.status == 'completed'
         );
     }
@@ -169,7 +176,8 @@ service cloud.firestore {
         (
           resource.data.driverId == request.auth.uid &&
           request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-            'driverLocation', 'driverHeading', 'driverLocationUpdatedAt', 'status', 'completedAt'
+            'driverLocation', 'driverHeading', 'driverLocationUpdatedAt', 'status', 'completedAt',
+            'driverRating', 'driverRatingComment', 'driverRatedAt'
           ])
         ) ||
         isAdmin()
