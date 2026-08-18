@@ -18,9 +18,14 @@ final tayarMapCameraConstraint = CameraConstraint.contain(
 );
 
 /// ====== طبقة الخريطة الموحّدة لكل شاشات الخريطة في التطبيق ======
-/// الوضع الغامق بيستخدم CartoDB Dark Matter tiles (مبنية على بيانات
-/// OpenStreetMap) بدل Mapbox — ستايل مظلم جاهز ومجاني بالكامل من غير
-/// أي API key أو تسجيل أو وسيلة دفع.
+/// الوضع الغامق بيستخدم Esri World Dark Gray Canvas — ستايل رمادي غامق
+/// أدفى وأقل قتامة من CartoDB Dark Matter. الخريطة دي عند Esri متقسّمة
+/// طبقتين لازم يتحطوا فوق بعض:
+/// 1) Base: الخلفية الرمادية بس (شوارع/مباني/مسطحات مائية من غير أسماء)
+/// 2) Reference: أسماء الشوارع والمناطق والحدود (خلفيتها شفافة عشان
+///    تتراكب فوق الـ Base وتبان الأسماء واضحة)
+/// الاتنين مجانيين بالكامل من غير أي API key. ملحوظة: ترتيب الإحداثيات
+/// عند Esri هو {z}/{y}/{x} مش {z}/{x}/{y} زي OSM/CartoDB.
 class TayarTileLayer extends StatelessWidget {
   const TayarTileLayer({super.key});
 
@@ -29,15 +34,25 @@ class TayarTileLayer extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (isDark) {
-      return TileLayer(
-        urlTemplate:
-            'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        subdomains: const ['a', 'b', 'c', 'd'],
-        userAgentPackageName: 'com.tayar.app',
-        retinaMode: RetinaMode.isHighDensity(context),
-        tileDisplay: const TileDisplay.fadeIn(
-          duration: Duration(milliseconds: 200),
-        ),
+      return Stack(
+        children: [
+          TileLayer(
+            urlTemplate:
+                'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+            userAgentPackageName: 'com.tayar.app',
+            tileDisplay: const TileDisplay.fadeIn(
+              duration: Duration(milliseconds: 200),
+            ),
+          ),
+          TileLayer(
+            urlTemplate:
+                'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+            userAgentPackageName: 'com.tayar.app',
+            tileDisplay: const TileDisplay.fadeIn(
+              duration: Duration(milliseconds: 200),
+            ),
+          ),
+        ],
       );
     }
 
@@ -54,7 +69,7 @@ class TayarTileLayer extends StatelessWidget {
 }
 
 /// ====== إسناد مصدر بيانات الخريطة (Attribution) — إجباري حسب شروط
-/// استخدام OpenStreetMap و CARTO المجانية. لازم يتضاف كـ آخر child في
+/// استخدام OpenStreetMap و Esri المجانية. لازم يتضاف كـ آخر child في
 /// كل شاشة فيها FlutterMap جنب TayarTileLayer، عشان يفضل ظاهر فوق كل
 /// الطبقات التانية (دبابيس/خطوط) من غير ما يحجب أي عنصر تفاعلي مهم.
 /// المكان topLeft (مش bottomLeft/bottomRight) مقصود: في 4 من الـ 6
@@ -76,7 +91,7 @@ class TayarMapAttribution extends StatelessWidget {
       backgroundColor: context.bgColor.withValues(alpha: 0.7),
       source: Text(
         isDark
-            ? 'OpenStreetMap contributors • CARTO'
+            ? 'Esri, HERE, Garmin • OpenStreetMap contributors'
             : 'OpenStreetMap contributors',
       ),
       onTap: () =>
