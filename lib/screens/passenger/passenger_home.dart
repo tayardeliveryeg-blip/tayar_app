@@ -21,6 +21,8 @@ import 'package:tayay_app/widgets/tayar_drawer.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
+import 'package:tayay_app/widgets/no_internet_toast.dart';
+import 'package:tayay_app/utils/connectivity_check.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/main.dart' show navigatorKey;
@@ -369,7 +371,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 width: double.infinity,
                 height: 50,
                 child: AppPrimaryButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    if (!await _requireInternet()) return;
+                    if (!context.mounted) return;
                     Navigator.pop(sheetContext);
                     Navigator.push(
                       context,
@@ -694,7 +698,17 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     return AppSettings.instance.estimateFare(_routeDistanceKm!);
   }
 
+  // ====== فحص الاتصال قبل أي تنقل لشاشة تانية محتاجة إنترنت. لو مفيش
+  // اتصال، بيوري رسالة مركزية مؤقتة (showNoInternetToast) ومبيسمحش
+  // بالتنقل خالص - أحسن من إن الشاشة تفتح وتفشل في التحميل جواها ======
+  Future<bool> _requireInternet() async {
+    if (await hasInternetConnection()) return true;
+    if (mounted) showNoInternetToast(context);
+    return false;
+  }
+
   Future<void> _openDestinationSearch() async {
+    if (!await _requireInternet()) return;
     final result = await Navigator.push<PlaceResult>(
       context,
       MaterialPageRoute(
@@ -731,6 +745,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   // بمفتاح فريد (custom_<timestamp>) عشان يفضل متاح جنب البيت والشغل ======
   Future<void> _addCustomSavedPlace() async {
     final loc = AppLocalizations.of(context)!;
+    if (!await _requireInternet()) return;
 
     final result = await Navigator.push<PlaceResult>(
       context,
@@ -1094,8 +1109,20 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     }
   }
 
+  // ====== فتح شاشة إنشاء طلب توصيل (زرار "Deliver My Orders" في الشاشة
+  // الرئيسية) - بيتفحص الاتصال الأول زي باقي أزرار التنقل ======
+  Future<void> _openDeliveryOrder() async {
+    if (!await _requireInternet()) return;
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CreateDeliveryOrderScreen()),
+    );
+  }
+
   Future<void> _openOrderConfirmation() async {
     if (_destinationLocation == null || _routeDistanceKm == null) return;
+    if (!await _requireInternet()) return;
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -1423,12 +1450,16 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   child: IgnorePointer(
                     ignoring: _isDraggingMap,
                     child: GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const NotificationsScreen(),
-                        ),
-                      ),
+                      onTap: () async {
+                        if (!await _requireInternet()) return;
+                        if (!context.mounted) return;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const NotificationsScreen(),
+                          ),
+                        );
+                      },
                       child: Container(
                         width: 50,
                         height: 50,
@@ -1632,13 +1663,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                             onReorderTrip: _reorderLastTrip,
                             onTapRideService: _openDestinationSearch,
                             nearbyDriversCount: _nearbyDriversCount,
-                            onTapDeliveryService: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const CreateDeliveryOrderScreen(),
-                              ),
-                            ),
+                            onTapDeliveryService: _openDeliveryOrder,
                             onDragStart: () => _onSheetDragStart(
                               collapsedHeight,
                               expandedHeight,

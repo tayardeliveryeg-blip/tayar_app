@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_vector_tiles/flutter_map_vector_tiles.dart' as vt;
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,48 +18,81 @@ final tayarMapCameraConstraint = CameraConstraint.contain(
   ),
 );
 
+/// ====== تحميل ستايلات OpenFreeMap (vector tiles) مرة واحدة لكل وضع
+/// (فاتح/غامق) وتخزينها مؤقتًا (cache) على مستوى التطبيق كله بدل ما كل
+/// شاشة خريطة (فيه 6 شاشات) تعمل تحميل جديد للستايل من الأول. الستايل
+/// أصلًا بيتخزن على القرص جوه المكتبة كمان (stale-while-revalidate)،
+/// لكن الكاش ده بيمنع حتى إعادة القراءة من القرص/الشبكة عند كل تنقل
+/// بين الشاشات جوه نفس جلسة التطبيق ======
+class _TayarMapStyles {
+  static Future<vt.Style>? _light;
+  static Future<vt.Style>? _dark;
+
+  /// Liberty: ستايل OpenFreeMap الأكثر تفصيلًا (شوارع/أحياء/معالم بألوان
+  /// حية)، وده اللي بيقرب شكله من جوجل مابس
+  static Future<vt.Style> light() {
+    return _light ??= vt.StyleReader(
+      uri: 'https://tiles.openfreemap.org/styles/liberty',
+    ).read();
+  }
+
+  /// Dark: نسخة OpenFreeMap من Dark Matter، بيانات OSM نفسها بس بألوان
+  /// غامقة، وبما إنه vector هيبقى فيه تسميات شوارع فرعية غنية زي الفاتح
+  static Future<vt.Style> dark() {
+    return _dark ??= vt.StyleReader(
+      uri: 'https://tiles.openfreemap.org/styles/dark',
+    ).read();
+  }
+}
+
 /// ====== طبقة الخريطة الموحّدة لكل شاشات الخريطة في التطبيق ======
-/// الوضع الغامق كان بيستخدم Esri World Dark Gray Canvas (ستايل minimal
-/// بتصميمه، بيانات HERE/Garmin ضعيفة في الشوارع الفرعية بمصر). اتبدّل
-/// لـ CartoDB Dark Matter (18 أغسطس 2026) كحل مؤقت: بيستخدم بيانات OSM
-/// نفسها المستخدمة في الوضع الفاتح، فالتسميات بقت غنية بنفس مستوى
-/// الفاتح تقريبًا. الحل ده مؤقت لحد ما مفتاح Mapbox يتفعّل، وقتها
-/// هيتبدّل الوضعين (فاتح وغامق) لـ Mapbox مع بعض عشان تناسق كامل.
-/// مجاني بالكامل من غير أي API key، ومحتاج إسناد "© OpenStreetMap
-/// contributors © CARTO" (اتضاف في TayarMapAttribution).
-class TayarTileLayer extends StatelessWidget {
+/// اتبدّلت من raster tiles (صور جاهزة) لـ vector tiles حقيقية عن طريق
+/// OpenFreeMap (18 أغسطس 2026) — مجاني بالكامل، من غير API key أو حساب،
+/// وأقرب شكل ممكن لجوجل مابس من غير أي مصاريف. البيانات جايه من OSM في
+/// الوضعين، فالتسميات غنية بنفس المستوى في الفاتح والغامق مع بعض.
+class TayarTileLayer extends StatefulWidget {
   const TayarTileLayer({super.key});
+
+  @override
+  State<TayarTileLayer> createState() => _TayarTileLayerState();
+}
+
+class _TayarTileLayerState extends State<TayarTileLayer> {
+  Future<vt.Style>? _future;
+  bool? _loadedIsDark;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    if (isDark) {
-      return TileLayer(
-        urlTemplate:
-            'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        subdomains: const ['a', 'b', 'c', 'd'],
-        userAgentPackageName: 'com.tayar.app',
-        tileDisplay: const TileDisplay.fadeIn(
-          duration: Duration(milliseconds: 200),
-        ),
-      );
+    if (_future == null || _loadedIsDark != isDark) {
+      _loadedIsDark = isDark;
+      _future = isDark ? _TayarMapStyles.dark() : _TayarMapStyles.light();
     }
 
-    return TileLayer(
-      urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      subdomains: const ['a', 'b', 'c'],
-      userAgentPackageName: 'com.tayar.app',
-      // ====== fade-in ناعم لظهور التايلز بدل ما تبان فجأة ======
-      tileDisplay: const TileDisplay.fadeIn(
-        duration: Duration(milliseconds: 200),
-      ),
+    return FutureBuilder<vt.Style>(
+      future: _future,
+      builder: (context, snapshot) {
+        final style = snapshot.data;
+        if (style == null) {
+          // ====== خلفية بسيطة لحد ما الستايل يتحمل. بيحصل مرة واحدة بس
+          // في حياة التطبيق (الستايل متخزن بعد كده)، فمش هيبان تقريبًا ======
+          return Container(
+            color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF5F5F0),
+          );
+        }
+        return vt.VectorTileLayer(
+          theme: style.theme,
+          tileProviders: style.providers,
+          rasterSources: style.rasterSources,
+          sprites: style.sprites,
+        );
+      },
     );
   }
 }
 
 /// ====== إسناد مصدر بيانات الخريطة (Attribution) — إجباري حسب شروط
-/// استخدام OpenStreetMap و Esri المجانية. لازم يتضاف كـ آخر child في
+/// استخدام OpenStreetMap و OpenFreeMap المجانية. لازم يتضاف كـ آخر child في
 /// كل شاشة فيها FlutterMap جنب TayarTileLayer، عشان يفضل ظاهر فوق كل
 /// الطبقات التانية (دبابيس/خطوط) من غير ما يحجب أي عنصر تفاعلي مهم.
 /// المكان topLeft (مش bottomLeft/bottomRight) مقصود: في 4 من الـ 6
@@ -67,7 +101,7 @@ class TayarTileLayer extends StatelessWidget {
 /// ====== شكل الأيقونة: أيقونة دائرية صغيرة (i) بدل النص الطويل اللي
 /// كان بيتكسر ويتداخل مع عناصر تانية على شاشات الموبايل الصغيرة. النص
 /// الكامل (المصدر + رابط الترخيص) بيظهر في BottomSheet لما المستخدم
-/// يدوس على الأيقونة، وده كافي قانونيًا لأن شروط OSM/Esri بتطلب إسناد
+/// يدوس على الأيقونة، وده كافي قانونيًا لأن شروط OSM/OpenFreeMap بتطلب إسناد
 /// "متاح ومرئي للمستخدم"، مش إنه يفضل مكتوب بالكامل طول الوقت. ======
 class TayarMapAttribution extends StatelessWidget {
   /// [alignment] بيتحكم في مكان الأيقونة لما الويدجت مستخدم كـ child مباشر
@@ -90,10 +124,7 @@ class TayarMapAttribution extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final source = isDark
-        ? 'OpenStreetMap contributors • CARTO'
-        : 'OpenStreetMap contributors';
+    final source = 'OpenStreetMap contributors • OpenFreeMap';
 
     return Align(
       alignment: alignment,

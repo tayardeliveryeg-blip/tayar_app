@@ -37,7 +37,11 @@ dependencies:
   shared_preferences: ^2.5.5
   http: ^1.6.0
   image_picker: ^1.1.2
-  flutter_map: ^8.0.0
+  flutter_map: ^8.2.0
+  # ====== vector tiles (18 أغسطس 2026): بيرندر ستايلات MapLibre/Mapbox GL
+  # (OpenFreeMap وغيره) بدل التايلز الجاهزة (raster)، فتقدر تعرض تفاصيل
+  # وتسميات أكتر بجودة أعلى ======
+  flutter_map_vector_tiles: ^2.6.2
   latlong2: ^0.10.1
   geolocator: ^14.0.2
   connectivity_plus: ^6.1.5
