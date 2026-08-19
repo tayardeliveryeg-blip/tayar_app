@@ -49,3 +49,29 @@ Functions (نفس فكرة `create-order` و`sos-notify`):
 3. نزّل `google-services.json` الجديد واستبدل بيه القديم.
 4. حدّث `firebase_options.dart` لو استخدمت FlutterFire CLI
    (`flutterfire configure`) هيتحدث تلقائي.
+
+## 4) تذكير الرحلة المجدولة (خطوة 5/5) — محتاج نشر + جدولة يدوية
+
+الكود جاهز (`supabase/functions/scheduled-ride-reminder/`) بس محتاج 3
+خطوات إعداد لازم تتعمل من عندك (معملهاش أي حاجة عن بعد هنا):
+
+1. **سجّل السر الجديد** في Supabase Dashboard -> Edge Functions ->
+   Secrets:
+   - اسم السر: `CRON_SECRET`
+   - القيمة: أي سلسلة عشوائية طويلة (ولّدها بنفسك، متستخدمش قيمة
+     `SOS_WEBHOOK_SECRET` القديمة).
+2. **انشر الدالة:**
+   ```
+   supabase functions deploy scheduled-ride-reminder
+   ```
+3. **فعّل الجدولة الدورية (كل 5 دقايق):** افتح
+   `supabase/sql/scheduled_ride_reminder_cron.sql`، غيّر فيه
+   `<project-ref>` و `<same-value-as-CRON_SECRET-secret>` بالقيم
+   الحقيقية بتاعتك، وشغّله مرة واحدة من Supabase Dashboard -> SQL
+   Editor.
+
+بعد كده هتحتاج تختبر: تعمل حجز رحلة مقدمة بميعاد قريب (أقل من ساعة
+مثلًا)، وتستنى لحد ما يفضلها 15 دقيقة، وتتأكد إن التذكير وصل فعليًا
+كإشعار push على جهاز الراكب. ملحوظة: أول مرة الدالة تنفّذ query على
+`orders` هتلاقي فيرستور طالب composite index (فيه رابط جاهز في رسالة
+الخطأ نفسها بيعمله بضغطة واحدة) — ده طبيعي ومتوقع.
