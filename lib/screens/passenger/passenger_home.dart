@@ -709,6 +709,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
   Future<void> _openDestinationSearch() async {
     if (!await _requireInternet()) return;
+    if (!mounted) return;
     final result = await Navigator.push<PlaceResult>(
       context,
       MaterialPageRoute(
@@ -746,6 +747,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   Future<void> _addCustomSavedPlace() async {
     final loc = AppLocalizations.of(context)!;
     if (!await _requireInternet()) return;
+    if (!mounted) return;
 
     final result = await Navigator.push<PlaceResult>(
       context,
@@ -1123,6 +1125,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   Future<void> _openOrderConfirmation() async {
     if (_destinationLocation == null || _routeDistanceKm == null) return;
     if (!await _requireInternet()) return;
+    if (!mounted) return;
     await Navigator.push(
       context,
       MaterialPageRoute(
