@@ -627,11 +627,15 @@ const SUPABASE_URL = 'https://pctxhemhytzaufdzuhfz.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
 
 /** بتنادي general-notify Edge Function - فشلها مش لازم يوقف عملية الشحن
- * نفسها (اللي خلصت فعليًا في Firestore خلاص)، فبنبلعه بهدوء. */
+ * نفسها (اللي خلصت فعليًا في Firestore خلاص)، فبنبلعها بهدوء بالنسبة
+ * لتجربة الأدمن، لكن دلوقتي بنتحقق من رد الـ Edge Function فعليًا (مكنش
+ * بيحصل قبل كده - fetch() مبترميش استثناء لمجرد رد HTTP فيه خطأ زي
+ * 401/403/500، فكانت أي مشكلة حقيقية بتعدي من غير ما حد يلاحظها) وبنطبع
+ * تحذير واضح في console فيه نص رسالة الخطأ الفعلية من الـ Edge Function. */
 async function sendGeneralNotification(userId, title, body, type){
   try {
     const idToken = await auth.currentUser.getIdToken();
-    await fetch(`${SUPABASE_URL}/functions/v1/general-notify`, {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/general-notify`, {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_ANON_KEY,
@@ -641,8 +645,18 @@ async function sendGeneralNotification(userId, title, body, type){
       },
       body: JSON.stringify({ userId, title, body, type })
     });
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      console.warn(`general-notify فشلت (${res.status}):`, json?.error || json);
+      toast(`تنبيه: الإشعار الفعلي فشل (${json?.error || res.status}) - الرصيد اتحدث عادي`);
+      return;
+    }
+    if (json && json.sent === false) {
+      console.warn('general-notify نجحت لكن مفيش fcmToken للمستخدم ده - الإشعار اتسجل في notifications بس الـ push مبعتش');
+    }
   } catch (e) {
     console.warn('فشل إرسال إشعار push (غير حرج):', e);
+    toast('تنبيه: تعذر الاتصال بخدمة الإشعارات - الرصيد اتحدث عادي');
   }
 }
 
