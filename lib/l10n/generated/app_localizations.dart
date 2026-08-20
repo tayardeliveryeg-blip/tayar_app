@@ -1574,6 +1574,84 @@ abstract class AppLocalizations {
   /// **'إلغاء الطلب'**
   String get cancelOrderButton;
 
+  /// No description provided for @cancelTripButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الرحلة'**
+  String get cancelTripButton;
+
+  /// No description provided for @cancelReasonSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليه عايز تلغي؟'**
+  String get cancelReasonSheetTitle;
+
+  /// No description provided for @cancelReasonChangedMind.
+  ///
+  /// In ar, this message translates to:
+  /// **'غيّرت رأيي'**
+  String get cancelReasonChangedMind;
+
+  /// No description provided for @cancelReasonDriverTooSlow.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطيار متأخر جدًا'**
+  String get cancelReasonDriverTooSlow;
+
+  /// No description provided for @cancelReasonWrongAddress.
+  ///
+  /// In ar, this message translates to:
+  /// **'غلطت في العنوان'**
+  String get cancelReasonWrongAddress;
+
+  /// No description provided for @cancelReasonFoundOtherWay.
+  ///
+  /// In ar, this message translates to:
+  /// **'لقيت وسيلة تانية'**
+  String get cancelReasonFoundOtherWay;
+
+  /// No description provided for @cancelReasonOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبب تاني'**
+  String get cancelReasonOther;
+
+  /// No description provided for @cancelReasonPassengerNoResponse.
+  ///
+  /// In ar, this message translates to:
+  /// **'الراكب مش بيرد'**
+  String get cancelReasonPassengerNoResponse;
+
+  /// No description provided for @cancelReasonPassengerNotAtLocation.
+  ///
+  /// In ar, this message translates to:
+  /// **'الراكب مش موجود في العنوان'**
+  String get cancelReasonPassengerNotAtLocation;
+
+  /// No description provided for @cancelReasonVehicleIssue.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشكلة في المركبة'**
+  String get cancelReasonVehicleIssue;
+
+  /// No description provided for @cancellationFeeWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'هيتم خصم {amount} جنيه من محفظتك كرسوم إلغاء لأن الطيار كان في الطريق ليك'**
+  String cancellationFeeWarning(String amount);
+
+  /// No description provided for @cancellationFeeChargedSnackbar.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إلغاء الرحلة، وخصم {amount} جنيه رسوم إلغاء من محفظتك'**
+  String cancellationFeeChargedSnackbar(String amount);
+
+  /// No description provided for @tripCancelledSuccessSnackbar.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إلغاء الرحلة'**
+  String get tripCancelledSuccessSnackbar;
+
   /// No description provided for @increaseFareButton.
   ///
   /// In ar, this message translates to:

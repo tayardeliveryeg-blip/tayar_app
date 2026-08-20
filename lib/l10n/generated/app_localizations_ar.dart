@@ -810,6 +810,49 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cancelOrderButton => 'إلغاء الطلب';
 
   @override
+  String get cancelTripButton => 'إلغاء الرحلة';
+
+  @override
+  String get cancelReasonSheetTitle => 'ليه عايز تلغي؟';
+
+  @override
+  String get cancelReasonChangedMind => 'غيّرت رأيي';
+
+  @override
+  String get cancelReasonDriverTooSlow => 'الطيار متأخر جدًا';
+
+  @override
+  String get cancelReasonWrongAddress => 'غلطت في العنوان';
+
+  @override
+  String get cancelReasonFoundOtherWay => 'لقيت وسيلة تانية';
+
+  @override
+  String get cancelReasonOther => 'سبب تاني';
+
+  @override
+  String get cancelReasonPassengerNoResponse => 'الراكب مش بيرد';
+
+  @override
+  String get cancelReasonPassengerNotAtLocation => 'الراكب مش موجود في العنوان';
+
+  @override
+  String get cancelReasonVehicleIssue => 'مشكلة في المركبة';
+
+  @override
+  String cancellationFeeWarning(String amount) {
+    return 'هيتم خصم $amount جنيه من محفظتك كرسوم إلغاء لأن الطيار كان في الطريق ليك';
+  }
+
+  @override
+  String cancellationFeeChargedSnackbar(String amount) {
+    return 'تم إلغاء الرحلة، وخصم $amount جنيه رسوم إلغاء من محفظتك';
+  }
+
+  @override
+  String get tripCancelledSuccessSnackbar => 'تم إلغاء الرحلة';
+
+  @override
   String get increaseFareButton => 'زيادة الأجرة';
 
   @override

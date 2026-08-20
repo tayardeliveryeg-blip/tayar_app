@@ -23,7 +23,7 @@ import {
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, content-type, x-firebase-id-token",
+  "Access-Control-Allow-Headers": "authorization, content-type, x-firebase-id-token, apikey",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 

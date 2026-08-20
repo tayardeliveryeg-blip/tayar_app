@@ -814,6 +814,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelOrderButton => 'Cancel Order';
 
   @override
+  String get cancelTripButton => 'Cancel Trip';
+
+  @override
+  String get cancelReasonSheetTitle => 'Why are you cancelling?';
+
+  @override
+  String get cancelReasonChangedMind => 'I changed my mind';
+
+  @override
+  String get cancelReasonDriverTooSlow => 'Driver is taking too long';
+
+  @override
+  String get cancelReasonWrongAddress => 'I entered the wrong address';
+
+  @override
+  String get cancelReasonFoundOtherWay => 'Found another way to go';
+
+  @override
+  String get cancelReasonOther => 'Other reason';
+
+  @override
+  String get cancelReasonPassengerNoResponse => 'Passenger isn\'t responding';
+
+  @override
+  String get cancelReasonPassengerNotAtLocation =>
+      'Passenger isn\'t at the pickup location';
+
+  @override
+  String get cancelReasonVehicleIssue => 'Vehicle issue';
+
+  @override
+  String cancellationFeeWarning(String amount) {
+    return 'EGP $amount will be deducted from your wallet as a cancellation fee since the driver was already on the way';
+  }
+
+  @override
+  String cancellationFeeChargedSnackbar(String amount) {
+    return 'Trip cancelled, EGP $amount cancellation fee deducted from your wallet';
+  }
+
+  @override
+  String get tripCancelledSuccessSnackbar => 'Trip cancelled';
+
+  @override
   String get increaseFareButton => 'Increase Fare';
 
   @override
