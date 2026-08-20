@@ -307,6 +307,65 @@ export class FirestoreClient {
     return results;
   }
 
+  /** بيمسح مستند. مش بترمي خطأ لو أصلاً مش موجود (404) - نفس سلوك
+   * .delete() العادي في Admin SDK. path مثلاً: "drivers/abc123" */
+  async delete(path: string): Promise<void> {
+    const token = await getGoogleAccessToken();
+    const res = await fetch(`${FIRESTORE_BASE}/${path}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok && res.status !== 404) {
+      throw new Error(
+        `Firestore delete فشل (${res.status}): ${await res.text()}`,
+      );
+    }
+  }
+
+  /**
+   * بيعمل كذا عملية (merge على مستند / delete لمستند) في نداء واحد
+   * ذرّي (atomic) - يا كلهم بينفذوا يا مفيش حاجة بتتنفذ خالص. عن طريق
+   * Firestore REST :batchWrite. محتاجينها عشان عمليات زي "انقل بيانات
+   * من مستند قديم لمستند جديد وامسح القديم" من غير ما نسيب حالة
+   * نصفانية لو حصل خطأ في النص. ملحوظة: "merge" هنا بتحدث الحقول
+   * المذكورة بس (زي SetOptions(merge:true))، مش بتمسح باقي حقول
+   * المستند اللي مش مذكورة.
+   */
+  async batchWrite(
+    writes: Array<
+      | { type: "merge"; path: string; data: Record<string, unknown> }
+      | { type: "delete"; path: string }
+    >,
+  ): Promise<void> {
+    const token = await getGoogleAccessToken();
+    const body = {
+      writes: writes.map((w) => {
+        const name =
+          `projects/${PROJECT_ID}/databases/(default)/documents/${w.path}`;
+        if (w.type === "delete") {
+          return { delete: name };
+        }
+        return {
+          update: { name, fields: toFirestoreFields(w.data) },
+          updateMask: { fieldPaths: Object.keys(w.data) },
+        };
+      }),
+    };
+    const res = await fetch(`${FIRESTORE_BASE}:batchWrite`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      throw new Error(
+        `Firestore batchWrite فشل (${res.status}): ${await res.text()}`,
+      );
+    }
+  }
+
   /**
    * بيعدّل حقول محددة بس في مستند موجود (زي .update() في Admin SDK)،
    * من غير ما يمسح باقي الحقول اللي مش مذكورة (عن طريق updateMask).

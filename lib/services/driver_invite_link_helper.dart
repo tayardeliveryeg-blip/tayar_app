@@ -1,4 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 
 // ====================================================
 // ====== ربط سجل الطيار المُضاف يدويًا من لوحة التحكم ======
@@ -6,8 +8,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // الطيار الحقيقي (drivers/{uid}) بعد أول تسجيل دخول، عن طريق
 // مطابقة رقم الموبايل. لو لقينا تطابق، بنرحّل كل بيانات السجل
 // القديم (اسم، موتوسيكل، إلخ) للمستند الصحيح ونمسح القديم —
-// بدل ما يفضل سجل يتيم متربطش بـ UID حقيقي أبدًا. ======
+// بدل ما يفضل سجل يتيم متربطش بـ UID حقيقي أبدًا.
+//
+// (2026-08-20) العملية دي بقت بتتم على السيرفر (Supabase Edge Function
+// اسمها link-driver) بدل batch مباشر من الموبايل، لأن firestore.rules
+// بترفض جزء الـ delete من العملية القديمة (isPreInvitedMatch محتاجة
+// phone_number claim مش موجود تاني بعد إلغاء الـ OTP) - شوف
+// supabase/functions/link-driver/index.ts للتفاصيل الكاملة. ======
 // ====================================================
+
+const String _supabaseUrl = 'https://pctxhemhytzaufdzuhfz.supabase.co';
+// ====== نفس مفتاح anon العام المستخدم في sos_service.dart و
+// order_confirmation_screen.dart - آمن يتضاف في كود العميل ======
+const String _supabaseAnonKey = 'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
 
 /// يحوّل أي شكل لرقم موبايل مصري (01xxxxxxxxx / +201xxxxxxxxx / 201xxxxxxxxx)
 /// لصيغة موحّدة (آخر 10 أرقام) عشان تتقارن صح مهما اختلفت صيغة الإدخال
@@ -42,44 +55,32 @@ Future<DriverLinkResult> linkPreInvitedDriverIfNeeded({
     return const DriverLinkResult(linked: false);
   }
 
-  final firestore = FirebaseFirestore.instance;
-  final driversRef = firestore.collection('drivers');
-
   try {
-    final query = await driversRef
-        .where('phoneNormalized', isEqualTo: normalized)
-        .where('isPreInvited', isEqualTo: true)
-        .limit(1)
-        .get();
+    final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+    if (idToken == null) return const DriverLinkResult(linked: false);
 
-    if (query.docs.isEmpty) return const DriverLinkResult(linked: false);
+    final response = await http
+        .post(
+          Uri.parse('$_supabaseUrl/functions/v1/link-driver'),
+          headers: {
+            'apikey': _supabaseAnonKey,
+            'Authorization': 'Bearer $_supabaseAnonKey',
+            'X-Firebase-Id-Token': idToken,
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({'phoneNumber': phoneNumber}),
+        )
+        .timeout(const Duration(seconds: 15));
 
-    final oldDoc = query.docs.first;
+    if (response.statusCode != 200) return const DriverLinkResult(linked: false);
 
-    // ====== نادرًا ما يحصل (لو الأدمن كتب نفس الـ UID غلط)، بس لو حصل
-    // منضربش batch؛ نظف الفلاج بس ======
-    if (oldDoc.id == uid) {
-      await oldDoc.reference.update({
-        'isPreInvited': false,
-        'linkedFromPreInvite': true,
-      });
-      return DriverLinkResult(linked: true, driverData: oldDoc.data());
-    }
-
-    final mergedData = Map<String, dynamic>.from(oldDoc.data());
-    mergedData.remove('isPreInvited');
-    mergedData['linkedFromPreInvite'] = true;
-    mergedData['linkedAt'] = FieldValue.serverTimestamp();
-
-    final batch = firestore.batch();
-    batch.set(driversRef.doc(uid), mergedData, SetOptions(merge: true));
-    batch.delete(oldDoc.reference);
-    await batch.commit();
-
-    return DriverLinkResult(linked: true, driverData: mergedData);
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    final linked = data['linked'] == true;
+    final driverData = data['driverData'] as Map<String, dynamic>?;
+    return DriverLinkResult(linked: linked, driverData: driverData);
   } catch (e) {
-    // ====== لو حصل أي خطأ (مثلاً صلاحيات) منوقفش تسجيل الدخول عشان كده،
-    // السائق هيكمل تسجيل عادي وهيتعامل معاه كأنه مستخدم جديد ======
+    // ====== لو حصل أي خطأ (شبكة، تايم أوت، إلخ) منوقفش تسجيل الدخول
+    // عشان كده، السائق هيكمل تسجيل عادي وهيتعامل معاه كأنه مستخدم جديد ======
     return const DriverLinkResult(linked: false);
   }
 }

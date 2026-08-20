@@ -37,18 +37,20 @@ Functions (نفس فكرة `create-order` و`sos-notify`):
 `onNewGeneralNotification`، `createOrder`، `onSosAlertCreated`) بقالها
 بدائل شغالة فعليًا على Supabase Edge Functions.
 
-## 3) applicationId لسه القيمة الافتراضية (مؤجّل قصدًا لحد قبل النشر)
+## ✅ 3) applicationId + توقيع الإصدار — خلصوا (2026-08-09)
 
-`android/app/build.gradle.kts` لسه فيه `com.example.tayay_app`. Google Play
-بيرفض نشر أي تطبيق بالـ prefix ده. القرار: نسيبه زي ما هو لحد آخر خطوة قبل
-النشر، عشان التغيير يتعمل مع تحديث Firebase Console سوا (لو اتغير من غير
-تحديث الكونسول، التطبيق هيبطّل يشتغل خالص - mismatch). لما يجي وقتها:
-1. غيّر `applicationId` و `namespace` في `android/app/build.gradle.kts`
-   لحاجة زي `com.gotayar.app`.
-2. سجّل تطبيق Android جديد بنفس الاسم ده في Firebase Console.
-3. نزّل `google-services.json` الجديد واستبدل بيه القديم.
-4. حدّث `firebase_options.dart` لو استخدمت FlutterFire CLI
-   (`flutterfire configure`) هيتحدث تلقائي.
+`applicationId`/`namespace` اتغيروا فعليًا لـ `com.tayar.app` (كانت
+`com.example.tayay_app`)، وتوقيع إصدار حقيقي (release signing) اتظبط
+في `android/app/build.gradle.kts` - بيقرا من `android/app/key.properties`
+(ملف غير متتبع في git عمدًا، لازم يكون موجود على أي جهاز هتعمل منه
+build فعلي)، ولو الملف مش موجود بيرجع تلقائيًا لتوقيع debug (fallback
+آمن للتطوير اليومي - منعرفش الـ build يفشل بس لأن حد نسي يعمل الملف).
+
+⚠️ **باقي عليك بس تتأكد إنت:**
+1. `android/app/key.properties` + ملف الـ keystore الحقيقي (.jks/.keystore)
+   موجودين فعليًا على جهازك (الملف مش هيبان في git status - ده متوقع ومقصود).
+2. عملت build release فعلي (`flutter build appbundle --release` أو
+   `flutter build apk --release`) وجربته على جهاز حقيقي مرة على الأقل.
 
 ## 4) تذكير الرحلة المجدولة (خطوة 5/5) — محتاج نشر + جدولة يدوية
 
@@ -96,3 +98,26 @@ Functions (نفس فكرة `create-order` و`sos-notify`):
 إعدادين جداد في تبويب "Settings" بلوحة الأدمن تقدر تعدّلهم في أي وقت من
 غير أي نشر: **Cancellation fee (EGP)** (افتراضي 10) و**Free cancellation
 window (minutes)** (افتراضي 3 دقايق بعد ما الطيار يقبل الرحلة).
+
+## 6) تصليح ربط السائق المُضاف يدويًا (link-driver) — محتاج نشر
+
+باج حرج اتصلح (2026-08-20): نظام ربط السائق "المُضاف يدويًا" من لوحة
+التحكم بحسابه الحقيقي بعد أول تسجيل دخول كان بقى معطّل بالكامل (صامت)
+من يوم ما اتشال التحقق بالـ OTP (`77e35ce`، 2026-08-09) - راجع
+`supabase/functions/link-driver/index.ts` للتفاصيل الكاملة. العملية دي
+نُقلت بالكامل للسيرفر (Supabase Edge Function جديدة) بدل الاعتماد على
+firestore.rules من جهة العميل.
+
+1. **انشر الدالة الجديدة:**
+   ```
+   supabase functions deploy link-driver
+   ```
+   (مش محتاجة أي secret جديد - بتستخدم نفس الـ `FIREBASE_PROJECT_ID` /
+   `FIREBASE_CLIENT_EMAIL` / `FIREBASE_PRIVATE_KEY` المسجلين بالفعل
+   لباقي الدوال زي `create-order`.)
+2. **اختبار:** من لوحة الأدمن، اعمل "+ Add driver" بسائق برقم موبايل
+   تجريبي، وبعدين من جهاز/إيموليتور، سجّل دخول بجوجل أو أبل وابدأ
+   تسجيل سائق جديد بنفس رقم الموبايل ده بالظبط في شاشة "المعلومات
+   الشخصية". المفروض السجل القديم يتربط بحسابك تلقائيًا (تقدر تتأكد من
+   Firestore Console: المستند القديم اختفى، والبيانات بقت في
+   `drivers/{uid}` بتاعك مع `linkedFromPreInvite: true`).
