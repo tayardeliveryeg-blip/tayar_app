@@ -186,6 +186,7 @@
   "sectionIncompleteLabel": "قم بتعبئة المعلومات المطلوبة",
   "optionalLabel": "اختياري",
   "personalPhotoLabel": "صورة شخصية",
+  "prefilledFromPassengerProfileHint": "عبّينا البيانات دي من بروفايلك كراكب - تقدر تعدّلها براحتك",
   "licensePhotoUploadRequired": "من فضلك ارفع صورة الرخصة وأدخل تاريخ الانتهاء",
   "licenseExpiryHint": "تاريخ انتهاء الصلاحية",
   "criminalRecordUploadRequired": "من فضلك ارفع صحيفة الحالة الجنائية وأدخل رقم الهوية",

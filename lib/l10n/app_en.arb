@@ -186,6 +186,7 @@
   "sectionIncompleteLabel": "Fill in required information",
   "optionalLabel": "Optional",
   "personalPhotoLabel": "Personal Photo",
+  "prefilledFromPassengerProfileHint": "We filled this in from your passenger profile - feel free to edit it",
   "licensePhotoUploadRequired": "Please upload license photo and expiry date",
   "licenseExpiryHint": "Expiry Date",
   "criminalRecordUploadRequired": "Please upload criminal record and ID number",

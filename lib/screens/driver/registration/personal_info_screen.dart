@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarThemeColors;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/driver_invite_link_helper.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
@@ -23,6 +24,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   final _mobileController = TextEditingController();
   Uint8List? _photoBytes;
   bool _isSaving = false;
+  // ====== بتتحط true لو نجحنا نعبّي أي حقل من بروفايل الراكب - بنستخدمها
+  // بس عشان نعرض تلميح بسيط فوق الفورم، مالهاش أي تأثير على منطق الحفظ ======
+  bool _prefilledFromPassenger = false;
 
   // ====== بتتحط true بعد محاولة "حفظ" فاشلة والحقل المطلوب لسه فاضي/غلط،
   // عشان نعرض إطار أحمر حواليه — وبترجع false تلقائيًا أول ما المستخدم
@@ -44,6 +48,79 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _firstNameController.addListener(_clearFirstNameError);
     _lastNameController.addListener(_clearLastNameError);
     _mobileController.addListener(_clearMobileError);
+    _loadPrefillFromPassengerProfile();
+  }
+
+  // ====== لو الراكب عنده بروفايل محفوظ بالفعل (دخل التطبيق كراكب الأول
+  // وبعدين اختار "وضع الطيار" من القايمة الجانبية)، نعبّي بيانات هذا
+  // القسم تلقائيًا من users/{uid} بدل ما يكتبها من الصفر تاني - قابلة
+  // للتعديل بالكامل زي أي حقل عادي. لو ده أول قسم بيفتحه من الأساس
+  // (مستخدم جديد اختار "طيار" مباشرة من شاشة اختيار الدور، مفيش بروفايل
+  // راكب أصلًا) الدالة مبتعملش حاجة بهدوء.
+  //
+  // لو القسم ده كان already مكتمل (complete:true) من زيارة سابقة لنفس
+  // القسم، منعملش تعبئة تلقائية تاني عشان منبوظش أي تعديل يدوي عمله
+  // الطيار بنفسه على بياناته كطيار. ======
+  Future<void> _loadPrefillFromPassengerProfile() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+    try {
+      final driverDoc = await FirebaseFirestore.instance
+          .collection('drivers')
+          .doc(uid)
+          .get();
+      final alreadyComplete =
+          driverDoc.data()?['personalInfo']?['complete'] == true;
+      if (alreadyComplete) return;
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+      final passengerInfo =
+          userDoc.data()?['personalInfo'] as Map<String, dynamic>?;
+      if (passengerInfo == null || !mounted) return;
+
+      final firstName = passengerInfo['firstName'] as String?;
+      final lastName = passengerInfo['lastName'] as String?;
+      final birthDate = passengerInfo['birthDate'] as String?;
+      final phone = passengerInfo['phone'] as String?;
+      final photoBase64 = passengerInfo['photoBase64'] as String?;
+      var didPrefillSomething = false;
+
+      setState(() {
+        if (firstName != null && firstName.isNotEmpty) {
+          _firstNameController.text = firstName;
+          didPrefillSomething = true;
+        }
+        if (lastName != null && lastName.isNotEmpty) {
+          _lastNameController.text = lastName;
+          didPrefillSomething = true;
+        }
+        if (birthDate != null && birthDate.isNotEmpty) {
+          _birthDateController.text = birthDate;
+          didPrefillSomething = true;
+        }
+        if (_mobileController.text.isEmpty &&
+            phone != null &&
+            phone.isNotEmpty) {
+          _mobileController.text = phone;
+          didPrefillSomething = true;
+        }
+        if (photoBase64 != null && photoBase64.isNotEmpty) {
+          try {
+            _photoBytes = base64Decode(photoBase64);
+            didPrefillSomething = true;
+          } catch (_) {
+            // ====== لو الفك فشل لأي سبب، نسيب مربع الصورة فاضي زي ما كان -
+            // الطيار يقدر يرفع صورة يدويًا عادي ======
+          }
+        }
+        _prefilledFromPassenger = didPrefillSomething;
+      });
+    } catch (e) {
+      debugPrint('تعذر تحميل بروفايل الراكب للتعبئة التلقائية: $e');
+    }
   }
 
   void _clearFirstNameError() {
@@ -198,6 +275,38 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       isSaving: _isSaving,
       onSave: _save,
       children: [
+        if (_prefilledFromPassenger)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+              decoration: BoxDecoration(
+                color: TayarColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, size: 18, color: TayarColors.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.prefilledFromPassengerProfileHint,
+                      style: TextStyle(
+                        color: context.textColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         Center(
           child: PhotoUploadTile(
             label: AppLocalizations.of(context)!.personalPhotoLabel,
