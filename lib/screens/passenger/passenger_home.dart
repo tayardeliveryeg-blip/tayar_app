@@ -1243,7 +1243,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       Polyline(
                         points: _routePoints,
                         strokeWidth: 5,
-                        color: TayarColors.primary,
+                        // ====== أبيض في الغامق / أسود في الفاتح - عشان يبان
+                        // واضح فوق شوارع الخريطة (Liberty) اللي لونها
+                        // برتقالي قريب من TayarColors.primary القديم ======
+                        color: context.textColor,
                       ),
                     ],
                   ),

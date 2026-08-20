@@ -152,7 +152,9 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
                           polylines: [
                             Polyline(
                               points: _routePoints,
-                              color: TayarColors.primary,
+                              // ====== أبيض في الغامق / أسود في الفاتح - عشان
+                              // يبان واضح فوق شوارع الخريطة البرتقالية ======
+                              color: context.textColor,
                               strokeWidth: 4,
                             ),
                           ],

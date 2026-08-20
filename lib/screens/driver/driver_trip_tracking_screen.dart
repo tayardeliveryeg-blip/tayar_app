@@ -423,7 +423,9 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                     Polyline(
                       points: _routePoints,
                       strokeWidth: 5,
-                      color: TayarColors.primary,
+                      // ====== أبيض في الغامق / أسود في الفاتح - عشان يبان
+                      // واضح فوق شوارع الخريطة البرتقالية ======
+                      color: context.textColor,
                     ),
                   ],
                 ),

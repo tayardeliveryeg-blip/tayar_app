@@ -582,7 +582,9 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     Polyline(
                       points: _routePoints,
                       strokeWidth: 5,
-                      color: TayarColors.primary,
+                      // ====== أبيض في الغامق / أسود في الفاتح - عشان يبان
+                      // واضح فوق شوارع الخريطة البرتقالية ======
+                      color: context.textColor,
                     ),
                   ],
                 ),
