@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart'
-    show TayarColors;
 
 /// ====== مين اللي بيلغي: بيحدد قايمة الأسباب المعروضة (الراكب والسائق
 /// عندهم أسباب مختلفة) ======
