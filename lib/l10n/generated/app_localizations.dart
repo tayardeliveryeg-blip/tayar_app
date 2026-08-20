@@ -986,6 +986,12 @@ abstract class AppLocalizations {
   /// **'صورة شخصية'**
   String get personalPhotoLabel;
 
+  /// No description provided for @prefilledFromPassengerProfileHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'عبّينا البيانات دي من بروفايلك كراكب - تقدر تعدّلها براحتك'**
+  String get prefilledFromPassengerProfileHint;
+
   /// No description provided for @licensePhotoUploadRequired.
   ///
   /// In ar, this message translates to:

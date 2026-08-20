@@ -479,6 +479,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get personalPhotoLabel => 'صورة شخصية';
 
   @override
+  String get prefilledFromPassengerProfileHint =>
+      'عبّينا البيانات دي من بروفايلك كراكب - تقدر تعدّلها براحتك';
+
+  @override
   String get licensePhotoUploadRequired =>
       'من فضلك ارفع صورة الرخصة وأدخل تاريخ الانتهاء';
 

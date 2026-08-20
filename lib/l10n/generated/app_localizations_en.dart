@@ -479,6 +479,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personalPhotoLabel => 'Personal Photo';
 
   @override
+  String get prefilledFromPassengerProfileHint =>
+      'We filled this in from your passenger profile - feel free to edit it';
+
+  @override
   String get licensePhotoUploadRequired =>
       'Please upload license photo and expiry date';
 
