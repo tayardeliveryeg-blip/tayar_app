@@ -18,32 +18,48 @@ final tayarMapCameraConstraint = CameraConstraint.contain(
   ),
 );
 
-/// ====== تحميل ستايلات OpenFreeMap (vector tiles) مرة واحدة لكل وضع
-/// (فاتح/غامق) وتخزينها مؤقتًا (cache) على مستوى التطبيق كله بدل ما كل
-/// شاشة خريطة (فيه 6 شاشات) تعمل تحميل جديد للستايل من الأول. الستايل
-/// أصلًا بيتخزن على القرص جوه المكتبة كمان (stale-while-revalidate)،
-/// لكن الكاش ده بيمنع حتى إعادة القراءة من القرص/الشبكة عند كل تنقل
-/// بين الشاشات جوه نفس جلسة التطبيق ======
+/// ====== تحميل ستايل OpenFreeMap "Liberty" مرة واحدة وتخزينه مؤقتًا على
+/// مستوى التطبيق كله (بدل ما كل شاشة خريطة - فيه 6 شاشات - تعمل تحميل
+/// جديد للستايل من الأول). الستايل أصلًا بيتخزن على القرص جوه المكتبة
+/// كمان (stale-while-revalidate)، لكن الكاش ده بيمنع حتى إعادة القراءة
+/// من القرص/الشبكة عند كل تنقل بين الشاشات جوه نفس جلسة التطبيق.
+///
+/// ====== ملحوظة مهمة: بقى فيه ستايل واحد بس (مش فاتح وغامق منفصلين) ======
+/// كان فيه قبل كده ستايل "dark" منفصل من OpenFreeMap (نسخة من Dark
+/// Matter)، بس اتضح إنه رمادي/أسود مسطح تقريبًا من غير تنويع ألوان
+/// حقيقي بين المية/الحدائق/الشوارع (المشروع الأصلي بتاعه متوقف التطوير
+/// من فريق OpenMapTiles، بعكس Liberty اللي لسه بيتحدث). فالتنوع اللوني
+/// في الوضع الغامق كان أقل بكتير من الفاتح ومحسوس إنه "أسود قاتم".
+///
+/// الحل: بنستخدم ستايل "Liberty" الغني بالألوان في الوضعين، وفي الوضع
+/// الغامق بنلف طبقة الخريطة بفلتر ألوان (invert + hue-rotate 180°) -
+/// نفس التقنية المعروفة اللي بتستخدمها كتير مواقع وتطبيقات لعمل نسخة
+/// غامقة من خريطة فاتحة. بيقلب السطوع فبيبقى الأبيض أسود، بس بيلف درجة
+/// اللون رجوع 180 عشان الألوان تفضل قريبة من الطبيعية (المية تفضل زرقاء
+/// غامقة، الحدائق تفضل خضرا غامقة) بدل ما تتحول لألوان معكوسة غريبة.
+/// النتيجة: نفس تفاصيل وتنوع ألوان الخريطة الفاتحة بالظبط، بس بشكل غامق
+/// مريح للعين، من غير ما نحتاج نصمم/نلاقي ستايل غامق منفصل. ======
 class _TayarMapStyles {
-  static Future<vt.Style>? _light;
-  static Future<vt.Style>? _dark;
+  static Future<vt.Style>? _liberty;
 
-  /// Liberty: ستايل OpenFreeMap الأكثر تفصيلًا (شوارع/أحياء/معالم بألوان
-  /// حية)، وده اللي بيقرب شكله من جوجل مابس
-  static Future<vt.Style> light() {
-    return _light ??= vt.StyleReader(
+  static Future<vt.Style> liberty() {
+    return _liberty ??= vt.StyleReader(
       uri: 'https://tiles.openfreemap.org/styles/liberty',
     ).read();
   }
-
-  /// Dark: نسخة OpenFreeMap من Dark Matter، بيانات OSM نفسها بس بألوان
-  /// غامقة، وبما إنه vector هيبقى فيه تسميات شوارع فرعية غنية زي الفاتح
-  static Future<vt.Style> dark() {
-    return _dark ??= vt.StyleReader(
-      uri: 'https://tiles.openfreemap.org/styles/dark',
-    ).read();
-  }
 }
+
+/// ====== مصفوفة فلتر الألوان اللي بتحول الستايل الفاتح لغامق (نفس تأثير
+/// CSS filter: invert(100%) hue-rotate(180deg) المستخدم كتير لعمل نسخة
+/// غامقة من خريطة فاتحة). القيم محسوبة يدويًا (invert ثم دوران درجة اللون
+/// 180° بمعادلة W3C القياسية لفلتر hue-rotate) ومدموجة في مصفوفة واحدة
+/// 4×5 عشان تتطبق كـ ColorFilter.matrix على عرض طبقة الخريطة بالكامل. ======
+const List<double> _darkMapInvertFilterMatrix = [
+  0.574, -1.430, -0.144, 0, 255,
+  -0.426, -0.430, -0.144, 0, 255,
+  -0.426, -1.430, 0.856, 0, 255,
+  0, 0, 0, 1, 0,
+];
 
 /// ====== طبقة الخريطة الموحّدة لكل شاشات الخريطة في التطبيق ======
 /// اتبدّلت من raster tiles (صور جاهزة) لـ vector tiles حقيقية عن طريق
@@ -59,15 +75,11 @@ class TayarTileLayer extends StatefulWidget {
 
 class _TayarTileLayerState extends State<TayarTileLayer> {
   Future<vt.Style>? _future;
-  bool? _loadedIsDark;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    if (_future == null || _loadedIsDark != isDark) {
-      _loadedIsDark = isDark;
-      _future = isDark ? _TayarMapStyles.dark() : _TayarMapStyles.light();
-    }
+    _future ??= _TayarMapStyles.liberty();
 
     return FutureBuilder<vt.Style>(
       future: _future,
@@ -80,11 +92,19 @@ class _TayarTileLayerState extends State<TayarTileLayer> {
             color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF5F5F0),
           );
         }
-        return vt.VectorTileLayer(
+        final tileLayer = vt.VectorTileLayer(
           theme: style.theme,
           tileProviders: style.providers,
           rasterSources: style.rasterSources,
           sprites: style.sprites,
+        );
+        // ====== في الوضع الغامق بس: فلتر invert+hue-rotate بيحوّل نفس
+        // ستايل Liberty الملوّن لنسخة غامقة بنفس التنوع اللوني (راجع
+        // تعليق _darkMapInvertFilterMatrix فوق) ======
+        if (!isDark) return tileLayer;
+        return ColorFiltered(
+          colorFilter: const ColorFilter.matrix(_darkMapInvertFilterMatrix),
+          child: tileLayer,
         );
       },
     );
