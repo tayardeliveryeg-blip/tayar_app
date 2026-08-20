@@ -19,6 +19,10 @@ class AppSettings {
   String supportPhone = '+201142263460';
   double referralWelcomeBonus = 20.0;
   int maxScheduleAdvanceDays = 7;
+  // ====== رسوم إلغاء الرحلة (تتحصل بس لو سائق كان قابل الطلب فعلاً، وبعد
+  // ما مهلة الإلغاء المجاني تنتهي - راجع cancellation_reason_sheet.dart) ======
+  double cancellationFeeAmount = 10.0;
+  int freeCancellationWindowMinutes = 3;
 
   bool _loaded = false;
 
@@ -45,6 +49,12 @@ class AppSettings {
         maxScheduleAdvanceDays =
             (data['maxScheduleAdvanceDays'] as num?)?.toInt() ??
             maxScheduleAdvanceDays;
+        cancellationFeeAmount =
+            (data['cancellationFeeAmount'] as num?)?.toDouble() ??
+            cancellationFeeAmount;
+        freeCancellationWindowMinutes =
+            (data['freeCancellationWindowMinutes'] as num?)?.toInt() ??
+            freeCancellationWindowMinutes;
       }
     } catch (_) {
       // صامت: هنفضل شغالين بالقيم الافتراضية

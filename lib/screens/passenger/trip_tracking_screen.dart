@@ -21,6 +21,8 @@ import 'package:tayay_app/services/trip_share_helper.dart';
 import 'package:tayay_app/widgets/contact_action_button.dart';
 import 'package:tayay_app/widgets/sos_floating_button.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/cancellation_reason_sheet.dart';
+import 'package:tayay_app/services/cancellation_service.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -50,6 +52,8 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
   String _driverId = '';
   double _fare = 0;
   String _paymentMethod = 'كاش';
+  DateTime? _acceptedAt;
+  bool _isCancelling = false;
   String _pickupAddress = '';
   String _destinationAddress = '';
   LatLng? _pickupLocation;
@@ -123,6 +127,8 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
       _driverId = (data['driverId'] as String?) ?? '';
       _fare = (data['acceptedFare'] as num?)?.toDouble() ?? 0;
       _paymentMethod = (data['paymentMethod'] as String?) ?? _paymentMethod;
+      _acceptedAt =
+          (data['acceptedAt'] as Timestamp?)?.toDate() ?? _acceptedAt;
       _pickupAddress = (data['pickupAddress'] as String?) ?? '';
       _destinationAddress = (data['destinationAddress'] as String?) ?? '';
 
@@ -418,6 +424,57 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) => proceed());
+  }
+
+  // ====== إلغاء الراكب للرحلة بنفسه (بعد ما الطيار قابل العرض بالفعل) -
+  // بتفتح بوتوم شيت اختيار السبب، وبتحسب رسوم الإلغاء لو اتعدت مهلة
+  // الإلغاء المجاني، وبعدين بتنفذ الإلغاء فعليًا. الشاشة نفسها هتسكّر
+  // تلقائيًا لما status يتغير لـ 'cancelled' عن طريق _onOrderUpdate ======
+  Future<void> _cancelTrip() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final quote = quoteCancellationFee(
+      status: _status,
+      acceptedAt: _acceptedAt,
+    );
+    final reasonCode = await showCancellationReasonSheet(
+      context,
+      actor: CancellationActor.customer,
+      feeAmount: quote.amount,
+    );
+    if (reasonCode == null || !mounted) return;
+
+    setState(() => _isCancelling = true);
+    final loc = AppLocalizations.of(context)!;
+    try {
+      await cancelOrderAsCustomer(
+        orderId: widget.orderId,
+        userId: uid,
+        reasonCode: reasonCode,
+        feeAmount: quote.amount,
+      );
+      // ====== الشاشة هتتقفل تلقائيًا عن طريق _onOrderUpdate/_showEndDialog
+      // لما التحديث يوصل، بس لو فيه رسوم بنعرض تنبيه إضافي فورًا بالمبلغ ======
+      if (quote.hasFee && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              loc.cancellationFeeChargedSnackbar(
+                quote.amount.toStringAsFixed(0),
+              ),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isCancelling = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(loc.genericErrorTryAgain)));
+      }
+    }
   }
 
   // ====== ديالوج الإلغاء فقط (لما الطيار أو النظام يلغي الرحلة) ======
@@ -893,6 +950,27 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                     ],
                   ),
                   const SizedBox(height: 12),
+
+                  // ====== زرار إلغاء الرحلة - يظهر بس والطيار لسه في
+                  // طريقه للراكب (accepted)، بيختفي بعد ما الرحلة تبدأ
+                  // فعليًا (in_progress) لأن الإلغاء وقتها مش منطقي ======
+                  if (_status == 'accepted')
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: _isCancelling ? null : _cancelTrip,
+                        icon: const Icon(
+                          Icons.close,
+                          size: 16,
+                          color: Colors.redAccent,
+                        ),
+                        label: Text(
+                          loc.cancelTripButton,
+                          style: const TextStyle(color: Colors.redAccent),
+                        ),
+                      ),
+                    ),
+                  if (_status == 'accepted') const SizedBox(height: 4),
 
                   Row(
                     children: [

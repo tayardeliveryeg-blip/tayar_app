@@ -23,7 +23,37 @@ service cloud.firestore {
           request.resource.data.proposedFare <= resource.data.initialFare * 1.5 + 1
         ) ||
         changedKeys.hasOnly(['autoAccept']) ||
-        (changedKeys.hasOnly(['status']) && request.resource.data.status == 'cancelled') ||
+        (
+          // ====== إلغاء الراكب لطلبه - محتاج سبب دايمًا (لو الطلب لسه
+          // 'searching'، أو 'accepted' فعليًا واتقبل من سائق). الرسوم
+          // (cancellationFee) مسموح تبقى أكتر من صفر بس لو سائق كان قابل
+          // الطلب فعلاً - الحساب الفعلي (حسب مهلة السماح المجانية في
+          // الإعدادات) بيتم في التطبيق نفسه، هنا بس بنتحقق إنها منطقية ======
+          changedKeys.hasOnly([
+            'status', 'cancellationReason', 'cancelledBy', 'cancellationFee', 'cancelledAt'
+          ]) &&
+          request.resource.data.status == 'cancelled' &&
+          (resource.data.status == 'searching' || resource.data.status == 'accepted') &&
+          request.resource.data.cancelledBy == 'customer' &&
+          request.resource.data.cancellationReason in [
+            'changed_mind', 'driver_too_slow', 'wrong_address', 'found_other_way', 'other'
+          ] &&
+          request.resource.data.cancellationFee is number &&
+          request.resource.data.cancellationFee >= 0 &&
+          (request.resource.data.cancellationFee == 0 || resource.data.status == 'accepted')
+        ) ||
+        (
+          // ====== الخطوة التانية (منفصلة) بعد إلغاء مدفوع بالمحفظة: تعليم
+          // إن رسوم الإلغاء اتخصمت فعليًا من رصيد الراكب - نفس فكرة
+          // walletDeducted لإنهاء الرحلة العادية، بس لرسوم الإلغاء ======
+          changedKeys.hasOnly(['cancellationFeeDeducted']) &&
+          request.resource.data.cancellationFeeDeducted == true &&
+          resource.data.cancellationFeeDeducted != true &&
+          resource.data.status == 'cancelled' &&
+          resource.data.cancelledBy == 'customer' &&
+          resource.data.paymentMethod == 'محفظة إلكترونية' &&
+          resource.data.cancellationFee > 0
+        ) ||
         (
           changedKeys.hasOnly([
             'status', 'driverId', 'driverName', 'acceptedFare', 'acceptedOfferId', 'acceptedAt'
@@ -71,6 +101,27 @@ service cloud.firestore {
         order.walletDeducted != true &&
         resource.data.walletBalance - request.resource.data.walletBalance == order.acceptedFare &&
         request.resource.data.walletBalance >= 0;
+    }
+
+    // ====== بتتأكد إن خصم رسوم إلغاء الرحلة (بعد ما سائق يكون قابلها فعلاً)
+    // من رصيد الراكب مش تعديل حر - لازم يكون مرتبط بطلب حقيقي اتلغى من
+    // الراكب نفسه، مدفوع بالمحفظة، وله رسوم إلغاء موجبة، ولسه ما اتخصمتش.
+    // بعكس isValidWalletDeduction، هنا مسموح الرصيد يبقى بالسالب (زي رصيد
+    // محفظة السائق بالظبط) عشان مانمنعش الإلغاء لمجرد إن الرصيد مش كافي -
+    // الرسوم بتتسجل كدين لحد ما يتشحن تاني ======
+    function isValidCancellationFeeDeduction(userId) {
+      let orderId = request.resource.data.walletLastCancellationFeeOrderId;
+      let order = get(/databases/$(database)/documents/orders/$(orderId)).data;
+      return
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['walletBalance', 'walletLastCancellationFeeOrderId']) &&
+        order.customerId == userId &&
+        order.paymentMethod == 'محفظة إلكترونية' &&
+        order.status == 'cancelled' &&
+        order.cancelledBy == 'customer' &&
+        order.cancellationFee > 0 &&
+        order.cancellationFeeDeducted != true &&
+        resource.data.walletBalance - request.resource.data.walletBalance == order.cancellationFee;
     }
 
     // ====== بتتأكد إن أي سطر بيتضاف في سجل حركات محفظة الراكب من الراكب
@@ -175,10 +226,28 @@ service cloud.firestore {
         (resource.data.customerId == request.auth.uid && isValidCustomerOrderUpdate(orderId)) ||
         (
           resource.data.driverId == request.auth.uid &&
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-            'driverLocation', 'driverHeading', 'driverLocationUpdatedAt', 'status', 'completedAt',
-            'driverRating', 'driverRatingComment', 'driverRatedAt'
-          ])
+          (
+            (
+              request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                'driverLocation', 'driverHeading', 'driverLocationUpdatedAt', 'status', 'completedAt',
+                'driverRating', 'driverRatingComment', 'driverRatedAt'
+              ]) &&
+              request.resource.data.status != 'cancelled'
+            ) ||
+            (
+              // ====== إلغاء السائق لرحلة قابلها بالفعل - محتاج سبب دايمًا،
+              // ومفيش رسوم عليه (الرسوم للراكب بس، لو هو اللي اتراجع) ======
+              request.resource.data.diff(resource.data).affectedKeys()
+                .hasOnly(['status', 'cancellationReason', 'cancelledBy', 'cancellationFee', 'cancelledAt']) &&
+              request.resource.data.status == 'cancelled' &&
+              resource.data.status == 'accepted' &&
+              request.resource.data.cancelledBy == 'driver' &&
+              request.resource.data.cancellationReason in [
+                'passenger_no_response', 'passenger_not_at_location', 'vehicle_issue', 'other'
+              ] &&
+              request.resource.data.cancellationFee == 0
+            )
+          )
         ) ||
         isAdmin()
       );
@@ -305,11 +374,13 @@ service cloud.firestore {
             !request.resource.data.diff(resource.data).affectedKeys()
               .hasAny([
                 'walletBalance', 'walletLastDeductionOrderId',
-                'walletLastPromoCode', 'referredByCode'
+                'walletLastPromoCode', 'referredByCode',
+                'walletLastCancellationFeeOrderId'
               ]) ||
             isValidWalletDeduction(userId) ||
             isValidPromoCredit(userId) ||
-            isValidReferralWelcomeCredit(userId)
+            isValidReferralWelcomeCredit(userId) ||
+            isValidCancellationFeeDeduction(userId)
           )
         ) ||
         (

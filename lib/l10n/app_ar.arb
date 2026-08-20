@@ -357,6 +357,33 @@
   "cancelSearchBody": "هيتم إلغاء طلبك وإيقاف البحث عن طيارين",
   "goBackButton": "رجوع",
   "cancelOrderButton": "إلغاء الطلب",
+  "cancelTripButton": "إلغاء الرحلة",
+  "cancelReasonSheetTitle": "ليه عايز تلغي؟",
+  "cancelReasonChangedMind": "غيّرت رأيي",
+  "cancelReasonDriverTooSlow": "الطيار متأخر جدًا",
+  "cancelReasonWrongAddress": "غلطت في العنوان",
+  "cancelReasonFoundOtherWay": "لقيت وسيلة تانية",
+  "cancelReasonOther": "سبب تاني",
+  "cancelReasonPassengerNoResponse": "الراكب مش بيرد",
+  "cancelReasonPassengerNotAtLocation": "الراكب مش موجود في العنوان",
+  "cancelReasonVehicleIssue": "مشكلة في المركبة",
+  "cancellationFeeWarning": "هيتم خصم {amount} جنيه من محفظتك كرسوم إلغاء لأن الطيار كان في الطريق ليك",
+  "@cancellationFeeWarning": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cancellationFeeChargedSnackbar": "تم إلغاء الرحلة، وخصم {amount} جنيه رسوم إلغاء من محفظتك",
+  "@cancellationFeeChargedSnackbar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tripCancelledSuccessSnackbar": "تم إلغاء الرحلة",
   "increaseFareButton": "زيادة الأجرة",
   "autoAcceptNearestDriverLabel": "قبول أقرب طيار مقابل {amount} جنيه تلقائيًا",
   "@autoAcceptNearestDriverLabel": {

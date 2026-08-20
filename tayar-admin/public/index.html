@@ -541,6 +541,14 @@
               <label>Max scheduling advance (days) <span class="hint">— how far ahead a passenger can book a scheduled ride</span></label>
               <input type="number" id="cfgMaxScheduleDays" value="7">
             </div>
+            <div class="settings-field">
+              <label>Cancellation fee (EGP) <span class="hint">— charged to the passenger's wallet if they cancel after a driver already accepted, past the free window below. Cash-paying passengers see the fee recorded but it isn't auto-collected.</span></label>
+              <input type="number" id="cfgCancellationFee" value="10">
+            </div>
+            <div class="settings-field">
+              <label>Free cancellation window (minutes) <span class="hint">— how long after a driver accepts the passenger can still cancel for free</span></label>
+              <input type="number" id="cfgFreeCancelWindow" value="3">
+            </div>
             <div class="settings-field" style="grid-column: 1 / -1;">
               <label>SOS admin phone numbers <span class="hint">— comma-separated, get an SMS the instant a passenger/driver hits the SOS button. Requires the Firebase Blaze plan + an SMS provider hooked up in functions/index.js.</span></label>
               <input type="text" id="cfgSosAdminPhones" placeholder="+20101xxxxxxx, +20122xxxxxxx">
@@ -1009,6 +1017,8 @@ function loadSettings(){
     document.getElementById('cfgPhone').value = d.supportPhone ?? '+201142263460';
     document.getElementById('cfgReferralBonus').value = d.referralWelcomeBonus ?? 20;
     document.getElementById('cfgMaxScheduleDays').value = d.maxScheduleAdvanceDays ?? 7;
+    document.getElementById('cfgCancellationFee').value = d.cancellationFeeAmount ?? 10;
+    document.getElementById('cfgFreeCancelWindow').value = d.freeCancellationWindowMinutes ?? 3;
     document.getElementById('cfgSosAdminPhones').value = Array.isArray(d.sosAdminPhones) ? d.sosAdminPhones.join(', ') : '';
     document.getElementById('settingsHint').textContent = doc.exists ? 'live values — the app reads these on startup' : 'no config saved yet — showing app defaults';
   }).catch(err=>{
@@ -1024,6 +1034,8 @@ function saveSettings(){
     supportPhone: document.getElementById('cfgPhone').value.trim(),
     referralWelcomeBonus: Number(document.getElementById('cfgReferralBonus').value) || 0,
     maxScheduleAdvanceDays: Number(document.getElementById('cfgMaxScheduleDays').value) || 7,
+    cancellationFeeAmount: Number(document.getElementById('cfgCancellationFee').value) || 0,
+    freeCancellationWindowMinutes: Number(document.getElementById('cfgFreeCancelWindow').value) || 0,
     sosAdminPhones: document.getElementById('cfgSosAdminPhones').value
       .split(',').map(s=>s.trim()).filter(Boolean),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()

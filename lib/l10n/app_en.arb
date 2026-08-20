@@ -357,6 +357,33 @@
   "cancelSearchBody": "This will cancel your request and stop searching for drivers",
   "goBackButton": "Go Back",
   "cancelOrderButton": "Cancel Order",
+  "cancelTripButton": "Cancel Trip",
+  "cancelReasonSheetTitle": "Why are you cancelling?",
+  "cancelReasonChangedMind": "I changed my mind",
+  "cancelReasonDriverTooSlow": "Driver is taking too long",
+  "cancelReasonWrongAddress": "I entered the wrong address",
+  "cancelReasonFoundOtherWay": "Found another way to go",
+  "cancelReasonOther": "Other reason",
+  "cancelReasonPassengerNoResponse": "Passenger isn't responding",
+  "cancelReasonPassengerNotAtLocation": "Passenger isn't at the pickup location",
+  "cancelReasonVehicleIssue": "Vehicle issue",
+  "cancellationFeeWarning": "EGP {amount} will be deducted from your wallet as a cancellation fee since the driver was already on the way",
+  "@cancellationFeeWarning": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cancellationFeeChargedSnackbar": "Trip cancelled, EGP {amount} cancellation fee deducted from your wallet",
+  "@cancellationFeeChargedSnackbar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tripCancelledSuccessSnackbar": "Trip cancelled",
   "increaseFareButton": "Increase Fare",
   "autoAcceptNearestDriverLabel": "Automatically accept the nearest driver for EGP {amount}",
   "@autoAcceptNearestDriverLabel": {

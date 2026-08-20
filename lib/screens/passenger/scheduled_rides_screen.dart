@@ -7,6 +7,8 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.dart'
     show formatScheduledForDisplay;
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/cancellation_reason_sheet.dart';
+import 'package:tayay_app/services/cancellation_service.dart';
 
 // ====================================================
 // ====== شاشة "الرحلات المجدولة": بتعرض بس رحلات الراكب المحجوزة
@@ -33,61 +35,49 @@ class ScheduledRidesScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _cancelRide(BuildContext context, String orderId) async {
+  Future<void> _cancelRide(
+    BuildContext context,
+    String orderId, {
+    required String status,
+    DateTime? acceptedAt,
+  }) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final quote = quoteCancellationFee(status: status, acceptedAt: acceptedAt);
+    final reasonCode = await showCancellationReasonSheet(
+      context,
+      actor: CancellationActor.customer,
+      feeAmount: quote.amount,
+    );
+    if (reasonCode == null || !context.mounted) return;
+
+    final loc = AppLocalizations.of(context)!;
     try {
-      await _ordersRef.doc(orderId).update({'status': 'cancelled'});
+      await cancelOrderAsCustomer(
+        orderId: orderId,
+        userId: uid,
+        reasonCode: reasonCode,
+        feeAmount: quote.amount,
+      );
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            AppLocalizations.of(context)!.scheduledRideCancelledSuccess,
+            quote.hasFee
+                ? loc.cancellationFeeChargedSnackbar(
+                    quote.amount.toStringAsFixed(0),
+                  )
+                : loc.scheduledRideCancelledSuccess,
           ),
         ),
       );
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.genericErrorTryAgain)),
+        SnackBar(content: Text(loc.genericErrorTryAgain)),
       );
     }
-  }
-
-  void _confirmCancel(BuildContext context, String orderId) {
-    final loc = AppLocalizations.of(context)!;
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          loc.cancelScheduledRideTitle,
-          style: TextStyle(color: context.textColor),
-        ),
-        content: Text(
-          loc.cancelScheduledRideBody,
-          style: TextStyle(color: context.textGreyColor),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(
-              loc.goBackButton,
-              style: TextStyle(color: context.textGreyColor),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              _cancelRide(context, orderId);
-            },
-            child: Text(
-              loc.cancelOrderButton,
-              style: const TextStyle(color: Colors.redAccent),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -199,6 +189,7 @@ class ScheduledRidesScreen extends StatelessWidget {
                         data['destinationAddress'] as String? ?? '';
                     final scheduledFor =
                         data['scheduledFor'] as Timestamp?;
+                    final acceptedAt = data['acceptedAt'] as Timestamp?;
                     final fare =
                         (data['acceptedFare'] ?? data['proposedFare']) as num?;
                     final driverName = data['driverName'] as String?;
@@ -338,7 +329,12 @@ class ScheduledRidesScreen extends StatelessWidget {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: OutlinedButton.icon(
-                              onPressed: () => _confirmCancel(context, doc.id),
+                              onPressed: () => _cancelRide(
+                                context,
+                                doc.id,
+                                status: status ?? '',
+                                acceptedAt: acceptedAt?.toDate(),
+                              ),
                               icon: const Icon(
                                 Icons.close,
                                 size: 16,

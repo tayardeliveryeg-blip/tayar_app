@@ -129,6 +129,67 @@ Future<void> deductWalletForCompletedTrip({
   });
 }
 
+/// ====== تسوية رسوم إلغاء رحلة (بعد ما الراكب يلغي رحلة كان سائق قابلها
+/// بالفعل، متأخر عن مهلة الإلغاء المجاني) - بتتنادى فورًا بعد كتابة إلغاء
+/// الطلب نفسه (منفصلة، مش جوه نفس الـ transaction - راجع تعليق
+/// isValidCancellationFeeDeduction في firestore.rules لسبب الفصل ده، نفس
+/// فكرة deductWalletForCompletedTrip بالظبط).
+///
+/// آمنة تتنادى أكتر من مرة على نفس الطلب (idempotent) - لو مش مدفوعة
+/// بالمحفظة، أو الرسوم صفر، أو اتخصمت قبل كده، الدالة مش هتعمل حاجة.
+/// بعكس خصم أجرة الرحلة العادية، هنا مسموح الرصيد يفضل بالسالب (زي محفظة
+/// السائق) عشان مانمنعش الإلغاء لمجرد إن الرصيد مش كافي وقتها. ======
+Future<void> settleCancellationFee({
+  required String orderId,
+  required String userId,
+}) async {
+  final orderRef = FirebaseFirestore.instance
+      .collection('orders')
+      .doc(orderId);
+  final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+  await FirebaseFirestore.instance.runTransaction((txn) async {
+    final orderSnap = await txn.get(orderRef);
+    final orderData = orderSnap.data();
+    if (orderData == null) return;
+
+    final isWalletPayment =
+        orderData['paymentMethod'] == kWalletPaymentMethodValue;
+    final isCancelled = orderData['status'] == 'cancelled';
+    final isCustomerCancelled = orderData['cancelledBy'] == 'customer';
+    final fee = (orderData['cancellationFee'] as num?)?.toDouble() ?? 0;
+    final alreadyDeducted = orderData['cancellationFeeDeducted'] == true;
+    if (!isWalletPayment ||
+        !isCancelled ||
+        !isCustomerCancelled ||
+        fee <= 0 ||
+        alreadyDeducted) {
+      return;
+    }
+
+    final userSnap = await txn.get(userRef);
+    final currentBalance =
+        (userSnap.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
+    final newBalance = currentBalance - fee;
+
+    txn.update(orderRef, {'cancellationFeeDeducted': true});
+
+    txn.set(userRef, {
+      'walletBalance': newBalance,
+      'walletLastCancellationFeeOrderId': orderId,
+    }, SetOptions(merge: true));
+
+    final ledgerRef = userRef.collection('walletTransactions').doc();
+    txn.set(ledgerRef, {
+      'type': 'cancellation_fee',
+      'amount': -fee,
+      'orderId': orderId,
+      'balanceAfter': newBalance,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  });
+}
+
 /// ====== بترجع رصيد محفظة الراكب الحالي (users/{uid}.walletBalance) ======
 /// مستخدمة في شاشة اختيار طريقة الدفع عشان نعرف نفعّل خيار "محفظة إلكترونية"
 /// من عدمه حسب كفاية الرصيد للأجرة الحالية ======
