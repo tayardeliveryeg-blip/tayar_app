@@ -24,7 +24,12 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/driver_home_drawer.
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_requests_tab.dart';
 
 class DriverHomeScreen extends StatefulWidget {
-  const DriverHomeScreen({super.key});
+  const DriverHomeScreen({super.key, this.initialTab = 0});
+
+  // ====== التبويب اللي المفروض الشاشة تفتح عليه (0=طلباتي، 1=دخلي،
+  // 2=تقييمي، 3=محفظتي) - بيتستخدم لما نيجي من إشعار (زي شحن المحفظة)
+  // عايزين نودّي الطيار على تاب معين على طول ======
+  final int initialTab;
 
   @override
   State<DriverHomeScreen> createState() => _DriverHomeScreenState();
@@ -50,7 +55,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   bool _isTogglingOnline = false;
 
   // ====== التبويب المختار في الشريط السفلي ======
-  int _selectedTab = 0;
+  late int _selectedTab = widget.initialTab;
 
   // ====== آخر موقع معروف للطيار، بنستخدمه لفلترة الطلبات القريبة بس ======
   // (ضمن نطاق serviceRadiusKm من الإعدادات) بدل ما يشوف طلبات من مدينة تانية

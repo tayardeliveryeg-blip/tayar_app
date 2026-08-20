@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+import 'package:tayay_app/screens/passenger/passenger_wallet_screen.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
@@ -16,6 +19,32 @@ class NotificationsScreen extends StatelessWidget {
 
   Future<void> _markAsRead(String docId) {
     return _notificationsRef.doc(docId).update({'isRead': true});
+  }
+
+  // ====== لما المستخدم يدوس على إشعار شحن المحفظة، نوديه على شاشة
+  // محفظته على طول - بدل ما يفضل بس واقف في شاشة الإشعارات. بنحدد دوره
+  // (راكب/كابتن) بنفس الطريقة اللي بيتحدد بيها في AuthGate (main.dart):
+  // آخر وضع محفوظ في SharedPreferences ======
+  Future<void> _handleTap(BuildContext context, String docId, String? type) async {
+    await _markAsRead(docId);
+    if (type != 'wallet') return;
+    if (!context.mounted) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final lastMode = prefs.getString('lastMode');
+    if (!context.mounted) return;
+
+    if (lastMode == 'driver') {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => const DriverHomeScreen(initialTab: 3),
+        ),
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const PassengerWalletScreen()),
+      );
+    }
   }
 
   Future<void> _markAllAsRead(
@@ -175,8 +204,9 @@ class NotificationsScreen extends StatelessWidget {
                         ? ts.toDate()
                         : DateTime.now();
 
+                    final type = data['type'] as String?;
                     return AppCard(
-                      onTap: () => _markAsRead(doc.id),
+                      onTap: () => _handleTap(context, doc.id, type),
                       padding: const EdgeInsets.all(14),
                       radius: 14,
                       border: isRead
