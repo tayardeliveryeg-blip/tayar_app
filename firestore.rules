@@ -8,6 +8,24 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/admin/$(request.auth.uid));
     }
 
+    // ====== بتحسب رسوم الإلغاء الصحيحة سيرفر-سايد بدل ما نصدّق قيمة
+    // cancellationFee اللي بيبعتها العميل نفسه: لو الطلب لسه ما اتقبلش
+    // (مفيش acceptedAt) أو لسه جوه مهلة الإلغاء المجاني (settings/config.
+    // freeCancellationWindowMinutes)، الرسوم لازم تبقى 0. غير كده لازم
+    // تطابق settings/config.cancellationFeeAmount بالظبط - العميل مش قادر
+    // يقرر هو الرسوم كام ولا يتهرب منها ======
+    function correctCancellationFee() {
+      let cfg = get(/databases/$(database)/documents/settings/config).data;
+      let feeAmount = ('cancellationFeeAmount' in cfg) ? cfg.cancellationFeeAmount : 10;
+      let freeWindowMin = ('freeCancellationWindowMinutes' in cfg)
+        ? cfg.freeCancellationWindowMinutes : 3;
+      let withinFreeWindow = !('acceptedAt' in resource.data) ||
+        (request.time.toMillis() - resource.data.acceptedAt.toMillis()) <
+          (freeWindowMin * 60 * 1000);
+      return request.resource.data.cancellationFee ==
+        (withinFreeWindow ? 0 : feeAmount);
+    }
+
     // ====== بتتأكد إن أي تعديل الراكب بيعمله على طلبه محصور في السيناريوهات
     // الستة المعروفة بالظبط (مش أي حقل تاني زي distanceKm أو suggestedFare
     // اللي المفروض تتحسب من السيرفر بس) ======
@@ -26,9 +44,8 @@ service cloud.firestore {
         (
           // ====== إلغاء الراكب لطلبه - محتاج سبب دايمًا (لو الطلب لسه
           // 'searching'، أو 'accepted' فعليًا واتقبل من سائق). الرسوم
-          // (cancellationFee) مسموح تبقى أكتر من صفر بس لو سائق كان قابل
-          // الطلب فعلاً - الحساب الفعلي (حسب مهلة السماح المجانية في
-          // الإعدادات) بيتم في التطبيق نفسه، هنا بس بنتحقق إنها منطقية ======
+          // (cancellationFee) بتتحسب سيرفر-سايد بالكامل عبر
+          // correctCancellationFee() - مش قيمة بيقررها العميل ======
           changedKeys.hasOnly([
             'status', 'cancellationReason', 'cancelledBy', 'cancellationFee', 'cancelledAt'
           ]) &&
@@ -39,8 +56,7 @@ service cloud.firestore {
             'changed_mind', 'driver_too_slow', 'wrong_address', 'found_other_way', 'other'
           ] &&
           request.resource.data.cancellationFee is number &&
-          request.resource.data.cancellationFee >= 0 &&
-          (request.resource.data.cancellationFee == 0 || resource.data.status == 'accepted')
+          correctCancellationFee()
         ) ||
         (
           // ====== الخطوة التانية (منفصلة) بعد إلغاء مدفوع بالمحفظة: تعليم
