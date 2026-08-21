@@ -373,6 +373,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                 child: AppPrimaryButton(
                   onPressed: () async {
                     if (!await _requireInternet()) return;
+                    if (!sheetContext.mounted) return;
                     if (!mounted) return;
                     Navigator.pop(sheetContext);
                     Navigator.push(
