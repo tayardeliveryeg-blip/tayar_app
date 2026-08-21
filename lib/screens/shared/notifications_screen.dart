@@ -69,6 +69,8 @@ class NotificationsScreen extends StatelessWidget {
         return Icons.account_balance_wallet_outlined;
       case 'driver_approval':
         return Icons.verified_outlined;
+      case 'driver_rejection':
+        return Icons.error_outline;
       default:
         return Icons.notifications_none;
     }
