@@ -10,7 +10,7 @@ import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
 // كل إشعار بيتخزن في collection('notifications') وفيه الحقول:
-// userId, title, body, type (order/system/promo), createdAt, isRead
+// userId, title, body, type (order/system/promo/wallet/driver_approval), createdAt, isRead
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
 
@@ -67,6 +67,8 @@ class NotificationsScreen extends StatelessWidget {
         return Icons.local_offer_outlined;
       case 'wallet':
         return Icons.account_balance_wallet_outlined;
+      case 'driver_approval':
+        return Icons.verified_outlined;
       default:
         return Icons.notifications_none;
     }

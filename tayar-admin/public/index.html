@@ -1225,9 +1225,22 @@ function showDriverDocuments(id){
 }
 function closeDocsModal(){ document.getElementById('docsModalOverlay').classList.remove('open'); }
 function setDriverApproval(id, status){
-  db.collection(COLLECTIONS.drivers).doc(id).update({status})
-    .then(()=>toast(`Driver approval set to ${status.replace('_',' ')}`))
-    .catch(err=>toast('Failed: ' + err.message));
+  // ====== بنجيب الحالة القديمة الأول عشان لو الأدمن حفظ نفس الحالة
+  // approved تاني (من غير ما تتغيّر فعليًا)، مبعتش إشعار مكرر للطيار ======
+  db.collection(COLLECTIONS.drivers).doc(id).get().then(snap=>{
+    const prevStatus = snap.exists ? (snap.data().status || 'pending_review') : null;
+    return db.collection(COLLECTIONS.drivers).doc(id).update({status}).then(()=>{
+      toast(`Driver approval set to ${status.replace('_',' ')}`);
+      if (status === 'approved' && prevStatus !== 'approved') {
+        sendGeneralNotification(
+          id,
+          'تم قبولك كطيار! 🎉',
+          'مبروك! تمت الموافقة على طلبك، تقدر دلوقتي تفتح وضع الطيار وتبدأ تستقبل طلبات التوصيل.',
+          'driver_approval'
+        );
+      }
+    });
+  }).catch(err=>toast('Failed: ' + err.message));
 }
 function forceDriverOffline(id){
   db.collection(COLLECTIONS.drivers).doc(id).update({isAvailable:false})
