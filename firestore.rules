@@ -421,7 +421,10 @@ service cloud.firestore {
         allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
         allow create: if request.auth != null && request.auth.uid == userId &&
           request.resource.data.discountValue ==
-            get(/databases/$(database)/documents/promo_codes/$(code)).data.discountValue;
+            get(/databases/$(database)/documents/promo_codes/$(code)).data.discountValue &&
+          getAfter(/databases/$(database)/documents/users/$(userId)).data.walletLastPromoCode == code &&
+          getAfter(/databases/$(database)/documents/users/$(userId)).data.walletBalance >
+            get(/databases/$(database)/documents/users/$(userId)).data.walletBalance;
         allow update, delete: if false;
       }
     }
@@ -499,7 +502,16 @@ service cloud.firestore {
         (
           request.auth != null &&
           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedCount']) &&
-          request.resource.data.usedCount == resource.data.usedCount + 1
+          request.resource.data.usedCount == resource.data.usedCount + 1 &&
+          existsAfter(
+            /databases/$(database)/documents/users/$(request.auth.uid)/redeemedPromoCodes/$(code)
+          ) &&
+          getAfter(
+            /databases/$(database)/documents/users/$(request.auth.uid)/redeemedPromoCodes/$(code)
+          ).data.discountValue == resource.data.discountValue &&
+          getAfter(
+            /databases/$(database)/documents/users/$(request.auth.uid)
+          ).data.walletLastPromoCode == code
         );
     }
 
