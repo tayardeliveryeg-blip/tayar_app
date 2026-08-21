@@ -590,11 +590,48 @@
   </div>
 </div>
 
+<!-- DRIVER REJECTION MODAL -->
+<div class="modal-overlay" id="driverRejectModalOverlay">
+  <div class="modal" style="width:460px;max-width:92vw;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="width:34px;height:34px;border-radius:9px;background:var(--danger-dim);color:var(--danger);display:flex;align-items:center;justify-content:center;font-size:18px;">!</div>
+      <div>
+        <h3 style="margin:0;font-size:15px;">رفض طلب الطيار</h3>
+        <div style="font-size:11.5px;color:var(--text-dim);margin-top:2px;">اكتب سبب الرفض ليتم إرساله إلى الطيار.</div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:18px;">
+      <label for="driverRejectionReason">سبب الرفض <span style="color:var(--danger);">*</span></label>
+      <textarea
+        id="driverRejectionReason"
+        rows="5"
+        maxlength="500"
+        placeholder="مثال: صورة رخصة القيادة غير واضحة أو المستند منتهي..."
+        style="width:100%;resize:vertical;background:var(--panel-2);border:1px solid var(--border);border-radius:7px;padding:10px 11px;color:var(--text);font-size:13px;font-family:var(--font-body);outline:none;"
+      ></textarea>
+      <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10.5px;color:var(--text-dimmer);">
+        <span>سيظهر هذا السبب للطيار داخل الإشعار.</span>
+        <span id="driverRejectionCounter">0/500</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="cancelDriverRejection()">إلغاء</button>
+      <button class="btn danger-outline" id="confirmDriverRejectionBtn" onclick="confirmDriverRejection()">تأكيد الرفض</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-app-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-auth-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-firestore-compat.min.js"></script>
+document.getElementById('driverRejectionReason')?.addEventListener('input', function(){
+  document.getElementById('driverRejectionCounter').textContent = `${this.value.length}/500`;
+});
+
 <!-- ====== OneSignal: تنبيه فوري (Push) للأدمن عند SOS، بديل لـ Cloud
      Functions اللي محتاجة خطة Blaze. متصل بـ Supabase Database Webhook
      اللي بيشتغل تلقائي لما تتضاف صف جديد في sos_alerts (اتزرعت من
@@ -1188,7 +1225,7 @@ function renderDrivers(){
       <td class="mono">★ ${d.rating}</td>
       <td class="mono">${d.deliveries}</td>
       <td>
-        <select class="inline-select" onchange="setDriverApproval('${d.id}', this.value)">
+        <select class="inline-select" onchange="setDriverApproval('${d.id}', this.value, this)">
           ${['pending_review','approved','rejected'].map(s=>`<option value="${s}" ${s===d.approval?'selected':''}>${s.replace('_',' ')}</option>`).join('')}
         </select>
       </td>
@@ -1224,13 +1261,114 @@ function showDriverDocuments(id){
   document.getElementById('docsModalOverlay').classList.add('open');
 }
 function closeDocsModal(){ document.getElementById('docsModalOverlay').classList.remove('open'); }
-function setDriverApproval(id, status){
+
+let pendingDriverRejection = null;
+
+function openDriverRejectionModal(id, prevStatus, selectEl){
+  pendingDriverRejection = { id, prevStatus, selectEl };
+
+  const reasonEl = document.getElementById('driverRejectionReason');
+  const counterEl = document.getElementById('driverRejectionCounter');
+  const confirmBtn = document.getElementById('confirmDriverRejectionBtn');
+
+  reasonEl.value = '';
+  counterEl.textContent = '0/500';
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = 'تأكيد الرفض';
+
+  document.getElementById('driverRejectModalOverlay').classList.add('open');
+
+  setTimeout(() => reasonEl.focus(), 50);
+}
+
+function cancelDriverRejection(){
+  if (pendingDriverRejection?.selectEl) {
+    pendingDriverRejection.selectEl.value = pendingDriverRejection.prevStatus || 'pending_review';
+  }
+
+  document.getElementById('driverRejectModalOverlay').classList.remove('open');
+  pendingDriverRejection = null;
+}
+
+function confirmDriverRejection(){
+  if (!pendingDriverRejection) return;
+
+  const { id, prevStatus, selectEl } = pendingDriverRejection;
+  const reasonEl = document.getElementById('driverRejectionReason');
+  const confirmBtn = document.getElementById('confirmDriverRejectionBtn');
+  const rejectionReason = reasonEl.value.trim();
+
+  if (!rejectionReason) {
+    reasonEl.focus();
+    toast('يجب كتابة سبب الرفض');
+    return;
+  }
+
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = 'جارٍ تأكيد الرفض...';
+
+  const updateData = {
+    status: 'rejected',
+    rejectionReason,
+    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  db.collection(COLLECTIONS.drivers).doc(id).update(updateData)
+    .then(()=>{
+      document.getElementById('driverRejectModalOverlay').classList.remove('open');
+      pendingDriverRejection = null;
+
+      toast('تم رفض طلب الطيار وإرسال سبب الرفض');
+
+      sendGeneralNotification(
+        id,
+        'تم رفض طلب انضمامك كطيار',
+        `نأسف، تم رفض طلب انضمامك كطيار في طيار. سبب الرفض: ${rejectionReason}`,
+        'driver_rejection'
+      );
+    })
+    .catch(err=>{
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'تأكيد الرفض';
+
+      if (selectEl) {
+        selectEl.value = prevStatus || 'pending_review';
+      }
+
+      toast('Failed: ' + err.message);
+    });
+}
+
+function setDriverApproval(id, status, selectEl){
   // ====== بنجيب الحالة القديمة الأول عشان لو الأدمن حفظ نفس الحالة
   // approved تاني (من غير ما تتغيّر فعليًا)، مبعتش إشعار مكرر للطيار ======
   db.collection(COLLECTIONS.drivers).doc(id).get().then(snap=>{
-    const prevStatus = snap.exists ? (snap.data().status || 'pending_review') : null;
-    return db.collection(COLLECTIONS.drivers).doc(id).update({status}).then(()=>{
+    const driverData = snap.exists ? snap.data() : {};
+    const prevStatus = driverData.status || 'pending_review';
+
+    // عند اختيار rejected نفتح نافذة احترافية لإدخال سبب الرفض
+    // ولا نغيّر الحالة في Firestore إلا بعد الضغط على "تأكيد الرفض".
+    if (status === 'rejected' && prevStatus !== 'rejected') {
+      openDriverRejectionModal(id, prevStatus, selectEl);
+      return;
+    }
+
+    // لو نفس الحالة rejected تم اختيارها مرة أخرى، لا نرسل إشعارًا جديدًا.
+    if (status === prevStatus) {
+      return;
+    }
+
+    const updateData = { status };
+
+    // عند إعادة الطلب من rejected إلى أي حالة أخرى نمسح سبب الرفض القديم.
+    if (prevStatus === 'rejected') {
+      updateData.rejectionReason = null;
+      updateData.rejectedAt = null;
+    }
+
+    return db.collection(COLLECTIONS.drivers).doc(id).update(updateData).then(()=>{
       toast(`Driver approval set to ${status.replace('_',' ')}`);
+
       if (status === 'approved' && prevStatus !== 'approved') {
         sendGeneralNotification(
           id,
@@ -1240,7 +1378,12 @@ function setDriverApproval(id, status){
         );
       }
     });
-  }).catch(err=>toast('Failed: ' + err.message));
+  }).catch(err=>{
+    if (selectEl) {
+      selectEl.value = 'pending_review';
+    }
+    toast('Failed: ' + err.message);
+  });
 }
 function forceDriverOffline(id){
   db.collection(COLLECTIONS.drivers).doc(id).update({isAvailable:false})
