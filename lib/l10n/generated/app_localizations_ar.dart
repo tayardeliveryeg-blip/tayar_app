@@ -1161,6 +1161,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get topUpAmountLabel => 'المبلغ (جنيه)';
 
   @override
+  String topUpAmountRangeHint(String min, String max) {
+    return 'بين $min و $max جنيه';
+  }
+
+  @override
   String get topUpProofLabel => 'صورة إثبات التحويل';
 
   @override
@@ -1202,6 +1207,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get myWalletLabel => 'محفظتي';
+
+  @override
+  String get walletSummaryPassengerLabel => 'رصيد رحلاتي';
+
+  @override
+  String get walletSummaryDriverLabel => 'مستحقات كطيار';
 
   @override
   String get walletTripPaymentLabel => 'رحلة مدفوعة بالمحفظة';

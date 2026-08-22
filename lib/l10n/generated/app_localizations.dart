@@ -2210,6 +2210,12 @@ abstract class AppLocalizations {
   /// **'المبلغ (جنيه)'**
   String get topUpAmountLabel;
 
+  /// No description provided for @topUpAmountRangeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'بين {min} و {max} جنيه'**
+  String topUpAmountRangeHint(String min, String max);
+
   /// No description provided for @topUpProofLabel.
   ///
   /// In ar, this message translates to:
@@ -2293,6 +2299,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'محفظتي'**
   String get myWalletLabel;
+
+  /// No description provided for @walletSummaryPassengerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيد رحلاتي'**
+  String get walletSummaryPassengerLabel;
+
+  /// No description provided for @walletSummaryDriverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستحقات كطيار'**
+  String get walletSummaryDriverLabel;
 
   /// No description provided for @walletTripPaymentLabel.
   ///

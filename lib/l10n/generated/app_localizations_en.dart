@@ -1170,6 +1170,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get topUpAmountLabel => 'Amount (EGP)';
 
   @override
+  String topUpAmountRangeHint(String min, String max) {
+    return 'Between $min and $max EGP';
+  }
+
+  @override
   String get topUpProofLabel => 'Transfer proof screenshot';
 
   @override
@@ -1213,6 +1218,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myWalletLabel => 'My Wallet';
+
+  @override
+  String get walletSummaryPassengerLabel => 'My ride wallet';
+
+  @override
+  String get walletSummaryDriverLabel => 'Driver dues';
 
   @override
   String get walletTripPaymentLabel => 'Trip paid with wallet';
