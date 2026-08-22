@@ -184,6 +184,7 @@ class WalletTransactionTile extends StatelessWidget {
     late final String label;
     late final IconData icon;
     late final Color color;
+    final rejectionReason = data['rejectionReason'] as String?;
 
     if (type == 'commission') {
       label = loc.walletCommissionTransactionLabel;
@@ -214,24 +215,44 @@ class WalletTransactionTile extends StatelessWidget {
         radius: AppRadius.xl,
         padding: const EdgeInsets.all(AppSpacing.lg),
         showShadow: false,
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(color: context.textColor, fontSize: 14),
-              ),
+            Row(
+              children: [
+                Icon(icon, color: color, size: 22),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(color: context.textColor, fontSize: 14),
+                  ),
+                ),
+                Text(
+                  '$sign${loc.currencyEGP(displayAmount.abs().toStringAsFixed(0))}',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '$sign${loc.currencyEGP(displayAmount.abs().toStringAsFixed(0))}',
-              style: TextStyle(
-                color: color,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+            // ====== سبب الرفض (لو الأدمن كتبه وقت المراجعة) - مضاف تحت
+            // السطر الأساسي عشان الطيار يعرف يصلّح إيه في المرة الجاية
+            // من غير ما يضطر يتواصل مع الدعم ======
+            if (status == 'rejected' &&
+                rejectionReason != null &&
+                rejectionReason.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.only(right: 34),
+                child: Text(
+                  rejectionReason,
+                  style: TextStyle(color: context.textGreyColor, fontSize: 12),
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

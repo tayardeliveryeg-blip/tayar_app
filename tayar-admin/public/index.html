@@ -1846,6 +1846,7 @@ function approveWalletTopup(requestId, driverId, amount){
 // ====== بنعمل نفس فحص الحالة قبل الرفض (transaction بدل update عادي)
 // لنفس السبب - منع رفض/تعديل طلب اتراجع بالفعل مرتين ======
 function rejectWalletTopup(requestId, driverId){
+  const reason = (prompt('Reason for rejecting this request? (optional, shown to the driver)') || '').trim();
   if(!confirm('Reject this top-up request?')) return;
   const txnRef = db.collection(COLLECTIONS.drivers).doc(driverId).collection('walletTransactions').doc(requestId);
   db.runTransaction(async txn => {
@@ -1856,11 +1857,15 @@ function rejectWalletTopup(requestId, driverId){
     txn.update(txnRef, {
       status: 'rejected',
       resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      resolvedBy: auth.currentUser.uid
+      resolvedBy: auth.currentUser.uid,
+      ...(reason ? { rejectionReason: reason } : {})
     });
   }).then(() => {
     toast('Top-up rejected');
-    sendGeneralNotification(driverId, 'تم رفض طلب الشحن', 'تم رفض طلب شحن محفظتك - راجع صورة الإيصال وحاول تاني أو تواصل مع الدعم', 'wallet', 'driver');
+    const body = reason
+      ? `تم رفض طلب شحن محفظتك - السبب: ${reason}`
+      : 'تم رفض طلب شحن محفظتك - راجع صورة الإيصال وحاول تاني أو تواصل مع الدعم';
+    sendGeneralNotification(driverId, 'تم رفض طلب الشحن', body, 'wallet', 'driver');
   }).catch(err => toast('Failed: ' + err.message));
 }
 
