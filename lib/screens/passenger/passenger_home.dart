@@ -52,8 +52,8 @@ String paymentMethodDisplay(BuildContext context, String value) {
 // ====== روابط طيار الرسمية على السوشيال ميديا ======
 class TayarSocialLinks {
   static const String facebook = 'https://www.facebook.com/tayardelivery/';
-  static const String instagram = 'https://www.instagram.com/gotayar/';
-  static const String whatsapp = 'https://wa.me/201142263460';
+  static const String instagram = 'https://www.instagram.com/go.tayar/';
+  static const String whatsapp = 'https://wa.me/201064286901';
   static const String tiktok = 'https://www.tiktok.com/@go.tayar';
 }
 
