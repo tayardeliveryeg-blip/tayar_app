@@ -422,6 +422,18 @@
       <!-- WALLET -->
       <div class="section" id="sec-wallet">
         <div class="panel-head" style="margin-bottom:14px;">
+          <h3 style="font-size:15px;">Driver top-up requests</h3>
+          <span class="hint">Drivers transfer via InstaPay outside the app and submit a proof screenshot here. Review the proof, then approve to credit their wallet automatically, or reject.</span>
+        </div>
+        <div class="panel">
+          <table>
+            <thead><tr><th>Driver</th><th>Amount</th><th>Proof</th><th>Requested</th><th></th></tr></thead>
+            <tbody id="driverTopupRequestsBody"></tbody>
+          </table>
+          <div id="driverTopupRequestsEmpty" class="hint" style="padding:10px 0;"></div>
+        </div>
+
+        <div class="panel-head" style="margin:22px 0 14px;">
           <h3 style="font-size:15px;">Passenger wallet credit</h3>
           <span class="hint">Search a passenger by phone or UID, then grant or adjust their wallet credit directly — this updates the real balance in Firestore, no Firebase Console needed.</span>
         </div>
@@ -663,7 +675,8 @@ const COLLECTIONS = {
   vendorApplications: 'vendor_applications',
   sosAlerts: 'sos_alerts',
   promoCodes: 'promo_codes',
-  pendingReferralRewards: 'pendingReferralRewards'
+  pendingReferralRewards: 'pendingReferralRewards',
+  driverTopupRequests: "drivers/*/walletTransactions (type='topup_request')"
 };
 // ====== نفس مشروع Supabase المستخدم في sos_service.dart والموبايل -
 // لبعت إشعار push حقيقي للراكب بعد شحن محفظته (general-notify Edge
@@ -789,8 +802,9 @@ let vendorApplications = [];
 let sosAlerts = [];
 let promoCodes = [];
 let pendingReferralRewards = [];
+let driverTopupRequests = [];
 let orderFilter = 'all';
-let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting' };
+let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting', driverTopupRequests:'connecting' };
 
 function showConnError(collectionKey, err){
   const banner = document.getElementById('connBanner');
@@ -965,6 +979,34 @@ function startListeners(){
     renderAll();
   }, err => { connectionState.pendingReferralRewards = 'error'; showConnError('pendingReferralRewards', err); });
 
+  // driverTopupRequests: طلبات شحن رصيد الطيار عن طريق InstaPay
+  // (submitWalletTopupRequest في wallet_service.dart) - بتتحفظ جوه
+  // drivers/{driverId}/walletTransactions زي أي حركة تانية في سجل محفظة
+  // الطيار، فبنستخدم collectionGroup query عشان نلمّها من كل الطيارين
+  // مرة واحدة بدل ما نلف على كل driver على حدة. محتاجة composite index
+  // (type + status + createdAt، راجع firestore.indexes.json) - لو مش
+  // متعمول، Firestore هيرجع رابط في الـ error بيعمله بضغطة واحدة.
+  db.collectionGroup('walletTransactions')
+    .where('type', '==', 'topup_request')
+    .where('status', '==', 'pending')
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(snap => {
+      driverTopupRequests = snap.docs.map(doc => {
+        const d = doc.data();
+        return {
+          id: doc.id,
+          // ====== doc.ref.parent.parent هو مستند drivers/{driverId} نفسه
+          // (parent = collection walletTransactions، parent.parent = المستند) ======
+          driverId: doc.ref.parent.parent.id,
+          amount: (d.amount != null) ? Number(d.amount) : 0,
+          proofBase64: d.proofBase64 || null,
+          time: relativeTime(pick(d, ['createdAt'], null))
+        };
+      });
+      connectionState.driverTopupRequests = 'ok';
+      renderAll();
+    }, err => { connectionState.driverTopupRequests = 'error'; showConnError('driverTopupRequests', err); });
+
   // sos_alerts: created instantly from the app the moment a passenger or driver
   // taps the SOS button during a trip (SosService.triggerAlert in sos_service.dart).
   // Ordered newest-first so the most urgent/recent alert is always on top.
@@ -1011,7 +1053,7 @@ const navItems = [
   {key:'orders', label:'Orders', count:()=>orders.length},
   {key:'drivers', label:'Drivers', count:()=>drivers.length},
   {key:'users', label:'Customers', count:()=>users.length},
-  {key:'wallet', label:'Wallet'},
+  {key:'wallet', label:'Wallet', count:()=>driverTopupRequests.length},
   {key:'promoReferrals', label:'Promo & Referrals', count:()=>pendingReferralRewards.filter(r=>r.status==='pending').length},
   {key:'vendorApplications', label:'Vendor Requests', count:()=>vendorApplications.filter(v=>v.status==='pending').length},
   {key:'settings', label:'Settings'},
@@ -1716,6 +1758,91 @@ function deletePromoCode(code){
     .catch(err=>toast('Failed: ' + err.message));
 }
 
+/* ---------------- DRIVER WALLET TOP-UP REQUESTS QUEUE ---------------- */
+// ====== طلبات شحن رصيد الطيار (submitWalletTopupRequest في
+// wallet_service.dart) - كانت قبل كده بتتراجع يدويًا من Firebase Console
+// (راجع firestore.rules: كان allow update, delete: if false على
+// walletTransactions خالص). دلوقتي الأدمن يقدر يوافق (بيضيف المبلغ
+// لرصيد الطيار تلقائيًا في نفس الـ transaction) أو يرفض من هنا مباشرة. ======
+function driverBrief(uid){
+  if(!uid) return '—';
+  const d = drivers.find(x => x.id === uid);
+  if(!d) return uid.slice(0, 8) + '…';
+  return `${d.name} <span class="mono" style="color:var(--text-dimmer);font-size:11px;">${d.phone}</span>`;
+}
+function renderDriverTopupRequests(){
+  const body = document.getElementById('driverTopupRequestsBody');
+  const empty = document.getElementById('driverTopupRequestsEmpty');
+  if(driverTopupRequests.length === 0){
+    body.innerHTML = '';
+    empty.textContent = 'No pending top-up requests.';
+    return;
+  }
+  empty.textContent = '';
+  body.innerHTML = driverTopupRequests.map(r => `
+    <tr>
+      <td>${driverBrief(r.driverId)}</td>
+      <td class="mono">${r.amount.toFixed(0)} EGP</td>
+      <td>${r.proofBase64
+        ? `<img src="data:image/jpeg;base64,${r.proofBase64}" style="width:54px;height:54px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer;" onclick="showTopupProof('${r.id}')" />`
+        : '<span class="hint">no proof</span>'}</td>
+      <td class="mono" style="color:var(--text-dimmer);font-size:12px;">${r.time}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn small primary" onclick="approveWalletTopup('${r.id}', '${r.driverId}', ${r.amount})">Approve</button>
+        <button class="btn small danger-outline" onclick="rejectWalletTopup('${r.id}', '${r.driverId}')">Reject</button>
+      </td>
+    </tr>`).join('');
+}
+// ====== بيفتح نفس مودال مستندات الطيار (docsModalOverlay) بس بصورة
+// الإيصال الواحدة دي - بدل ما نعمل مودال جديد لنفس الفكرة ======
+function showTopupProof(requestId){
+  const r = driverTopupRequests.find(x => x.id === requestId);
+  if(!r || !r.proofBase64) return;
+  document.getElementById('docsModalTitle').textContent = `Top-up proof — ${driverBrief(r.driverId).replace(/<[^>]+>/g, ' ')}`;
+  document.getElementById('docsModalBody').innerHTML = `
+    <div style="width:280px;">
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:6px;">InstaPay transfer proof — ${r.amount.toFixed(0)} EGP</div>
+      <img src="data:image/jpeg;base64,${r.proofBase64}" style="width:100%;border-radius:8px;border:1px solid var(--border);" />
+    </div>`;
+  document.getElementById('docsModalOverlay').classList.add('open');
+}
+// ====== الموافقة: transaction واحدة بتضيف المبلغ لرصيد الطيار (زي
+// completeTripAndDeductCommission في wallet_service.dart، بس بالإضافة
+// بدل الخصم) وتعلّم طلب الشحن نفسه 'approved' مع بعض - عشان الحالتين
+// يحصلوا مع بعض أو ولا واحدة ======
+function approveWalletTopup(requestId, driverId, amount){
+  if(!confirm(`Add ${amount.toFixed(0)} EGP to this driver's wallet?`)) return;
+  const driverRef = db.collection(COLLECTIONS.drivers).doc(driverId);
+  const txnRef = driverRef.collection('walletTransactions').doc(requestId);
+  let newBalance = 0;
+  db.runTransaction(async txn => {
+    const driverSnap = await txn.get(driverRef);
+    const current = (driverSnap.data() && driverSnap.data().walletBalance) || 0;
+    newBalance = current + amount;
+    txn.update(driverRef, { walletBalance: newBalance });
+    txn.update(txnRef, {
+      status: 'approved',
+      resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      resolvedBy: auth.currentUser.uid,
+      balanceAfter: newBalance
+    });
+  }).then(() => {
+    toast(`Top-up approved — new balance ${newBalance.toFixed(0)} EGP`);
+    sendGeneralNotification(driverId, 'تم شحن محفظتك', `تم قبول طلب شحن ${amount.toFixed(0)} جنيه وإضافته لرصيدك`, 'wallet');
+  }).catch(err => toast('Failed: ' + err.message));
+}
+function rejectWalletTopup(requestId, driverId){
+  if(!confirm('Reject this top-up request?')) return;
+  db.collection(COLLECTIONS.drivers).doc(driverId).collection('walletTransactions').doc(requestId).update({
+    status: 'rejected',
+    resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    resolvedBy: auth.currentUser.uid
+  }).then(() => {
+    toast('Top-up rejected');
+    sendGeneralNotification(driverId, 'تم رفض طلب الشحن', 'تم رفض طلب شحن محفظتك - راجع صورة الإيصال وحاول تاني أو تواصل مع الدعم', 'wallet');
+  }).catch(err => toast('Failed: ' + err.message));
+}
+
 /* ---------------- REFERRAL REWARDS QUEUE ---------------- */
 // ====== بيدور على بيانات مختصرة (اسم + تليفون) عن مستخدم من الـ users
 // array المحمّل بالفعل، من غير ما نعمل query إضافي ======
@@ -1864,6 +1991,7 @@ function renderAll(){
   if(currentSection==='drivers'){ renderDrivers(); }
   if(currentSection==='users'){ renderUsers(); }
   if(currentSection==='vendorApplications'){ renderVendorApplications(); }
+  if(currentSection==='wallet'){ renderDriverTopupRequests(); }
   if(currentSection==='promoReferrals'){ renderPromoCodes(); renderReferralRewards(); }
 }
 
