@@ -229,6 +229,18 @@ service cloud.firestore {
         request.resource.data.price <= order.initialFare * 1.5 + 1;
     }
 
+    // ====== طبقة حماية سيرفر-سايد لبند 5 (سائقين مفضّلين/محظورين):
+    // تتأكد إن الراكب صاحب الطلب ده مش حاظر الطيار الحالي قبل ما نسمحله
+    // يبعت عرض أصلاً - فلترة الواجهة في driver_home_screen.dart بتمنع
+    // الطيار من الشوفان، والقاعدة دي بتمنعه فعليًا لو عدّى الفلترة بأي
+    // طريقة (نداء API مباشر مثلًا) ======
+    function isNotBlockedByOrderCustomer(orderId) {
+      let customerId = get(/databases/$(database)/documents/orders/$(orderId)).data.customerId;
+      return !exists(
+        /databases/$(database)/documents/driverBlocks/$(customerId + '_' + request.auth.uid)
+      );
+    }
+
     // ====== الطلبات/الرحلات ======
     match /orders/{orderId} {
       allow read: if request.auth != null && (
@@ -276,7 +288,8 @@ service cloud.firestore {
         );
         allow create: if request.auth != null &&
           request.resource.data.driverId == request.auth.uid &&
-          isValidOfferPrice(orderId);
+          isValidOfferPrice(orderId) &&
+          isNotBlockedByOrderCustomer(orderId);
         allow update, delete: if false;
       }
       match /messages/{messageId} {

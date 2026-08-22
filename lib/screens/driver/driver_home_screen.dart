@@ -16,6 +16,7 @@ import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/widgets/pulsing_dot.dart';
 import 'package:tayay_app/screens/driver/driver_trip_tracking_screen.dart';
 import 'package:tayay_app/services/wallet_service.dart';
+import 'package:tayay_app/services/driver_relations_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_income_tab.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_rating_tab.dart';
@@ -61,6 +62,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   // (ضمن نطاق serviceRadiusKm من الإعدادات) بدل ما يشوف طلبات من مدينة تانية
   LatLng? _driverCurrentPosition;
 
+  // ====== مجموعة الركاب اللي حاظرين الطيار الحالي (bund 5 - سائقين
+  // مفضّلين/محظورين) - بتتحدّث Live، وبتُستخدم لإخفاء طلباتهم عن
+  // الطيار خالص، نفس فكرة فلترة النطاق الجغرافي بالظبط ======
+  StreamSubscription<Set<String>>? _blockedByPassengersSub;
+  Set<String> _blockedByPassengerIds = {};
+
   User? get _currentUser => FirebaseAuth.instance.currentUser;
 
   CollectionReference<Map<String, dynamic>> get _ordersRef =>
@@ -89,6 +96,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     setupCallInvitationService(navigatorKey: navigatorKey);
     // ====== تعبئة رقم التليفون تلقائيًا لو السائق سجل قبل إضافة هذا الحقل ======
     _backfillPhoneNumber();
+    // ====== الاستماع لقايمة الركاب اللي حاظريني عشان أستخدمها في فلترة
+    // الطلبات المعروضة (bund 5) ======
+    _blockedByPassengersSub = DriverRelationsService
+        .blockedByPassengerIdsForCurrentDriver()
+        .listen((ids) {
+          if (mounted) setState(() => _blockedByPassengerIds = ids);
+        });
   }
 
   // ====== لوحة التحكم محتاجة رقم تليفون السائق؛ السائقين اللي سجلوا قبل ما نضيف
@@ -183,6 +197,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   void dispose() {
     _activeTripListener?.cancel();
     _positionSub?.cancel();
+    _blockedByPassengersSub?.cancel();
     // ====== إخفاء الطيار من قايمة "المتاحين" عند إغلاق الشاشة/التطبيق ======
     final uid = _currentUser?.uid;
     if (uid != null) {
@@ -211,18 +226,28 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   // توسع التطبيق لمدن تانية غير العاشر من رمضان، عشان طيار في مدينة معينة
   // ما يشوفش طلبات من مدينة تانية بعيدة تمامًا. لو موقع الطيار لسه مش معروف
   // (أول لحظة فتح الشاشة قبل ما GPS يرد) بنسيب القايمة زي ما هي من غير فلترة
-  // عشان مايفضلش شايف قايمة فاضية من غير سبب واضح ======
+  // عشان مايفضلش شايف قايمة فاضية من غير سبب واضح. كمان بتستبعد أي طلب
+  // من راكب حاظر الطيار الحالي (bund 5 - سائقين مفضّلين/محظورين) ======
   List<QueryDocumentSnapshot<Map<String, dynamic>>>
   _filterOrdersWithinServiceRadius(
     List<QueryDocumentSnapshot<Map<String, dynamic>>> orders,
   ) {
     final driverPos = _driverCurrentPosition;
-    if (driverPos == null) return orders;
-
     final radiusMeters = AppSettings.instance.serviceRadiusKm * 1000;
 
     return orders.where((order) {
-      final pickupGeo = _extractGeoPoint(order.data()['pickupLocation']);
+      final data = order.data();
+
+      // ====== لو الراكب صاحب الطلب ده حاظر الطيار الحالي، الطلب يختفي
+      // خالص - قبل ما نوصل لأي حساب مسافة ======
+      final customerId = data['customerId'] as String?;
+      if (customerId != null && _blockedByPassengerIds.contains(customerId)) {
+        return false;
+      }
+
+      if (driverPos == null) return true;
+
+      final pickupGeo = _extractGeoPoint(data['pickupLocation']);
       // ====== طلب من غير موقع انطلاق محفوظ (حالة قديمة/استثنائية): نوريه
       // برضه بدل ما يختفي بلا سبب ======
       if (pickupGeo == null) return true;
