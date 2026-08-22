@@ -377,10 +377,20 @@ service cloud.firestore {
       // InstaPay) - نفس فكرة users/{uid}/walletTransactions. ده كان ناقص
       // قبل كده فكانت كل كتابة/قراءة هنا بترفض تلقائيًا (default-deny) لأن
       // مفيش match block ليها أصلًا ======
+      // ====== allow update: مضافة عشان لوحة الأدمن تقدر توافق/ترفض طلب
+      // شحن (type == 'topup_request') - قبل كده كان أي تعديل ممنوع خالص
+      // فطلب الشحن فضل عالق على status: 'pending' للأبد ومحتاج مراجعة
+      // يدوية من Firebase Console. محصور على الأدمن بس، وعلى نفس الحقول
+      // اللي بتتغير وقت المراجعة (زي pendingReferralRewards/sos_alerts) -
+      // مينفعش الأدمن (أو حد تاني) يعدّل amount أو proofBase64 بعد
+      // الإنشاء ======
       match /walletTransactions/{transactionId} {
         allow read: if request.auth != null && (request.auth.uid == driverId || isAdmin());
         allow create: if request.auth != null && (request.auth.uid == driverId || isAdmin());
-        allow update, delete: if false;
+        allow update: if isAdmin() &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['status', 'resolvedAt', 'resolvedBy', 'balanceAfter']);
+        allow delete: if false;
       }
     }
 
