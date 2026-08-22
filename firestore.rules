@@ -443,6 +443,33 @@ service cloud.firestore {
             get(/databases/$(database)/documents/users/$(userId)).data.walletBalance;
         allow update, delete: if false;
       }
+      // ====== سائقين مفضّلين عند الراكب (مرجعية بس - عرض في الواجهة،
+      // مفيش أي تأثير أمني/تشغيلي على الطرف التاني) - وثيقة واحدة لكل
+      // طيار، الـ document ID هو driverId نفسه ======
+      match /favoriteDrivers/{driverId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // ====== حظر الراكب لطيار معيّن - منفصلة عن users/{userId} (مش
+    // subcollection) عشان الطيار المحظور يقدر "يقرأ" (list) هل هو
+    // محظور عند حد بدون الحاجة لصلاحية قراءة بروفايل الراكب نفسه.
+    // الـ document ID = "{passengerId}_{driverId}" لمنع تكرار الحظر
+    // لنفس الزوج. الراكب بس يقدر يحظر/يفك حظر (create/delete)، والطيار
+    // المحظور يقدر يعمل query بـ driverId==uid بتاعه عشان يعرف مين
+    // حاظره (يُستخدم في تصفية الطلبات المتاحة له - driver_requests_tab) ======
+    match /driverBlocks/{blockId} {
+      allow read: if request.auth != null &&
+        (resource.data.passengerId == request.auth.uid ||
+         resource.data.driverId == request.auth.uid);
+      allow create: if request.auth != null &&
+        request.resource.data.passengerId == request.auth.uid &&
+        blockId == request.resource.data.passengerId + '_' + request.resource.data.driverId &&
+        request.resource.data.driverId is string &&
+        request.resource.data.driverId != request.auth.uid;
+      allow delete: if request.auth != null &&
+        resource.data.passengerId == request.auth.uid;
+      allow update: if false;
     }
 
     // ====== إشعارات المستخدم ======
