@@ -28,6 +28,7 @@ import 'package:tayay_app/screens/shared/security_screen.dart';
 import 'package:tayay_app/screens/shared/settings_screen.dart';
 import 'package:tayay_app/screens/shared/help_screen.dart';
 import 'package:tayay_app/screens/shared/support_screen.dart';
+import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 
 // ====================================================
 // ====================== Drawer =======================
@@ -241,6 +242,17 @@ class TayarDrawer extends StatelessWidget {
                 ),
               ),
             ),
+            Divider(color: context.dividerColor2, height: 1),
+
+            // ====== كارت ملخص المحفظتين مع بعض: رصيد رحلاتي (users/{uid})
+            // دايمًا ظاهر، ومستحقات الطيار (drivers/{uid}) بس لو المستخدم
+            // مسجل كطيار بالفعل. الاتنين منفصلين في الداتا زي ما هما
+            // (رصيد الراكب "أصل" مسبق الدفع، ومحفظة الطيار "دفتر مديونية"
+            // ممكن تنزل بالسالب - دمجهم في رقم واحد كان هيخلي مديونية
+            // الطيار تاكل من رصيد رحلاته بدون ما يلاحظ) - الكارت ده بس
+            // بيوريهم مع بعض في مكان واحد عشان يبان بوضوح، من غير ما نلمس
+            // الـ schema أو منطق الخصم/الإضافة خالص ======
+            const _WalletSummaryCard(),
             Divider(color: context.dividerColor2, height: 1),
 
             // ====== قايمة العناصر ======
@@ -566,6 +578,147 @@ class _SocialIcon extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Center(child: icon),
+      ),
+    );
+  }
+}
+
+// ====== كارت يوري رصيد محفظة الراكب دايمًا، ورصيد محفظة الطيار كمان لو
+// المستخدم مسجل كطيار بالفعل (drivers/{uid} موجود) - صف منفصل لكل واحدة
+// بلابل واضحة، من غير ما يتجمعوا في رقم واحد ======
+class _WalletSummaryCard extends StatelessWidget {
+  const _WalletSummaryCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
+      ),
+      child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .snapshots(),
+        builder: (context, userSnapshot) {
+          final passengerBalance =
+              (userSnapshot.data?.data()?['walletBalance'] as num?)
+                  ?.toDouble() ??
+              0;
+
+          return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+            stream: FirebaseFirestore.instance
+                .collection('drivers')
+                .doc(uid)
+                .snapshots(),
+            builder: (context, driverSnapshot) {
+              final isDriver = driverSnapshot.data?.exists ?? false;
+              final driverBalance =
+                  (driverSnapshot.data?.data()?['walletBalance'] as num?)
+                      ?.toDouble() ??
+                  0;
+
+              return Column(
+                children: [
+                  _WalletSummaryRow(
+                    icon: Icons.two_wheeler,
+                    label: loc.walletSummaryPassengerLabel,
+                    balance: passengerBalance,
+                    isNegative: false,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PassengerWalletScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  if (isDriver) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    _WalletSummaryRow(
+                      icon: Icons.delivery_dining,
+                      label: loc.walletSummaryDriverLabel,
+                      balance: driverBalance,
+                      isNegative: driverBalance < 0,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const DriverHomeScreen(initialTab: 3),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ],
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _WalletSummaryRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final double balance;
+  final bool isNegative;
+  final VoidCallback onTap;
+  const _WalletSummaryRow({
+    required this.icon,
+    required this.label,
+    required this.balance,
+    required this.isNegative,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final color = isNegative ? TayarColors.error : TayarColors.primary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.lg),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 18),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(color: context.textGreyColor, fontSize: 13),
+              ),
+            ),
+            Text(
+              loc.currencyEGP(balance.toStringAsFixed(0)),
+              style: TextStyle(
+                color: color,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
