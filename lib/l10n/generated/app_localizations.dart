@@ -2857,6 +2857,108 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رحلتك محجوزة لـ {dateTime} - هنبدأ ندوّرلك على طيار دلوقتي عشان يتفق معاك'**
   String scheduledRideSearchingBanner(String dateTime);
+
+  /// No description provided for @addToFavoriteDriversButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف للمفضّلين'**
+  String get addToFavoriteDriversButton;
+
+  /// No description provided for @removeFromFavoriteDriversButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة من المفضّلين'**
+  String get removeFromFavoriteDriversButton;
+
+  /// No description provided for @blockDriverButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حظر الطيار'**
+  String get blockDriverButton;
+
+  /// No description provided for @unblockDriverButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'فك الحظر'**
+  String get unblockDriverButton;
+
+  /// No description provided for @blockDriverConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حظر الطيار؟'**
+  String get blockDriverConfirmTitle;
+
+  /// No description provided for @blockDriverConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'{driverName} مش هيقدر يشوف أو يقبل طلباتك تاني بعد الحظر. تقدر تفك الحظر في أي وقت من بروفايلك.'**
+  String blockDriverConfirmBody(String driverName);
+
+  /// No description provided for @blockButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'حظر'**
+  String get blockButton;
+
+  /// No description provided for @driverAddedToFavoritesMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت إضافة الطيار للمفضّلين'**
+  String get driverAddedToFavoritesMessage;
+
+  /// No description provided for @driverRemovedFromFavoritesMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت إزالة الطيار من المفضّلين'**
+  String get driverRemovedFromFavoritesMessage;
+
+  /// No description provided for @driverBlockedMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حظر الطيار'**
+  String get driverBlockedMessage;
+
+  /// No description provided for @driverUnblockedMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم فك حظر الطيار'**
+  String get driverUnblockedMessage;
+
+  /// No description provided for @myDriversDrawerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سائقيني'**
+  String get myDriversDrawerLabel;
+
+  /// No description provided for @myDriversScreenTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سائقيني'**
+  String get myDriversScreenTitle;
+
+  /// No description provided for @favoriteDriversTabLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المفضّلين'**
+  String get favoriteDriversTabLabel;
+
+  /// No description provided for @blockedDriversTabLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحظورين'**
+  String get blockedDriversTabLabel;
+
+  /// No description provided for @noFavoriteDriversYetMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه معندكش سائقين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم'**
+  String get noFavoriteDriversYetMessage;
+
+  /// No description provided for @noBlockedDriversYetMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'معندكش أي سائقين محظورين'**
+  String get noBlockedDriversYetMessage;
 }
 
 class _AppLocalizationsDelegate

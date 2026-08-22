@@ -1513,4 +1513,59 @@ class AppLocalizationsAr extends AppLocalizations {
   String scheduledRideSearchingBanner(String dateTime) {
     return 'رحلتك محجوزة لـ $dateTime - هنبدأ ندوّرلك على طيار دلوقتي عشان يتفق معاك';
   }
+
+  @override
+  String get addToFavoriteDriversButton => 'أضف للمفضّلين';
+
+  @override
+  String get removeFromFavoriteDriversButton => 'إزالة من المفضّلين';
+
+  @override
+  String get blockDriverButton => 'حظر الطيار';
+
+  @override
+  String get unblockDriverButton => 'فك الحظر';
+
+  @override
+  String get blockDriverConfirmTitle => 'حظر الطيار؟';
+
+  @override
+  String blockDriverConfirmBody(String driverName) {
+    return '$driverName مش هيقدر يشوف أو يقبل طلباتك تاني بعد الحظر. تقدر تفك الحظر في أي وقت من بروفايلك.';
+  }
+
+  @override
+  String get blockButton => 'حظر';
+
+  @override
+  String get driverAddedToFavoritesMessage => 'تمت إضافة الطيار للمفضّلين';
+
+  @override
+  String get driverRemovedFromFavoritesMessage =>
+      'تمت إزالة الطيار من المفضّلين';
+
+  @override
+  String get driverBlockedMessage => 'تم حظر الطيار';
+
+  @override
+  String get driverUnblockedMessage => 'تم فك حظر الطيار';
+
+  @override
+  String get myDriversDrawerLabel => 'سائقيني';
+
+  @override
+  String get myDriversScreenTitle => 'سائقيني';
+
+  @override
+  String get favoriteDriversTabLabel => 'المفضّلين';
+
+  @override
+  String get blockedDriversTabLabel => 'المحظورين';
+
+  @override
+  String get noFavoriteDriversYetMessage =>
+      'لسه معندكش سائقين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم';
+
+  @override
+  String get noBlockedDriversYetMessage => 'معندكش أي سائقين محظورين';
 }

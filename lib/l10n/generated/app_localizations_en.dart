@@ -1526,4 +1526,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String scheduledRideSearchingBanner(String dateTime) {
     return 'Your ride is scheduled for $dateTime - we\'ll start finding a rider now so they can confirm with you';
   }
+
+  @override
+  String get addToFavoriteDriversButton => 'Add to favorites';
+
+  @override
+  String get removeFromFavoriteDriversButton => 'Remove from favorites';
+
+  @override
+  String get blockDriverButton => 'Block driver';
+
+  @override
+  String get unblockDriverButton => 'Unblock';
+
+  @override
+  String get blockDriverConfirmTitle => 'Block this driver?';
+
+  @override
+  String blockDriverConfirmBody(String driverName) {
+    return '$driverName won\'t be able to see or accept your ride requests once blocked. You can unblock them anytime from your profile.';
+  }
+
+  @override
+  String get blockButton => 'Block';
+
+  @override
+  String get driverAddedToFavoritesMessage => 'Driver added to favorites';
+
+  @override
+  String get driverRemovedFromFavoritesMessage =>
+      'Driver removed from favorites';
+
+  @override
+  String get driverBlockedMessage => 'Driver blocked';
+
+  @override
+  String get driverUnblockedMessage => 'Driver unblocked';
+
+  @override
+  String get myDriversDrawerLabel => 'My drivers';
+
+  @override
+  String get myDriversScreenTitle => 'My drivers';
+
+  @override
+  String get favoriteDriversTabLabel => 'Favorites';
+
+  @override
+  String get blockedDriversTabLabel => 'Blocked';
+
+  @override
+  String get noFavoriteDriversYetMessage =>
+      'No favorite drivers yet - add one from the rating screen after any trip';
+
+  @override
+  String get noBlockedDriversYetMessage => 'You haven\'t blocked any drivers';
 }
