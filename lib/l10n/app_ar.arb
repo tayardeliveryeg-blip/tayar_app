@@ -547,6 +547,17 @@
   "topUpWalletTitle": "شحن رصيد المحفظة",
   "topUpWalletSubtitle": "حوّل المبلغ إنستاباي وارفع صورة إيصال التحويل، وهنراجع طلبك ونضيفه لرصيدك أول بأول",
   "topUpAmountLabel": "المبلغ (جنيه)",
+  "topUpAmountRangeHint": "بين {min} و {max} جنيه",
+  "@topUpAmountRangeHint": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "topUpProofLabel": "صورة إثبات التحويل",
   "topUpProofRequiredError": "لازم ترفع صورة إثبات التحويل",
   "invalidAmountError": "أدخل مبلغ صحيح",
@@ -561,6 +572,8 @@
   "walletTopupRejectedLabel": "طلب شحن - مرفوض",
   "negativeWalletBalanceNote": "رصيدك بالسالب، لازم تشحن المحفظة عشان تقدر تستقبل طلبات جديدة",
   "myWalletLabel": "محفظتي",
+  "walletSummaryPassengerLabel": "رصيد رحلاتي",
+  "walletSummaryDriverLabel": "مستحقات كطيار",
   "walletTripPaymentLabel": "رحلة مدفوعة بالمحفظة",
   "walletAdminCreditLabel": "رصيد مضاف من الإدارة",
   "walletAvailableBalanceLabel": "الرصيد المتاح: {amount} جنيه",

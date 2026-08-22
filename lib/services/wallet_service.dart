@@ -201,17 +201,55 @@ Future<double> getPassengerWalletBalance(String uid) async {
   return (snap.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
 }
 
-/// ====== تسجيل طلب شحن رصيد جديد من الطيار (في انتظار المراجعة اليدوية) ======
-/// الطلب بيتحفظ بحالة 'pending' وميأثرش على الرصيد إلا لما يتراجع ويتوافق
-/// عليه يدويًا من Firebase Console حاليًا (لحد ما تتعمل شاشة الأدمن) ======
+/// ====== استثناء مخصص لطلب شحن الرصيد - رسالة عربية واضحة تتعرض
+/// مباشرة للمستخدم (نفس فكرة PromoCodeException/ReferralException) ======
+class WalletTopupException implements Exception {
+  final String message;
+  WalletTopupException(this.message);
+  @override
+  String toString() => message;
+}
+
+/// ====== حد أدنى/أقصى لمبلغ طلب الشحن الواحد - مش قيد أمني صارم (الأدمن
+/// بيراجع المبلغ والإيصال يدويًا برضو قبل الموافقة)، الهدف بس حماية من
+/// أخطاء كتابة زي إضافة صفر بالغلط أو رقم صغير جدًا مش هيغطي حتى مصاريف
+/// المراجعة ======
+const double kMinWalletTopupAmount = 20;
+const double kMaxWalletTopupAmount = 5000;
+
+/// ====== تسجيل طلب شحن رصيد جديد من الطيار (في انتظار المراجعة من لوحة
+/// الأدمن - راجع tayar-admin/public/index.html، قسم Driver top-up
+/// requests) ======
 Future<void> submitWalletTopupRequest({
   required String driverId,
   required double amount,
   required String proofBase64,
 }) async {
+  if (amount < kMinWalletTopupAmount || amount > kMaxWalletTopupAmount) {
+    throw WalletTopupException(
+      'المبلغ لازم يكون بين ${kMinWalletTopupAmount.toStringAsFixed(0)} '
+      'و ${kMaxWalletTopupAmount.toStringAsFixed(0)} جنيه',
+    );
+  }
+
   final driverRef = FirebaseFirestore.instance
       .collection('drivers')
       .doc(driverId);
+
+  // ====== منع أكتر من طلب شحن pending واحد في نفس الوقت - عشان مايتكررش
+  // نفس الطلب في قايمة مراجعة الأدمن ولا يحصل لبس مين اتراجع ومين لأ ======
+  final existingPending = await driverRef
+      .collection('walletTransactions')
+      .where('type', isEqualTo: 'topup_request')
+      .where('status', isEqualTo: 'pending')
+      .limit(1)
+      .get();
+  if (existingPending.docs.isNotEmpty) {
+    throw WalletTopupException(
+      'عندك طلب شحن قيد المراجعة بالفعل - استنى نتيجته الأول قبل ما تبعت طلب جديد',
+    );
+  }
+
   await driverRef.collection('walletTransactions').add({
     'type': 'topup_request',
     'status': 'pending',

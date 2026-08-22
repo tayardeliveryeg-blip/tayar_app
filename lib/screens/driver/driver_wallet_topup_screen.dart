@@ -144,13 +144,19 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
                   style: TextStyle(color: context.textColor),
                   decoration: InputDecoration(
                     labelText: loc.topUpAmountLabel,
+                    helperText: loc.topUpAmountRangeHint(
+                      kMinWalletTopupAmount.toStringAsFixed(0),
+                      kMaxWalletTopupAmount.toStringAsFixed(0),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   validator: (value) {
                     final amount = double.tryParse((value ?? '').trim());
-                    if (amount == null || amount <= 0) {
+                    if (amount == null ||
+                        amount < kMinWalletTopupAmount ||
+                        amount > kMaxWalletTopupAmount) {
                       return loc.invalidAmountError;
                     }
                     return null;

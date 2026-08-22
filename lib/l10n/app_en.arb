@@ -547,6 +547,17 @@
   "topUpWalletTitle": "Top up wallet balance",
   "topUpWalletSubtitle": "Transfer the amount via InstaPay and upload the receipt screenshot, we'll review your request and add it to your balance shortly",
   "topUpAmountLabel": "Amount (EGP)",
+  "topUpAmountRangeHint": "Between {min} and {max} EGP",
+  "@topUpAmountRangeHint": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "topUpProofLabel": "Transfer proof screenshot",
   "topUpProofRequiredError": "You need to upload a transfer proof screenshot",
   "invalidAmountError": "Enter a valid amount",
@@ -561,6 +572,8 @@
   "walletTopupRejectedLabel": "Top-up request - rejected",
   "negativeWalletBalanceNote": "Your balance is negative, top up your wallet to keep receiving new orders",
   "myWalletLabel": "My Wallet",
+  "walletSummaryPassengerLabel": "My ride wallet",
+  "walletSummaryDriverLabel": "Driver dues",
   "walletTripPaymentLabel": "Trip paid with wallet",
   "walletAdminCreditLabel": "Credit added by admin",
   "walletAvailableBalanceLabel": "Available balance: EGP {amount}",
