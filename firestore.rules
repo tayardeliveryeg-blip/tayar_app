@@ -383,11 +383,16 @@ service cloud.firestore {
       // يدوية من Firebase Console. محصور على الأدمن بس، وعلى نفس الحقول
       // اللي بتتغير وقت المراجعة (زي pendingReferralRewards/sos_alerts) -
       // مينفعش الأدمن (أو حد تاني) يعدّل amount أو proofBase64 بعد
-      // الإنشاء ======
+      // الإنشاء. شرط resource.data.status == 'pending' مضاف كحماية إضافية
+      // (defense in depth) ضد شحن نفس الطلب مرتين - بيمنع أي محاولة تعديل
+      // تانية على طلب اتراجع بالفعل (approved/rejected)، حتى لو حصل خطأ
+      // أو تعارض في كود اللوحة نفسه (زي double-click أو أدمنين بيراجعوا
+      // نفس الطلب في نفس اللحظة) ======
       match /walletTransactions/{transactionId} {
         allow read: if request.auth != null && (request.auth.uid == driverId || isAdmin());
         allow create: if request.auth != null && (request.auth.uid == driverId || isAdmin());
         allow update: if isAdmin() &&
+          resource.data.status == 'pending' &&
           request.resource.data.diff(resource.data).affectedKeys()
             .hasOnly(['status', 'resolvedAt', 'resolvedBy', 'balanceAfter']);
         allow delete: if false;

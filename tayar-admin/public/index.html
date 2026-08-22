@@ -1812,13 +1812,22 @@ function showTopupProof(requestId){
 // ====== الموافقة: transaction واحدة بتضيف المبلغ لرصيد الطيار (زي
 // completeTripAndDeductCommission في wallet_service.dart، بس بالإضافة
 // بدل الخصم) وتعلّم طلب الشحن نفسه 'approved' مع بعض - عشان الحالتين
-// يحصلوا مع بعض أو ولا واحدة ======
+// يحصلوا مع بعض أو ولا واحدة.
+// ====== بنقرا حالة طلب الشحن نفسه (txnRef) جوه الـ transaction قبل أي
+// تعديل - لو اتغيّرت من 'pending' (يعني حد راجعه بالفعل، زي admin تاني
+// فتح نفس الطلب، أو ضغطة مزدوجة بالغلط) نوقف على طول من غير ما نضيف
+// المبلغ تاني. firestore.rules فيها نفس الشرط كحماية إضافية على مستوى
+// السيرفر (defense in depth) حتى لو حصل باج تاني هنا مستقبلًا ======
 function approveWalletTopup(requestId, driverId, amount){
   if(!confirm(`Add ${amount.toFixed(0)} EGP to this driver's wallet?`)) return;
   const driverRef = db.collection(COLLECTIONS.drivers).doc(driverId);
   const txnRef = driverRef.collection('walletTransactions').doc(requestId);
   let newBalance = 0;
   db.runTransaction(async txn => {
+    const txnSnap = await txn.get(txnRef);
+    if(!txnSnap.exists || txnSnap.data().status !== 'pending'){
+      throw new Error('This request was already reviewed (maybe by someone else) - refresh and check its current status.');
+    }
     const driverSnap = await txn.get(driverRef);
     const current = (driverSnap.data() && driverSnap.data().walletBalance) || 0;
     newBalance = current + amount;
@@ -1834,12 +1843,21 @@ function approveWalletTopup(requestId, driverId, amount){
     sendGeneralNotification(driverId, 'تم شحن محفظتك', `تم قبول طلب شحن ${amount.toFixed(0)} جنيه وإضافته لرصيدك`, 'wallet', 'driver');
   }).catch(err => toast('Failed: ' + err.message));
 }
+// ====== بنعمل نفس فحص الحالة قبل الرفض (transaction بدل update عادي)
+// لنفس السبب - منع رفض/تعديل طلب اتراجع بالفعل مرتين ======
 function rejectWalletTopup(requestId, driverId){
   if(!confirm('Reject this top-up request?')) return;
-  db.collection(COLLECTIONS.drivers).doc(driverId).collection('walletTransactions').doc(requestId).update({
-    status: 'rejected',
-    resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    resolvedBy: auth.currentUser.uid
+  const txnRef = db.collection(COLLECTIONS.drivers).doc(driverId).collection('walletTransactions').doc(requestId);
+  db.runTransaction(async txn => {
+    const txnSnap = await txn.get(txnRef);
+    if(!txnSnap.exists || txnSnap.data().status !== 'pending'){
+      throw new Error('This request was already reviewed (maybe by someone else) - refresh and check its current status.');
+    }
+    txn.update(txnRef, {
+      status: 'rejected',
+      resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      resolvedBy: auth.currentUser.uid
+    });
   }).then(() => {
     toast('Top-up rejected');
     sendGeneralNotification(driverId, 'تم رفض طلب الشحن', 'تم رفض طلب شحن محفظتك - راجع صورة الإيصال وحاول تاني أو تواصل مع الدعم', 'wallet', 'driver');
