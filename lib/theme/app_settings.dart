@@ -16,7 +16,7 @@ class AppSettings {
   double commissionRate = 0.10;
   double serviceRadiusKm =
       15.0; // محفوظة للمستقبل: مفيش فلترة بالمسافة مفعّلة في مطابقة السائقين لسه
-  String supportPhone = '+201142263460';
+  String supportPhone = '+201064286901';
   double referralWelcomeBonus = 20.0;
   int maxScheduleAdvanceDays = 7;
   // ====== رسوم إلغاء الرحلة (تتحصل بس لو سائق كان قابل الطلب فعلاً، وبعد
