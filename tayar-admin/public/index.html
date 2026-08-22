@@ -690,7 +690,10 @@ const SUPABASE_ANON_KEY = 'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
  * بيحصل قبل كده - fetch() مبترميش استثناء لمجرد رد HTTP فيه خطأ زي
  * 401/403/500، فكانت أي مشكلة حقيقية بتعدي من غير ما حد يلاحظها) وبنطبع
  * تحذير واضح في console فيه نص رسالة الخطأ الفعلية من الـ Edge Function. */
-async function sendGeneralNotification(userId, title, body, type){
+// ====== walletRole (اختياري): 'passenger' أو 'driver' - لازم تتبعت مع أي
+// إشعار type == 'wallet' عشان الموبايل يعرف يفتح شاشة المحفظة الصح على
+// طول من الإشعار (راجع تعليق general-notify/index.ts لتفاصيل الباج القديم) ======
+async function sendGeneralNotification(userId, title, body, type, walletRole){
   try {
     const idToken = await auth.currentUser.getIdToken();
     const res = await fetch(`${SUPABASE_URL}/functions/v1/general-notify`, {
@@ -701,7 +704,7 @@ async function sendGeneralNotification(userId, title, body, type){
         'X-Firebase-Id-Token': idToken,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userId, title, body, type })
+      body: JSON.stringify({ userId, title, body, type, ...(walletRole ? { walletRole } : {}) })
     });
     const json = await res.json().catch(() => null);
     if (!res.ok) {
@@ -1672,7 +1675,7 @@ function submitWalletGrant(){
     const notifBody = reason
       ? `تم إضافة ${amount} جنيه إلى محفظتك (${reason}). رصيدك الحالي: ${newBalance.toFixed(0)} جنيه.`
       : `تم إضافة ${amount} جنيه إلى محفظتك. رصيدك الحالي: ${newBalance.toFixed(0)} جنيه.`;
-    sendGeneralNotification(walletSelectedUserId, 'تم شحن محفظتك', notifBody, 'wallet');
+    sendGeneralNotification(walletSelectedUserId, 'تم شحن محفظتك', notifBody, 'wallet', 'passenger');
     document.getElementById('walletGrantAmount').value = '';
     document.getElementById('walletGrantReason').value = '';
   }).catch(err=>toast('Failed: ' + err.message));
@@ -1828,7 +1831,7 @@ function approveWalletTopup(requestId, driverId, amount){
     });
   }).then(() => {
     toast(`Top-up approved — new balance ${newBalance.toFixed(0)} EGP`);
-    sendGeneralNotification(driverId, 'تم شحن محفظتك', `تم قبول طلب شحن ${amount.toFixed(0)} جنيه وإضافته لرصيدك`, 'wallet');
+    sendGeneralNotification(driverId, 'تم شحن محفظتك', `تم قبول طلب شحن ${amount.toFixed(0)} جنيه وإضافته لرصيدك`, 'wallet', 'driver');
   }).catch(err => toast('Failed: ' + err.message));
 }
 function rejectWalletTopup(requestId, driverId){
@@ -1839,7 +1842,7 @@ function rejectWalletTopup(requestId, driverId){
     resolvedBy: auth.currentUser.uid
   }).then(() => {
     toast('Top-up rejected');
-    sendGeneralNotification(driverId, 'تم رفض طلب الشحن', 'تم رفض طلب شحن محفظتك - راجع صورة الإيصال وحاول تاني أو تواصل مع الدعم', 'wallet');
+    sendGeneralNotification(driverId, 'تم رفض طلب الشحن', 'تم رفض طلب شحن محفظتك - راجع صورة الإيصال وحاول تاني أو تواصل مع الدعم', 'wallet', 'driver');
   }).catch(err => toast('Failed: ' + err.message));
 }
 

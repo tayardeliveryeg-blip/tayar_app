@@ -66,9 +66,17 @@ Deno.serve(async (req: Request) => {
     }
 
     const body = await req.json();
-    const { userId, title, body: notifBody, type } = body ?? {};
+    const { userId, title, body: notifBody, type, walletRole } = body ?? {};
     if (!userId || !title || !notifBody) {
       return jsonResponse({ error: "userId و title و body مطلوبين" }, 400);
+    }
+    // ====== walletRole (اختياري): 'passenger' أو 'driver' - بتتبعت بس مع
+    // type == 'wallet'، عشان notifications_screen.dart في الموبايل يعرف
+    // يفتح شاشة المحفظة الصح على طول من غير ما "يخمّن" من آخر وضع مستخدم
+    // (lastMode) - ده كان سبب باج إن إشعار شحن محفظة الراكب كان بيفتح
+    // شاشة محفظة الطيار لو المستخدم كان واقف في وضع الطيار وقت الضغط ======
+    if (walletRole !== undefined && walletRole !== "passenger" && walletRole !== "driver") {
+      return jsonResponse({ error: "walletRole لازم يبقى passenger أو driver" }, 400);
     }
 
     // ====== 1) كتابة مستند الإشعار - عشان يظهر في شاشة الإشعارات بتاعة
@@ -78,6 +86,7 @@ Deno.serve(async (req: Request) => {
       title,
       body: notifBody,
       type: type || "system",
+      ...(walletRole ? { walletRole } : {}),
       createdAt: new Date(),
       isRead: false,
     });

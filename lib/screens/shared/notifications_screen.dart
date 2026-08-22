@@ -22,19 +22,41 @@ class NotificationsScreen extends StatelessWidget {
   }
 
   // ====== لما المستخدم يدوس على إشعار شحن المحفظة، نوديه على شاشة
-  // محفظته على طول - بدل ما يفضل بس واقف في شاشة الإشعارات. بنحدد دوره
-  // (راكب/كابتن) بنفس الطريقة اللي بيتحدد بيها في AuthGate (main.dart):
-  // آخر وضع محفوظ في SharedPreferences ======
-  Future<void> _handleTap(BuildContext context, String docId, String? type) async {
+  // محفظته على طول - بدل ما يفضل بس واقف في شاشة الإشعارات.
+  //
+  // بنحدد أي محفظة (راكب/طيار) من حقل walletRole المسجّل على الإشعار نفسه
+  // (مبعوت من لوحة الأدمن وقت الإنشاء - راجع sendGeneralNotification في
+  // tayar-admin/public/index.html وgeneral-notify Edge Function) - مش من
+  // آخر وضع مستخدم في الجهاز (lastMode) زي ما كان بيحصل قبل كده. الاعتماد
+  // على lastMode كان بيسبب باج واضح: لو الأدمن شحن محفظة الراكب والمستخدم
+  // في نفس اللحظة واقف في وضع الطيار، الضغط على الإشعار كان بيفتحله شاشة
+  // محفظة الطيار (رصيدها صفر) بدل محفظة الراكب اللي فعلًا اتشحنت.
+  //
+  // fallback على lastMode لسه موجود بس للإشعارات القديمة اللي اتبعتت قبل
+  // إضافة الحقل ده ومفيهاش walletRole أصلًا ======
+  Future<void> _handleTap(
+    BuildContext context,
+    String docId,
+    String? type,
+    String? walletRole,
+  ) async {
     await _markAsRead(docId);
     if (type != 'wallet') return;
     if (!context.mounted) return;
 
-    final prefs = await SharedPreferences.getInstance();
-    final lastMode = prefs.getString('lastMode');
-    if (!context.mounted) return;
+    bool openDriverWallet;
+    if (walletRole == 'driver') {
+      openDriverWallet = true;
+    } else if (walletRole == 'passenger') {
+      openDriverWallet = false;
+    } else {
+      // ====== fallback قديم للإشعارات اللي اتبعتت قبل walletRole ======
+      final prefs = await SharedPreferences.getInstance();
+      if (!context.mounted) return;
+      openDriverWallet = prefs.getString('lastMode') == 'driver';
+    }
 
-    if (lastMode == 'driver') {
+    if (openDriverWallet) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => const DriverHomeScreen(initialTab: 3),
@@ -209,8 +231,9 @@ class NotificationsScreen extends StatelessWidget {
                         : DateTime.now();
 
                     final type = data['type'] as String?;
+                    final walletRole = data['walletRole'] as String?;
                     return AppCard(
-                      onTap: () => _handleTap(context, doc.id, type),
+                      onTap: () => _handleTap(context, doc.id, type, walletRole),
                       padding: const EdgeInsets.all(14),
                       radius: 14,
                       border: isRead
