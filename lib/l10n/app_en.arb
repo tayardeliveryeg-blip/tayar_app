@@ -693,5 +693,25 @@
   "scheduledRideSearchingBanner": "Your ride is scheduled for {dateTime} - we'll start finding a rider now so they can confirm with you",
   "@scheduledRideSearchingBanner": {
     "placeholders": { "dateTime": { "type": "String" } }
-  }
+  },
+  "addToFavoriteDriversButton": "Add to favorites",
+  "removeFromFavoriteDriversButton": "Remove from favorites",
+  "blockDriverButton": "Block driver",
+  "unblockDriverButton": "Unblock",
+  "blockDriverConfirmTitle": "Block this driver?",
+  "blockDriverConfirmBody": "{driverName} won't be able to see or accept your ride requests once blocked. You can unblock them anytime from your profile.",
+  "@blockDriverConfirmBody": {
+    "placeholders": { "driverName": { "type": "String" } }
+  },
+  "blockButton": "Block",
+  "driverAddedToFavoritesMessage": "Driver added to favorites",
+  "driverRemovedFromFavoritesMessage": "Driver removed from favorites",
+  "driverBlockedMessage": "Driver blocked",
+  "driverUnblockedMessage": "Driver unblocked",
+  "myDriversDrawerLabel": "My drivers",
+  "myDriversScreenTitle": "My drivers",
+  "favoriteDriversTabLabel": "Favorites",
+  "blockedDriversTabLabel": "Blocked",
+  "noFavoriteDriversYetMessage": "No favorite drivers yet - add one from the rating screen after any trip",
+  "noBlockedDriversYetMessage": "You haven't blocked any drivers"
 }

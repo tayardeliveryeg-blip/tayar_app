@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors, PassengerHomeScreen;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/services/driver_relations_service.dart';
 
 /// ====== شاشة تقييم الطيار بعد انتهاء الرحلة ======
 /// بتظهر تلقائيًا لما الأوردر يوصل لحالة completed، وبتسمح للراكب
@@ -29,6 +30,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
   int _stars = 0;
   final _commentController = TextEditingController();
   bool _isSubmitting = false;
+  bool _relationBusy = false;
 
   @override
   void dispose() {
@@ -89,6 +91,95 @@ class _RateTripScreenState extends State<RateTripScreen> {
           content: Text(AppLocalizations.of(context)!.failedToSaveRatingError),
         ),
       );
+    }
+  }
+
+  Future<void> _toggleFavorite(bool currentlyFavorite) async {
+    if (_relationBusy || widget.driverId.isEmpty) return;
+    setState(() => _relationBusy = true);
+    final loc = AppLocalizations.of(context)!;
+    try {
+      await DriverRelationsService.setFavorite(
+        driverId: widget.driverId,
+        driverName: widget.driverName,
+        isFavorite: !currentlyFavorite,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            !currentlyFavorite
+                ? loc.driverAddedToFavoritesMessage
+                : loc.driverRemovedFromFavoritesMessage,
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint('❌ خطأ في تحديث المفضّلين: $e');
+    } finally {
+      if (mounted) setState(() => _relationBusy = false);
+    }
+  }
+
+  Future<void> _toggleBlocked(bool currentlyBlocked) async {
+    if (_relationBusy || widget.driverId.isEmpty) return;
+    final loc = AppLocalizations.of(context)!;
+
+    // ====== الحظر إجراء أقوى من المفضّلة - بنأكد قبل ما نطبّقه، الفك
+    // مباشر بدون تأكيد ======
+    if (!currentlyBlocked) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: context.cardColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            loc.blockDriverConfirmTitle,
+            style: TextStyle(color: context.textColor),
+          ),
+          content: Text(
+            loc.blockDriverConfirmBody(widget.driverName),
+            style: TextStyle(color: context.textGreyColor),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(loc.cancel, style: TextStyle(color: context.textGreyColor)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(
+                loc.blockButton,
+                style: const TextStyle(color: Colors.redAccent),
+              ),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true) return;
+    }
+
+    setState(() => _relationBusy = true);
+    try {
+      await DriverRelationsService.setBlocked(
+        driverId: widget.driverId,
+        driverName: widget.driverName,
+        isBlocked: !currentlyBlocked,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            !currentlyBlocked
+                ? loc.driverBlockedMessage
+                : loc.driverUnblockedMessage,
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint('❌ خطأ في تحديث الحظر: $e');
+    } finally {
+      if (mounted) setState(() => _relationBusy = false);
     }
   }
 
@@ -210,6 +301,59 @@ class _RateTripScreenState extends State<RateTripScreen> {
                   ),
                 ),
 
+                const SizedBox(height: 12),
+
+                // ====== المفضّلة/الحظر - بيظهروا بس لو عندنا driverId
+                // حقيقي (مش سيناريو نادر لطلب اتلغى قبل ما طيار يتقبله) ======
+                if (widget.driverId.isNotEmpty)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: StreamBuilder<bool>(
+                          stream: DriverRelationsService.isFavoriteStream(
+                            widget.driverId,
+                          ),
+                          builder: (context, snap) {
+                            final isFav = snap.data ?? false;
+                            return _RelationChip(
+                              icon: isFav ? Icons.star : Icons.star_border,
+                              label: isFav
+                                  ? loc.removeFromFavoriteDriversButton
+                                  : loc.addToFavoriteDriversButton,
+                              color: TayarColors.primary,
+                              active: isFav,
+                              busy: _relationBusy,
+                              onTap: () => _toggleFavorite(isFav),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: StreamBuilder<bool>(
+                          stream: DriverRelationsService.isBlockedStream(
+                            widget.driverId,
+                          ),
+                          builder: (context, snap) {
+                            final isBlocked = snap.data ?? false;
+                            return _RelationChip(
+                              icon: isBlocked
+                                  ? Icons.block
+                                  : Icons.block_outlined,
+                              label: isBlocked
+                                  ? loc.unblockDriverButton
+                                  : loc.blockDriverButton,
+                              color: Colors.redAccent,
+                              active: isBlocked,
+                              busy: _relationBusy,
+                              onTap: () => _toggleBlocked(isBlocked),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
                 const SizedBox(height: 32),
 
                 // ====== النجوم ======
@@ -304,6 +448,62 @@ class _RateTripScreenState extends State<RateTripScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ====== شريحة صغيرة قابلة للضغط (مفضّلة/حظر) - بتتلوّن لو "مفعّلة"
+// (active) عشان توضّح الحالة الحالية بنظرة واحدة ======
+class _RelationChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool active;
+  final bool busy;
+  final VoidCallback onTap;
+
+  const _RelationChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.active,
+    required this.busy,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: busy ? null : onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        decoration: BoxDecoration(
+          color: active ? color.withValues(alpha: 0.15) : context.cardColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: active ? color : context.textGreyColor.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: active ? color : context.textGreyColor, size: 18),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: active ? color : context.textGreyColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -693,5 +693,25 @@
   "scheduledRideSearchingBanner": "رحلتك محجوزة لـ {dateTime} - هنبدأ ندوّرلك على طيار دلوقتي عشان يتفق معاك",
   "@scheduledRideSearchingBanner": {
     "placeholders": { "dateTime": { "type": "String" } }
-  }
+  },
+  "addToFavoriteDriversButton": "أضف للمفضّلين",
+  "removeFromFavoriteDriversButton": "إزالة من المفضّلين",
+  "blockDriverButton": "حظر الطيار",
+  "unblockDriverButton": "فك الحظر",
+  "blockDriverConfirmTitle": "حظر الطيار؟",
+  "blockDriverConfirmBody": "{driverName} مش هيقدر يشوف أو يقبل طلباتك تاني بعد الحظر. تقدر تفك الحظر في أي وقت من بروفايلك.",
+  "@blockDriverConfirmBody": {
+    "placeholders": { "driverName": { "type": "String" } }
+  },
+  "blockButton": "حظر",
+  "driverAddedToFavoritesMessage": "تمت إضافة الطيار للمفضّلين",
+  "driverRemovedFromFavoritesMessage": "تمت إزالة الطيار من المفضّلين",
+  "driverBlockedMessage": "تم حظر الطيار",
+  "driverUnblockedMessage": "تم فك حظر الطيار",
+  "myDriversDrawerLabel": "سائقيني",
+  "myDriversScreenTitle": "سائقيني",
+  "favoriteDriversTabLabel": "المفضّلين",
+  "blockedDriversTabLabel": "المحظورين",
+  "noFavoriteDriversYetMessage": "لسه معندكش سائقين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم",
+  "noBlockedDriversYetMessage": "معندكش أي سائقين محظورين"
 }
