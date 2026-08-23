@@ -673,5 +673,18 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    // ====== قاعدة إضافية بصيغة collection-group الصريحة (path=**) عشان
+    // استعلام db.collectionGroup('walletTransactions') في لوحة الأدمن
+    // (قسم "Driver top-up requests") يشتغل - القاعدة المتداخلة جوه
+    // drivers/{driverId}/walletTransactions فوق كانت شغالة تمام للقراءة
+    // المباشرة (get) لمستند واحد، لكن Firestore بيرفض أي list/collectionGroup
+    // query تلقائيًا لو مفيش قاعدة بالصيغة دي بالظبط تغطي الكوليكشن كله -
+    // حتى لو القاعدة المتداخلة نفسها منطقيًا صح. القراءة هنا محصورة على
+    // الأدمن بس (الطيار بيقرا سجله عن طريق القاعدة المتداخلة العادية،
+    // مش محتاج collectionGroup) ======
+    match /{path=**}/walletTransactions/{transactionId} {
+      allow read: if request.auth != null && isAdmin();
+    }
   }
 }
