@@ -225,10 +225,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get termsAndConditions => 'Terms & Conditions';
 
   @override
-  String get termsAndConditionsBody =>
-      'By using the Tayar app, you agree to be bound by these Terms and Conditions. Please review the full terms on our official website or contact customer support for more details.';
-
-  @override
   String get privacyPolicy => 'Privacy Policy';
 
   @override
@@ -429,6 +425,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsAndConditionsTitle => 'Terms and Conditions';
+
+  @override
+  String get termsAndConditionsBody =>
+      'By using the Tayar app (as a rider, driver, or vendor partner), you agree to be fully bound by the Terms and Conditions published at b10-app-1e682.web.app/terms.html. In short: Tayar is a matching platform only, not a transport company, and drivers are independent users, not employees. Fares are negotiable within a set range, cancellation fees apply after a free grace period, and a commission is deducted from drivers per trip. Please review the full text at the link above, or from Settings > Terms and Conditions.';
 
   @override
   String get submitApplicationSuccessTitle => 'Application sent!';

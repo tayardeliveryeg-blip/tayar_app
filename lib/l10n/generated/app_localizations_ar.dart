@@ -225,10 +225,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get termsAndConditions => 'الشروط والأحكام';
 
   @override
-  String get termsAndConditionsBody =>
-      'باستخدامك تطبيق طيار، أنت بتوافق على الالتزام بهذه الشروط والأحكام. يرجى مراجعة الشروط الكاملة على موقعنا الرسمي أو التواصل مع خدمة العملاء لمزيد من التفاصيل.';
-
-  @override
   String get privacyPolicy => 'سياسة الخصوصية';
 
   @override
@@ -429,6 +425,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get termsAndConditionsTitle => 'الشروط والأحكام';
+
+  @override
+  String get termsAndConditionsBody =>
+      'باستخدامك تطبيق طيار (كراكب أو طيار أو شريك تجاري)، أنت بتوافق على الالتزام الكامل بالشروط والأحكام المنشورة على b10-app-1e682.web.app/terms.html. الملخص: طيار منصة ربط بس، مش شركة نقل، والطيار مستخدم مستقل مش موظف. الأسعار قابلة للتفاوض ضمن هامش محدد، وفيه رسوم إلغاء بعد مهلة مجانية، وعمولة على الطيار عن كل رحلة. يرجى مراجعة النص الكامل من الرابط أعلاه أو من شاشة الإعدادات > الشروط والأحكام.';
 
   @override
   String get submitApplicationSuccessTitle => 'تم إرسال طلبك';
