@@ -9,6 +9,7 @@ import 'package:tayay_app/services/promo_service.dart';
 import 'package:tayay_app/services/referral_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 
 // ====== شاشة "محفظتي" للراكب: الرصيد الحالي + سجل الحركات - نفس فكرة
 // DriverWalletTab بالظبط، بس من غير زرار شحن (رصيد الراكب بيتزود من
@@ -42,6 +43,23 @@ class PassengerWalletScreen extends StatelessWidget {
                         ?.toDouble() ??
                     0;
 
+                // ====== محفظة الطيار (drivers/{uid}) منفصلة تمامًا عن
+                // رصيد الراكب فوق - بتتعرض هنا بس لو المستخدم مسجل كطيار
+                // بالفعل. نفس المنطق اللي كان في _WalletSummaryCard بالشريط
+                // الجانبي قبل كده، اتنقل هنا داخل شاشة المحفظة نفسها ======
+                return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance
+                      .collection('drivers')
+                      .doc(uid)
+                      .snapshots(),
+                  builder: (context, driverSnapshot) {
+                    final isDriver = driverSnapshot.data?.exists ?? false;
+                    final driverBalance =
+                        (driverSnapshot.data?.data()?['walletBalance']
+                                as num?)
+                            ?.toDouble() ??
+                        0;
+
                 return ListView(
                   padding: const EdgeInsets.all(AppSpacing.xl),
                   children: [
@@ -74,6 +92,80 @@ class PassengerWalletScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+
+                    // ====== كارت مستحقات الطيار - يظهر بس لو المستخدم
+                    // مسجل كطيار، وبيودّي مباشرة لتبويب محفظة الطيار
+                    // (DriverHomeScreen initialTab: 3) عند الضغط عليه ======
+                    if (isDriver) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      InkWell(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const DriverHomeScreen(initialTab: 3),
+                          ),
+                        ),
+                        borderRadius: BorderRadius.circular(AppRadius.xxl),
+                        child: Container(
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          decoration: BoxDecoration(
+                            color: (driverBalance < 0
+                                    ? TayarColors.error
+                                    : TayarColors.primary)
+                                .withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.xxl,
+                            ),
+                            border: Border.all(
+                              color:
+                                  (driverBalance < 0
+                                          ? TayarColors.error
+                                          : TayarColors.primary)
+                                      .withValues(alpha: 0.35),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.delivery_dining,
+                                color: driverBalance < 0
+                                    ? TayarColors.error
+                                    : TayarColors.primary,
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                              Expanded(
+                                child: Text(
+                                  loc.walletSummaryDriverLabel,
+                                  style: TextStyle(
+                                    color: context.textColor,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                loc.currencyEGP(
+                                  driverBalance.toStringAsFixed(0),
+                                ),
+                                style: TextStyle(
+                                  color: driverBalance < 0
+                                      ? TayarColors.error
+                                      : TayarColors.primary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.chevron_right,
+                                color: context.textGreyColor,
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: AppSpacing.xxl),
 
                     // ====== كود الإحالة الشخصي - بيتحمل مرة واحدة (أو
@@ -263,6 +355,8 @@ class PassengerWalletScreen extends StatelessWidget {
                       },
                     ),
                   ],
+                );
+                  },
                 );
               },
             ),
