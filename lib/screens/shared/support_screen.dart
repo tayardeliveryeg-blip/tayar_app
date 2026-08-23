@@ -191,7 +191,7 @@ class _SupportScreenState extends State<SupportScreen> {
                   : Text(
                       loc.sendButton,
                       style: TextStyle(
-                        color: context.textColor,
+                        color: context.onPrimaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
