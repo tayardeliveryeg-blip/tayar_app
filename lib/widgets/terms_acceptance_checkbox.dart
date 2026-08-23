@@ -8,7 +8,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 // المفروض يترفق بزيادة الرقم ده، عشان لو حبينا مستقبلًا نجبر المستخدمين
 // اللي وافقوا على نسخة قديمة يوافقوا تاني على النسخة الجديدة (بمقارنة
 // termsVersion المحفوظ في بروفايلهم بالقيمة الحالية هنا) ======
-const String kTermsAndConditionsVersion = '1.0';
+const String kTermsAndConditionsVersion = '1.1';
 
 /// ====== Checkbox الموافقة على الشروط والأحكام - بيتستخدم في شاشة تسجيل
 /// الراكب (profile_setup_screen.dart) وشاشة تسجيل الطيار

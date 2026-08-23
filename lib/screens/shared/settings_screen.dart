@@ -50,13 +50,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  // ====== بيفتح صفحة سياسة الخصوصية الكاملة (مستضافة على Firebase Hosting)
-  // في المتصفح، بدل ما يعرض ملخص قصير جوه التطبيق ======
+  // ====== بيفتح صفحة سياسة الخصوصية أو الشروط والأحكام الكاملة (مستضافين
+  // على Firebase Hosting) في المتصفح، بدل ما يعرض ملخص قصير جوه التطبيق -
+  // الاتنين بقوا بنفس المنطق دلوقتي بعد ما اتبنت صفحة terms.html كاملة
+  // (كانت الشروط قبل كده بتفتح ديالوج بنص مختصر بس بيحيل على "الموقع
+  // الرسمي" اللي مكنش فيه محتوى فعلي) ======
   static const String _privacyPolicyUrl =
       'https://b10-app-1e682.web.app/privacy.html';
+  static const String _termsAndConditionsUrl =
+      'https://b10-app-1e682.web.app/terms.html';
 
-  Future<void> _openPrivacyPolicy(BuildContext context) async {
-    final uri = Uri.parse(_privacyPolicyUrl);
+  Future<void> _openHostedPage(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -67,28 +72,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _showTextDialog(String title, String body) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(title, style: TextStyle(color: context.textColor)),
-        content: SingleChildScrollView(
-          child: Text(body, style: TextStyle(color: context.textGreyColor)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              AppLocalizations.of(context)!.ok,
-              style: const TextStyle(color: TayarColors.primary),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Future<void> _openPrivacyPolicy(BuildContext context) =>
+      _openHostedPage(context, _privacyPolicyUrl);
+
+  Future<void> _openTermsAndConditions(BuildContext context) =>
+      _openHostedPage(context, _termsAndConditionsUrl);
 
   // ====== بيفتح شيت لاختيار اللغة: عربي / إنجليزي / لغة الجهاز ======
   void _showLanguageSheet(BuildContext context) {
@@ -376,10 +364,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Icons.chevron_left,
                         color: context.textGreyColor,
                       ),
-                      onTap: () => _showTextDialog(
-                        AppLocalizations.of(context)!.termsAndConditions,
-                        AppLocalizations.of(context)!.termsAndConditionsBody,
-                      ),
+                      onTap: () => _openTermsAndConditions(context),
                     ),
                     Divider(color: context.dividerColor2, height: 1),
                     ListTile(
