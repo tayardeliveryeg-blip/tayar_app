@@ -394,6 +394,204 @@ export class FirestoreClient {
       );
     }
   }
+
+  // ====== دعم Firestore Transactions حقيقية (read-then-write ذرّي مع
+  // optimistic concurrency) - محتاجينها عشان أي منطق مالي بيتنفذ من
+  // Edge Function (زي تسوية عمولة الطيار في complete-trip) يكون بنفس
+  // ضمانات runTransaction() في الفلاتر SDK بالظبط: لو أي مستند اتقرا
+  // جوه الـ transaction اتغيّر من حد تاني بعد القراءة، الـ commit كله
+  // بيترفض تلقائيًا (فايرستور نفسه بيتتبع ده، مش إحنا) وبنعيد المحاولة. ======
+
+  /** بيبدأ transaction جديدة، وبيرجع الـ token بتاعها - المفروض تتمرر
+   * لـ getManyInTransaction() و commitTransaction() بعد كده. */
+  async beginTransaction(): Promise<string> {
+    const token = await getGoogleAccessToken();
+    const res = await fetch(`${FIRESTORE_BASE}:beginTransaction`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    });
+    if (!res.ok) {
+      throw new Error(
+        `Firestore beginTransaction فشل (${res.status}): ${await res.text()}`,
+      );
+    }
+    const json = await res.json();
+    return json.transaction as string;
+  }
+
+  /** بيقرا كذا مستند مع بعض جوه transaction معينة (REST :batchGet) -
+   * بيرجع بنفس ترتيب الـ paths المدخلة، null لأي مستند مش موجود. أي
+   * مستند بتقراه هنا بيتسجل كـ "read" جوه الـ transaction، فلو اتغيّر من
+   * حد تاني قبل الـ commit، الـ commit هيترفض تلقائيًا. */
+  async getManyInTransaction(
+    paths: string[],
+    transaction: string,
+  ): Promise<Array<Record<string, unknown> | null>> {
+    const token = await getGoogleAccessToken();
+    const documents = paths.map((p) => `${FIRESTORE_BASE}/${p}`);
+    const res = await fetch(`${FIRESTORE_BASE}:batchGet`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ documents, transaction }),
+    });
+    if (!res.ok) {
+      throw new Error(
+        `Firestore batchGet فشل (${res.status}): ${await res.text()}`,
+      );
+    }
+    const results = (await res.json()) as Array<
+      { found?: { name: string; fields?: unknown }; missing?: string }
+    >;
+    const byName = new Map<string, Record<string, unknown> | null>();
+    for (const r of results) {
+      if (r.found) {
+        byName.set(
+          r.found.name,
+          // deno-lint-ignore no-explicit-any
+          fromFirestoreFields((r.found.fields as any) ?? {}),
+        );
+      } else if (r.missing) {
+        byName.set(r.missing, null);
+      }
+    }
+    return documents.map((name) => byName.get(name) ?? null);
+  }
+
+  /** بيعمل commit لـ transaction بدأت بـ beginTransaction - كل الكتابات
+   * بتتنفذ مع بعض ذرّيًا (يا كلها يا ولا واحدة)، وبترفض تلقائيًا لو أي
+   * مستند اتقرا جوه نفس الـ transaction (عن طريق getManyInTransaction)
+   * اتغيّر من حد تاني في نفس الوقت - نفس ضمان runTransaction() في
+   * الفلاتر SDK بالظبط. لازم تعمل catch للخطأ وتعيد المحاولة من الأول
+   * (transaction جديدة) لو فشلت بسبب تعارض - راجع withRetriedTransaction
+   * تحت. */
+  async commitTransaction(
+    transaction: string,
+    writes: Array<
+      | { type: "update"; path: string; data: Record<string, unknown> }
+      | {
+        type: "create";
+        collectionPath: string;
+        documentId: string;
+        data: Record<string, unknown>;
+      }
+    >,
+  ): Promise<void> {
+    const token = await getGoogleAccessToken();
+    const body = {
+      transaction,
+      writes: writes.map((w) => {
+        if (w.type === "create") {
+          const name =
+            `projects/${PROJECT_ID}/databases/(default)/documents/${w.collectionPath}/${w.documentId}`;
+          // ====== currentDocument.exists: false بيتأكد إن المستند ده
+          // فعلًا مش موجود قبل كده - حماية إضافية ضد تصادم documentId
+          // (نظريًا شبه مستحيل بالـ id العشوائي اللي بنولّده، لكن مجانية
+          // نضيفها) ======
+          return {
+            update: { name, fields: toFirestoreFields(w.data) },
+            currentDocument: { exists: false },
+          };
+        }
+        const name =
+          `projects/${PROJECT_ID}/databases/(default)/documents/${w.path}`;
+        return {
+          update: { name, fields: toFirestoreFields(w.data) },
+          updateMask: { fieldPaths: Object.keys(w.data) },
+        };
+      }),
+    };
+    const res = await fetch(`${FIRESTORE_BASE}:commit`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      throw new Error(
+        `Firestore commit فشل (${res.status}): ${await res.text()}`,
+      );
+    }
+  }
+
+  /** بيلغي transaction بدون commit - مفيد لو حصل خطأ في المنطق بعد
+   * beginTransaction وعايزين نسيب القفل بسرعة بدل ما نستنى الـ timeout
+   * الافتراضي. بنتجاهل فشلها عمدًا (best-effort) - لو فشلت، الـ
+   * transaction هتنتهي لوحدها بعد شوية زي أي transaction معلقة عادي. */
+  async rollback(transaction: string): Promise<void> {
+    try {
+      const token = await getGoogleAccessToken();
+      await fetch(`${FIRESTORE_BASE}:rollback`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transaction }),
+      });
+    } catch {
+      // best-effort - راجع التعليق فوق
+    }
+  }
+}
+
+/** بيولّد id عشوائي بنفس شكل الـ auto-id بتاع فايرستور (20 حرف من نفس
+ * الأبجدية) - محتاجينه وقت الكتابة جوه transaction لأن REST :commit
+ * محتاج اسم المستند مُحدد مقدمًا، بعكس create() العادية اللي بتسيب
+ * فايرستور يولّد الـ id (مش متاح جوه transaction commit). */
+export function randomFirestoreId(): string {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const bytes = new Uint8Array(20);
+  crypto.getRandomValues(bytes);
+  let id = "";
+  for (let i = 0; i < bytes.length; i++) {
+    id += chars[bytes[i] % chars.length];
+  }
+  return id;
+}
+
+/**
+ * بتنفّذ دالة transaction معينة، وبتعيد المحاولة تلقائيًا (transaction
+ * جديدة كل مرة) لو فشلت بسبب تعارض قراءة/كتابة (ABORTED - كود 409 أو
+ * رسالة فيها "ABORTED") - أقصى 5 محاولات مع تأخير بسيط متزايد بين كل
+ * محاولة، نفس نمط retry القياسي لـ Firestore transactions. أي خطأ تاني
+ * (مش تعارض) بيتترمى على طول من غير إعادة محاولة. ======
+ *
+ * دالة fn بتاخد transaction token وترجع أي حاجة - عليها هي تعمل
+ * getManyInTransaction() و commitTransaction() بنفسها.
+ */
+export async function withRetriedTransaction<T>(
+  db: FirestoreClient,
+  fn: (transaction: string) => Promise<T>,
+): Promise<T> {
+  const maxAttempts = 5;
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const transaction = await db.beginTransaction();
+    try {
+      return await fn(transaction);
+    } catch (err) {
+      lastError = err;
+      await db.rollback(transaction);
+      const message = err instanceof Error ? err.message : String(err);
+      const isConflict = message.includes("ABORTED") ||
+        message.includes("409") ||
+        message.includes("already exists");
+      if (!isConflict || attempt === maxAttempts) throw err;
+      // ====== تأخير بسيط متزايد قبل إعادة المحاولة (100ms, 200ms, ...) ======
+      await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
+    }
+  }
+  throw lastError;
 }
 
 // ====== 3) إرسال Push Notification عن طريق FCM HTTP v1 API ======
