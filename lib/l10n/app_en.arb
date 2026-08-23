@@ -221,6 +221,10 @@
   "continueWithAppleButton": "Continue with Apple",
   "continueWithPhoneButton": "Continue with Phone",
   "loginTermsAgreementNotice": "By joining, you agree to the terms of use and privacy policy",
+  "loginAgreementPrefix": "By continuing, you agree to the ",
+  "termsOfUseLinkText": "Terms of Use",
+  "loginAgreementConnector": " and ",
+  "loginAgreementRequiredError": "You must agree to the Terms of Use and Privacy Policy to continue",
   "signInFailedError": "Sign in failed: {error}",
   "@signInFailedError": {
     "placeholders": {

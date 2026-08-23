@@ -221,6 +221,10 @@
   "continueWithAppleButton": "المتابعة باستخدام Apple",
   "continueWithPhoneButton": "المتابعة عبر الهاتف",
   "loginTermsAgreementNotice": "يشير الانضمام إلى موافقتك على شروط الاستخدام والسياسة الخصوصية",
+  "loginAgreementPrefix": "بالمتابعة، أنت موافق على ",
+  "termsOfUseLinkText": "شروط الاستخدام",
+  "loginAgreementConnector": " و ",
+  "loginAgreementRequiredError": "لازم توافق على شروط الاستخدام وسياسة الخصوصية عشان تكمل",
   "signInFailedError": "فشل تسجيل الدخول: {error}",
   "@signInFailedError": {
     "placeholders": {

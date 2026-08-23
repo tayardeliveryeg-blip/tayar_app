@@ -1202,6 +1202,30 @@ abstract class AppLocalizations {
   /// **'يشير الانضمام إلى موافقتك على شروط الاستخدام والسياسة الخصوصية'**
   String get loginTermsAgreementNotice;
 
+  /// No description provided for @loginAgreementPrefix.
+  ///
+  /// In ar, this message translates to:
+  /// **'بالمتابعة، أنت موافق على '**
+  String get loginAgreementPrefix;
+
+  /// No description provided for @termsOfUseLinkText.
+  ///
+  /// In ar, this message translates to:
+  /// **'شروط الاستخدام'**
+  String get termsOfUseLinkText;
+
+  /// No description provided for @loginAgreementConnector.
+  ///
+  /// In ar, this message translates to:
+  /// **' و '**
+  String get loginAgreementConnector;
+
+  /// No description provided for @loginAgreementRequiredError.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم توافق على شروط الاستخدام وسياسة الخصوصية عشان تكمل'**
+  String get loginAgreementRequiredError;
+
   /// No description provided for @signInFailedError.
   ///
   /// In ar, this message translates to:

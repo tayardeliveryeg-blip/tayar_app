@@ -8,6 +8,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/gestures.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/helpers/auth_flow_helpers.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
@@ -29,7 +31,40 @@ class _LoginScreenState extends State<LoginScreen> {
   // ====== تسجيل الدخول بجوجل ======
   static bool _googleSignInInitialized = false;
 
+  // ====== موافقة المستخدم على شروط الاستخدام وسياسة الخصوصية - لازم
+  // تتعلّم قبل ما يقدر يكمل بأي وسيلة تسجيل دخول (جوجل/آبل). نفس
+  // الروابط المستضافة المستخدمة في شاشة الإعدادات (settings_screen.dart) ======
+  bool _agreedToTerms = false;
+  bool _showTermsError = false;
+
+  static const String _privacyPolicyUrl =
+      'https://b10-app-1e682.web.app/privacy.html';
+  static const String _termsOfUseUrl =
+      'https://b10-app-1e682.web.app/terms.html';
+
+  Future<void> _openHostedPage(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
+        ),
+      );
+    }
+  }
+
+  // ====== بترجع true لو المستخدم موافق فعلاً ومسموح يكمل، وإلا بتظهر
+  // رسالة الخطأ تحت الـ checkbox وترجع false عشان الشاشة اللي بتنادي
+  // ده توقف عملية تسجيل الدخول ======
+  bool _ensureAgreedToTerms() {
+    if (_agreedToTerms) return true;
+    setState(() => _showTermsError = true);
+    return false;
+  }
+
   Future<void> _signInWithGoogle(BuildContext context) async {
+    if (!_ensureAgreedToTerms()) return;
     try {
       // ====== نتأكد إن GoogleSignIn.instance اتعمله initialize مرة واحدة بس ======
       // ملاحظة: على Flutter Web وقت الـ Hot Restart، الـ Dart state بيتصفّر
@@ -105,6 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ====== تسجيل الدخول بآبل ======
   Future<void> _signInWithApple(BuildContext context) async {
+    if (!_ensureAgreedToTerms()) return;
     try {
       // ====== nonce عشوائي لحماية الجلسة من هجمات الإعادة (replay attacks) ======
       final rawNonce = _generateNonce();
@@ -259,26 +295,44 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // خانة الموافقة على شروط الاستخدام وسياسة الخصوصية
+                  _buildTermsAgreementCheckbox(context),
+                  const SizedBox(height: 12),
+
                   // زر المتابعة باستخدام Google
                   // ====== على الويب: لازم نعرض زرار جوجل الرسمي (renderButton)
-                  // لأن authenticate() برمجيًا مش مدعوم على الويب أصلًا ======
+                  // لأن authenticate() برمجيًا مش مدعوم على الويب أصلًا، فبنحط
+                  // طبقة شفافة فوقه توقف الضغطة وتوري خطأ الموافقة لو
+                  // المستخدم لسه ماعلّمش الـ checkbox ======
                   if (kIsWeb)
-                    GoogleSignInWebButton(
-                      onSignedIn: (ctx, isNewUser) async {
-                        await navigateAfterAuth(ctx, isNewUser: isNewUser);
-                      },
-                      onError: (ctx, e) {
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              AppLocalizations.of(
-                                ctx,
-                              )!.signInFailedError(e.toString()),
+                    Stack(
+                      children: [
+                        GoogleSignInWebButton(
+                          onSignedIn: (ctx, isNewUser) async {
+                            await navigateAfterAuth(ctx, isNewUser: isNewUser);
+                          },
+                          onError: (ctx, e) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(
+                                    ctx,
+                                  )!.signInFailedError(e.toString()),
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          },
+                        ),
+                        if (!_agreedToTerms)
+                          Positioned.fill(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: _ensureAgreedToTerms,
+                              child: const SizedBox.expand(),
                             ),
-                            backgroundColor: Colors.red,
                           ),
-                        );
-                      },
+                      ],
                     )
                   else
                     _buildCustomButton(
@@ -305,23 +359,103 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 15),
                   ],
-                  const SizedBox(height: 5),
-
-                  // النصوص القانونية في الأسفل
-                  Text(
-                    AppLocalizations.of(context)!.loginTermsAgreementNotice,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.textGreyColor,
-                    ),
-                  ),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // ====== خانة موافقة قابلة للتعليم + رابطين منفصلين (شروط الاستخدام /
+  // سياسة الخصوصية) كل واحد بيفتح صفحته الحقيقية المستضافة لوحده، مش
+  // نص واحد بيفتح حاجة واحدة بس. لازم تتعلّم قبل أي وسيلة تسجيل دخول ======
+  Widget _buildTermsAgreementCheckbox(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: _showTermsError
+                ? Border.all(color: Colors.red, width: 1.5)
+                : null,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Checkbox(
+                value: _agreedToTerms,
+                activeColor: TayarColors.primary,
+                onChanged: (v) => setState(() {
+                  _agreedToTerms = v ?? false;
+                  if (_agreedToTerms) _showTermsError = false;
+                }),
+              ),
+              // ====== النص العادي بس (مش الروابط) بيعلّم/يشيل تعليم
+              // الـ checkbox، عشان ميتعارضش مع recognizer الرابطين ======
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: context.textColor, fontSize: 13),
+                    children: [
+                      TextSpan(
+                        text: loc.loginAgreementPrefix,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => setState(() {
+                            _agreedToTerms = !_agreedToTerms;
+                            if (_agreedToTerms) _showTermsError = false;
+                          }),
+                      ),
+                      TextSpan(
+                        text: loc.termsOfUseLinkText,
+                        style: const TextStyle(
+                          color: TayarColors.primary,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () =>
+                              _openHostedPage(context, _termsOfUseUrl),
+                      ),
+                      TextSpan(
+                        text: loc.loginAgreementConnector,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => setState(() {
+                            _agreedToTerms = !_agreedToTerms;
+                            if (_agreedToTerms) _showTermsError = false;
+                          }),
+                      ),
+                      TextSpan(
+                        text: loc.privacyPolicy,
+                        style: const TextStyle(
+                          color: TayarColors.primary,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () =>
+                              _openHostedPage(context, _privacyPolicyUrl),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (_showTermsError)
+          Padding(
+            padding: const EdgeInsets.only(right: 12, top: 2),
+            child: Text(
+              loc.loginAgreementRequiredError,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+      ],
     );
   }
 

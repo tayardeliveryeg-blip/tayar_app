@@ -603,6 +603,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'By joining, you agree to the terms of use and privacy policy';
 
   @override
+  String get loginAgreementPrefix => 'By continuing, you agree to the ';
+
+  @override
+  String get termsOfUseLinkText => 'Terms of Use';
+
+  @override
+  String get loginAgreementConnector => ' and ';
+
+  @override
+  String get loginAgreementRequiredError =>
+      'You must agree to the Terms of Use and Privacy Policy to continue';
+
+  @override
   String signInFailedError(String error) {
     return 'Sign in failed: $error';
   }

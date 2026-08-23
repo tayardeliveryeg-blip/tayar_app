@@ -600,6 +600,19 @@ class AppLocalizationsAr extends AppLocalizations {
       'يشير الانضمام إلى موافقتك على شروط الاستخدام والسياسة الخصوصية';
 
   @override
+  String get loginAgreementPrefix => 'بالمتابعة، أنت موافق على ';
+
+  @override
+  String get termsOfUseLinkText => 'شروط الاستخدام';
+
+  @override
+  String get loginAgreementConnector => ' و ';
+
+  @override
+  String get loginAgreementRequiredError =>
+      'لازم توافق على شروط الاستخدام وسياسة الخصوصية عشان تكمل';
+
+  @override
   String signInFailedError(String error) {
     return 'فشل تسجيل الدخول: $error';
   }
