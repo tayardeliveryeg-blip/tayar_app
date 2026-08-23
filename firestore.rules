@@ -382,8 +382,23 @@ service cloud.firestore {
             )
           )
         );
+      // ====== أي مستخدم موثّق يقدر يعدّل ratingSum/ratingCount (لازمة عشان
+      // تقييم الراكب للطيار في rate_trip_screen.dart يشتغل من غير
+      // Permission Denied) - قبل كده كانت الزيادة مفتوحة لأي رقم، يعني
+      // أي مستخدم يقدر "يقيّم" أي طيار برقم ضخم دفعة واحدة من غير ما
+      // يكون راكب فعلي معاه أبدًا. دلوقتي كل تحديث لازم يكون بالظبط
+      // زيادة تقييم واحد صحيح (ratingCount +1، وratingSum بين +1 و+5 -
+      // نطاق النجوم المسموح في rate_trip_screen.dart). ده بيقفل القفزة
+      // الكبيرة في ضغطة واحدة، لكن مش حماية كاملة 100% (لسه ممكن حد
+      // يكرر الطلب يدويًا كذا مرة) - حماية كاملة محتاجة نقل التقييم
+      // للسيرفر زي complete-trip بالظبط، مش ضروري بنفس مستوى الأولوية
+      // هنا لأن التقييمات مش فلوس. resource.data.get(..., 0) بترجع 0 لو
+      // الحقل مش موجود أصلًا (أول تقييم للطيار ده في حياته) ======
       allow update: if request.auth != null &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount']);
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount']) &&
+        request.resource.data.ratingCount == resource.data.get('ratingCount', 0) + 1 &&
+        request.resource.data.ratingSum >= resource.data.get('ratingSum', 0) + 1 &&
+        request.resource.data.ratingSum <= resource.data.get('ratingSum', 0) + 5;
       allow delete: if request.auth != null && (isAdmin() || isPreInvitedMatch());
 
       // ====== سجل حركات محفظة الطيار (عمولة كل رحلة + طلبات شحن رصيد
@@ -472,10 +487,15 @@ service cloud.firestore {
 
       // ====== أي مستخدم موثّق (زي طيار بيقيّم راكب بعد رحلة) يقدر يحدّث
       // ratingSum/ratingCount بس في بروفايل راكب تاني — نفس فكرة قاعدة
-      // drivers/{driverId} المطابقة بالظبط، لازمة عشان تقييم الطيار
-      // للراكب في rate_rider_screen.dart يشتغل من غير Permission Denied ======
+      // drivers/{driverId} المطابقة بالظبط (نفس تحديد الزيادة بـ +1
+      // للعداد و+1..+5 للمجموع - راجع التعليق المفصّل هناك)، لازمة عشان
+      // تقييم الطيار للراكب في rate_rider_screen.dart يشتغل من غير
+      // Permission Denied ======
       allow update: if request.auth != null &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount']);
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount']) &&
+        request.resource.data.ratingCount == resource.data.get('ratingCount', 0) + 1 &&
+        request.resource.data.ratingSum >= resource.data.get('ratingSum', 0) + 1 &&
+        request.resource.data.ratingSum <= resource.data.get('ratingSum', 0) + 5;
 
       // ====== سجل حركات محفظة الراكب (خصم رحلات مدفوعة بالمحفظة + رصيد
       // بيمنحه الأدمن كهدية/خصم) - نفس فكرة drivers/{id}/walletTransactions ======
