@@ -358,11 +358,24 @@ service cloud.firestore {
       // يقدر يعدّل الحقل ده لأي قيمة مباشرة وهي ثغرة أمنية خطيرة (أي
       // كابتن كان يقدر "يوافق على نفسه" من غير ما يمر على مراجعة الأدمن
       // خالص) ======
+      // ====== walletBalance برضو محصور تمامًا على الأدمن أو الـ service
+      // account بتاع complete-trip Edge Function (اللي بيتصل بفايرستور
+      // بصلاحية Google service account كاملة، فبيتجاوز القواعد دي خالص -
+      // نفس مبدأ أي Admin SDK access). قبل كده كان الحقل ده مفتوح قدام
+      // الكابتن نفسه لأن completeTripAndDeductCommission في wallet_
+      // service.dart (الفلاتر) كانت هي اللي بتكتبه مباشرة من جهاز
+      // الطيار لحظة إنهاء الرحلة - وده كان معناه أي كابتن بمعرفة تقنية
+      // بسيطة (REST call مباشر مش من خلال التطبيق) يقدر يغيّر رصيد
+      // محفظته لأي رقم يحبه من غير ما يمر على أي رحلة أو عمولة أصلًا.
+      // دلوقتي حساب وكتابة العمولة بقى بالكامل على السيرفر (راجع
+      // supabase/functions/complete-trip/index.ts) والكابتن بينادي
+      // الدالة دي بس، مش بيكتب الحقل مباشرة ======
       allow update: if request.auth != null &&
         (
           isAdmin() ||
           (
             request.auth.uid == driverId &&
+            !request.resource.data.diff(resource.data).affectedKeys().hasAny(['walletBalance']) &&
             (
               !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status']) ||
               request.resource.data.status == 'pending_review'
@@ -388,9 +401,28 @@ service cloud.firestore {
       // تانية على طلب اتراجع بالفعل (approved/rejected)، حتى لو حصل خطأ
       // أو تعارض في كود اللوحة نفسه (زي double-click أو أدمنين بيراجعوا
       // نفس الطلب في نفس اللحظة) ======
+      // ====== allow create: الكابتن بقى محصور إنه ينشئ بس مستندات
+      // 'topup_request' سليمة الشكل (status pending، amount رقم موجب،
+      // proofBase64 موجود) - قبل كده كان يقدر ينشئ أي مستند (زي
+      // 'commission' أو 'trip_earning' وهمي) جوه سجل حركاته من غير أي
+      // قيد. ده كان مجرد سجل مضلل مش خطر مالي فعلي (لأن walletBalance
+      // نفسه محمي دلوقتي)، لكن قفلها هنا أنضف وأوضح - نفس الفكرة إن كل
+      // نوع حركة له مصدر واحد موثوق بس (الأدمن أو complete-trip) ======
       match /walletTransactions/{transactionId} {
         allow read: if request.auth != null && (request.auth.uid == driverId || isAdmin());
-        allow create: if request.auth != null && (request.auth.uid == driverId || isAdmin());
+        allow create: if request.auth != null &&
+          (
+            isAdmin() ||
+            (
+              request.auth.uid == driverId &&
+              request.resource.data.type == 'topup_request' &&
+              request.resource.data.status == 'pending' &&
+              request.resource.data.amount is number &&
+              request.resource.data.amount > 0 &&
+              request.resource.data.proofBase64 is string &&
+              request.resource.data.proofBase64.size() > 0
+            )
+          );
         allow update: if isAdmin() &&
           resource.data.status == 'pending' &&
           request.resource.data.diff(resource.data).affectedKeys()
