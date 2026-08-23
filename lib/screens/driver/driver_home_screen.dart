@@ -688,7 +688,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   Future<void> _completeTrip(String orderId) async {
     final driverId = _currentUser?.uid;
     if (driverId == null) return;
-    await completeTripAndDeductCommission(orderId: orderId, driverId: driverId);
+    try {
+      await completeTripAndDeductCommission(orderId: orderId);
+    } on CompleteTripException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+    }
   }
 
   // ====== إشعار للطيار لحظة وصوله فعليًا لنقطة الوجهة، مع زرار سريع

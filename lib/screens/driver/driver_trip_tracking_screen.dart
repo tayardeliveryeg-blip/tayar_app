@@ -322,10 +322,13 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
   Future<void> _completeTrip() async {
     final driverId = FirebaseAuth.instance.currentUser?.uid;
     if (driverId == null) return;
-    await completeTripAndDeductCommission(
-      orderId: widget.orderId,
-      driverId: driverId,
-    );
+    try {
+      await completeTripAndDeductCommission(orderId: widget.orderId);
+    } on CompleteTripException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      return;
+    }
     // ====== بعد إنهاء الرحلة وتسوية المحفظة، نوجّه الطيار مباشرة لشاشة
     // تقييم الراكب (بدل الرجوع المباشر للخلف) — نفس فكرة تقييم الراكب
     // للطيار بالظبط لكن بالعكس ======

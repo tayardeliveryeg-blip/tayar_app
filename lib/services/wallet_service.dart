@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tayay_app/theme/app_settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 
 // ====================================================
 // ====== منطق محفظة الطيار: نسبة الشركة بتتخصم تلقائي ======
@@ -8,69 +11,88 @@ import 'package:tayay_app/theme/app_settings.dart';
 // للشركة). الرصيد ممكن يبقى بالسالب لو الطيار متأخر عن الشحن ======
 // ====================================================
 
-/// نسبة عمولة الشركة من كل رحلة — القيمة الافتراضية (10%)، بتتغير فعليًا
-/// من خلال إعدادات لوحة الأدمن (AppSettings.instance.commissionRate)
-const double kDriverCommissionRate = 0.10;
-
 /// القيمة المخزّنة في حقل paymentMethod بالطلبات لما الراكب يدفع من
 /// محفظته الإلكترونية (نص عربي ثابت زي باقي طرق الدفع - راجع
 /// paymentMethodDisplay() في passenger_home.dart لعرضها متعدد اللغة) ======
 const String kWalletPaymentMethodValue = 'محفظة إلكترونية';
 
-/// ====== إنهاء الرحلة + تسوية محفظة الطيار في نفس الوقت (transaction واحدة
-/// عشان نضمن إن الحالتين بيحصلوا مع بعض أو ولا واحدة).
+// ====== نفس بيانات Supabase المستخدمة في sos_service.dart - Edge
+// Functions بتاعتنا كلها على نفس المشروع ======
+const String _kSupabaseUrl = 'https://pctxhemhytzaufdzuhfz.supabase.co';
+const String _kSupabaseAnonKey =
+    'sb_publishable_ltwC2X3e-F6nkAiPxszdlQ_x7xTNUC3';
+
+/// ====== استثناء عام لأي خطأ من إنهاء الرحلة - رسالة عربية واضحة تتعرض
+/// مباشرة للطيار (نفس فكرة WalletTopupException) ======
+class CompleteTripException implements Exception {
+  final String message;
+  CompleteTripException(this.message);
+  @override
+  String toString() => message;
+}
+
+/// ====== إنهاء الرحلة + تسوية محفظة الطيار.
 /// - لو الدفع كاش: الطيار قبض الأجرة كاملة من الراكب يدويًا، فبنخصم نسبة
 ///   الشركة بس من محفظته (زي ما كان دايمًا).
 /// - لو الدفع محفظة إلكترونية: الطيار مقبضش أي كاش من الراكب، فبدل خصم
 ///   عمولة، بنضيفله نصيبه الصافي كامل (الأجرة - العمولة) - خصم رصيد
-///   الراكب نفسه بيحصل بعدين من ناحيته في deductWalletForCompletedTrip. ======
+///   الراكب نفسه بيحصل بعدين من ناحيته في deductWalletForCompletedTrip.
+///
+/// ====== الحساب بقى بالكامل على السيرفر (Supabase Edge Function:
+/// complete-trip) بدل ما يتنفذ من جهاز الطيار نفسه زي الأول. السبب:
+/// firestore.rules كانت مضطرة تسيب drivers/{uid}.walletBalance مفتوح
+/// قدام الطيار نفسه عشان الجهاز كان بيكتبه مباشرة بعد كل رحلة - وده كان
+/// معناه أي طيار بمعرفة تقنية بسيطة يقدر يغيّر رصيد محفظته لأي رقم يحبه
+/// من غير ما يمر على أي رحلة أو عمولة أصلًا. الدالة دلوقتي بس بتنادي
+/// السيرفر وتسيبه هو يتأكد من كل حاجة (صاحب الرحلة فعلًا، الرحلة شغالة
+/// فعلًا، نسبة العمولة الحقيقية من settings/config) - راجع
+/// supabase/functions/complete-trip/index.ts للتفاصيل.
+///
 /// مستخدمة من driver_home_screen.dart و driver_trip_tracking_screen.dart
-/// عشان يبقى منطق إنهاء الرحلة وتسوية المحفظة في مكان واحد بس ======
-Future<void> completeTripAndDeductCommission({
-  required String orderId,
-  required String driverId,
-}) async {
-  final orderRef = FirebaseFirestore.instance
-      .collection('orders')
-      .doc(orderId);
-  final driverRef = FirebaseFirestore.instance
-      .collection('drivers')
-      .doc(driverId);
+/// عشان يبقى منطق إنهاء الرحلة وتسوية المحفظة في مكان واحد بس.
+///
+/// ====== ملحوظة: مفيش داعي نبعت driverId - السيرفر بياخده من التوكن
+/// الموثوق نفسه (X-Firebase-Id-Token)، مش من أي قيمة يبعتها الجهاز.
+/// حتى لو كان فيه قيمة متبعتة، مكانش المفروض نوثق فيها أصلًا. ======
+Future<void> completeTripAndDeductCommission({required String orderId}) async {
+  final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+  if (idToken == null) {
+    throw CompleteTripException('لازم تكون مسجل دخول عشان تنهي الرحلة');
+  }
 
-  await FirebaseFirestore.instance.runTransaction((txn) async {
-    final orderSnap = await txn.get(orderRef);
-    final fare = (orderSnap.data()?['acceptedFare'] as num?)?.toDouble() ?? 0;
-    final isWalletPayment =
-        orderSnap.data()?['paymentMethod'] == kWalletPaymentMethodValue;
+  late final http.Response res;
+  try {
+    res = await http
+        .post(
+          Uri.parse('$_kSupabaseUrl/functions/v1/complete-trip'),
+          headers: {
+            'apikey': _kSupabaseAnonKey,
+            'Authorization': 'Bearer $_kSupabaseAnonKey',
+            'X-Firebase-Id-Token': idToken,
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({'orderId': orderId}),
+        )
+        .timeout(const Duration(seconds: 20));
+  } catch (_) {
+    throw CompleteTripException(
+      'تعذر الاتصال بالسيرفر - اتأكد من اتصال النت وحاول تاني',
+    );
+  }
 
-    final driverSnap = await txn.get(driverRef);
-    final currentBalance =
-        (driverSnap.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
-
-    final commission = fare * AppSettings.instance.commissionRate;
-    final walletDelta = isWalletPayment ? (fare - commission) : -commission;
-    final newBalance = currentBalance + walletDelta;
-
-    txn.update(orderRef, {
-      'status': 'completed',
-      'completedAt': FieldValue.serverTimestamp(),
-    });
-
-    txn.set(driverRef, {
-      'walletBalance': newBalance,
-    }, SetOptions(merge: true));
-
-    final ledgerRef = driverRef.collection('walletTransactions').doc();
-    txn.set(ledgerRef, {
-      'type': isWalletPayment ? 'trip_earning' : 'commission',
-      'status': 'completed',
-      'amount': walletDelta,
-      'orderId': orderId,
-      'fare': fare,
-      'balanceAfter': newBalance,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-  });
+  if (res.statusCode != 200) {
+    String message = 'حصل خطأ في إنهاء الرحلة، حاول تاني';
+    try {
+      final decoded = jsonDecode(res.body) as Map<String, dynamic>?;
+      final serverMessage = decoded?['error'] as String?;
+      if (serverMessage != null && serverMessage.trim().isNotEmpty) {
+        message = serverMessage;
+      }
+    } catch (_) {
+      // نسيب الرسالة العامة زي ما هي لو الرد مش JSON لأي سبب
+    }
+    throw CompleteTripException(message);
+  }
 }
 
 /// ====== خصم رصيد الراكب لطلب مكتمل مدفوع بمحفظته الإلكترونية + تسجيل
