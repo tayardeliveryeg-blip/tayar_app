@@ -277,10 +277,11 @@
   .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .settings-field{background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
   .settings-field label{font-size:11.5px;color:var(--text-dim);font-weight:600;display:block;margin-bottom:8px;}
-  .settings-field input{
+  .settings-field input, .settings-field select{
     width:100%;background:transparent;border:none;color:var(--text);font-size:16px;font-family:var(--font-mono);
     outline:none;font-weight:700;
   }
+  .settings-field select option{background:var(--panel-2);color:var(--text);}
 
   /* LOGIN */
   .login-screen{
@@ -349,6 +350,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input id="globalSearch" placeholder="Search..." oninput="onSearch(this.value)">
         </div>
+        <div class="mono" id="userRoleTag" style="font-size:11px;color:var(--accent);background:var(--accent-dim);padding:7px 12px;border-radius:8px;text-transform:capitalize;"></div>
         <div class="mono" id="userEmailTag" style="font-size:12px;color:var(--text-dim);background:var(--panel);border:1px solid var(--border);padding:7px 12px;border-radius:8px;"></div>
         <button class="btn small" onclick="doLogout()">Sign out</button>
       </div>
@@ -553,6 +555,52 @@
             <button class="btn" onclick="exportUsersCsv()">⬇ Customers CSV</button>
             <button class="btn" onclick="exportDriversCsv()">⬇ Drivers CSV</button>
           </div>
+        </div>
+      </div>
+
+      <!-- ADMINS (super_admin only) -->
+      <div class="section" id="sec-admins">
+        <div class="panel-head" style="margin-bottom:14px;">
+          <h3 style="font-size:15px;">Panel admins</h3>
+          <button class="btn primary" onclick="openAddAdminForm()">+ Add admin</button>
+        </div>
+
+        <div class="panel" id="addAdminPanel" style="display:none;">
+          <div class="panel-head"><h3>Add admin</h3></div>
+          <div class="settings-grid">
+            <div class="settings-field">
+              <label>Firebase Auth UID</label>
+              <input type="text" id="newAdminUid" placeholder="copy from Firebase Console → Authentication">
+            </div>
+            <div class="settings-field">
+              <label>Email (for reference only)</label>
+              <input type="text" id="newAdminEmail" placeholder="name@example.com">
+            </div>
+            <div class="settings-field">
+              <label>Role</label>
+              <select id="newAdminRole">
+                <option value="super_admin">super_admin — full access</option>
+                <option value="support" selected>support — SOS, orders, drivers, customers</option>
+                <option value="finance">finance — wallet, promo & referrals</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn primary" onclick="submitAddAdmin()">Save admin</button>
+            <button class="btn" onclick="closeAddAdminForm()">Cancel</button>
+          </div>
+          <div class="hint" style="margin-top:8px;">
+            The UID must belong to a user already registered in this app's Firebase Auth
+            (the app itself has no "become an admin" flow — this only grants panel access
+            to an existing account).
+          </div>
+        </div>
+
+        <div class="panel">
+          <table>
+            <thead><tr><th>Email</th><th>Role</th><th>UID</th><th>Added</th><th></th></tr></thead>
+            <tbody id="adminsBody"></tbody>
+          </table>
         </div>
       </div>
 
@@ -762,14 +810,45 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 /* ---------------- AUTH GATE ---------------- */
-auth.onAuthStateChanged(user => {
+// ====== دور الأدمن الحالي (يتحمّل بعد تسجيل الدخول من مستند admin/{uid}).
+// نفس منطق الافتراضي في firestore.rules: لو مفيش حقل role، يبقى super_admin
+// (توافق مع الأدمنز اللي كانوا موجودين قبل نظام الأدوار ده) ======
+let currentAdminRole = 'super_admin';
+// ====== أي تاب مش موجود في القائمة هنا يبقى متاح لكل الأدوار (زي overview) ======
+const ROLE_TABS = {
+  super_admin: null, // null = كل التابات
+  support: ['overview','sosAlerts','orders','drivers','users','vendorApplications','reports'],
+  finance: ['overview','wallet','promoReferrals','reports'],
+};
+function canSeeTab(key){
+  const allowed = ROLE_TABS[currentAdminRole];
+  return allowed === null || allowed === undefined ? true : allowed.includes(key);
+}
+
+auth.onAuthStateChanged(async user => {
   const loginScreen = document.getElementById('loginScreen');
   const appEl = document.querySelector('.app');
   if(user){
     loginScreen.style.display = 'none';
     appEl.style.display = 'flex';
     document.getElementById('userEmailTag').textContent = user.email;
+    // ====== بنجيب دور الأدمن الحالي مرة واحدة بعد تسجيل الدخول - لو حصل
+    // أي خطأ (مستند مش موجود لسه، إلخ) بنفضل على super_admin افتراضيًا
+    // بدل ما نقفل اللوحة كلها على الأدمن ======
+    try {
+      const adminDoc = await db.collection('admin').doc(user.uid).get();
+      currentAdminRole = (adminDoc.exists && adminDoc.data().role) ? adminDoc.data().role : 'super_admin';
+    } catch(e) {
+      console.warn('تعذر تحميل دور الأدمن، هيتفعّل super_admin افتراضيًا:', e);
+      currentAdminRole = 'super_admin';
+    }
+    document.getElementById('userRoleTag').textContent = currentAdminRole.replace('_',' ');
+    // ====== لو الأدمن كان فاتح تاب مش متاح لدوره (أو تاب Admins ومش
+    // super_admin)، نرجعه لـ overview بدل شاشة فاضية ======
+    if(!canSeeTab(currentSection)) currentSection = 'overview';
     startListeners();
+    renderNav();
+    renderAll();
     // طلب صلاحية إشعارات الطوارئ (OneSignal) - مرة واحدة، هيتجاهل الطلب
     // تلقائيًا لو الأدمن رافض قبل كده أو موافق بالفعل
     if (window.OneSignalDeferred) {
@@ -793,7 +872,11 @@ function doLogin(){
       ? 'Wrong email or password.' : err.message;
   });
 }
-function doLogout(){ auth.signOut(); }
+function doLogout(){
+  if(adminsUnsub){ adminsUnsub(); adminsUnsub = null; }
+  admins = [];
+  auth.signOut();
+}
 function doGoogleLogin(){
   const errEl = document.getElementById('loginError');
   errEl.textContent = '';
@@ -831,7 +914,8 @@ const icons = {
   promoReferrals: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 12 22l-9.41-9.41A2 2 0 0 1 2 11.17V4a2 2 0 0 1 2-2h7.17a2 2 0 0 1 1.41.59l9.41 9.41a2 2 0 0 1 0 2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>',
   sosAlerts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
-  reports: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>'
+  reports: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>',
+  admins: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
 };
 
 /* ---------------- LIVE DATA (populated from Firestore) ---------------- */
@@ -1097,12 +1181,13 @@ const navItems = [
   {key:'promoReferrals', label:'Promo & Referrals', count:()=>pendingReferralRewards.filter(r=>r.status==='pending').length},
   {key:'vendorApplications', label:'Vendor Requests', count:()=>vendorApplications.filter(v=>v.status==='pending').length},
   {key:'reports', label:'📊 Reports'},
+  {key:'admins', label:'🔑 Admins'},
   {key:'settings', label:'Settings'},
 ];
 
 function renderNav(){
   const nav = document.getElementById('nav');
-  nav.innerHTML = navItems.map(item => `
+  nav.innerHTML = navItems.filter(item => canSeeTab(item.key)).map(item => `
     <div class="nav-item ${item.key===currentSection?'active':''}" onclick="goTo('${item.key}')">
       ${icons[item.key]}
       <span>${item.label}</span>
@@ -1113,15 +1198,17 @@ function renderNav(){
 
 let currentSection = 'overview';
 function goTo(key){
+  if(!canSeeTab(key)) return;
   currentSection = key;
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+key).classList.add('active');
-  const titles = {overview:'Overview', sosAlerts:'SOS Alerts', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', promoReferrals:'Promo & Referrals', vendorApplications:'Vendor Requests', reports:'Reports', settings:'Settings'};
+  const titles = {overview:'Overview', sosAlerts:'SOS Alerts', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', promoReferrals:'Promo & Referrals', vendorApplications:'Vendor Requests', reports:'Reports', admins:'Admins', settings:'Settings'};
   document.getElementById('pageTitle').textContent = titles[key];
   document.getElementById('pageBreadcrumb').textContent = 'tayar / ' + key;
   renderNav();
   renderAll();
   if(key==='settings') loadSettings();
+  if(key==='admins') listenAdmins();
   if(key==='wallet'){ cancelWalletGrant(); document.getElementById('walletSearchInput').value=''; document.getElementById('walletSearchResults').innerHTML=''; }
 }
 
@@ -2208,6 +2295,107 @@ function exportDriversCsv(){
     ['Name','Phone','Vehicle','Plate','Rating','Deliveries','Approval'],
     drivers.map(d => [d.name, d.phone, d.vehicle, d.plate, d.rating, d.deliveries, d.approval])
   );
+}
+
+/* ---------------- ADMINS MANAGEMENT (super_admin only) ---------------- */
+// ====== بنعمل listener جديد بس أول ما الأدمن يفتح التاب ده (مش من
+// startListeners العام زي باقي الـ collections)، لأن قراءة كل الأدمنز
+// محصورة على super_admin في القواعد أصلًا - أي دور تاني هيرجعله permission
+// error لو حاول، فمفيش داعي نستهلك listener طول الوقت من غير استخدام ======
+let admins = [];
+let adminsUnsub = null;
+function listenAdmins(){
+  if(adminsUnsub) return; // بالفعل شغال
+  adminsUnsub = db.collection('admin').onSnapshot(snap => {
+    admins = snap.docs.map(doc => {
+      const d = doc.data();
+      const addedAt = d.addedAt ? (d.addedAt.toDate ? d.addedAt.toDate() : new Date(d.addedAt)) : null;
+      return {
+        id: doc.id,
+        email: d.email || '—',
+        role: d.role || 'super_admin',
+        addedAt: addedAt ? addedAt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—'
+      };
+    });
+    renderAdmins();
+  }, err => {
+    console.warn('تعذر تحميل قائمة الأدمنز (متوقع لو الدور مش super_admin):', err);
+    document.getElementById('adminsBody').innerHTML =
+      `<tr><td colspan="5" style="text-align:center; color:var(--text-dimmer);">Only super_admin can view this list</td></tr>`;
+  });
+}
+
+function renderAdmins(){
+  document.getElementById('adminsBody').innerHTML = admins.map(a => `
+    <tr>
+      <td>${a.email}</td>
+      <td>
+        <select onchange="changeAdminRole('${a.id}', this.value)" ${a.id===auth.currentUser.uid ? 'disabled title="لا يمكنك تغيير دورك الخاص"' : ''}>
+          <option value="super_admin" ${a.role==='super_admin'?'selected':''}>super_admin</option>
+          <option value="support" ${a.role==='support'?'selected':''}>support</option>
+          <option value="finance" ${a.role==='finance'?'selected':''}>finance</option>
+        </select>
+      </td>
+      <td class="mono" style="font-size:11px;color:var(--text-dimmer);">${a.id}</td>
+      <td>${a.addedAt}</td>
+      <td>
+        ${a.id===auth.currentUser.uid
+          ? ''
+          : `<button class="btn small danger-outline" onclick="removeAdmin('${a.id}', '${a.email}')">Remove</button>`}
+      </td>
+    </tr>
+  `).join('') || `<tr><td colspan="5" style="text-align:center; color:var(--text-dimmer);">No admins found</td></tr>`;
+}
+
+function openAddAdminForm(){
+  document.getElementById('addAdminPanel').style.display = 'block';
+}
+function closeAddAdminForm(){
+  document.getElementById('addAdminPanel').style.display = 'none';
+  document.getElementById('newAdminUid').value = '';
+  document.getElementById('newAdminEmail').value = '';
+}
+
+async function submitAddAdmin(){
+  const uid = document.getElementById('newAdminUid').value.trim();
+  const email = document.getElementById('newAdminEmail').value.trim();
+  const role = document.getElementById('newAdminRole').value;
+  if(!uid){ toast('لازم تدخل الـ UID'); return; }
+  try {
+    await db.collection('admin').doc(uid).set({
+      email: email || null,
+      role,
+      addedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      addedBy: auth.currentUser.uid
+    }, {merge:true});
+    toast('تم إضافة الأدمن بنجاح');
+    closeAddAdminForm();
+  } catch(e){
+    console.error(e);
+    toast('فشل إضافة الأدمن: ' + e.message);
+  }
+}
+
+async function changeAdminRole(uid, newRole){
+  try {
+    await db.collection('admin').doc(uid).update({role: newRole});
+    toast('تم تحديث الدور');
+  } catch(e){
+    console.error(e);
+    toast('فشل تحديث الدور: ' + e.message);
+    renderAdmins(); // يرجّع الـ select لقيمته الأصلية
+  }
+}
+
+async function removeAdmin(uid, email){
+  if(!confirm(`متأكد إنك عايز تشيل صلاحية الأدمن من ${email}؟`)) return;
+  try {
+    await db.collection('admin').doc(uid).delete();
+    toast('تم حذف صلاحية الأدمن');
+  } catch(e){
+    console.error(e);
+    toast('فشل الحذف: ' + e.message);
+  }
 }
 
 /* ---------------- RENDER ALL ---------------- */

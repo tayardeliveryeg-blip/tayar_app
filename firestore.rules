@@ -8,6 +8,18 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/admin/$(request.auth.uid));
     }
 
+    // ====== دور الأدمن الحالي - 'super_admin' | 'support' | 'finance'.
+    // لو مستند الأدمن مفيهوش حقل role أصلًا (كل الأدمنز اللي كانوا موجودين
+    // قبل ما نضيف نظام الأدوار ده)، بيتعامل معاه كـ super_admin تلقائيًا
+    // عشان محدش يتقفل بره لوحة التحكم بسبب ترقية النظام ======
+    function getAdminRole() {
+      let adminDoc = get(/databases/$(database)/documents/admin/$(request.auth.uid)).data;
+      return ('role' in adminDoc) ? adminDoc.role : 'super_admin';
+    }
+    function isSuperAdmin() {
+      return isAdmin() && getAdminRole() == 'super_admin';
+    }
+
     // ====== بتحسب رسوم الإلغاء الصحيحة سيرفر-سايد بدل ما نصدّق قيمة
     // cancellationFee اللي بيبعتها العميل نفسه: لو الطلب لسه ما اتقبلش
     // (مفيش acceptedAt) أو لسه جوه مهلة الإلغاء المجاني (settings/config.
@@ -668,10 +680,22 @@ service cloud.firestore {
 
     // ====== إعدادات التطبيق (سعر الرحلة، العمولة، تليفون الدعم) — قراءة عامة
     // لأن التطبيق بيقراها وقت الفتح حتى قبل ما المستخدم يسجل دخول،
-    // والكتابة محصورة على الأدمن بس من لوحة التحكم ======
+    // والكتابة محصورة على super_admin بس (تغيير التسعير قرار حساس) ======
     match /settings/{settingId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isSuperAdmin();
+    }
+
+    // ====== مستندات الأدمن نفسها (بتحدد مين أدمن أصلًا ودوره). أي أدمن
+    // يقدر يقرا مستنده هو بس (عشان يعرف دوره وقت تسجيل الدخول)، لكن قراءة
+    // *كل* الأدمنز (لازمة لتاب "Admins" في اللوحة) وأي إضافة/حذف/تعديل
+    // دور محصورة على super_admin بس - عشان محدش من الأدوار الأقل يقدر
+    // يرقّي نفسه أو يضيف أدمن جديد ======
+    match /admin/{adminId} {
+      allow get: if request.auth != null &&
+        (request.auth.uid == adminId || isSuperAdmin());
+      allow list: if isSuperAdmin();
+      allow write: if isSuperAdmin();
     }
 
     // ====== قاعدة إضافية بصيغة collection-group الصريحة (path=**) عشان
