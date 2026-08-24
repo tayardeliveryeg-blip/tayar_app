@@ -182,14 +182,27 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
       // ====== بيعرض شاشة قفل الرقم السري فوق كل حاجة لو _isLocked = true،
       // من غير ما يأثر على الـ Navigator أو الشاشة الحالية تحته ======
       builder: (context, child) {
-        return Stack(
-          children: [
-            ?child,
-            if (_isLocked)
-              AppLockScreen(
-                onUnlocked: () => setState(() => _isLocked = false),
-              ),
-          ],
+        // ====== تثبيت حجم الخط داخل حدود معقولة (0.9x - 1.2x) بدل ما
+        // يتوارث مباشرة من إعداد "حجم الخط" في نظام الأندرويد. من غير
+        // القفل ده، أي مستخدم غيّر إعداد حجم الخط من جهازه (كبير أو
+        // صغير عن المتوسط) بيشوف نصوص وتخطيطات مختلفة تمامًا عن التصميم
+        // الأصلي، وده كان سبب اختلاف الشكل بين الأجهزة اللي لوحظ ======
+        final mq = MediaQuery.of(context);
+        final clampedScaler = mq.textScaler.clamp(
+          minScaleFactor: 0.9,
+          maxScaleFactor: 1.2,
+        );
+        return MediaQuery(
+          data: mq.copyWith(textScaler: clampedScaler),
+          child: Stack(
+            children: [
+              ?child,
+              if (_isLocked)
+                AppLockScreen(
+                  onUnlocked: () => setState(() => _isLocked = false),
+                ),
+            ],
+          ),
         );
       },
     );
