@@ -23,6 +23,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/driver_rating_tab.d
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_wallet_tab.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_home_drawer.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_requests_tab.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key, this.initialTab = 0});
@@ -519,12 +520,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         final granted = await _ensureLocationPermission();
         if (!granted) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)!.permissionLocationRequired,
-                ),
-              ),
+            TayarToast.show(
+              context,
+              AppLocalizations.of(context)!.permissionLocationRequired,
+              type: ToastType.warning,
             );
           }
           return;
@@ -663,18 +662,18 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
       if (!mounted) return;
       setState(() => _offeredOrderIds.add(orderId));
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.offerSentWaitingPassenger,
-          ),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.offerSentWaitingPassenger,
+        type: ToastType.success,
       );
     } catch (e) {
       debugPrint('❌ خطأ في إرسال العرض: $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.offerSendFailed)),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.offerSendFailed,
+        type: ToastType.error,
       );
     }
   }
@@ -692,7 +691,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       await completeTripAndDeductCommission(orderId: orderId);
     } on CompleteTripException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      TayarToast.show(context, e.message, type: ToastType.error);
     }
   }
 
@@ -700,28 +699,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   // لإنهاء الرحلة من غير ما يدور على الزرار في الكارت ======
   void _notifyArrivalAtDestination(String tripId) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 12),
-        backgroundColor: TayarColors.primary,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-        ),
-        content: Text(
-          AppLocalizations.of(context)!.arrivedAtDestination,
-          style: TextStyle(
-            color: context.onPrimaryColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        action: SnackBarAction(
-          label: AppLocalizations.of(context)!.endTrip,
-          textColor: context.onPrimaryColor,
-          onPressed: () => _completeTrip(tripId),
-        ),
-      ),
+    TayarToast.show(
+      context,
+      AppLocalizations.of(context)!.arrivedAtDestination,
+      type: ToastType.success,
+      duration: const Duration(seconds: 12),
+      actionLabel: AppLocalizations.of(context)!.endTrip,
+      onAction: () => _completeTrip(tripId),
     );
   }
 

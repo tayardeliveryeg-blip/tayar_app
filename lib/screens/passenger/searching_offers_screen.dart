@@ -16,6 +16,7 @@ import 'package:tayay_app/screens/passenger/searching_offers_widgets/driver_moto
 import 'package:tayay_app/screens/passenger/searching_offers_widgets/offer_cards.dart';
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 /// ====== شاشة البحث عن عروض الطيارين (زي InDrive) ======
 /// بتستنى عروض من مجموعة orders/{orderId}/offers وتعرضهم لايف،
@@ -292,10 +293,10 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       debugPrint('❌ خطأ في قبول العرض: $e');
       if (!mounted) return;
       setState(() => _isProcessingAccept = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToAcceptOfferError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.failedToAcceptOfferError,
+        type: ToastType.error,
       );
     }
   }

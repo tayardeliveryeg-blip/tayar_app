@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====== كارت الرحلة النشطة فوق قائمة الطلبات + زرار التواصل (شات/مكالمة) ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
@@ -203,10 +204,10 @@ class ActiveTripCard extends StatelessWidget {
                             );
                           } catch (e) {
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('تعذر بدء المكالمة: $e'),
-                                ),
+                              TayarToast.show(
+                                context,
+                                'تعذر بدء المكالمة: $e',
+                                type: ToastType.error,
                               );
                             }
                           }

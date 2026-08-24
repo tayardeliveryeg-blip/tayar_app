@@ -4,6 +4,7 @@ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' sho
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/services/driver_relations_service.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 /// ====== شاشة تقييم الطيار بعد انتهاء الرحلة ======
 /// بتظهر تلقائيًا لما الأوردر يوصل لحالة completed، وبتسمح للراكب
@@ -40,10 +41,10 @@ class _RateTripScreenState extends State<RateTripScreen> {
 
   Future<void> _submitRating() async {
     if (_stars == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.pleaseSelectStarsFirst),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.pleaseSelectStarsFirst,
+        type: ToastType.warning,
       );
       return;
     }
@@ -86,10 +87,10 @@ class _RateTripScreenState extends State<RateTripScreen> {
       debugPrint('❌ خطأ في حفظ التقييم: $e');
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToSaveRatingError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.failedToSaveRatingError,
+        type: ToastType.error,
       );
     }
   }
@@ -105,14 +106,12 @@ class _RateTripScreenState extends State<RateTripScreen> {
         isFavorite: !currentlyFavorite,
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            !currentlyFavorite
-                ? loc.driverAddedToFavoritesMessage
-                : loc.driverRemovedFromFavoritesMessage,
-          ),
-        ),
+      TayarToast.show(
+        context,
+        !currentlyFavorite
+            ? loc.driverAddedToFavoritesMessage
+            : loc.driverRemovedFromFavoritesMessage,
+        type: ToastType.success,
       );
     } catch (e) {
       debugPrint('❌ خطأ في تحديث المفضّلين: $e');
@@ -167,14 +166,10 @@ class _RateTripScreenState extends State<RateTripScreen> {
         isBlocked: !currentlyBlocked,
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            !currentlyBlocked
-                ? loc.driverBlockedMessage
-                : loc.driverUnblockedMessage,
-          ),
-        ),
+      TayarToast.show(
+        context,
+        !currentlyBlocked ? loc.driverBlockedMessage : loc.driverUnblockedMessage,
+        type: ToastType.info,
       );
     } catch (e) {
       debugPrint('❌ خطأ في تحديث الحظر: $e');

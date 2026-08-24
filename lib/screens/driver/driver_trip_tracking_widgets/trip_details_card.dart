@@ -9,6 +9,7 @@ import 'package:tayay_app/services/call_invitation_helper.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/contact_action_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====== كارت تفاصيل الرحلة أسفل شاشة تتبع الطيار: بيانات الراكب، العنوانين،
 // طريقة الدفع، زرارين التواصل (شات/مكالمة)، وزرار بدء/إنهاء الرحلة ======
@@ -259,8 +260,10 @@ class TripDetailsCard extends StatelessWidget {
                           );
                         } catch (e) {
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('تعذر بدء المكالمة: $e')),
+                            TayarToast.show(
+                              context,
+                              'تعذر بدء المكالمة: $e',
+                              type: ToastType.error,
                             );
                           }
                         }

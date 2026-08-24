@@ -6,6 +6,7 @@ import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 /// ====== شاشة تقييم الراكب بعد انتهاء الرحلة (من ناحية الطيار) ======
 /// نفس فكرة RateTripScreen بالظبط لكن بالعكس: الطيار هو اللي بيقيّم الراكب.
@@ -43,10 +44,10 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
 
   Future<void> _submitRating() async {
     if (_stars == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.pleaseSelectStarsFirst),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.pleaseSelectStarsFirst,
+        type: ToastType.warning,
       );
       return;
     }
@@ -91,10 +92,10 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
       debugPrint('❌ خطأ في حفظ تقييم الراكب: $e');
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToSaveRatingError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.failedToSaveRatingError,
+        type: ToastType.error,
       );
     }
   }

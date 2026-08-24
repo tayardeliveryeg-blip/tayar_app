@@ -15,6 +15,7 @@ import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String pickupAddress;
@@ -278,20 +279,14 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
     );
 
     if (combined.isBefore(minDateTime)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.scheduleMinLeadError)));
+      TayarToast.show(context, l10n.scheduleMinLeadError, type: ToastType.warning);
       return;
     }
     if (combined.isAfter(maxDateTime)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            l10n.scheduleMaxAdvanceError(
-              AppSettings.instance.maxScheduleAdvanceDays,
-            ),
-          ),
-        ),
+      TayarToast.show(
+        context,
+        l10n.scheduleMaxAdvanceError(AppSettings.instance.maxScheduleAdvanceDays),
+        type: ToastType.warning,
       );
       return;
     }
@@ -360,12 +355,10 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
         );
         if (!mounted) return;
         setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              errorMessage ?? AppLocalizations.of(context)!.submitFailedError,
-            ),
-          ),
+        TayarToast.show(
+          context,
+          errorMessage ?? AppLocalizations.of(context)!.submitFailedError,
+          type: ToastType.error,
         );
         return;
       }
@@ -394,10 +387,10 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
       debugPrint('❌ خطأ في إرسال الطلب: $e');
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.submitFailedError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.submitFailedError,
+        type: ToastType.error,
       );
     }
   }

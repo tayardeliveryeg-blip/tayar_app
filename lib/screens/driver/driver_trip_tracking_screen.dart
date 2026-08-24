@@ -19,6 +19,7 @@ import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/driver_pos
 import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/trip_details_card.dart';
 import 'package:tayay_app/widgets/sos_floating_button.dart';
 import 'package:tayay_app/screens/driver/rate_rider_screen.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي من ناحية الطيار ======
 /// بتتفتح فورًا لحظة قبول عرض الطيار، أو لما يدوس على كارت الرحلة النشطة
@@ -326,7 +327,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
       await completeTripAndDeductCommission(orderId: widget.orderId);
     } on CompleteTripException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      TayarToast.show(context, e.message, type: ToastType.error);
       return;
     }
     // ====== بعد إنهاء الرحلة وتسوية المحفظة، نوجّه الطيار مباشرة لشاشة
@@ -515,9 +516,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
                 );
                 final ok = await shareTripViaWhatsapp(message);
                 if (!ok && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(loc.failedToOpenAppError)),
-                  );
+                  TayarToast.show(context, loc.failedToOpenAppError, type: ToastType.error);
                 }
               },
               child: Container(

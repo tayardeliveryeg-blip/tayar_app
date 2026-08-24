@@ -23,6 +23,7 @@ import 'package:tayay_app/widgets/sos_floating_button.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/cancellation_reason_sheet.dart';
 import 'package:tayay_app/services/cancellation_service.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -229,27 +230,11 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
     HapticFeedback.mediumImpact();
     if (!mounted) return;
     final loc = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: TayarColors.primary,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 4),
-        content: Row(
-          children: [
-            Icon(Icons.directions_car, color: context.onPrimaryColor),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                loc.driverArrivedAtPickupLabel,
-                style: TextStyle(
-                  color: context.onPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    TayarToast.show(
+      context,
+      loc.driverArrivedAtPickupLabel,
+      type: ToastType.success,
+      duration: const Duration(seconds: 4),
     );
   }
 
@@ -457,22 +442,16 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
       // ====== الشاشة هتتقفل تلقائيًا عن طريق _onOrderUpdate/_showEndDialog
       // لما التحديث يوصل، بس لو فيه رسوم بنعرض تنبيه إضافي فورًا بالمبلغ ======
       if (quote.hasFee && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              loc.cancellationFeeChargedSnackbar(
-                quote.amount.toStringAsFixed(0),
-              ),
-            ),
-          ),
+        TayarToast.show(
+          context,
+          loc.cancellationFeeChargedSnackbar(quote.amount.toStringAsFixed(0)),
+          type: ToastType.warning,
         );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isCancelling = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(loc.genericErrorTryAgain)));
+        TayarToast.show(context, loc.genericErrorTryAgain, type: ToastType.error);
       }
     }
   }
@@ -797,9 +776,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                 );
                 final ok = await shareTripViaWhatsapp(message);
                 if (!ok && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(loc.failedToOpenAppError)),
-                  );
+                  TayarToast.show(context, loc.failedToOpenAppError, type: ToastType.error);
                 }
               },
               child: Container(
@@ -939,10 +916,10 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                               );
                             } catch (e) {
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('تعذر بدء المكالمة: $e'),
-                                  ),
+                                TayarToast.show(
+                                  context,
+                                  'تعذر بدء المكالمة: $e',
+                                  type: ToastType.error,
                                 );
                               }
                             }

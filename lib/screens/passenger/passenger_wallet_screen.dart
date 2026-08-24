@@ -10,6 +10,7 @@ import 'package:tayay_app/services/referral_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====== شاشة "محفظتي" للراكب: الرصيد الحالي + سجل الحركات - نفس فكرة
 // DriverWalletTab بالظبط، بس من غير زرار شحن (رصيد الراكب بيتزود من
@@ -413,20 +414,16 @@ void _showRedeemCodeSheet(BuildContext context, String uid) {
 
             if (amount != null) {
               Navigator.pop(sheetContext);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    loc.codeRedeemedSuccessMessage(amount.toStringAsFixed(0)),
-                  ),
-                  backgroundColor: TayarColors.success,
-                ),
+              TayarToast.show(
+                context,
+                loc.codeRedeemedSuccessMessage(amount.toStringAsFixed(0)),
+                type: ToastType.success,
               );
             } else {
-              ScaffoldMessenger.of(sheetContext).showSnackBar(
-                SnackBar(
-                  content: Text(errorMessage ?? loc.invalidCodeGenericError),
-                  backgroundColor: TayarColors.error,
-                ),
+              TayarToast.show(
+                sheetContext,
+                errorMessage ?? loc.invalidCodeGenericError,
+                type: ToastType.error,
               );
             }
           }

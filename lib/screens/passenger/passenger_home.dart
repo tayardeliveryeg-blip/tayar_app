@@ -22,6 +22,7 @@ import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/widgets/no_internet_toast.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/utils/connectivity_check.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
@@ -64,10 +65,10 @@ Future<void> launchSocialUrl(BuildContext context, String url) async {
     mode: LaunchMode.externalApplication,
   );
   if (!ok && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
-      ),
+    TayarToast.show(
+      context,
+      AppLocalizations.of(context)!.failedToOpenAppError,
+      type: ToastType.error,
     );
   }
 }
@@ -782,15 +783,11 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       }, SetOptions(merge: true));
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.savedAddressSavedConfirmation)),
-      );
+      TayarToast.show(context, loc.savedAddressSavedConfirmation, type: ToastType.success);
     } catch (e) {
       debugPrint('❌ خطأ في حفظ مكان محفوظ مخصص ($key): $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.savedAddressSaveError)));
+      TayarToast.show(context, loc.savedAddressSaveError, type: ToastType.error);
     }
   }
 
@@ -953,20 +950,18 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
       }, SetOptions(merge: true));
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.savedAddressSavedConfirmation,
-          ),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.savedAddressSavedConfirmation,
+        type: ToastType.success,
       );
     } catch (e) {
       debugPrint('❌ خطأ في حفظ العنوان المحفوظ ($key): $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.savedAddressSaveError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.savedAddressSaveError,
+        type: ToastType.error,
       );
     }
   }

@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' sho
 import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====================================================
 // ====== شاشة شحن رصيد محفظة الطيار ======
@@ -51,12 +52,7 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
     final loc = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     if (_proofBytes == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(loc.topUpProofRequiredError),
-          backgroundColor: Colors.red,
-        ),
-      );
+      TayarToast.show(context, loc.topUpProofRequiredError, type: ToastType.error);
       return;
     }
 
@@ -98,9 +94,7 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-      );
+      TayarToast.show(context, e.toString(), type: ToastType.error);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
