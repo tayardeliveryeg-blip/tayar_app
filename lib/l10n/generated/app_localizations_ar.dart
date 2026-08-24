@@ -1575,10 +1575,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get driverUnblockedMessage => 'تم فك حظر الطيار';
 
   @override
-  String get myDriversDrawerLabel => 'سائقيني';
+  String get myDriversDrawerLabel => 'طياريني';
 
   @override
-  String get myDriversScreenTitle => 'سائقيني';
+  String get myDriversScreenTitle => 'طياريني';
 
   @override
   String get favoriteDriversTabLabel => 'المفضّلين';
