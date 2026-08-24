@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
-import 'package:tayay_app/theme/theme_extensions.dart' show AppShadows;
+import 'package:tayay_app/theme/theme_extensions.dart' show AppSpacing;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_driver_card.dart';
 
 // ====== كارت اقتراح رفع السعر بعد ما البحث ياخد وقت طويل ======
 // (كانت private class _RaiseFareCard جوه searching_offers_screen.dart)
+// بدون تغيير — شغالة صح ومفيش تعارض مع الدمج.
 class RaiseFareCard extends StatelessWidget {
   final double currentFare;
   final double suggestedFare;
@@ -28,7 +31,6 @@ class RaiseFareCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            // سبيسر فاضي بنفس عرض زرار الإغلاق عشان النص يتزن في النص بالظبط
             const SizedBox(width: 48),
             Expanded(
               child: Text(
@@ -61,9 +63,7 @@ class RaiseFareCard extends StatelessWidget {
             onPressed: onRaiseFare,
             style: ElevatedButton.styleFrom(
               backgroundColor: TayarColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: Text(
               loc.searchWithFareLabel(suggestedFare.toStringAsFixed(0)),
@@ -82,7 +82,7 @@ class RaiseFareCard extends StatelessWidget {
 }
 
 // ====== زرار +/- لتعديل السعر ======
-// (كانت private class _FareStepButton جوه searching_offers_screen.dart)
+// بدون تغيير.
 class FareStepButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onTap;
@@ -99,9 +99,7 @@ class FareStepButton extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: enabled
-              ? context.cardColor
-              : context.cardColor.withValues(alpha: 0.5),
+          color: enabled ? context.cardColor : context.cardColor.withValues(alpha: 0.5),
           shape: BoxShape.circle,
           border: Border.all(color: TayarColors.primary.withValues(alpha: 0.5)),
         ),
@@ -111,8 +109,11 @@ class FareStepButton extends StatelessWidget {
   }
 }
 
-// ====== كارت عرض الطيار الواحد ======
-// (كانت private class _OfferCard جوه searching_offers_screen.dart)
+// ====== كارت عرض الطيار الواحد (نسخة مضغوطة داخل القايمة) ======
+// [تحديث دمج] اتغلف بـ AppCard بدل Container يدوي، عشان ياخد نفس نظام
+// الظل الموحّد في التطبيق. onTap مش متمرر هنا (الكارت للعرض بس، مش قابل
+// للضغط ككل — القبول عن طريق الزرار الداخلي فقط)، فتأثير press-scale
+// بتاع AppCard مبيتفعّلش أصلًا هنا — صفر تغيير بصري على الحالة العادية.
 class OfferCard extends StatelessWidget {
   final String driverName;
   final double? rating;
@@ -131,13 +132,11 @@ class OfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: context.cardColor,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: TayarColors.primary.withValues(alpha: 0.25)),
-      ),
+    return AppCard(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      radius: 14,
+      shadowStyle: AppCardShadow.none,
+      border: Border.all(color: TayarColors.primary.withValues(alpha: 0.25)),
       child: Row(
         children: [
           CircleAvatar(
@@ -162,18 +161,11 @@ class OfferCard extends StatelessWidget {
                 if (rating != null)
                   Row(
                     children: [
-                      const Icon(
-                        Icons.star,
-                        color: TayarColors.primary,
-                        size: 12,
-                      ),
+                      const Icon(Icons.star, color: TayarColors.primary, size: 12),
                       const SizedBox(width: 4),
                       Text(
                         rating!.toStringAsFixed(1),
-                        style: TextStyle(
-                          color: context.textGreyColor,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: context.textGreyColor, fontSize: 12),
                       ),
                     ],
                   )
@@ -205,9 +197,7 @@ class OfferCard extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: TayarColors.primary,
                 padding: const EdgeInsets.symmetric(horizontal: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               child: Text(
                 AppLocalizations.of(context)!.acceptButton,
@@ -221,8 +211,8 @@ class OfferCard extends StatelessWidget {
   }
 }
 
-// ====== دائرة بروفايل طيار واحد بتظهر بأنيميشن بسيط (Scale) أول مرة تتبني ======
-// (كانت private class _OfferAvatarPop جوه searching_offers_screen.dart)
+// ====== دائرة بروفايل طيار واحد بتظهر بأنيميشن بسيط أول مرة تتبني ======
+// بدون تغيير.
 class OfferAvatarPop extends StatelessWidget {
   final String? photoUrl;
   final double size;
@@ -260,7 +250,15 @@ class OfferAvatarPop extends StatelessWidget {
 }
 
 // ====== إشعار عرض جديد: بيطلع تحت لما طيار يعمل عرض، وفيه قبول أو رفض ======
-// (كانت private class _OfferNotificationSheet جوه searching_offers_screen.dart)
+// [تحديث دمج كبير] بدل ما يبني الكارت يدويًا بـ Container+Row+Column (زي
+// الأصل)، دلوقتي بيستخدم TayarDriverCard الموحّد مباشرة — نفس التصميم
+// بالظبط (السعر الكبير، الأفاتار بگرادينت، الأزرار بتوهّج) لكن من غير تكرار
+// كود. حركة الدخول (fade + slide من تحت) اتسابت زي ما هي بالظبط لأنها
+// بتفرق عن TayarBottomSheet.show() في نقطة مهمة: الإشعار ده إجباري
+// (isDismissible: false, enableDrag: false في الاستدعاء بتاعه في
+// searching_offers_screen.dart) — المستخدم لازم يقبل أو يرفض صراحة، مينفعش
+// يسحبه أو يقفله بالضغط برّه. TayarBottomSheet.show() مصمم للـ sheets
+// القابلة للسحب، فمش مناسب هنا واستخدامه كان هيكسر القيد ده.
 class OfferNotificationSheet extends StatelessWidget {
   final String driverName;
   final double? rating;
@@ -281,10 +279,9 @@ class OfferNotificationSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+        padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
         child: TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: 1),
           duration: const Duration(milliseconds: 280),
@@ -292,140 +289,16 @@ class OfferNotificationSheet extends StatelessWidget {
           builder: (context, value, child) {
             return Opacity(
               opacity: value,
-              child: Transform.translate(
-                offset: Offset(0, (1 - value) * 24),
-                child: child,
-              ),
+              child: Transform.translate(offset: Offset(0, (1 - value) * 24), child: child),
             );
           },
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.cardColor,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: AppShadows.elevated(context),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 26,
-                      backgroundColor: TayarColors.primary,
-                      backgroundImage:
-                          (photoUrl != null && photoUrl!.isNotEmpty)
-                          ? NetworkImage(photoUrl!)
-                          : null,
-                      child: (photoUrl == null || photoUrl!.isEmpty)
-                          ? Icon(
-                              Icons.person,
-                              color: context.onPrimaryColor,
-                              size: 26,
-                            )
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            loc.newOfferFromDriverLabel(driverName),
-                            style: TextStyle(
-                              color: context.textColor,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          if (rating != null)
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: TayarColors.primary,
-                                  size: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  rating!.toStringAsFixed(1),
-                                  style: TextStyle(
-                                    color: context.textGreyColor,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            )
-                          else
-                            Text(
-                              AppLocalizations.of(context)!.newDriverLabel,
-                              style: TextStyle(
-                                color: context.textGreyColor,
-                                fontSize: 12,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      loc.currencyEGP(price.toStringAsFixed(0)),
-                      style: const TextStyle(
-                        color: TayarColors.primary,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 46,
-                        child: OutlinedButton(
-                          onPressed: onReject,
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: context.textGreyColor),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            loc.rejectButton,
-                            style: TextStyle(color: context.textGreyColor),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: SizedBox(
-                        height: 46,
-                        child: AppPrimaryButton(
-                          onPressed: onAccept,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: TayarColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            loc.acceptButton,
-                            style: TextStyle(
-                              color: context.onPrimaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          child: TayarDriverCard(
+            driverName: driverName,
+            rating: rating,
+            price: price,
+            driverImage: photoUrl,
+            onAccept: onAccept,
+            onReject: onReject,
           ),
         ),
       ),

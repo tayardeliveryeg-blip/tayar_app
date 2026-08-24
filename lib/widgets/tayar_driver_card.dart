@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
@@ -30,12 +31,18 @@ import 'package:tayay_app/widgets/app_primary_button.dart';
 
 class TayarDriverCard extends StatelessWidget {
   final String driverName;
-  final double rating;
-  final int trips;
+  // ====== [تحديث] rating/trips/distance/time/vehicleType بقوا اختياريين.
+  // مش كل شاشة في المشروع عندها كل البيانات دي متاحة فعليًا (مثلًا شاشة
+  // searching_offers_screen.dart بيوصلها driverName/rating/price/photoUrl
+  // بس من الـ offer doc، من غير مسافة أو وقت وصول أو نوع مركبة لكل عرض).
+  // بدل ما نضطر نخترع قيم وهمية عشان الكارت "يبان كامل"، أي حقل مش
+  // متمرر بيختفي من الواجهة تلقائيًا بدل ما يظهر فاضي أو بأرقام مغلوطة ======
+  final double? rating;
+  final int? trips;
   final double price;
-  final String distance;
-  final String time;
-  final String vehicleType;
+  final String? distance;
+  final String? time;
+  final String? vehicleType;
   final VoidCallback onAccept;
   final VoidCallback onReject;
   final String? driverImage;
@@ -43,19 +50,22 @@ class TayarDriverCard extends StatelessWidget {
   const TayarDriverCard({
     super.key,
     required this.driverName,
-    required this.rating,
-    required this.trips,
     required this.price,
-    required this.distance,
-    required this.time,
-    required this.vehicleType,
     required this.onAccept,
     required this.onReject,
+    this.rating,
+    this.trips,
+    this.distance,
+    this.time,
+    this.vehicleType,
     this.driverImage,
   });
 
+  bool get _hasInfoChips => distance != null || time != null || vehicleType != null;
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AppCard(
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
       padding: EdgeInsets.zero,
@@ -121,91 +131,105 @@ class TayarDriverCard extends StatelessWidget {
                           color: context.textColor,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.sm,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: TayarColors.primary.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(AppRadius.sm),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.star_rounded,
-                                  color: TayarColors.primary,
-                                  size: 14,
+                      // لو مفيش rating ولا trips خالص (زي سائق جديد لسه ماعملش
+                      // رحلات)، الصف ده مبيتعرضش أصلًا بدل ما يبان فاضي.
+                      if (rating != null || trips != null) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            if (rating != null)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.sm,
+                                  vertical: 3,
                                 ),
-                                const SizedBox(width: 3),
-                                Text(
-                                  rating.toString(),
-                                  style: const TextStyle(
-                                    color: TayarColors.primary,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                decoration: BoxDecoration(
+                                  color: TayarColors.primary.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(AppRadius.sm),
                                 ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Flexible(
-                            child: Text(
-                              '$trips رحلة',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 13, color: context.textGreyColor),
-                            ),
-                          ),
-                        ],
-                      ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.star_rounded,
+                                      color: TayarColors.primary,
+                                      size: 14,
+                                    ),
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      rating!.toStringAsFixed(1),
+                                      style: const TextStyle(
+                                        color: TayarColors.primary,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else
+                              Text(
+                                loc.newDriverLabel,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontStyle: FontStyle.italic,
+                                  color: context.textGreyColor,
+                                ),
+                              ),
+                            if (trips != null) ...[
+                              const SizedBox(width: AppSpacing.sm),
+                              Flexible(
+                                child: Text(
+                                  '$trips رحلة',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 13, color: context.textGreyColor),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
 
-                // السعر — كبير وبولد (أسلوب inDrive)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(price.toStringAsFixed(0), style: TayarStatTextStyles.statSmall),
-                    Text(
-                      'ج.م',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: context.textGreyColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                // السعر — كبير وبولد (أسلوب inDrive). سطر واحد مترجم بالكامل
+                // عبر currencyEGP بدل تقسيم الرقم والعملة يدويًا، لأن ترتيبهم
+                // بيختلف بين العربي ("25 جنيه") والإنجليزي ("EGP 25").
+                Text(
+                  loc.currencyEGP(price.toStringAsFixed(0)),
+                  style: TayarStatTextStyles.statSmall,
                 ),
               ],
             ),
           ),
 
-          Divider(color: context.dividerColor2, height: 1),
-
-          // صف المسافة والوقت ونوع المركبة
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
+          // صف المسافة والوقت ونوع المركبة — بيظهر بس لو فيه بيانات فعلية
+          // متمررة (شاشات زي البحث عن عروض حاليًا معهاش مسافة/وقت لكل عرض).
+          if (_hasInfoChips) ...[
+            Divider(color: context.dividerColor2, height: 1),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
+              child: Row(
+                children: [
+                  if (distance != null)
+                    _InfoChip(icon: Icons.location_on_outlined, label: distance!),
+                  if (distance != null && (time != null || vehicleType != null))
+                    const SizedBox(width: AppSpacing.md),
+                  if (time != null) _InfoChip(icon: Icons.access_time_rounded, label: time!),
+                  if (time != null && vehicleType != null) const SizedBox(width: AppSpacing.md),
+                  if (vehicleType != null)
+                    _InfoChip(icon: Icons.two_wheeler, label: vehicleType!),
+                ],
+              ),
             ),
-            child: Row(
-              children: [
-                _InfoChip(icon: Icons.location_on_outlined, label: distance),
-                const SizedBox(width: AppSpacing.md),
-                _InfoChip(icon: Icons.access_time_rounded, label: time),
-                const SizedBox(width: AppSpacing.md),
-                _InfoChip(icon: Icons.two_wheeler, label: vehicleType),
-              ],
-            ),
-          ),
+          ] else
+            const SizedBox(height: AppSpacing.sm),
 
           // زرارين الإجراء
           Padding(
@@ -224,7 +248,7 @@ class TayarDriverCard extends StatelessWidget {
                       onReject();
                     },
                     variant: AppButtonVariant.secondary,
-                    child: const Text('رفض'),
+                    child: Text(loc.rejectButton),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -236,7 +260,7 @@ class TayarDriverCard extends StatelessWidget {
                       onAccept();
                     },
                     variant: AppButtonVariant.primary,
-                    child: const Text('قبول العرض'),
+                    child: Text(loc.acceptButton),
                   ),
                 ),
               ],
