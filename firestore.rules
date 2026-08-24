@@ -19,6 +19,11 @@ service cloud.firestore {
     function isSuperAdmin() {
       return isAdmin() && getAdminRole() == 'super_admin';
     }
+    // ====== دور support بيقدر يدير الشكاوى (زي حل SOS بالظبط) - super_admin
+    // طبعًا يقدر برضه، finance لأ (مفيش داعي يشوف/يرد على شكاوى) ======
+    function isSupportAdmin() {
+      return isAdmin() && (getAdminRole() == 'super_admin' || getAdminRole() == 'support');
+    }
 
     // ====== بتحسب رسوم الإلغاء الصحيحة سيرفر-سايد بدل ما نصدّق قيمة
     // cancellationFee اللي بيبعتها العميل نفسه: لو الطلب لسه ما اتقبلش
@@ -574,13 +579,27 @@ service cloud.firestore {
       allow create, delete: if false;
     }
 
-    // ====== تذاكر الدعم الفني ======
+    // ====== تذاكر الدعم الفني / الشكاوى المنظمة - أي مستخدم مسجل دخول يقدر
+    // يفتح تذكرة بس على نفسه (userId لازم يطابق auth.uid)، بحالة 'open'
+    // دايمًا وقت الإنشاء، وبتصنيف من قائمة محددة سلفًا (category) - وممنوع
+    // يبعت adminReply أو assignedAdminId بنفسه (دول للأدمن بس). القراءة
+    // لصاحب التذكرة (عشان يشوف رد الدعم في شاشة "شكاويّ") أو أي أدمن.
+    // تعديل الحالة/الرد محصور على أدمن دوره support أو super_admin بس -
+    // نفس منطق isSupportAdmin() فوق ======
     match /support_tickets/{ticketId} {
       allow create: if request.auth != null &&
-        request.resource.data.userId == request.auth.uid;
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.status == 'open' &&
+        request.resource.data.category in
+          ['order_issue', 'driver_behavior', 'payment', 'technical', 'other'] &&
+        !('adminReply' in request.resource.data) &&
+        !('assignedAdminId' in request.resource.data);
       allow read: if request.auth != null &&
         (resource.data.userId == request.auth.uid || isAdmin());
-      allow update, delete: if false;
+      allow update: if isSupportAdmin() &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'adminReply', 'assignedAdminId', 'resolvedAt', 'resolvedBy', 'updatedAt']);
+      allow delete: if isSuperAdmin();
     }
 
     // ====== طلبات انضمام المحلات كـ"شركاء تجاريين" (فورم "عايز تبقى شريك

@@ -1029,6 +1029,48 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sendButton => 'إرسال';
 
   @override
+  String get complaintCategoryLabel => 'نوع الشكوى';
+
+  @override
+  String get categoryOrderIssue => 'مشكلة في رحلة';
+
+  @override
+  String get categoryDriverBehavior => 'سلوك السائق';
+
+  @override
+  String get categoryPayment => 'مشكلة دفع أو محفظة';
+
+  @override
+  String get categoryTechnical => 'مشكلة تقنية في التطبيق';
+
+  @override
+  String get categoryOther => 'أخرى';
+
+  @override
+  String get myComplaintsLabel => 'شكاويّ';
+
+  @override
+  String get myTicketsScreenTitle => 'شكاويّ السابقة';
+
+  @override
+  String get noTicketsYetLabel => 'لسه معملتش أي شكوى';
+
+  @override
+  String get ticketStatusOpen => 'قيد الانتظار';
+
+  @override
+  String get ticketStatusInProgress => 'جاري المراجعة';
+
+  @override
+  String get ticketStatusResolved => 'تم الحل';
+
+  @override
+  String get adminReplyLabel => 'رد الدعم الفني';
+
+  @override
+  String get ticketAwaitingReplyLabel => 'لسه مفيش رد - هنرد عليك في أقرب وقت';
+
+  @override
   String get tripCancelledTitle => 'تم إلغاء الرحلة';
 
   @override

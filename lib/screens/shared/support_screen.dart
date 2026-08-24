@@ -1,13 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
+import 'package:tayay_app/screens/shared/my_tickets_screen.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+
+// ====== تصنيفات الشكوى الثابتة - نفس القيم بالظبط لازم تتطابق مع
+// الـ allow list في firestore.rules (match /support_tickets/{ticketId})
+// عشان الإرسال ينجح. لو ضفت تصنيف جديد هنا لازم تضيفه في الـ rules برضه ======
+enum ComplaintCategory { orderIssue, driverBehavior, payment, technical, other }
+
+extension ComplaintCategoryValue on ComplaintCategory {
+  String get value {
+    switch (this) {
+      case ComplaintCategory.orderIssue:
+        return 'order_issue';
+      case ComplaintCategory.driverBehavior:
+        return 'driver_behavior';
+      case ComplaintCategory.payment:
+        return 'payment';
+      case ComplaintCategory.technical:
+        return 'technical';
+      case ComplaintCategory.other:
+        return 'other';
+    }
+  }
+
+  String label(AppLocalizations loc) {
+    switch (this) {
+      case ComplaintCategory.orderIssue:
+        return loc.categoryOrderIssue;
+      case ComplaintCategory.driverBehavior:
+        return loc.categoryDriverBehavior;
+      case ComplaintCategory.payment:
+        return loc.categoryPayment;
+      case ComplaintCategory.technical:
+        return loc.categoryTechnical;
+      case ComplaintCategory.other:
+        return loc.categoryOther;
+    }
+  }
+}
 
 // ====== شاشة الدعم: تواصل مباشر (واتساب/اتصال/إيميل) + إرسال شكوى/استفسار ======
 // رقم الواتساب/الاتصال بييجي من إعدادات لوحة الأدمن (AppSettings)، والإيميل ثابت تحت
@@ -24,6 +64,7 @@ class _SupportScreenState extends State<SupportScreen> {
 
   final _messageController = TextEditingController();
   bool _sending = false;
+  ComplaintCategory _category = ComplaintCategory.orderIssue;
 
   @override
   void dispose() {
@@ -64,12 +105,23 @@ class _SupportScreenState extends State<SupportScreen> {
     setState(() => _sending = true);
     try {
       final user = FirebaseAuth.instance.currentUser;
+      // ====== userRole بيتسجل وقت الإرسال من lastMode المحفوظة (نفس
+      // الفكرة المستخدمة في notifications_screen.dart لتوجيه إشعار
+      // المحفظة) - معلومة سياق للأدمن وقت المراجعة بس، مش حقل أمني ======
+      final prefs = await SharedPreferences.getInstance();
+      final userRole = prefs.getString('lastMode') ?? 'passenger';
       await FirebaseFirestore.instance.collection('support_tickets').add({
         'userId': user?.uid,
         'userName': user?.displayName,
+        'userRole': userRole,
+        'category': _category.value,
         'message': text,
         'status': 'open',
         'createdAt': FieldValue.serverTimestamp(),
+        // ====== adminReply متعمّد إنه مش موجود هنا خالص (مش حتى null) -
+        // firestore.rules بترفض أي طلب إنشاء فيه المفتاح ده أصلًا
+        // (!('adminReply' in request.resource.data))، والأدمن بس اللي
+        // بيضيفه لاحقًا عن طريق update ======
       });
       _messageController.clear();
       if (!mounted) return;
@@ -102,6 +154,21 @@ class _SupportScreenState extends State<SupportScreen> {
         elevation: 0,
         iconTheme: IconThemeData(color: context.textColor),
         title: Text(loc.navSupport, style: TextStyle(color: context.textColor)),
+        actions: [
+          TextButton.icon(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const MyTicketsScreen()),
+            ),
+            icon: const Icon(Icons.history, color: TayarColors.primary),
+            label: Text(
+              loc.myComplaintsLabel,
+              style: const TextStyle(
+                color: TayarColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -152,6 +219,37 @@ class _SupportScreenState extends State<SupportScreen> {
             ),
           ),
           const SizedBox(height: 12),
+          Text(
+            loc.complaintCategoryLabel,
+            style: TextStyle(color: context.textGreyColor, fontSize: 13),
+          ),
+          const SizedBox(height: 8),
+          AppCard(
+            radius: 14,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            showShadow: false,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<ComplaintCategory>(
+                value: _category,
+                isExpanded: true,
+                dropdownColor: context.bgColor,
+                iconEnabledColor: context.textGreyColor,
+                style: TextStyle(color: context.textColor, fontSize: 15),
+                items: ComplaintCategory.values
+                    .map(
+                      (c) => DropdownMenuItem(
+                        value: c,
+                        child: Text(c.label(loc)),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (c) {
+                  if (c != null) setState(() => _category = c);
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
           AppCard(
             radius: 14,
             padding: const EdgeInsets.all(14),

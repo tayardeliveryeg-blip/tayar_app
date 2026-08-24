@@ -1970,6 +1970,90 @@ abstract class AppLocalizations {
   /// **'إرسال'**
   String get sendButton;
 
+  /// No description provided for @complaintCategoryLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع الشكوى'**
+  String get complaintCategoryLabel;
+
+  /// No description provided for @categoryOrderIssue.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشكلة في رحلة'**
+  String get categoryOrderIssue;
+
+  /// No description provided for @categoryDriverBehavior.
+  ///
+  /// In ar, this message translates to:
+  /// **'سلوك السائق'**
+  String get categoryDriverBehavior;
+
+  /// No description provided for @categoryPayment.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشكلة دفع أو محفظة'**
+  String get categoryPayment;
+
+  /// No description provided for @categoryTechnical.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشكلة تقنية في التطبيق'**
+  String get categoryTechnical;
+
+  /// No description provided for @categoryOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'أخرى'**
+  String get categoryOther;
+
+  /// No description provided for @myComplaintsLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكاويّ'**
+  String get myComplaintsLabel;
+
+  /// No description provided for @myTicketsScreenTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكاويّ السابقة'**
+  String get myTicketsScreenTitle;
+
+  /// No description provided for @noTicketsYetLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه معملتش أي شكوى'**
+  String get noTicketsYetLabel;
+
+  /// No description provided for @ticketStatusOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد الانتظار'**
+  String get ticketStatusOpen;
+
+  /// No description provided for @ticketStatusInProgress.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري المراجعة'**
+  String get ticketStatusInProgress;
+
+  /// No description provided for @ticketStatusResolved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الحل'**
+  String get ticketStatusResolved;
+
+  /// No description provided for @adminReplyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رد الدعم الفني'**
+  String get adminReplyLabel;
+
+  /// No description provided for @ticketAwaitingReplyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه مفيش رد - هنرد عليك في أقرب وقت'**
+  String get ticketAwaitingReplyLabel;
+
   /// No description provided for @tripCancelledTitle.
   ///
   /// In ar, this message translates to:
@@ -2981,13 +3065,13 @@ abstract class AppLocalizations {
   /// No description provided for @myDriversDrawerLabel.
   ///
   /// In ar, this message translates to:
-  /// **'سائقيني'**
+  /// **'طياريني'**
   String get myDriversDrawerLabel;
 
   /// No description provided for @myDriversScreenTitle.
   ///
   /// In ar, this message translates to:
-  /// **'سائقيني'**
+  /// **'طياريني'**
   String get myDriversScreenTitle;
 
   /// No description provided for @favoriteDriversTabLabel.

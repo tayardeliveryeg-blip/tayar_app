@@ -207,6 +207,8 @@
 
   .badge.pending{background:#3d2f10;color:var(--amber);}
   .badge.contacted{background:var(--success-dim);color:var(--success);}
+  /* complaints (support_tickets) */
+  .badge.open{background:#3d2f10;color:var(--amber);}
   /* promo codes / referral rewards */
   .badge.resolved{background:var(--success-dim);color:var(--success);}
   .badge.inactive{background:#2a2f3a;color:var(--text-dim);}
@@ -522,6 +524,22 @@
         </div>
       </div>
 
+      <!-- COMPLAINTS -->
+      <div class="section" id="sec-complaints">
+        <div class="panel-head" style="margin-bottom:14px;">
+          <h3 style="font-size:15px;">📋 Complaints</h3>
+          <span class="hint">Structured support tickets from passengers and drivers (support_screen.dart), categorized on submission. Reply to resolve — the reply and status update are pushed back to the user's "My complaints" screen and as a notification.</span>
+        </div>
+        <div class="filters" id="complaintFilters"></div>
+        <div class="panel">
+          <table>
+            <thead><tr><th>From</th><th>Category</th><th>Message</th><th>Sent</th><th>Status</th><th></th></tr></thead>
+            <tbody id="complaintsBody"></tbody>
+          </table>
+          <div id="complaintsEmpty" class="hint" style="padding:10px 0;"></div>
+        </div>
+      </div>
+
       <!-- REPORTS -->
       <div class="section" id="sec-reports">
         <div class="kpi-row" id="reportsKpiRow"></div>
@@ -760,7 +778,8 @@ const COLLECTIONS = {
   sosAlerts: 'sos_alerts',
   promoCodes: 'promo_codes',
   pendingReferralRewards: 'pendingReferralRewards',
-  driverTopupRequests: "drivers/*/walletTransactions (type='topup_request')"
+  driverTopupRequests: "drivers/*/walletTransactions (type='topup_request')",
+  complaints: 'support_tickets'
 };
 // ====== نفس مشروع Supabase المستخدم في sos_service.dart والموبايل -
 // لبعت إشعار push حقيقي للراكب بعد شحن محفظته (general-notify Edge
@@ -817,7 +836,7 @@ let currentAdminRole = 'super_admin';
 // ====== أي تاب مش موجود في القائمة هنا يبقى متاح لكل الأدوار (زي overview) ======
 const ROLE_TABS = {
   super_admin: null, // null = كل التابات
-  support: ['overview','sosAlerts','orders','drivers','users','vendorApplications','reports'],
+  support: ['overview','sosAlerts','orders','drivers','users','vendorApplications','complaints','reports'],
   finance: ['overview','wallet','promoReferrals','reports'],
 };
 function canSeeTab(key){
@@ -887,6 +906,16 @@ function doGoogleLogin(){
   });
 }
 
+// ====== بيهرّب أي HTML جوه نص المستخدم (زي رسالة شكوى) قبل ما نحطه في
+// innerHTML - عشان نمنع أي محاولة XSS لو حد كتب <script> أو تاج تاني في
+// رسالته. مستخدمة في renderComplaints بس دلوقتي (أكتر حقل نص حر ظاهر
+// للأدمن جاي من مستخدم مش موثوق) ======
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
 /* pick the first field that exists on a Firestore doc, with a fallback */
 function pick(data, keys, fallback){
   for(const k of keys){ if(data[k] !== undefined && data[k] !== null && data[k] !== '') return data[k]; }
@@ -915,6 +944,7 @@ const icons = {
   sosAlerts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
   reports: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>',
+  complaints: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
   admins: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
 };
 
@@ -927,8 +957,10 @@ let sosAlerts = [];
 let promoCodes = [];
 let pendingReferralRewards = [];
 let driverTopupRequests = [];
+let complaints = [];
+let complaintStatusFilter = 'open';
 let orderFilter = 'all';
-let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting', driverTopupRequests:'connecting' };
+let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting', driverTopupRequests:'connecting', complaints:'connecting' };
 
 function showConnError(collectionKey, err){
   const banner = document.getElementById('connBanner');
@@ -1131,6 +1163,31 @@ function startListeners(){
       renderAll();
     }, err => { connectionState.driverTopupRequests = 'error'; showConnError('driverTopupRequests', err); });
 
+  // support_tickets: شكاوى/تذاكر الدعم اللي بيبعتها الراكب أو الطيار من
+  // شاشة الدعم (support_screen.dart) - كل تذكرة معاها category ثابت وuserRole
+  // (سياق بس، مش حقل أمني). محصورة في الواجهة على أدمن دوره support أو
+  // super_admin بس (راجع ROLE_TABS فوق)، ونفس القيد متكرر في firestore.rules
+  // (isSupportAdmin) - defense in depth زي أي إجراء حساس تاني في اللوحة ======
+  db.collection(COLLECTIONS.complaints).orderBy('createdAt', 'desc').onSnapshot(snap => {
+    complaints = snap.docs.map(doc => {
+      const d = doc.data();
+      return {
+        id: doc.id,
+        userId: pick(d, ['userId'], null),
+        userName: pick(d, ['userName'], null),
+        userRole: pick(d, ['userRole'], 'passenger'),
+        category: pick(d, ['category'], 'other'),
+        message: pick(d, ['message'], ''),
+        status: pick(d, ['status'], 'open'),
+        adminReply: pick(d, ['adminReply'], null),
+        createdAtRaw: pick(d, ['createdAt'], null),
+        time: relativeTime(pick(d, ['createdAt'], null))
+      };
+    });
+    connectionState.complaints = 'ok';
+    renderAll();
+  }, err => { connectionState.complaints = 'error'; showConnError('complaints', err); });
+
   // sos_alerts: created instantly from the app the moment a passenger or driver
   // taps the SOS button during a trip (SosService.triggerAlert in sos_service.dart).
   // Ordered newest-first so the most urgent/recent alert is always on top.
@@ -1180,6 +1237,7 @@ const navItems = [
   {key:'wallet', label:'Wallet', count:()=>driverTopupRequests.length},
   {key:'promoReferrals', label:'Promo & Referrals', count:()=>pendingReferralRewards.filter(r=>r.status==='pending').length},
   {key:'vendorApplications', label:'Vendor Requests', count:()=>vendorApplications.filter(v=>v.status==='pending').length},
+  {key:'complaints', label:'📋 Complaints', count:()=>complaints.filter(c=>c.status==='open').length},
   {key:'reports', label:'📊 Reports'},
   {key:'admins', label:'🔑 Admins'},
   {key:'settings', label:'Settings'},
@@ -1994,6 +2052,85 @@ function rejectWalletTopup(requestId, driverId){
   }).catch(err => toast('Failed: ' + err.message));
 }
 
+/* ---------------- COMPLAINTS (support_tickets) ---------------- */
+const COMPLAINT_CATEGORY_LABELS = {
+  order_issue: 'Trip issue',
+  driver_behavior: 'Driver behavior',
+  payment: 'Payment / wallet',
+  technical: 'Technical',
+  other: 'Other'
+};
+const COMPLAINT_STATUS_LABELS = { open: 'Open', in_progress: 'In progress', resolved: 'Resolved' };
+const COMPLAINT_FILTERS = ['open', 'in_progress', 'resolved', 'all'];
+
+// ====== بيدور على اسم/تليفون مختصر لصاحب الشكوى - من users لو راكب أو
+// drivers لو طيار (حسب userRole المسجّل على التذكرة نفسها وقت الإرسال) ======
+function complainantBrief(userId, userRole){
+  if(!userId) return '—';
+  return userRole === 'driver' ? driverBrief(userId) : userBrief(userId);
+}
+
+function renderComplaintFilters(){
+  document.getElementById('complaintFilters').innerHTML = COMPLAINT_FILTERS.map(f => `
+    <div class="chip ${complaintStatusFilter===f?'active':''}" onclick="setComplaintFilter('${f}')">${f==='all'?'All':COMPLAINT_STATUS_LABELS[f]}</div>
+  `).join('');
+}
+function setComplaintFilter(f){ complaintStatusFilter = f; renderComplaints(); }
+
+function renderComplaints(){
+  renderComplaintFilters();
+  const list = complaints.filter(c => complaintStatusFilter==='all' || c.status===complaintStatusFilter);
+  const body = document.getElementById('complaintsBody');
+  const empty = document.getElementById('complaintsEmpty');
+  if(list.length === 0){
+    body.innerHTML = '';
+    empty.textContent = 'No complaints here.';
+    return;
+  }
+  empty.textContent = '';
+  body.innerHTML = list.map(c => `
+    <tr>
+      <td>${complainantBrief(c.userId, c.userRole)} <span class="hint" style="font-size:11px;">(${c.userRole})</span></td>
+      <td>${COMPLAINT_CATEGORY_LABELS[c.category] || c.category}</td>
+      <td style="max-width:280px; white-space:normal;">${escapeHtml(c.message)}</td>
+      <td class="mono" style="color:var(--text-dimmer);font-size:12px;">${c.time}</td>
+      <td><span class="badge ${c.status}">${COMPLAINT_STATUS_LABELS[c.status] || c.status}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${c.status !== 'resolved' ? `<button class="btn small primary" onclick="replyToComplaint('${c.id}')">Reply &amp; resolve</button>` : ''}
+        ${c.status === 'open' ? `<button class="btn small" onclick="markComplaintInProgress('${c.id}')">Mark in progress</button>` : ''}
+      </td>
+    </tr>`).join('');
+}
+
+function markComplaintInProgress(ticketId){
+  db.collection(COLLECTIONS.complaints).doc(ticketId).update({
+    status: 'in_progress',
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => toast('Marked in progress')).catch(err => toast('Failed: ' + err.message));
+}
+
+// ====== الرد بيقفل الشكوى على طول (status='resolved') - لو الأدمن محتاج
+// يرجعلها تاني بعدين يقدر من Firebase Console، بس الفلو العادي إن الرد
+// هو خطوة الحل الأخيرة زي ما اتفقنا في بند 7 من رودماب المنافسين ======
+function replyToComplaint(ticketId){
+  const c = complaints.find(x => x.id === ticketId);
+  if(!c) return;
+  const reply = (prompt('Reply to this complaint (sent to the user, marks it resolved):') || '').trim();
+  if(!reply) return;
+  db.collection(COLLECTIONS.complaints).doc(ticketId).update({
+    status: 'resolved',
+    adminReply: reply,
+    resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    resolvedBy: auth.currentUser.uid,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    toast('Reply sent — complaint resolved');
+    if(c.userId){
+      sendGeneralNotification(c.userId, 'رد على شكواك', reply, 'support_reply');
+    }
+  }).catch(err => toast('Failed: ' + err.message));
+}
+
 /* ---------------- REFERRAL REWARDS QUEUE ---------------- */
 // ====== بيدور على بيانات مختصرة (اسم + تليفون) عن مستخدم من الـ users
 // array المحمّل بالفعل، من غير ما نعمل query إضافي ======
@@ -2409,6 +2546,7 @@ function renderAll(){
   if(currentSection==='drivers'){ renderDrivers(); }
   if(currentSection==='users'){ renderUsers(); }
   if(currentSection==='vendorApplications'){ renderVendorApplications(); }
+  if(currentSection==='complaints'){ renderComplaints(); }
   if(currentSection==='wallet'){ renderDriverTopupRequests(); }
   if(currentSection==='promoReferrals'){ renderPromoCodes(); renderReferralRewards(); }
   if(currentSection==='reports'){ renderReports(); }

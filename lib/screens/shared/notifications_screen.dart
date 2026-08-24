@@ -6,6 +6,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_wallet_screen.dart';
+import 'package:tayay_app/screens/shared/my_tickets_screen.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
@@ -41,6 +42,13 @@ class NotificationsScreen extends StatelessWidget {
     String? walletRole,
   ) async {
     await _markAsRead(docId);
+    if (type == 'support_reply') {
+      if (!context.mounted) return;
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const MyTicketsScreen()));
+      return;
+    }
     if (type != 'wallet') return;
     if (!context.mounted) return;
 
@@ -93,6 +101,8 @@ class NotificationsScreen extends StatelessWidget {
         return Icons.verified_outlined;
       case 'driver_rejection':
         return Icons.error_outline;
+      case 'support_reply':
+        return Icons.support_agent_outlined;
       default:
         return Icons.notifications_none;
     }

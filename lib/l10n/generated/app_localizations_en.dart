@@ -1035,6 +1035,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendButton => 'Send';
 
   @override
+  String get complaintCategoryLabel => 'Complaint type';
+
+  @override
+  String get categoryOrderIssue => 'Trip issue';
+
+  @override
+  String get categoryDriverBehavior => 'Driver behavior';
+
+  @override
+  String get categoryPayment => 'Payment or wallet issue';
+
+  @override
+  String get categoryTechnical => 'Technical app issue';
+
+  @override
+  String get categoryOther => 'Other';
+
+  @override
+  String get myComplaintsLabel => 'My complaints';
+
+  @override
+  String get myTicketsScreenTitle => 'My complaints';
+
+  @override
+  String get noTicketsYetLabel => 'You haven\'t submitted any complaints yet';
+
+  @override
+  String get ticketStatusOpen => 'Pending';
+
+  @override
+  String get ticketStatusInProgress => 'Under review';
+
+  @override
+  String get ticketStatusResolved => 'Resolved';
+
+  @override
+  String get adminReplyLabel => 'Support reply';
+
+  @override
+  String get ticketAwaitingReplyLabel =>
+      'No reply yet - we\'ll get back to you soon';
+
+  @override
   String get tripCancelledTitle => 'Trip Cancelled';
 
   @override
