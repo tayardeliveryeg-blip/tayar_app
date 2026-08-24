@@ -520,6 +520,42 @@
         </div>
       </div>
 
+      <!-- REPORTS -->
+      <div class="section" id="sec-reports">
+        <div class="kpi-row" id="reportsKpiRow"></div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Orders & revenue — last 14 days</h3>
+            <span class="hint">completed trips only</span>
+          </div>
+          <div id="reportsChart"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Driver performance</h3>
+            <button class="btn" onclick="exportDriversCsv()">⬇ Export CSV</button>
+          </div>
+          <table>
+            <thead><tr><th>Driver</th><th>Completed</th><th>Cancelled</th><th>Cancel rate</th><th>Revenue generated</th><th>Rating</th></tr></thead>
+            <tbody id="driverPerfBody"></tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Export raw data</h3>
+            <span class="hint">CSV files open directly in Excel</span>
+          </div>
+          <div style="display:flex; gap:10px; padding:4px 0;">
+            <button class="btn" onclick="exportOrdersCsv()">⬇ Orders CSV</button>
+            <button class="btn" onclick="exportUsersCsv()">⬇ Customers CSV</button>
+            <button class="btn" onclick="exportDriversCsv()">⬇ Drivers CSV</button>
+          </div>
+        </div>
+      </div>
+
       <!-- SETTINGS -->
       <div class="section" id="sec-settings">
         <div class="panel">
@@ -794,7 +830,8 @@ const icons = {
   vendorApplications: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9z"/><path d="M9 20v-6h6v6"/></svg>',
   promoReferrals: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 12 22l-9.41-9.41A2 2 0 0 1 2 11.17V4a2 2 0 0 1 2-2h7.17a2 2 0 0 1 1.41.59l9.41 9.41a2 2 0 0 1 0 2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>',
   sosAlerts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
-  settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
+  settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  reports: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>'
 };
 
 /* ---------------- LIVE DATA (populated from Firestore) ---------------- */
@@ -1059,6 +1096,7 @@ const navItems = [
   {key:'wallet', label:'Wallet', count:()=>driverTopupRequests.length},
   {key:'promoReferrals', label:'Promo & Referrals', count:()=>pendingReferralRewards.filter(r=>r.status==='pending').length},
   {key:'vendorApplications', label:'Vendor Requests', count:()=>vendorApplications.filter(v=>v.status==='pending').length},
+  {key:'reports', label:'📊 Reports'},
   {key:'settings', label:'Settings'},
 ];
 
@@ -1078,7 +1116,7 @@ function goTo(key){
   currentSection = key;
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+key).classList.add('active');
-  const titles = {overview:'Overview', sosAlerts:'SOS Alerts', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', promoReferrals:'Promo & Referrals', vendorApplications:'Vendor Requests', settings:'Settings'};
+  const titles = {overview:'Overview', sosAlerts:'SOS Alerts', orders:'Orders', drivers:'Drivers', users:'Customers', wallet:'Wallet', promoReferrals:'Promo & Referrals', vendorApplications:'Vendor Requests', reports:'Reports', settings:'Settings'};
   document.getElementById('pageTitle').textContent = titles[key];
   document.getElementById('pageBreadcrumb').textContent = 'tayar / ' + key;
   renderNav();
@@ -2006,6 +2044,172 @@ function toast(msg){
   setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2600);
 }
 
+/* ---------------- REPORTS ---------------- */
+// ====== بيرجع مصفوفة من 14 يوم فاتوا (من الأقدم للأحدث)، كل عنصر فيه
+// {date, label, ordersCount, completedCount, revenue} - محسوبة كلها من
+// الـ orders array اللي أصلاً محمّلة بالكامل عن طريق الـ listener، فمفيش
+// أي query إضافي على Firestore هنا ======
+function computeDailyReport(days){
+  const buckets = [];
+  const now = new Date();
+  for(let i = days - 1; i >= 0; i--){
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    buckets.push({
+      date: d,
+      label: d.toLocaleDateString('en-GB', {day:'2-digit', month:'short'}),
+      ordersCount: 0,
+      completedCount: 0,
+      revenue: 0
+    });
+  }
+  orders.forEach(o => {
+    if(!o.createdAtRaw) return;
+    const od = o.createdAtRaw;
+    const bucket = buckets.find(b =>
+      b.date.getFullYear()===od.getFullYear() &&
+      b.date.getMonth()===od.getMonth() &&
+      b.date.getDate()===od.getDate()
+    );
+    if(!bucket) return;
+    bucket.ordersCount++;
+    if(o.status === 'completed'){
+      bucket.completedCount++;
+      bucket.revenue += (Number(o.total) || 0);
+    }
+  });
+  return buckets;
+}
+
+function renderReportsKpis(){
+  const last14 = computeDailyReport(14);
+  const totalRevenue = last14.reduce((s,b)=>s+b.revenue, 0);
+  const totalCompleted = last14.reduce((s,b)=>s+b.completedCount, 0);
+  const totalOrders = last14.reduce((s,b)=>s+b.ordersCount, 0);
+  const completionRate = totalOrders > 0 ? Math.round((totalCompleted / totalOrders) * 100) : 0;
+  const avgDailyRevenue = Math.round(totalRevenue / 14);
+  const kpis = [
+    {label:'Revenue (14 days)', value:'EGP ' + totalRevenue, delta: 'EGP ' + avgDailyRevenue + ' / day avg', up:true},
+    {label:'Completed trips (14 days)', value: totalCompleted, delta: totalOrders + ' total requested', up:true},
+    {label:'Completion rate', value: completionRate + '%', delta: completionRate>=70?'healthy':'needs attention', up: completionRate>=70},
+    {label:'Active drivers', value: drivers.filter(d=>d.approval==='approved').length, delta: drivers.filter(d=>d.online).length + ' online now', up:true},
+  ];
+  document.getElementById('reportsKpiRow').innerHTML = kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-delta ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${k.delta}</div>
+      <div class="bar"></div>
+    </div>
+  `).join('');
+}
+
+// ====== رسم بياني بسيط بـ SVG خام من غير أي مكتبة خارجية - عمودين
+// لكل يوم (عدد الطلبات المكتملة + الإيراد) عشان نفضل خفاف على الصفحة ======
+function renderReportsChart(){
+  const data = computeDailyReport(14);
+  const maxRevenue = Math.max(1, ...data.map(d=>d.revenue));
+  const w = 900, h = 220, padBottom = 30, padTop = 10, barGap = 6;
+  const barW = (w / data.length) - barGap;
+  let bars = '';
+  data.forEach((d, i) => {
+    const barH = Math.round(((h - padBottom - padTop) * d.revenue) / maxRevenue);
+    const x = i * (barW + barGap);
+    const y = h - padBottom - barH;
+    bars += `
+      <g>
+        <rect x="${x}" y="${y}" width="${barW}" height="${Math.max(barH,1)}" rx="3" fill="var(--accent)" opacity="${d.revenue>0?1:0.15}">
+          <title>${d.label}: EGP ${d.revenue} · ${d.completedCount} trips</title>
+        </rect>
+        <text x="${x + barW/2}" y="${h - 10}" text-anchor="middle" font-size="10" fill="var(--text-dimmer)">${d.label.split(' ')[0]}</text>
+      </g>`;
+  });
+  document.getElementById('reportsChart').innerHTML = `
+    <svg viewBox="0 0 ${w} ${h}" style="width:100%; height:220px; overflow:visible;">${bars}</svg>
+  `;
+}
+
+// ====== أداء كل طيار: مكتمل، ملغي، نسبة الإلغاء، الإيراد اللي جابه،
+// والتقييم (موجود أصلًا في مستند الطيار) - كل ده من نفس orders array
+// المحمّلة، من غير أي query إضافي ======
+function renderDriverPerformance(){
+  const statsByDriver = {};
+  orders.forEach(o => {
+    if(!o.driverId) return;
+    if(!statsByDriver[o.driverId]) statsByDriver[o.driverId] = {completed:0, cancelled:0, revenue:0};
+    if(o.status === 'completed'){
+      statsByDriver[o.driverId].completed++;
+      statsByDriver[o.driverId].revenue += (Number(o.total) || 0);
+    }
+    if(o.status === 'cancelled') statsByDriver[o.driverId].cancelled++;
+  });
+  const rows = drivers
+    .map(d => {
+      const s = statsByDriver[d.id] || {completed:0, cancelled:0, revenue:0};
+      const total = s.completed + s.cancelled;
+      const cancelRate = total > 0 ? Math.round((s.cancelled / total) * 100) : 0;
+      return {...d, ...s, cancelRate, total};
+    })
+    .filter(d => d.total > 0)
+    .sort((a,b) => b.completed - a.completed);
+  document.getElementById('driverPerfBody').innerHTML = rows.map(d => `
+    <tr>
+      <td>${d.name}</td>
+      <td>${d.completed}</td>
+      <td>${d.cancelled}</td>
+      <td><span class="badge ${d.cancelRate>30?'cancelled':'completed'}">${d.cancelRate}%</span></td>
+      <td>EGP ${d.revenue}</td>
+      <td>⭐ ${(d.rating||0).toFixed(1)}</td>
+    </tr>
+  `).join('') || `<tr><td colspan="6" style="text-align:center; color:var(--text-dimmer);">No completed or cancelled trips yet</td></tr>`;
+}
+
+function renderReports(){
+  renderReportsKpis();
+  renderReportsChart();
+  renderDriverPerformance();
+}
+
+// ====== تصدير CSV عام: بياخد مصفوفة صفوف + أسماء أعمدة، وبيحمّل ملف
+// .csv فعلي عن طريق Blob - بيفتح مباشرة في Excel من غير أي حاجة تانية ======
+function downloadCsv(filename, headers, rows){
+  const escapeCell = v => {
+    const s = (v==null ? '' : String(v));
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+  };
+  const csv = [headers.join(','), ...rows.map(r => r.map(escapeCell).join(','))].join('\n');
+  // ====== BOM في الأول عشان Excel يقرأ العربي صح من غير ما يبوظ الترميز ======
+  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function exportOrdersCsv(){
+  downloadCsv(
+    'tayar-orders-' + new Date().toISOString().slice(0,10) + '.csv',
+    ['Order ID','Customer','Driver','Pickup','Destination','Fare (EGP)','Status','Date'],
+    orders.map(o => [o.displayId, o.customer, o.driver, o.pickup, o.destination, o.total, o.status, o.createdAtRaw ? o.createdAtRaw.toLocaleString('en-GB') : ''])
+  );
+}
+
+function exportUsersCsv(){
+  downloadCsv(
+    'tayar-customers-' + new Date().toISOString().slice(0,10) + '.csv',
+    ['Name','Phone','Orders','Joined','Status'],
+    users.map(u => [u.name, u.phone, u.orders, u.joined, u.status])
+  );
+}
+
+function exportDriversCsv(){
+  downloadCsv(
+    'tayar-drivers-' + new Date().toISOString().slice(0,10) + '.csv',
+    ['Name','Phone','Vehicle','Plate','Rating','Deliveries','Approval'],
+    drivers.map(d => [d.name, d.phone, d.vehicle, d.plate, d.rating, d.deliveries, d.approval])
+  );
+}
+
 /* ---------------- RENDER ALL ---------------- */
 function renderAll(){
   recomputeCounts();
@@ -2019,6 +2223,7 @@ function renderAll(){
   if(currentSection==='vendorApplications'){ renderVendorApplications(); }
   if(currentSection==='wallet'){ renderDriverTopupRequests(); }
   if(currentSection==='promoReferrals'){ renderPromoCodes(); renderReferralRewards(); }
+  if(currentSection==='reports'){ renderReports(); }
 }
 
 renderNav();
