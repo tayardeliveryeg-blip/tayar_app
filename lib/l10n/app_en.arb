@@ -167,6 +167,8 @@
   "closeButton": "Close",
   "termsAgreementPrefix": "I agree to the ",
   "termsAndConditionsLinkText": "Terms and Conditions",
+  "termsAgreementAndConnector": " and ",
+  "privacyPolicyLinkText": "Privacy Policy",
   "termsAgreementRequiredError": "You must agree to the Terms and Conditions to continue",
   "termsAndConditionsTitle": "Terms and Conditions",
   "termsAndConditionsBody": "By using the Tayar app (as a rider, driver, or vendor partner), you agree to be fully bound by the Terms and Conditions published at b10-app-1e682.web.app/terms.html. In short: Tayar is a matching platform only, not a transport company, and drivers are independent users, not employees. Fares are negotiable within a set range, cancellation fees apply after a free grace period, and a commission is deducted from drivers per trip. Please review the full text at the link above, or from Settings > Terms and Conditions.",

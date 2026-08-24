@@ -420,6 +420,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get termsAndConditionsLinkText => 'الشروط والأحكام';
 
   @override
+  String get termsAgreementAndConnector => ' و';
+
+  @override
+  String get privacyPolicyLinkText => 'سياسة الخصوصية';
+
+  @override
   String get termsAgreementRequiredError =>
       'لازم توافق على الشروط والأحكام عشان تكمل';
 

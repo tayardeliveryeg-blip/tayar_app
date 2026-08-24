@@ -878,6 +878,18 @@ abstract class AppLocalizations {
   /// **'الشروط والأحكام'**
   String get termsAndConditionsLinkText;
 
+  /// No description provided for @termsAgreementAndConnector.
+  ///
+  /// In ar, this message translates to:
+  /// **' و'**
+  String get termsAgreementAndConnector;
+
+  /// No description provided for @privacyPolicyLinkText.
+  ///
+  /// In ar, this message translates to:
+  /// **'سياسة الخصوصية'**
+  String get privacyPolicyLinkText;
+
   /// No description provided for @termsAgreementRequiredError.
   ///
   /// In ar, this message translates to:

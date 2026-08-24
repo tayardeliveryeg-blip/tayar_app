@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
+import 'package:url_launcher/url_launcher.dart';
 
 // ====== نسخة الشروط والأحكام الحالية. أي تعديل جوهري في نص الشروط
 // المفروض يترفق بزيادة الرقم ده، عشان لو حبينا مستقبلًا نجبر المستخدمين
@@ -10,8 +11,15 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 // termsVersion المحفوظ في بروفايلهم بالقيمة الحالية هنا) ======
 const String kTermsAndConditionsVersion = '1.1';
 
-/// ====== Checkbox الموافقة على الشروط والأحكام - بيتستخدم في شاشة تسجيل
-/// الراكب (profile_setup_screen.dart) وشاشة تسجيل الطيار
+// ====== نفس صفحات الشروط والخصوصية المستضافة على Firebase Hosting
+// المستخدمة في settings_screen.dart - بنفتحهم هنا كمان بدل الديالوج
+// المحلي القديم (اللي كان بيعرض ملخص مختصر بس مش النص الكامل الرسمي) ======
+const String _kTermsAndConditionsUrl =
+    'https://b10-app-1e682.web.app/terms.html';
+const String _kPrivacyPolicyUrl = 'https://b10-app-1e682.web.app/privacy.html';
+
+/// ====== Checkbox الموافقة على الشروط والأحكام وسياسة الخصوصية - بيتستخدم
+/// في شاشة تسجيل الراكب (profile_setup_screen.dart) وشاشة تسجيل الطيار
 /// (driver_registration_screen.dart). لما المستخدم يوافق، الشاشة اللي
 /// بتستخدمه هي اللي مسؤولة إنها تكتب termsAcceptedAt (serverTimestamp)
 /// و termsVersion (kTermsAndConditionsVersion) في وثيقته وقت الحفظ. ======
@@ -29,34 +37,16 @@ class TermsAcceptanceCheckbox extends StatelessWidget {
     this.showError = false,
   });
 
-  void _openTermsDialog(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          loc.termsAndConditionsTitle,
-          style: TextStyle(color: context.textColor),
+  Future<void> _openHostedPage(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
         ),
-        content: SingleChildScrollView(
-          child: Text(
-            loc.termsAndConditionsBody,
-            style: TextStyle(color: context.textGreyColor, height: 1.6),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              loc.closeButton,
-              style: const TextStyle(color: TayarColors.primary),
-            ),
-          ),
-        ],
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -101,7 +91,24 @@ class TermsAcceptanceCheckbox extends StatelessWidget {
                           decoration: TextDecoration.underline,
                         ),
                         recognizer: TapGestureRecognizer()
-                          ..onTap = () => _openTermsDialog(context),
+                          ..onTap = () =>
+                              _openHostedPage(context, _kTermsAndConditionsUrl),
+                      ),
+                      TextSpan(
+                        text: loc.termsAgreementAndConnector,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => onChanged(!value),
+                      ),
+                      TextSpan(
+                        text: loc.privacyPolicyLinkText,
+                        style: const TextStyle(
+                          color: TayarColors.primary,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () =>
+                              _openHostedPage(context, _kPrivacyPolicyUrl),
                       ),
                     ],
                   ),
