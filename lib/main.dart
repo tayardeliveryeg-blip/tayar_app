@@ -12,6 +12,7 @@ import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/screens/auth/app_lock_screen.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/screens/onboarding/onboarding_screen.dart';
 
 export 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarTheme, TayarThemeColors;
@@ -178,7 +179,7 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
       locale: _locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const AuthGate(),
+      home: const AppEntryPoint(),
       // ====== بيعرض شاشة قفل الرقم السري فوق كل حاجة لو _isLocked = true،
       // من غير ما يأثر على الـ Navigator أو الشاشة الحالية تحته ======
       builder: (context, child) {
@@ -206,6 +207,50 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
         );
       },
     );
+  }
+}
+
+// ====== بيفحص أولاً لو المستخدم شاف الـ Onboarding قبل كده.
+// لو لأ → بيعرض شاشة الـ Onboarding.
+// لو آه → بيروح لـ AuthGate عادي ======
+class AppEntryPoint extends StatefulWidget {
+  const AppEntryPoint({super.key});
+
+  @override
+  State<AppEntryPoint> createState() => _AppEntryPointState();
+}
+
+class _AppEntryPointState extends State<AppEntryPoint> {
+  bool? _hasSeenOnboarding;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeen = prefs.getBool('hasSeenOnboarding') ?? false;
+    setState(() => _hasSeenOnboarding = hasSeen);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_hasSeenOnboarding == null) {
+      return Scaffold(
+        backgroundColor: context.bgColor,
+        body: const Center(
+          child: CircularProgressIndicator(color: TayarColors.primary),
+        ),
+      );
+    }
+
+    if (!_hasSeenOnboarding!) {
+      return const OnboardingScreen();
+    }
+
+    return const AuthGate();
   }
 }
 
