@@ -76,7 +76,7 @@ class OrderRequestCard extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-                child: Row(children: [const SizedBox(width: AppSpacing.sm), SizedBox(height: 14, child: VerticalDivider(color: TayarColors.divider, thickness: 2))]),
+                child: Row(children: [const SizedBox(width: AppSpacing.sm), SizedBox(height: 14, child: VerticalDivider(color: context.dividerColor2, thickness: 2))]),
               ),
               Row(
                 children: [

@@ -65,7 +65,7 @@ class TripDetailsCard extends StatelessWidget {
                 height: 4,
                 decoration: BoxDecoration(
                   color: context.textGreyColor,
-                  borderRadius: BorderRadius.circular(AppRadius.xs),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),

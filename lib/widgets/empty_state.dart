@@ -79,7 +79,6 @@ class EmptyState extends StatelessWidget {
               AppPrimaryButton(
                 onPressed: onAction,
                 variant: AppButtonVariant.primary,
-                isFullWidth: false,
                 child: Text(actionLabel!),
               ),
             ],
