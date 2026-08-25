@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart'
-    show paymentMethodDisplay;
+import 'package:tayay_app/screens/passenger/passenger_home.dart' show paymentMethodDisplay;
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 
-// ====== كارت طلب واحد في تبويب "الطلبات" الخاص بالسائق ======
-// (كان قبل كده private class جوه driver_home_screen.dart واتقسم في ملف منفصل)
 class OrderRequestCard extends StatelessWidget {
   final String pickupAddress;
   final String destinationAddress;
@@ -38,229 +35,119 @@ class OrderRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(AppRadius.xl),
-      onTap: onOpenDetails,
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: BoxDecoration(
-          color: context.cardColor,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(
-            color: TayarColors.primary.withValues(alpha: 0.25),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ====== بادچ "محجوزة لـ..." للطلبات المجدولة مقدمًا - بيظهر بس
-            // لو scheduledFor موجودة (شوف orderType في supabase/functions/create-order) ======
-            if (scheduledFor != null) ...[
-              AppCard(
-                color: TayarColors.primary.withValues(alpha: 0.15),
-                radius: AppRadius.sm,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.xxs,
-                ),
-                showShadow: false,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.schedule,
-                      color: TayarColors.primary,
-                      size: 13,
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Text(
-                      AppLocalizations.of(context)!.scheduledForLabel(
-                        formatScheduledForDisplay(scheduledFor!),
-                      ),
-                      style: const TextStyle(
-                        color: TayarColors.primary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-            ],
-            Row(
-              children: [
-                const Icon(
-                  Icons.location_on,
-                  color: TayarColors.primary,
-                  size: 16,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    pickupAddress,
-                    style: TextStyle(color: context.textColor, fontSize: 14),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+    final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
+    return AppCard(
+      radius: AppRadius.xl,
+      padding: EdgeInsets.zero,
+      showShadow: false,
+      border: Border.all(color: TayarColors.primary.withValues(alpha: 0.25)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        onTap: onOpenDetails,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (scheduledFor != null) ...[
+                AppCard(
+                  color: TayarColors.primary.withValues(alpha: 0.15),
+                  radius: AppRadius.sm,
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+                  showShadow: false,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.schedule, color: TayarColors.primary, size: 13),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text(loc.scheduledForLabel(formatScheduledForDisplay(scheduledFor!)), style: textTheme.labelSmall?.copyWith(color: TayarColors.primary, fontWeight: FontWeight.bold)),
+                    ],
                   ),
                 ),
+                const SizedBox(height: AppSpacing.sm),
               ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-              child: Row(
-                children: [
-                  SizedBox(width: AppSpacing.sm),
-                  SizedBox(
-                    height: 14,
-                    child: VerticalDivider(
-                      color: context.dividerColor2,
-                      thickness: 2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              children: [
-                const Icon(Icons.flag, color: TayarColors.primary, size: 16),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    destinationAddress,
-                    style: TextStyle(color: context.textColor, fontSize: 14),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.distanceDurationLabel(
-                    distanceKm.toStringAsFixed(1),
-                    durationMin,
-                  ),
-                  style: TextStyle(color: context.textGreyColor, fontSize: 12),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      AppLocalizations.of(
-                        context,
-                      )!.currencyEGP(proposedFare.toStringAsFixed(0)),
-                      style: const TextStyle(
-                        color: TayarColors.primary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
-                    AppCard(
-                      color: context.textColor.withValues(alpha: 0.08),
-                      radius: AppRadius.xxl,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
-                        vertical: AppSpacing.xxs,
-                      ),
-                      showShadow: false,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.payments_outlined,
-                            color: context.textGreyColor,
-                            size: 12,
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Text(
-                            paymentMethodDisplay(context, paymentMethod),
-                            style: TextStyle(
-                              color: context.textGreyColor,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            if (alreadyOffered)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                  child: Text(
-                    AppLocalizations.of(context)!.offerSentAlreadyLabel,
-                    style: TextStyle(
-                      color: context.textGreyColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              )
-            else
               Row(
                 children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: onCustomOffer,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.md,
-                        ),
-                        side: const BorderSide(color: TayarColors.primary),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.sm),
+                  const Icon(Icons.location_on, color: TayarColors.primary, size: 16),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(child: Text(pickupAddress, style: textTheme.bodyMedium?.copyWith(color: context.textColor), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
+                child: Row(children: [const SizedBox(width: AppSpacing.sm), SizedBox(height: 14, child: VerticalDivider(color: TayarColors.divider, thickness: 2))]),
+              ),
+              Row(
+                children: [
+                  const Icon(Icons.flag, color: TayarColors.primary, size: 16),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(child: Text(destinationAddress, style: textTheme.bodyMedium?.copyWith(color: context.textColor), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(loc.distanceDurationLabel(distanceKm.toStringAsFixed(1), durationMin), style: textTheme.bodySmall?.copyWith(color: context.textGreyColor)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(loc.currencyEGP(proposedFare.toStringAsFixed(0)), style: textTheme.titleMedium?.copyWith(color: TayarColors.primary, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: AppSpacing.xxs),
+                      AppCard(
+                        color: context.textColor.withValues(alpha: 0.08),
+                        radius: AppRadius.xxl,
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+                        showShadow: false,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.payments_outlined, color: context.textGreyColor, size: 12),
+                            const SizedBox(width: AppSpacing.xs),
+                            Text(paymentMethodDisplay(context, paymentMethod), style: textTheme.labelSmall?.copyWith(color: context.textGreyColor)),
+                          ],
                         ),
                       ),
-                      child: Text(
-                        AppLocalizations.of(context)!.offerCustomButton,
-                        style: TextStyle(color: TayarColors.primary),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: AppPrimaryButton(
-                      onPressed: onQuickAccept,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: TayarColors.primary,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.md,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.sm),
-                        ),
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.acceptProposedPrice,
-                        style: TextStyle(color: context.onPrimaryColor),
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-          ],
+              const SizedBox(height: AppSpacing.md),
+              if (alreadyOffered)
+                Center(child: Padding(padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm), child: Text(loc.offerSentAlreadyLabel, style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor))))
+              else
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppPrimaryButton(
+                        onPressed: onCustomOffer,
+                        variant: AppButtonVariant.outline,
+                        size: AppButtonSize.medium,
+                        child: Text(loc.offerCustomButton, style: textTheme.labelLarge?.copyWith(color: TayarColors.primary)),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: AppPrimaryButton(
+                        onPressed: onQuickAccept,
+                        variant: AppButtonVariant.primary,
+                        size: AppButtonSize.medium,
+                        child: Text(loc.acceptProposedPrice, style: textTheme.labelLarge?.copyWith(color: context.onPrimaryColor)),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// ====== تنسيق موحّد لعرض ميعاد الرحلة المجدولة في واجهات السائق (كارت
-// الطلب، شاشة التفاصيل، كارت الرحلة النشطة) - نفس صيغة يوم/شهر - ساعة:دقيقة
-// المستخدمة في order_confirmation_screen.dart و searching_offers_screen.dart
-// بجانب الراكب ======
 String formatScheduledForDisplay(DateTime dt) {
-  return '${_twoDigits(dt.day)}/${_twoDigits(dt.month)} - '
-      '${_twoDigits(dt.hour)}:${_twoDigits(dt.minute)}';
+  return '${_twoDigits(dt.day)}/${_twoDigits(dt.month)} - ${_twoDigits(dt.hour)}:${_twoDigits(dt.minute)}';
 }
 
 String _twoDigits(int n) => n.toString().padLeft(2, '0');
