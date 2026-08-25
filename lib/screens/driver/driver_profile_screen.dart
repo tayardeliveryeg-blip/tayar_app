@@ -10,15 +10,10 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 import 'package:tayay_app/services/profile_photo_validator.dart';
 import 'package:tayay_app/screens/shared/profile_widgets.dart';
 import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
+import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 
-// ====================================================
-// ====== شاشة بروفايل الطيار: قابلة للتعديل ======
-// (الصورة، الاسم، تاريخ الميلاد، الموبايل، العنوان)
-// بيانات الموتوسيكل والمستندات مش موجودة هنا، بتتعدّل من
-// مكانها في تسجيل الطيار مش من هنا ======
-// ====================================================
 class DriverProfileScreen extends StatefulWidget {
   const DriverProfileScreen({super.key});
 
@@ -33,19 +28,13 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
 
-  // ====== الصورة الحالية المحفوظة كـ Base64 جوه مستند الطيار في Firestore ======
   String? _existingPhotoBase64;
-  // ====== الصورة الجديدة اللي المستخدم اختارها في الجلسة الحالية (لسه متحفظتش) ======
   Uint8List? _newPhotoBytes;
 
   bool _isLoading = true;
   bool _isSaving = false;
-  // ====== true أثناء تشغيل فحص الوجه على الصورة المختارة قبل قبولها ======
   bool _isCheckingPhoto = false;
 
-  // ====== بتتحط true بعد محاولة "حفظ" فاشلة والحقل المطلوب لسه فاضي،
-  // عشان نعرض إطار أحمر حواليه — وبترجع false تلقائيًا أول ما المستخدم
-  // يكتب فيه حاجة ======
   bool _firstNameError = false;
   bool _lastNameError = false;
 
@@ -71,7 +60,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     }
   }
 
-  // ====== تحميل بيانات الطيار الحالية عشان الحقول تظهر معمورة، مش فاضية ======
   Future<void> _loadProfile() async {
     if (_uid == null) return;
     try {
@@ -96,29 +84,31 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     }
   }
 
-  // ====== بوتوم شيت بسيط يسيب المستخدم يختار هيجيب الصورة منين:
-  // من معرض الصور، أو يفتح الكاميرا مباشرة ويلتقط صورة جديدة ======
+  // Specialized sheet: اختيار مصدر الصورة له سلوك خاص، لذلك لا نُجبره على
+  // Generic BottomSheet component.
   Future<void> _showPhotoSourceSheet() async {
     final l10n = AppLocalizations.of(context)!;
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
       backgroundColor: context.cardColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.xxl),
+        ),
       ),
       builder: (sheetContext) {
         return SafeArea(
           child: Wrap(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                 child: Center(
                   child: Text(
                     l10n.choosePhotoSourceTitle,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: sheetContext.textColor,
-                    ),
+                    style: Theme.of(sheetContext).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: sheetContext.textColor,
+                        ),
                   ),
                 ),
               ),
@@ -129,7 +119,9 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                 ),
                 title: Text(
                   l10n.chooseFromGalleryLabel,
-                  style: TextStyle(color: sheetContext.textColor),
+                  style: Theme.of(sheetContext).textTheme.bodyLarge?.copyWith(
+                        color: sheetContext.textColor,
+                      ),
                 ),
                 onTap: () =>
                     Navigator.of(sheetContext).pop(ImageSource.gallery),
@@ -141,7 +133,9 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                 ),
                 title: Text(
                   l10n.takePhotoLabel,
-                  style: TextStyle(color: sheetContext.textColor),
+                  style: Theme.of(sheetContext).textTheme.bodyLarge?.copyWith(
+                        color: sheetContext.textColor,
+                      ),
                 ),
                 onTap: () => Navigator.of(sheetContext).pop(ImageSource.camera),
               ),
@@ -166,8 +160,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     if (file == null) return;
     final bytes = await file.readAsBytes();
 
-    // ====== قبل قبول الصورة، نتأكد إنها صورة وجه قريبة وواضحة زي متطلبات
-    // التحقق الأمني (نفس فكرة InDrive)، وده بيشتغل على الموبايل بس ======
     setState(() => _isCheckingPhoto = true);
     final result = await ProfilePhotoValidator.validate(
       imagePath: file.path,
@@ -181,8 +173,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       return;
     }
 
-    // ====== الصورة عدّت فحص الوجه، دلوقتي نسيب المستخدم يكبّر/يصغّر
-    // ويظبط الصورة جوه دائرة القص قبل ما تتحفظ فعليًا ======
     if (!mounted) return;
     final editedBytes = await Navigator.of(context).push<Uint8List>(
       MaterialPageRoute(
@@ -196,9 +186,16 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
   }
 
   Future<void> _pickDate() async {
+    DateTime initial = DateTime(2000);
+    final saved = _birthDateController.text.trim();
+    if (saved.isNotEmpty) {
+      final parsed = DateTime.tryParse(saved);
+      if (parsed != null) initial = parsed;
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000),
+      initialDate: initial,
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
@@ -208,14 +205,8 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     }
   }
 
-  // ====== الحد الأقصى لحجم أي مستند في Firestore حوالي 1 ميجابايت، فبنسيب
-  // هامش أمان كويس ونرفض أي صورة الـ base64 بتاعها هيتعدى 700 كيلوبايت
-  // (الحجم الأصلي للصورة بيكبر ~33% لما يتحول Base64) ======
   static const int _maxBase64Length = 700 * 1024;
 
-  // ====== لو المستخدم اختار صورة جديدة، نحوّلها Base64 عشان تتحفظ جوه
-  // مستند الطيار مباشرة في Firestore (بدون Storage)؛ لو مفيش صورة جديدة
-  // نسيب القديمة زي ما هي ======
   String? _encodePhotoIfNeeded() {
     if (_newPhotoBytes == null) return _existingPhotoBase64;
     return base64Encode(_newPhotoBytes!);
@@ -250,7 +241,10 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
           AppLocalizations.of(context)!.photoTooLargeError,
           type: ToastType.error,
         );
-        setState(() => _isSaving = false);
+        setState(() {
+          _newPhotoBytes = null;
+          _isSaving = false;
+        });
         return;
       }
 
@@ -301,6 +295,8 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       backgroundColor: context.bgColor,
       appBar: AppBar(
@@ -309,7 +305,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
         iconTheme: IconThemeData(color: context.textColor),
         title: Text(
           AppLocalizations.of(context)!.navProfile,
-          style: TextStyle(color: context.textColor),
+          style: textTheme.titleLarge?.copyWith(color: context.textColor),
         ),
       ),
       body: _isLoading
@@ -317,7 +313,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
               child: CircularProgressIndicator(color: TayarColors.primary),
             )
           : Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -336,17 +332,16 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         ),
                         Center(
                           child: Padding(
-                            padding: const EdgeInsets.only(top: 8),
+                            padding: const EdgeInsets.only(top: AppSpacing.sm),
                             child: Text(
                               AppLocalizations.of(context)!.changePhotoLabel,
-                              style: TextStyle(
+                              style: textTheme.bodySmall?.copyWith(
                                 color: context.textGreyColor,
-                                fontSize: 12,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppSpacing.xxl),
                         ProfileTextField(
                           controller: _firstNameController,
                           hint: AppLocalizations.of(context)!.firstNameHint,
@@ -378,33 +373,17 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 54,
-                    child: AppPrimaryButton(
-                      onPressed: _isSaving ? null : _save,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: TayarColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
+                  AppPrimaryButton(
+                    onPressed: _isSaving ? null : _save,
+                    variant: AppButtonVariant.primary,
+                    size: AppButtonSize.medium,
+                    isLoading: _isSaving,
+                    child: Text(
+                      AppLocalizations.of(context)!.saveButton,
+                      style: textTheme.labelLarge?.copyWith(
+                        color: context.onPrimaryColor,
+                        fontWeight: FontWeight.bold,
                       ),
-                      child: _isSaving
-                          ? SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                color: context.onPrimaryColor,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Text(
-                              AppLocalizations.of(context)!.saveButton,
-                              style: TextStyle(
-                                color: context.textColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                     ),
                   ),
                 ],
