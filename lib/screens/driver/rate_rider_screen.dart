@@ -103,9 +103,7 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
   Future<void> _finish({bool showThanks = false}) async {
     final loc = AppLocalizations.of(context)!;
     if (showThanks) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.thankYouForRatingLabel)));
+      TayarToast.show(context, loc.thankYouForRatingLabel, type: ToastType.success);
       await Future.delayed(const Duration(milliseconds: 600));
     }
     if (!mounted) return;

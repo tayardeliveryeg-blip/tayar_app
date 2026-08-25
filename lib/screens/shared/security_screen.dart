@@ -256,9 +256,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
     if (!reauthenticated) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
+      TayarToast.show(
         context,
-      ).showSnackBar(SnackBar(content: Text(loc.reauthRequiredForDeleteError)));
+        loc.reauthRequiredForDeleteError,
+        type: ToastType.error,
+      );
       return;
     }
 

@@ -299,15 +299,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             await navigateAfterAuth(ctx, isNewUser: isNewUser);
                           },
                           onError: (ctx, e) {
-                            ScaffoldMessenger.of(ctx).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppLocalizations.of(
-                                    ctx,
-                                  )!.signInFailedError(e.toString()),
-                                ),
-                                backgroundColor: Colors.red,
-                              ),
+                            TayarToast.show(
+                              ctx,
+                              AppLocalizations.of(
+                                ctx,
+                              )!.signInFailedError(e.toString()),
+                              type: ToastType.error,
                             );
                           },
                         ),

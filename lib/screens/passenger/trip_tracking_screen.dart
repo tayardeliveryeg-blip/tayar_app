@@ -224,7 +224,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
     }
   }
 
-  // ====== إشعار داخل التطبيق (SnackBar + اهتزاز خفيف) لحظة وصول الطيار
+  // ====== إشعار داخل التطبيق (TayarToast + اهتزاز خفيف) لحظة وصول الطيار
   // لنقطة الانطلاق. إشعار داخلي بس (مش push)، فبيشتغل وقت ما الشاشة مفتوحة ======
   void _notifyDriverArrivedAtPickup() {
     HapticFeedback.mediumImpact();

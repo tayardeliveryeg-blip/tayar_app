@@ -13,6 +13,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 import 'package:tayay_app/screens/passenger/select_destination_screen.dart'
     show SelectDestinationScreen, PlaceResult;
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
+import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/screens/passenger/searching_offers/searching_offers_screen_screen.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/location_pick_row.dart';
@@ -194,9 +195,7 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
   Future<void> _saveOrder() async {
     final loc = AppLocalizations.of(context)!;
     if (!_canSubmit) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.fillAllFieldsError)));
+      TayarToast.show(context, loc.fillAllFieldsError, type: ToastType.warning);
       return;
     }
 
@@ -263,9 +262,7 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
       debugPrint('❌ خطأ في حفظ طلب التوصيل: $e');
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(loc.submitFailedError)));
+      TayarToast.show(context, loc.submitFailedError, type: ToastType.error);
     }
   }
 

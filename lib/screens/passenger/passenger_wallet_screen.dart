@@ -244,14 +244,10 @@ class PassengerWalletScreen extends StatelessWidget {
                                         Clipboard.setData(
                                           ClipboardData(text: code),
                                         );
-                                        ScaffoldMessenger.of(
+                                        TayarToast.show(
                                           context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              loc.referralCodeCopiedMessage,
-                                            ),
-                                          ),
+                                          loc.referralCodeCopiedMessage,
+                                          type: ToastType.success,
                                         );
                                       },
                                     ),
