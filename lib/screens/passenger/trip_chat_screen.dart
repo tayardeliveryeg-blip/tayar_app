@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
 import 'package:tayay_app/theme/theme_extensions.dart' show AppSpacing, AppRadius;
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 /// ====== شاشة المحادثة بين الراكب والطيار ======
 /// بتتفعّل بعد قبول الطلب من الطرفين، وبتستخدم subcollection
@@ -155,12 +156,10 @@ class _TripChatScreenState extends State<TripChatScreen> {
       debugPrint('❌ خطأ في إرسال الرسالة: $e');
       if (quickText == null) _controller.text = text;
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${AppLocalizations.of(context)!.chatErrorLoadingMessages}: $e',
-            ),
-          ),
+        TayarToast.show(
+          context,
+          '${AppLocalizations.of(context)!.chatErrorLoadingMessages}: $e',
+          type: ToastType.error,
         );
       }
     } finally {

@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/order_request_card.
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/cancellation_reason_sheet.dart';
 import 'package:tayay_app/services/cancellation_service.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====================================================
 // ====== شاشة "الرحلات المجدولة": بتعرض بس رحلات الراكب المحجوزة
@@ -61,22 +62,16 @@ class ScheduledRidesScreen extends StatelessWidget {
         feeAmount: quote.amount,
       );
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            quote.hasFee
-                ? loc.cancellationFeeChargedSnackbar(
-                    quote.amount.toStringAsFixed(0),
-                  )
-                : loc.scheduledRideCancelledSuccess,
-          ),
-        ),
+      TayarToast.show(
+        context,
+        quote.hasFee
+            ? loc.cancellationFeeChargedSnackbar(quote.amount.toStringAsFixed(0))
+            : loc.scheduledRideCancelledSuccess,
+        type: quote.hasFee ? ToastType.warning : ToastType.success,
       );
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.genericErrorTryAgain)),
-      );
+      TayarToast.show(context, loc.genericErrorTryAgain, type: ToastType.error);
     }
   }
 

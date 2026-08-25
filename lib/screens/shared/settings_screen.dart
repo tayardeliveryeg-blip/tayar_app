@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/main.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====== شاشة الإعدادات: اللغة، الإشعارات، ونبذة عن التطبيق ======
 class SettingsScreen extends StatefulWidget {
@@ -64,10 +65,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final uri = Uri.parse(url);
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.failedToOpenAppError,
+        type: ToastType.error,
       );
     }
   }

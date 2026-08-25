@@ -18,6 +18,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/sos_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====== شاشة الأمان: قفل التطبيق برقم سري + عرض وسيلة تسجيل الدخول + حذف
 // الحساب + جهة اتصال الطوارئ. شاشة مشتركة بين الراكب والطيار - isDriver
@@ -67,10 +68,10 @@ class _SecurityScreenState extends State<SecurityScreen> {
     try {
       await SosService.setEmergencyContact(_userRole, phone);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.savedSuccessfully),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.savedSuccessfully,
+        type: ToastType.success,
       );
     } finally {
       if (mounted) setState(() => _savingEmergencyContact = false);
@@ -454,14 +455,12 @@ class _SecurityScreenState extends State<SecurityScreen> {
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       if (e.code == 'requires-recent-login') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(loc.reauthRequiredForDeleteError)),
-        );
+        TayarToast.show(context, loc.reauthRequiredForDeleteError, type: ToastType.error);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(loc.errorOccurredWithMessage(e.message ?? '')),
-          ),
+        TayarToast.show(
+          context,
+          loc.errorOccurredWithMessage(e.message ?? ''),
+          type: ToastType.error,
         );
       }
     }

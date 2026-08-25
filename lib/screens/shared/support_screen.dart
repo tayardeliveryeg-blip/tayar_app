@@ -11,6 +11,7 @@ import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====== تصنيفات الشكوى الثابتة - نفس القيم بالظبط لازم تتطابق مع
 // الـ allow list في firestore.rules (match /support_tickets/{ticketId})
@@ -75,10 +76,10 @@ class _SupportScreenState extends State<SupportScreen> {
   Future<void> _launch(Uri uri) async {
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.failedToOpenAppError,
+        type: ToastType.error,
       );
     }
   }
@@ -125,19 +126,17 @@ class _SupportScreenState extends State<SupportScreen> {
       });
       _messageController.clear();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.supportMessageSentConfirmation,
-          ),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.supportMessageSentConfirmation,
+        type: ToastType.success,
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.genericErrorTryAgain),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.genericErrorTryAgain,
+        type: ToastType.error,
       );
     } finally {
       if (mounted) setState(() => _sending = false);

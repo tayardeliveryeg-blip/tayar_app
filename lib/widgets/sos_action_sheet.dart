@@ -6,6 +6,7 @@ import 'package:tayay_app/screens/shared/security_screen.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/sos_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 const String _kEgyptPoliceNumber = '122';
 
@@ -43,10 +44,10 @@ Future<void> showSosActionSheet(
 Future<void> _launch(BuildContext context, Uri uri) async {
   final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
   if (!ok && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
-      ),
+    TayarToast.show(
+      context,
+      AppLocalizations.of(context)!.failedToOpenAppError,
+      type: ToastType.error,
     );
   }
 }

@@ -11,6 +11,7 @@ import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/services/vendor_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 /// ====== شاشة فورم "عايز تبقى شريك تجاري معانا؟" ======
 /// فورم خفيف بخمس حقول: اسم المحل، نوع النشاط (Dropdown)، رقم موبايل/واتساب،
@@ -117,9 +118,7 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
   Future<void> _submit() async {
     final loc = AppLocalizations.of(context)!;
     if (!_canSubmit) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.vendorFillRequiredFieldsError)),
-      );
+      TayarToast.show(context, loc.vendorFillRequiredFieldsError, type: ToastType.warning);
       return;
     }
 
@@ -166,9 +165,7 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
       debugPrint('❌ خطأ في إرسال طلب انضمام التاجر: $e');
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.vendorSubmitFailedError)),
-      );
+      TayarToast.show(context, loc.vendorSubmitFailedError, type: ToastType.error);
     }
   }
 

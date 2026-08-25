@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====== صف "البيت" و"الشغل": بيسمعوا على users/{uid}.savedAddresses على
 // فيرستور لايف. لو المكان لسه مش محفوظ، دوسة عليه بتفتح شاشة اختيار
@@ -210,9 +211,7 @@ class SavedPlacesRow extends StatelessWidget {
         'savedAddresses.$key': FieldValue.delete(),
       });
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.savedPlaceRemovedConfirmation)),
-      );
+      TayarToast.show(context, loc.savedPlaceRemovedConfirmation, type: ToastType.success);
     } catch (e) {
       debugPrint('❌ خطأ في حذف مكان محفوظ مخصص ($key): $e');
     }

@@ -4,6 +4,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====== نسخة الشروط والأحكام الحالية. أي تعديل جوهري في نص الشروط
 // المفروض يترفق بزيادة الرقم ده، عشان لو حبينا مستقبلًا نجبر المستخدمين
@@ -41,10 +42,10 @@ class TermsAcceptanceCheckbox extends StatelessWidget {
     final uri = Uri.parse(url);
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.failedToOpenAppError,
+        type: ToastType.error,
       );
     }
   }
