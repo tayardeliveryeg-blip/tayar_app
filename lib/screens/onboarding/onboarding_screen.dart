@@ -3,6 +3,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/screens/auth/login_screen.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -19,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingPageData(
       icon: Icons.two_wheeler,
       title: 'أرخص وأسرع في الزحمة',
-      subtitle: 'وصل لأي مكان بالموتوسيكل بأقل سعر وفي أقل وقت',
+      subtitle: 'وصل لأي مكان بالدراجة بأقل سعر وفي أقل وقت',
       color: const Color(0xFFFF6B00),
     ),
     _OnboardingPageData(
@@ -65,13 +66,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1A1A1A) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
-
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: context.bgColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -100,7 +96,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _pageController,
                 onPageChanged: (index) => setState(() => _currentPage = index),
                 itemCount: _pages.length,
-                itemBuilder: (context, index) => _buildPage(_pages[index], textColor),
+                itemBuilder: (context, index) =>
+                    _buildPage(_pages[index], context.textColor),
               ),
             ),
 
@@ -117,7 +114,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       dotWidth: 10,
                       dotHeight: 10,
                       activeDotColor: TayarColors.primary,
-                      dotColor: isDark ? Colors.white24 : Colors.black12,
+                      dotColor: context.dividerColor2,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -125,17 +122,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   // Next / Start button
                   SizedBox(
                     width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
+                    child: AppPrimaryButton(
                       onPressed: _onNext,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: TayarColors.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
+                      variant: AppButtonVariant.primary,
+                      size: AppButtonSize.large,
                       child: Text(
                         _currentPage < _pages.length - 1 ? 'التالي' : 'ابدأ الآن',
                         style: const TextStyle(
