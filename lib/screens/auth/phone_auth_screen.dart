@@ -7,6 +7,7 @@ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' sho
 import 'package:tayay_app/theme/theme_extensions.dart' show AppSpacing, AppRadius;
 import 'package:tayay_app/helpers/auth_flow_helpers.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====================================================
 // ====== شاشة إدخال رقم الموبايل ======
@@ -76,9 +77,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
+    TayarToast.show(context, message, type: ToastType.error);
   }
 
   @override
@@ -414,12 +413,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           _resendToken = resendToken;
         });
         _startResendTimer();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.codeResentMessage),
-            backgroundColor: TayarColors.primary,
-          ),
-        );
+        TayarToast.show(context, l10n.codeResentMessage, type: ToastType.success);
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         _verificationId = verificationId;
@@ -428,9 +422,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
+    TayarToast.show(context, message, type: ToastType.error);
   }
 
   // ====== خانة رقم واحدة من خانات الكود ======

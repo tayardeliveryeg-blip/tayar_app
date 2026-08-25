@@ -7,6 +7,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, PassengerHomeScreen;
 import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====================================================
 // ====== شاشة استكمال بيانات الراكب بعد أول تسجيل دخول ======
@@ -99,9 +100,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-      );
+      TayarToast.show(context, e.toString(), type: ToastType.error);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

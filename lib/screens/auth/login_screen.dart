@@ -15,6 +15,7 @@ import 'package:tayay_app/helpers/auth_flow_helpers.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/google_signin_web_button_stub.dart'
     if (dart.library.js_interop) 'package:tayay_app/widgets/google_signin_web_button_web.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====================================================
 // ====== شاشة تسجيل الدخول: جوجل + الموبايل بس ======
@@ -46,10 +47,10 @@ class _LoginScreenState extends State<LoginScreen> {
     final uri = Uri.parse(url);
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToOpenAppError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.failedToOpenAppError,
+        type: ToastType.error,
       );
     }
   }
@@ -115,24 +116,18 @@ class _LoginScreenState extends State<LoginScreen> {
       // ====== المستخدم لغى العملية بنفسه، مش لازم نظهرله رسالة خطأ ======
       if (e.code == GoogleSignInExceptionCode.canceled) return;
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.signInFailedError(e.toString()),
-            ),
-            backgroundColor: Colors.red,
-          ),
+        TayarToast.show(
+          context,
+          AppLocalizations.of(context)!.signInFailedError(e.toString()),
+          type: ToastType.error,
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.signInFailedError(e.toString()),
-            ),
-            backgroundColor: Colors.red,
-          ),
+        TayarToast.show(
+          context,
+          AppLocalizations.of(context)!.signInFailedError(e.toString()),
+          type: ToastType.error,
         );
       }
     }
@@ -181,26 +176,18 @@ class _LoginScreenState extends State<LoginScreen> {
       // ====== المستخدم لغى العملية بنفسه، مش لازم نظهرله رسالة خطأ ======
       if (e.code == AuthorizationErrorCode.canceled) return;
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(
-                context,
-              )!.signInWithAppleFailedError(e.message.toString()),
-            ),
-            backgroundColor: Colors.red,
-          ),
+        TayarToast.show(
+          context,
+          AppLocalizations.of(context)!.signInWithAppleFailedError(e.message.toString()),
+          type: ToastType.error,
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.signInFailedError(e.toString()),
-            ),
-            backgroundColor: Colors.red,
-          ),
+        TayarToast.show(
+          context,
+          AppLocalizations.of(context)!.signInFailedError(e.toString()),
+          type: ToastType.error,
         );
       }
     }

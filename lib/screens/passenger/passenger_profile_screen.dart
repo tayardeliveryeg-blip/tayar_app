@@ -11,6 +11,7 @@ import 'package:tayay_app/services/profile_photo_validator.dart';
 import 'package:tayay_app/screens/shared/profile_widgets.dart';
 import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====================================================
 // ====== شاشة بروفايل الراكب: قابلة للتعديل ======
@@ -176,12 +177,7 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
     setState(() => _isCheckingPhoto = false);
 
     if (!result.isValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.errorMessageAr!),
-          backgroundColor: Colors.red,
-        ),
-      );
+      TayarToast.show(context, result.errorMessageAr!, type: ToastType.error);
       return;
     }
 
@@ -244,10 +240,10 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
         _firstNameError = firstNameEmpty;
         _lastNameError = lastNameEmpty;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.fullNameRequiredError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.fullNameRequiredError,
+        type: ToastType.warning,
       );
       return;
     }
@@ -258,10 +254,10 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
     final phone = _phoneController.text.trim();
     final egyptianPhoneRegex = RegExp(r'^01[0125][0-9]{8}$');
     if (phone.isNotEmpty && !egyptianPhoneRegex.hasMatch(phone)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.invalidPhoneNumberError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.invalidPhoneNumberError,
+        type: ToastType.warning,
       );
       return;
     }
@@ -272,10 +268,10 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
 
       if (photoBase64 != null && photoBase64.length > _maxBase64Length) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.photoTooLargeError),
-          ),
+        TayarToast.show(
+          context,
+          AppLocalizations.of(context)!.photoTooLargeError,
+          type: ToastType.error,
         );
         // ====== نشيل الصورة الكبيرة من الذاكرة عشان المستخدم يضطر يختار
         // صورة تانية بدل ما يفضل عالق يدوس Save على نفس الصورة المرفوضة ======
@@ -300,17 +296,19 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
       }, SetOptions(merge: true));
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.profileUpdatedSuccess),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.profileUpdatedSuccess,
+        type: ToastType.success,
       );
       Navigator.pop(context);
     } catch (e) {
       debugPrint('❌ خطأ في حفظ البروفايل: $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.saveFailedError,
+        type: ToastType.error,
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);

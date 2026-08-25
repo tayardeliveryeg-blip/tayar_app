@@ -11,6 +11,7 @@ import 'package:tayay_app/services/profile_photo_validator.dart';
 import 'package:tayay_app/screens/shared/profile_widgets.dart';
 import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 
 // ====================================================
 // ====== شاشة بروفايل الطيار: قابلة للتعديل ======
@@ -176,12 +177,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     setState(() => _isCheckingPhoto = false);
 
     if (!result.isValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.errorMessageAr!),
-          backgroundColor: Colors.red,
-        ),
-      );
+      TayarToast.show(context, result.errorMessageAr!, type: ToastType.error);
       return;
     }
 
@@ -235,10 +231,10 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
         _firstNameError = firstNameEmpty;
         _lastNameError = lastNameEmpty;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.fullNameRequiredError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.fullNameRequiredError,
+        type: ToastType.warning,
       );
       return;
     }
@@ -249,10 +245,10 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
 
       if (photoBase64 != null && photoBase64.length > _maxBase64Length) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.photoTooLargeError),
-          ),
+        TayarToast.show(
+          context,
+          AppLocalizations.of(context)!.photoTooLargeError,
+          type: ToastType.error,
         );
         setState(() => _isSaving = false);
         return;
@@ -272,17 +268,19 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       }, SetOptions(merge: true));
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.profileUpdatedSuccess),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.profileUpdatedSuccess,
+        type: ToastType.success,
       );
       Navigator.pop(context);
     } catch (e) {
       debugPrint('❌ خطأ في حفظ البروفايل: $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.saveFailedError,
+        type: ToastType.error,
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);
