@@ -13,6 +13,7 @@ import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 class DriverRegistrationScreen extends StatefulWidget {
   const DriverRegistrationScreen({super.key});
 
@@ -138,10 +139,10 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
     } catch (e) {
       debugPrint('❌ خطأ في إرسال طلب التسجيل: $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.submitFailedError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.submitFailedError,
+        type: ToastType.error,
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);

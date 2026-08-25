@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
 import 'package:tayay_app/services/driver_document_upload_service.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 class BikeInfoScreen extends StatefulWidget {
   const BikeInfoScreen({super.key});
 
@@ -92,10 +93,10 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
         _brandError = brandEmpty;
         _plateError = plateEmpty;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.bikeInfoRequiredError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.bikeInfoRequiredError,
+        type: ToastType.warning,
       );
       return;
     }
@@ -134,8 +135,10 @@ class _BikeInfoScreenState extends State<BikeInfoScreen> {
     } catch (e) {
       debugPrint('❌ خطأ في حفظ معلومات الموتوسيكل: $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.saveFailedError,
+        type: ToastType.error,
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
 import 'package:tayay_app/services/driver_document_upload_service.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 class DrivingLicenseScreen extends StatefulWidget {
   const DrivingLicenseScreen({super.key});
 
@@ -81,12 +82,10 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
         _licensePhotoError = licensePhotoMissing;
         _expiryError = expiryEmpty;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.licensePhotoUploadRequired,
-          ),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.licensePhotoUploadRequired,
+        type: ToastType.warning,
       );
       return;
     }
@@ -111,8 +110,10 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
     } catch (e) {
       debugPrint('❌ خطأ في حفظ رخصة القيادة: $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.saveFailedError,
+        type: ToastType.error,
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);

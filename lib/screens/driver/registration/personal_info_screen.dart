@@ -10,6 +10,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/driver_invite_link_helper.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
 import 'package:tayay_app/services/driver_document_upload_service.dart';
+import 'package:tayay_app/widgets/tayar_toast.dart';
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key});
 
@@ -175,10 +176,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         _firstNameError = firstNameEmpty;
         _lastNameError = lastNameEmpty;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.fullNameRequiredError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.fullNameRequiredError,
+        type: ToastType.warning,
       );
       return;
     }
@@ -186,10 +187,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     final normalizedMobile = normalizeEgyptPhone(mobile);
     if (normalizedMobile == null || normalizedMobile.length < 9) {
       setState(() => _mobileError = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.phoneNumberFormatError),
-        ),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.phoneNumberFormatError,
+        type: ToastType.warning,
       );
       return;
     }
@@ -248,8 +249,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     } catch (e) {
       debugPrint('❌ خطأ في حفظ المعلومات الشخصية: $e');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.saveFailedError)),
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.saveFailedError,
+        type: ToastType.error,
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);
