@@ -6,8 +6,6 @@ import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 
-// ====== تبويب "محفظتي": الرصيد الصافي بعد عمولة الشركة + سجل الحركات ======
-// (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
 class DriverWalletTab extends StatelessWidget {
   final String driverId;
   const DriverWalletTab({super.key, required this.driverId});
@@ -15,151 +13,65 @@ class DriverWalletTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      stream: FirebaseFirestore.instance
-          .collection('drivers')
-          .doc(driverId)
-          .snapshots(),
+      stream: FirebaseFirestore.instance.collection('drivers').doc(driverId).snapshots(),
       builder: (context, driverSnapshot) {
-        final balance =
-            (driverSnapshot.data?.data()?['walletBalance'] as num?)
-                ?.toDouble() ??
-            0;
+        final balance = (driverSnapshot.data?.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
         final isNegative = balance < 0;
-
+        final balanceColor = isNegative ? TayarColors.error : TayarColors.primary;
         return ListView(
           padding: const EdgeInsets.all(AppSpacing.xl),
           children: [
-            // ====== كارت الرصيد الحالي ======
-            Container(
+            AppCard(
+              radius: AppRadius.xxl,
               padding: const EdgeInsets.all(AppSpacing.xxl),
-              decoration: BoxDecoration(
-                color: (isNegative ? TayarColors.error : TayarColors.primary)
-                    .withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppRadius.xxl),
-                border: Border.all(
-                  color: (isNegative ? TayarColors.error : TayarColors.primary)
-                      .withValues(alpha: 0.4),
-                ),
-              ),
+              showShadow: false,
+              color: balanceColor.withValues(alpha: 0.12),
+              border: Border.all(color: balanceColor.withValues(alpha: 0.4)),
               child: Column(
                 children: [
-                  Text(
-                    loc.availableBalance,
-                    style: TextStyle(
-                      color: context.textGreyColor,
-                      fontSize: 14,
-                    ),
-                  ),
+                  Text(loc.availableBalance, style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor)),
                   const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    loc.currencyEGP(balance.toStringAsFixed(0)),
-                    style: TayarStatTextStyles.statMedium.copyWith(
-                      color: isNegative
-                          ? TayarColors.error
-                          : TayarColors.primary,
-                    ),
-                  ),
+                  Text(loc.currencyEGP(balance.toStringAsFixed(0)), style: TayarStatTextStyles.statMedium.copyWith(color: balanceColor)),
                   if (isNegative) ...[
                     const SizedBox(height: AppSpacing.md),
-                    Text(
-                      loc.negativeWalletBalanceNote,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: TayarColors.error, fontSize: 12),
-                    ),
+                    Text(loc.negativeWalletBalanceNote, textAlign: TextAlign.center, style: textTheme.bodySmall?.copyWith(color: TayarColors.error)),
                   ],
                 ],
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-
-            // ====== زرار شحن المحفظة ======
-            SizedBox(
-              height: 50,
-              child: AppPrimaryButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TayarColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const DriverWalletTopupScreen(),
-                    ),
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add_card_outlined,
-                      color: context.onPrimaryColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      loc.topUpWalletButton,
-                      style: TextStyle(
-                        color: context.onPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+            AppPrimaryButton(
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DriverWalletTopupScreen())),
+              variant: AppButtonVariant.primary,
+              size: AppButtonSize.medium,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_card_outlined, color: context.onPrimaryColor),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text(loc.topUpWalletButton, style: textTheme.labelLarge?.copyWith(color: context.onPrimaryColor, fontWeight: FontWeight.bold)),
+                ],
               ),
             ),
             const SizedBox(height: AppSpacing.xxl),
-
-            // ====== سجل المعاملات ======
-            Text(
-              loc.walletTransactionsTitle,
-              style: TextStyle(
-                color: context.textColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text(loc.walletTransactionsTitle, style: textTheme.titleMedium?.copyWith(color: context.textColor, fontWeight: FontWeight.bold)),
             const SizedBox(height: AppSpacing.md),
             StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              stream: FirebaseFirestore.instance
-                  .collection('drivers')
-                  .doc(driverId)
-                  .collection('walletTransactions')
-                  .orderBy('createdAt', descending: true)
-                  .limit(50)
-                  .snapshots(),
+              stream: FirebaseFirestore.instance.collection('drivers').doc(driverId).collection('walletTransactions').orderBy('createdAt', descending: true).limit(50).snapshots(),
               builder: (context, txnSnapshot) {
                 if (!txnSnapshot.hasData) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                      child: CircularProgressIndicator(
-                        color: TayarColors.primary,
-                      ),
-                    ),
-                  );
+                  return const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: AppSpacing.xl), child: CircularProgressIndicator(color: TayarColors.primary)));
                 }
                 final docs = txnSnapshot.data!.docs;
                 if (docs.isEmpty) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.xl,
-                    ),
-                    child: Center(
-                      child: Text(
-                        loc.noWalletTransactionsLabel,
-                        style: TextStyle(color: context.textGreyColor),
-                      ),
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                    child: Center(child: Text(loc.noWalletTransactionsLabel, style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor))),
                   );
                 }
-                return Column(
-                  children: docs
-                      .map((doc) => WalletTransactionTile(data: doc.data()))
-                      .toList(),
-                );
+                return Column(children: docs.map((doc) => WalletTransactionTile(data: doc.data())).toList());
               },
             ),
           ],
@@ -169,7 +81,6 @@ class DriverWalletTab extends StatelessWidget {
   }
 }
 
-// ====== سطر واحد في سجل معاملات المحفظة (عمولة رحلة أو طلب شحن) ======
 class WalletTransactionTile extends StatelessWidget {
   final Map<String, dynamic> data;
   const WalletTransactionTile({super.key, required this.data});
@@ -177,15 +88,14 @@ class WalletTransactionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     final type = data['type'] as String? ?? '';
     final status = data['status'] as String? ?? '';
     final amount = (data['amount'] as num?)?.toDouble() ?? 0;
-
+    final rejectionReason = data['rejectionReason'] as String?;
     late final String label;
     late final IconData icon;
     late final Color color;
-    final rejectionReason = data['rejectionReason'] as String?;
-
     if (type == 'commission') {
       label = loc.walletCommissionTransactionLabel;
       icon = Icons.percent;
@@ -203,14 +113,10 @@ class WalletTransactionTile extends StatelessWidget {
       icon = Icons.hourglass_top_outlined;
       color = TayarColors.warning;
     }
-
-    final displayAmount = type == 'commission'
-        ? amount // من الأساس بالسالب في الداتا
-        : amount.abs();
+    final displayAmount = type == 'commission' ? amount : amount.abs();
     final sign = displayAmount < 0 || type == 'commission' ? '' : '+';
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: AppCard(
         radius: AppRadius.xl,
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -222,35 +128,15 @@ class WalletTransactionTile extends StatelessWidget {
               children: [
                 Icon(icon, color: color, size: 22),
                 const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(color: context.textColor, fontSize: 14),
-                  ),
-                ),
-                Text(
-                  '$sign${loc.currencyEGP(displayAmount.abs().toStringAsFixed(0))}',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Expanded(child: Text(label, style: textTheme.bodyMedium?.copyWith(color: context.textColor))),
+                Text('$sign${loc.currencyEGP(displayAmount.abs().toStringAsFixed(0))}', style: textTheme.bodyMedium?.copyWith(color: color, fontWeight: FontWeight.bold)),
               ],
             ),
-            // ====== سبب الرفض (لو الأدمن كتبه وقت المراجعة) - مضاف تحت
-            // السطر الأساسي عشان الطيار يعرف يصلّح إيه في المرة الجاية
-            // من غير ما يضطر يتواصل مع الدعم ======
-            if (status == 'rejected' &&
-                rejectionReason != null &&
-                rejectionReason.isNotEmpty) ...[
-              const SizedBox(height: 6),
+            if (status == 'rejected' && rejectionReason != null && rejectionReason.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xs),
               Padding(
-                padding: const EdgeInsets.only(right: 34),
-                child: Text(
-                  rejectionReason,
-                  style: TextStyle(color: context.textGreyColor, fontSize: 12),
-                ),
+                padding: const EdgeInsets.only(right: AppSpacing.xxl),
+                child: Text(rejectionReason, style: textTheme.bodySmall?.copyWith(color: context.textGreyColor)),
               ),
             ],
           ],
@@ -259,4 +145,3 @@ class WalletTransactionTile extends StatelessWidget {
     );
   }
 }
-
