@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/offer_sheet.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/active_trip_card.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/trip_request_detail_screen.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== دالة مساعدة موحّدة لاستخراج GeoPoint من حقول الموقع ======
 // (نسخة مستقلة بتخدم التبويب ده بس، النسخة الأصلية لسه موجودة في
@@ -173,10 +174,9 @@ class DriverRequestsTab extends StatelessWidget {
                       );
                     }
                     if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: TayarColors.primary,
-                        ),
+                      return Padding(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        child: TayarShimmer.list(count: 3),
                       );
                     }
 
