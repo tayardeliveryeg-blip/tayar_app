@@ -3,15 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors;
 import 'package:tayay_app/theme/theme_extensions.dart' show AppSpacing, AppRadius;
 import 'package:tayay_app/helpers/auth_flow_helpers.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 
-// ====================================================
-// ====== شاشة إدخال رقم الموبايل ======
-// ====================================================
 class PhoneAuthScreen extends StatefulWidget {
   const PhoneAuthScreen({super.key});
 
@@ -31,8 +28,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
     }
 
     setState(() => _isLoading = true);
-
-    // تحويل الرقم المصري لصيغة دولية (+20)
     String formattedPhone = phone;
     if (formattedPhone.startsWith('0')) {
       formattedPhone = formattedPhone.substring(1);
@@ -43,24 +38,19 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       phoneNumber: formattedPhone,
       timeout: const Duration(seconds: 60),
       verificationCompleted: (PhoneAuthCredential credential) async {
-        final userCredential = await FirebaseAuth.instance
-            .signInWithCredential(credential);
+        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
         if (!mounted) return;
-        await navigateAfterAuth(
-          context,
-          isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
-        );
+        await navigateAfterAuth(context, isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false);
       },
       verificationFailed: (FirebaseAuthException e) {
+        if (!mounted) return;
         setState(() => _isLoading = false);
         final l10n = AppLocalizations.of(context)!;
-        _showError(
-          l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel),
-        );
+        _showError(l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel));
       },
       codeSent: (String verificationId, int? resendToken) {
-        setState(() => _isLoading = false);
         if (!mounted) return;
+        setState(() => _isLoading = false);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -83,6 +73,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       backgroundColor: context.bgColor,
       appBar: AppBar(
@@ -91,54 +82,48 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
         iconTheme: IconThemeData(color: context.textColor),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               l10n.phoneNumberLabel,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: textTheme.headlineSmall?.copyWith(
                 color: context.textColor,
-                fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               l10n.otpSendNoticeLabel,
               textAlign: TextAlign.center,
-              style: TextStyle(color: context.textGreyColor, fontSize: 14),
+              style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor),
             ),
-            const SizedBox(height: 40),
-
-            // ====== حقل رقم الموبايل ======
+            const SizedBox(height: AppSpacing.xxl),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               decoration: BoxDecoration(
                 color: context.cardColor,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(AppRadius.lg),
                 border: Border.all(color: context.dividerColor2),
               ),
               child: Row(
                 children: [
-                  Text(
-                    '+20',
-                    style: TextStyle(color: context.textColor, fontSize: 16),
-                  ),
-                  const SizedBox(width: 8),
+                  Text('+20', style: textTheme.bodyLarge?.copyWith(color: context.textColor)),
+                  const SizedBox(width: AppSpacing.sm),
                   Container(width: 1, height: 24, color: context.dividerColor2),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: TextField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       textAlign: TextAlign.right,
-                      style: TextStyle(color: context.textColor, fontSize: 16),
+                      style: textTheme.bodyLarge?.copyWith(color: context.textColor),
                       decoration: InputDecoration(
                         hintText: '01xxxxxxxxx',
-                        hintStyle: TextStyle(color: context.textGreyColor),
+                        hintStyle: textTheme.bodyLarge?.copyWith(color: context.textGreyColor),
                         border: InputBorder.none,
                       ),
                     ),
@@ -146,36 +131,18 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-
-            // ====== زرار إرسال الكود ======
-            SizedBox(
-              height: 55,
-              child: AppPrimaryButton(
-                onPressed: _isLoading ? null : _sendOtp,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TayarColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+            const SizedBox(height: AppSpacing.lg),
+            AppPrimaryButton(
+              onPressed: _isLoading ? null : _sendOtp,
+              variant: AppButtonVariant.primary,
+              size: AppButtonSize.medium,
+              isLoading: _isLoading,
+              child: Text(
+                l10n.sendCodeButton,
+                style: textTheme.labelLarge?.copyWith(
+                  color: context.onPrimaryColor,
+                  fontWeight: FontWeight.bold,
                 ),
-                child: _isLoading
-                    ? SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          color: context.onPrimaryColor,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        l10n.sendCodeButton,
-                        style: TextStyle(
-                          color: context.onPrimaryColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
               ),
             ),
           ],
@@ -185,18 +152,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   }
 }
 
-// ====================================================
-// ====== شاشة إدخال كود التحقق (OTP) ======
-// ====================================================
 class OtpVerificationScreen extends StatefulWidget {
   final String verificationId;
   final String phoneNumber;
   final int? resendToken;
-
-  // ====== لما تبقى true: الشاشة مش بتستخدم لتسجيل دخول جديد، لكن لإثبات
-  // هوية المستخدم الحالي (مثلًا قبل حذف الحساب). في الحالة دي بنعمل
-  // reauthenticateWithCredential بدل signInWithCredential، وبعد النجاح
-  // بنرجع للخلف بـ Navigator.pop(true) بدل ما ندخل المستخدم للتطبيق ======
   final bool reauthMode;
 
   const OtpVerificationScreen({
@@ -211,31 +170,20 @@ class OtpVerificationScreen extends StatefulWidget {
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
 }
 
-class _OtpVerificationScreenState extends State<OtpVerificationScreen>
-    with TickerProviderStateMixin {
+class _OtpVerificationScreenState extends State<OtpVerificationScreen> with TickerProviderStateMixin {
   static const int _codeLength = 6;
   static const int _resendSeconds = 60;
-
-  // آخر verificationId معتمد (بيتغيّر بعد إعادة الإرسال)
   late String _verificationId;
   int? _resendToken;
-
-  // حقل واحد مخفي بياخد الإدخال الحقيقي (ودعم الـ autofill) + كنترولر
-  // منفصل لكل خانة عشان العرض بس
   final FocusNode _hiddenFieldFocus = FocusNode();
   final TextEditingController _hiddenController = TextEditingController();
-
   bool _isLoading = false;
   bool _isAutoVerifying = false;
   Timer? _timer;
   int _secondsLeft = _resendSeconds;
-
-  // ====== أنيميشن دخول الشاشة ======
   late final AnimationController _entranceController;
   late final Animation<double> _fadeAnim;
   late final Animation<Offset> _slideAnim;
-
-  // ====== أنيميشن الاهتزاز عند الخطأ ======
   late final AnimationController _shakeController;
   late final Animation<double> _shakeAnim;
 
@@ -244,27 +192,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     super.initState();
     _verificationId = widget.verificationId;
     _resendToken = widget.resendToken;
-
-    _entranceController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _fadeAnim = CurvedAnimation(
-      parent: _entranceController,
-      curve: Curves.easeOut,
-    );
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.06),
-      end: Offset.zero,
-    ).animate(
+    _entranceController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    _fadeAnim = CurvedAnimation(parent: _entranceController, curve: Curves.easeOut);
+    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero).animate(
       CurvedAnimation(parent: _entranceController, curve: Curves.easeOutCubic),
     );
     _entranceController.forward();
-
-    _shakeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 420),
-    );
+    _shakeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 420));
     _shakeAnim = TweenSequence<double>([
       TweenSequenceItem(tween: Tween(begin: 0.0, end: -10.0), weight: 1),
       TweenSequenceItem(tween: Tween(begin: -10.0, end: 10.0), weight: 2),
@@ -272,11 +206,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       TweenSequenceItem(tween: Tween(begin: -6.0, end: 6.0), weight: 2),
       TweenSequenceItem(tween: Tween(begin: 6.0, end: 0.0), weight: 1),
     ]).animate(_shakeController);
-
     _hiddenController.addListener(_onCodeChanged);
     _startResendTimer();
-
-    // فوكس تلقائي على الحقل المخفي فور فتح الشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _hiddenFieldFocus.requestFocus();
     });
@@ -308,7 +239,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   }
 
   void _onCodeChanged() {
-    setState(() {}); // تحديث شكل الخانات مع كل حرف
+    if (!mounted) return;
+    setState(() {});
     final code = _hiddenController.text;
     if (code.length == _codeLength && !_isLoading && !_isAutoVerifying) {
       _isAutoVerifying = true;
@@ -319,15 +251,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   Future<void> _verifyOtp(String code) async {
     FocusScope.of(context).unfocus();
     setState(() => _isLoading = true);
-
     try {
-      final credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId,
-        smsCode: code,
-      );
-
-      // ====== وضع إعادة التحقق (قبل حذف الحساب مثلًا): بنثبت هوية
-      // المستخدم الحالي بس، مش بنسجله دخول من جديد ولا بنغيّر شاشته ======
+      final credential = PhoneAuthProvider.credential(verificationId: _verificationId, smsCode: code);
       if (widget.reauthMode) {
         final user = FirebaseAuth.instance.currentUser;
         if (user == null) throw Exception('no-current-user');
@@ -336,24 +261,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
         Navigator.pop(context, true);
         return;
       }
-
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(
-        credential,
-      );
-
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
       if (!mounted) return;
-      await navigateAfterAuth(
-        context,
-        isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
-      );
+      await navigateAfterAuth(context, isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false);
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;
-      _showError(
-        e.code == 'invalid-verification-code'
-            ? l10n.invalidOtpError
-            : l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel),
-      );
+      _showError(e.code == 'invalid-verification-code' ? l10n.invalidOtpError : l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel));
       _clearAndShake();
     } finally {
       _isAutoVerifying = false;
@@ -373,10 +287,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   Future<void> _resendCode() async {
     if (_secondsLeft > 0) return;
     final l10n = AppLocalizations.of(context)!;
-
     setState(() => _isLoading = true);
     _hiddenController.clear();
-
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: widget.phoneNumber,
       forceResendingToken: _resendToken,
@@ -390,20 +302,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           Navigator.pop(context, true);
           return;
         }
-        final userCredential = await FirebaseAuth.instance
-            .signInWithCredential(credential);
+        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
         if (!mounted) return;
-        await navigateAfterAuth(
-          context,
-          isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false,
-        );
+        await navigateAfterAuth(context, isNewUser: userCredential.additionalUserInfo?.isNewUser ?? false);
       },
       verificationFailed: (FirebaseAuthException e) {
         if (!mounted) return;
         setState(() => _isLoading = false);
-        _showError(
-          l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel),
-        );
+        _showError(l10n.errorOccurredWithMessage(e.message ?? l10n.tryAgainLabel));
       },
       codeSent: (String verificationId, int? resendToken) {
         if (!mounted) return;
@@ -425,19 +331,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     TayarToast.show(context, message, type: ToastType.error);
   }
 
-  // ====== خانة رقم واحدة من خانات الكود ======
   Widget _buildPinBox(int index) {
     final code = _hiddenController.text;
     final digit = index < code.length ? code[index] : '';
     final isCurrent = index == code.length;
     final hasFocus = _hiddenFieldFocus.hasFocus;
     final isFilled = digit.isNotEmpty;
-
-    final Color borderColor = isFilled
-        ? TayarColors.primary
-        : (isCurrent && hasFocus)
-            ? TayarColors.primary
-            : context.dividerColor2;
+    final borderColor = isFilled || (isCurrent && hasFocus) ? TayarColors.primary : context.dividerColor2;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
@@ -447,30 +347,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       decoration: BoxDecoration(
         color: context.cardColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(
-          color: borderColor,
-          width: (isFilled || (isCurrent && hasFocus)) ? 2 : 1,
-        ),
-        boxShadow: (isCurrent && hasFocus)
-            ? [
-                BoxShadow(
-                  color: TayarColors.primary.withValues(alpha: 0.18),
-                  blurRadius: 8,
-                  spreadRadius: 1,
-                ),
-              ]
-            : null,
+        border: Border.all(color: borderColor, width: isCurrent && hasFocus ? 2 : 1),
       ),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 120),
-        child: Text(
-          digit,
-          key: ValueKey(digit),
-          style: TextStyle(
-            color: context.textColor,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+      child: Text(
+        digit,
+        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          color: context.textColor,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -479,6 +362,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       backgroundColor: context.bgColor,
       appBar: AppBar(
@@ -492,9 +376,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           child: SlideTransition(
             position: _slideAnim,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.xxl,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -502,42 +384,25 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                   Text(
                     l10n.confirmPhoneNumberTitle,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: context.textColor,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: textTheme.headlineSmall?.copyWith(color: context.textColor, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     l10n.otpSentToNumberLabel(widget.phoneNumber),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: context.textGreyColor,
-                      fontSize: 14,
-                    ),
+                    style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor),
                   ),
-                  const SizedBox(height: 40),
-
-                  // ====== خانات الكود + حقل مخفي للـ autofill ======
+                  const SizedBox(height: AppSpacing.xxl),
                   AnimatedBuilder(
                     animation: _shakeAnim,
-                    builder: (context, child) => Transform.translate(
-                      offset: Offset(_shakeAnim.value, 0),
-                      child: child,
-                    ),
+                    builder: (context, child) => Transform.translate(offset: Offset(_shakeAnim.value, 0), child: child),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: List.generate(
-                            _codeLength,
-                            (i) => _buildPinBox(i),
-                          ),
+                          children: List.generate(_codeLength, _buildPinBox),
                         ),
-                        // حقل حقيقي شفاف فوق الخانات: بياخد الإدخال
-                        // والـ autofill من رسالة الـ SMS تلقائيًا
                         Opacity(
                           opacity: 0.0,
                           child: TextField(
@@ -548,13 +413,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                             textAlign: TextAlign.center,
                             maxLength: _codeLength,
                             autofillHints: const [AutofillHints.oneTimeCode],
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            decoration: const InputDecoration(
-                              counterText: '',
-                              border: InputBorder.none,
-                            ),
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            decoration: const InputDecoration(counterText: '', border: InputBorder.none),
                             onChanged: (_) => setState(() {}),
                           ),
                         ),
@@ -562,76 +422,32 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
-
-                  // ====== إعادة الإرسال + العداد ======
                   Center(
                     child: _secondsLeft > 0
-                        ? Text(
-                            l10n.resendCodeCountdown(_secondsLeft),
-                            style: TextStyle(
-                              color: context.textGreyColor,
-                              fontSize: 13,
-                            ),
-                          )
+                        ? Text(l10n.resendCodeCountdown(_secondsLeft), style: textTheme.bodySmall?.copyWith(color: context.textGreyColor))
                         : Column(
                             children: [
-                              Text(
-                                l10n.didntReceiveCodeLabel,
-                                style: TextStyle(
-                                  color: context.textGreyColor,
-                                  fontSize: 13,
-                                ),
-                              ),
+                              Text(l10n.didntReceiveCodeLabel, style: textTheme.bodySmall?.copyWith(color: context.textGreyColor)),
                               const SizedBox(height: AppSpacing.xs),
                               TextButton(
                                 onPressed: _isLoading ? null : _resendCode,
                                 child: Text(
                                   l10n.resendCodeButton,
-                                  style: const TextStyle(
-                                    color: TayarColors.primary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: textTheme.labelLarge?.copyWith(color: TayarColors.primary, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
                           ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-
-                  // ====== زرار التأكيد ======
-                  SizedBox(
-                    height: 55,
-                    child: AppPrimaryButton(
-                      onPressed: (_isLoading ||
-                              _hiddenController.text.length != _codeLength)
-                          ? null
-                          : () => _verifyOtp(_hiddenController.text),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: TayarColors.primary,
-                        disabledBackgroundColor:
-                            TayarColors.primary.withValues(alpha: 0.4),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.lg),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                color: context.onPrimaryColor,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Text(
-                              l10n.confirmButton,
-                              style: TextStyle(
-                                color: context.onPrimaryColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                  AppPrimaryButton(
+                    onPressed: (_isLoading || _hiddenController.text.length != _codeLength) ? null : () => _verifyOtp(_hiddenController.text),
+                    variant: AppButtonVariant.primary,
+                    size: AppButtonSize.medium,
+                    isLoading: _isLoading,
+                    child: Text(
+                      l10n.confirmButton,
+                      style: textTheme.labelLarge?.copyWith(color: context.onPrimaryColor, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
