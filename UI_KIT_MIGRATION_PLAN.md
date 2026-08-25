@@ -1,8 +1,8 @@
 # TAYAR UI Kit Migration Plan
 
 ## Phase 1 — Central UI Kit stabilization
-- [ ] AppPrimaryButton: add/standardize outline variant
-- [ ] AppPrimaryButton: variant-aware loading indicator
+- [x] AppPrimaryButton: add/standardize outline variant
+- [x] AppPrimaryButton: variant-aware loading indicator
 - [ ] Remove repeated external styleFrom overrides where possible
 
 ## Phase 2 — Migration priorities
