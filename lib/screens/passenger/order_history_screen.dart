@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
 
 // ====== شاشة سجل الطلبات: بتعرض كل طلبات الراكب الحالي (رحلات + توصيل) ======
 // بنجيب كل حاجة من collection('orders') فلترة على customerId، وبنرتب
@@ -111,34 +112,10 @@ class OrderHistoryScreen extends StatelessWidget {
                   });
 
                 if (docs.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                         Icon(
-                          Icons.history,
-                          color: context.textGreyColor,
-                          size: 56,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          l10n.noOrdersYetTitle,
-                          style:  TextStyle(
-                            color: context.textColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          l10n.noOrdersYetSubtitle,
-                          style:  TextStyle(
-                            color: context.textGreyColor,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                  return EmptyState(
+                    icon: Icons.history,
+                    title: l10n.noOrdersYetTitle,
+                    subtitle: l10n.noOrdersYetSubtitle,
                   );
                 }
 

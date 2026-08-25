@@ -10,6 +10,7 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/cancellation_reason_sheet.dart';
 import 'package:tayay_app/services/cancellation_service.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
 
 // ====================================================
 // ====== شاشة "الرحلات المجدولة": بتعرض بس رحلات الراكب المحجوزة
@@ -139,34 +140,10 @@ class ScheduledRidesScreen extends StatelessWidget {
                   });
 
                 if (docs.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.schedule_outlined,
-                          color: context.textGreyColor,
-                          size: 56,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          l10n.noScheduledRidesTitle,
-                          style: TextStyle(
-                            color: context.textColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          l10n.noScheduledRidesSubtitle,
-                          style: TextStyle(
-                            color: context.textGreyColor,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                  return EmptyState(
+                    icon: Icons.schedule_outlined,
+                    title: l10n.noScheduledRidesTitle,
+                    subtitle: l10n.noScheduledRidesSubtitle,
                   );
                 }
 

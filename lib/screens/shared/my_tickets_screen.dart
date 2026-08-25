@@ -5,6 +5,8 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/shared/support_screen.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== شاشة "شكاويّ": بتعرض للمستخدم كل التذاكر اللي بعتها من شاشة الدعم
 // (support_tickets حيث userId == uid) لحظيًا، مع حالة كل تذكرة ورد الدعم
@@ -48,15 +50,16 @@ class MyTicketsScreen extends StatelessWidget {
                   );
                 }
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TayarShimmer.list(count: 4),
+                  );
                 }
                 final docs = snapshot.data!.docs;
                 if (docs.isEmpty) {
-                  return Center(
-                    child: Text(
-                      loc.noTicketsYetLabel,
-                      style: TextStyle(color: context.textGreyColor),
-                    ),
+                  return EmptyState(
+                    icon: Icons.confirmation_number_outlined,
+                    title: loc.noTicketsYetLabel,
                   );
                 }
                 return ListView.separated(

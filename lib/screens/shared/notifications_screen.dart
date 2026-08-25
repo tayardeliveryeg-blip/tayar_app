@@ -8,6 +8,8 @@ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_wallet_screen.dart';
 import 'package:tayay_app/screens/shared/my_tickets_screen.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
 // كل إشعار بيتخزن في collection('notifications') وفيه الحقول:
@@ -197,31 +199,17 @@ class NotificationsScreen extends StatelessWidget {
                   );
                 }
                 if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: TayarColors.primary,
-                    ),
+                  return Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: TayarShimmer.list(count: 5),
                   );
                 }
 
                 final docs = snapshot.data!.docs;
                 if (docs.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.notifications_none,
-                          color: context.textGreyColor.withValues(alpha: 0.6),
-                          size: 56,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          l10n.noNotificationsYet,
-                          style: TextStyle(color: context.textGreyColor),
-                        ),
-                      ],
-                    ),
+                  return EmptyState(
+                    icon: Icons.notifications_none,
+                    title: l10n.noNotificationsYet,
                   );
                 }
 

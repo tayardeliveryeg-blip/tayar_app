@@ -9,6 +9,8 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 import 'package:tayay_app/services/vendor_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 /// ====== شاشة "شركاؤنا التجاريين": بتعرض كل المحلات اللي اتأكدت كشريك
 /// تجاري (بعد ما الأدمن ينشرها من تاب Vendor Requests)، مرتبة حسب الأقرب
@@ -99,28 +101,18 @@ class _VendorPartnersScreenState extends State<VendorPartnersScreen> {
               stream: streamVendorPartners(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: TayarColors.primary,
-                    ),
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TayarShimmer.list(count: 4),
                   );
                 }
                 final partners = List<VendorPartner>.from(
                   snapshot.data ?? const [],
                 );
                 if (partners.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Text(
-                        loc.noVendorPartnersYetMessage,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: context.textGreyColor,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
+                  return EmptyState(
+                    icon: Icons.storefront_outlined,
+                    title: loc.noVendorPartnersYetMessage,
                   );
                 }
 

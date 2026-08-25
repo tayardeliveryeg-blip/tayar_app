@@ -11,6 +11,8 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 class PassengerWalletScreen extends StatelessWidget {
   const PassengerWalletScreen({super.key});
@@ -130,9 +132,9 @@ class PassengerWalletScreen extends StatelessWidget {
                         StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                           stream: FirebaseFirestore.instance.collection('users').doc(uid).collection('walletTransactions').orderBy('createdAt', descending: true).limit(50).snapshots(),
                           builder: (context, txnSnapshot) {
-                            if (!txnSnapshot.hasData) return const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: AppSpacing.xl), child: CircularProgressIndicator(color: TayarColors.primary)));
+                            if (!txnSnapshot.hasData) return Padding(padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl), child: TayarShimmer.list(count: 3));
                             final docs = txnSnapshot.data!.docs;
-                            if (docs.isEmpty) return Padding(padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl), child: Center(child: Text(loc.noWalletTransactionsLabel, style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor))));
+                            if (docs.isEmpty) return Padding(padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl), child: EmptyState(icon: Icons.account_balance_wallet_outlined, title: loc.noWalletTransactionsLabel));
                             return Column(children: docs.map((doc) => PassengerWalletTransactionTile(data: doc.data())).toList());
                           },
                         ),

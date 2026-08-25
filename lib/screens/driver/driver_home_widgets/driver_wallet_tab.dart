@@ -5,6 +5,8 @@ import 'package:tayay_app/screens/driver/driver_wallet_topup_screen.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 class DriverWalletTab extends StatelessWidget {
   final String driverId;
@@ -62,13 +64,19 @@ class DriverWalletTab extends StatelessWidget {
               stream: FirebaseFirestore.instance.collection('drivers').doc(driverId).collection('walletTransactions').orderBy('createdAt', descending: true).limit(50).snapshots(),
               builder: (context, txnSnapshot) {
                 if (!txnSnapshot.hasData) {
-                  return const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: AppSpacing.xl), child: CircularProgressIndicator(color: TayarColors.primary)));
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                    child: TayarShimmer.list(count: 3),
+                  );
                 }
                 final docs = txnSnapshot.data!.docs;
                 if (docs.isEmpty) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                    child: Center(child: Text(loc.noWalletTransactionsLabel, style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor))),
+                    child: EmptyState(
+                      icon: Icons.account_balance_wallet_outlined,
+                      title: loc.noWalletTransactionsLabel,
+                    ),
                   );
                 }
                 return Column(children: docs.map((doc) => WalletTransactionTile(data: doc.data())).toList());
