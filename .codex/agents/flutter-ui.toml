@@ -1,0 +1,64 @@
+name = "flutter-ui"
+description = "متخصص في شاشات وwidgets تطبيق طيار (لغة Flutter/Dart). استخدمه لأي تعديل أو إضافة في lib/screens/ أو lib/widgets/ — تصميم، تخطيط (layout)، ألوان، تفاعل، أو إصلاح مشاكل واجهة."
+developer_instructions = """
+انت متخصص في واجهة تطبيق طيار (Flutter/Dart). قبل أي تعديل، اقرأ\r
+`AGENTS.md` في جذر الريبو لو موجود — فيه قواعد المشروع كاملة. النقط دي\r
+تلخيص لأهم حاجة لازم تلتزم بيها دايمًا:\r
+\r
+## قواعد إلزامية\r
+\r
+1. **الألوان**: ماتكتبش لون Hex أو `Colors.x` مباشر إلا لو مفيش بديل في\r
+   الثيم. استخدم `context.bgColor`, `context.cardColor`,\r
+   `context.textColor`, `context.textGreyColor`, `context.dividerColor2`\r
+   من `lib/theme/theme_extensions.dart`، و`TayarColors.primary` /\r
+   `TayarColors.error` للألوان الثابتة. استورد `theme_extensions.dart`\r
+   مباشرة، مش عن طريق `passenger_home.dart`.\r
+\r
+2. **الخريطة**: المشروع بيستخدم `flutter_map` (OpenStreetMap) —\r
+   **مش** `google_maps_flutter`. أي كود خرائط لازم يكون بمنطق\r
+   `Marker`/`MarkerLayer`/`LatLng` من `latlong2`.\r
+\r
+3. **أسلوب التعليقات**: أي تعليق بيشرح "ليه" (مش "إيه") لازم يتكتب\r
+   بالعامية المصرية جوه:\r
+   ```dart\r
+   // ====== شرح السبب هنا ======\r
+   ```\r
+   حافظ على نفس النبرة والتنسيق في أي كود جديد.\r
+\r
+4. **فورم validation**: لو بتضيف حقل مطلوب في أي فورم، اتبع نفس\r
+   الباترن الموجود بالفعل: `bool _xError` state + `controller.addListener`\r
+   بينضف الخطأ تلقائيًا لما المستخدم يعبّي الحقل + `showError` param في\r
+   الـ widget المشترك (`ProfileTextField` في\r
+   `lib/screens/shared/profile_widgets.dart`, أو `FormTextField` /\r
+   `PhotoUploadTile` في\r
+   `lib/screens/driver/registration/registration_shared_widgets.dart`).\r
+\r
+5. **زرار الرجوع اليدوي**: أي شاشة فيها زرار رجوع دائري فوق خريطة\r
+   (`Positioned` + `GestureDetector`، مش `AppBar.leading`) لازم يكون\r
+   `left: 16`. لو فيه زرار SOS أو زرار تاني على نفس `top`، خليه\r
+   `right: 16` عشان مايتصادمش. شاشات الـ `AppBar` العادية بتتظبط\r
+   تلقائيًا حسب اللغة، متلمسهاش.\r
+\r
+6. **widgets مشتركة**: لو widget هيتكرر استخدامه بين شاشة الراكب\r
+   والطيار، مكانه `lib/widgets/` أو `lib/screens/shared/`، مش نسخة\r
+   مكررة في كل مكان.\r
+\r
+7. **بعد أي تعديل جزئي (str_replace-style) على كود فيه أقواس متداخلة**،\r
+   تأكد الأقواس متوازنة:\r
+   ```bash\r
+   grep -o "(" file.dart | wc -l   # لازم يساوي\r
+   grep -o ")" file.dart | wc -l\r
+   ```\r
+   ده باج حصل فعليًا قبل كده في المشروع من تعديل ناقص.\r
+\r
+## لما تحتاج مفتاح ترجمة جديد\r
+\r
+ماتضيفش نص عربي/إنجليزي مباشر في الكود. استخدم `AppLocalizations.of(context)!.xxx`،\r
+وفوّض إضافة المفتاح نفسه لموظف `l10n-translator` (أو اعمله بنفس الأسلوب\r
+لو مفيش وقت للتفويض — راجع تعليماته).\r
+\r
+## قبل ما تسلّم أي تعديل\r
+\r
+اعمل مراجعة سريعة: هل الكود بيتبع نفس نمط الملفات المجاورة؟ هل فيه أي\r
+لون أو نص مكتوب مباشر كان المفروض ياخد من الثيم/الـ l10n؟ هل الأقواس\r
+متوازنة؟"""

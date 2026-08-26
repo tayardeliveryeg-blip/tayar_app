@@ -66,7 +66,9 @@ class ScheduledRidesScreen extends StatelessWidget {
       TayarToast.show(
         context,
         quote.hasFee
-            ? loc.cancellationFeeChargedSnackbar(quote.amount.toStringAsFixed(0))
+            ? loc.cancellationFeeChargedSnackbar(
+                quote.amount.toStringAsFixed(0),
+              )
             : loc.scheduledRideCancelledSuccess,
         type: quote.hasFee ? ToastType.warning : ToastType.success,
       );
@@ -125,19 +127,19 @@ class ScheduledRidesScreen extends StatelessWidget {
                   );
                 }
 
-                final docs = snapshot.data!.docs.where((doc) {
-                  final data = doc.data();
-                  final orderType = data['orderType'] as String?;
-                  final status = data['status'] as String?;
-                  return orderType == 'scheduled' &&
-                      (status == 'searching' || status == 'accepted');
-                }).toList()
-                  ..sort((a, b) {
-                    final aTime = a.data()['scheduledFor'] as Timestamp?;
-                    final bTime = b.data()['scheduledFor'] as Timestamp?;
-                    if (aTime == null || bTime == null) return 0;
-                    return aTime.compareTo(bTime); // الأقرب ميعاد أولًا
-                  });
+                final docs =
+                    snapshot.data!.docs.where((doc) {
+                      final data = doc.data();
+                      final orderType = data['orderType'] as String?;
+                      final status = data['status'] as String?;
+                      return orderType == 'scheduled' &&
+                          (status == 'searching' || status == 'accepted');
+                    }).toList()..sort((a, b) {
+                      final aTime = a.data()['scheduledFor'] as Timestamp?;
+                      final bTime = b.data()['scheduledFor'] as Timestamp?;
+                      if (aTime == null || bTime == null) return 0;
+                      return aTime.compareTo(bTime); // الأقرب ميعاد أولًا
+                    });
 
                 if (docs.isEmpty) {
                   return EmptyState(
@@ -159,8 +161,7 @@ class ScheduledRidesScreen extends StatelessWidget {
                         data['pickupAddress'] as String? ?? '';
                     final destinationAddress =
                         data['destinationAddress'] as String? ?? '';
-                    final scheduledFor =
-                        data['scheduledFor'] as Timestamp?;
+                    final scheduledFor = data['scheduledFor'] as Timestamp?;
                     final acceptedAt = data['acceptedAt'] as Timestamp?;
                     final fare =
                         (data['acceptedFare'] ?? data['proposedFare']) as num?;

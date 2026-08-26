@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/passenger_home.dart' show TayarColors, TayarThemeColors, paymentMethodDisplay;
+import 'package:tayay_app/screens/passenger/passenger_home.dart'
+    show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 
@@ -68,17 +69,17 @@ class OrderHistoryScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: context.bgColor,
         elevation: 0,
-        iconTheme:  IconThemeData(color: context.textColor),
+        iconTheme: IconThemeData(color: context.textColor),
         title: Text(
           l10n.orderHistoryLabel,
-          style:  TextStyle(color: context.textColor),
+          style: TextStyle(color: context.textColor),
         ),
       ),
       body: uid == null
           ? Center(
               child: Text(
                 l10n.noOrdersYetTitle,
-                style:  TextStyle(color: context.textGreyColor),
+                style: TextStyle(color: context.textGreyColor),
               ),
             )
           : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -90,7 +91,7 @@ class OrderHistoryScreen extends StatelessWidget {
                   return Center(
                     child: Text(
                       l10n.searchFailedTryAgainError,
-                      style:  TextStyle(color: context.textGreyColor),
+                      style: TextStyle(color: context.textGreyColor),
                     ),
                   );
                 }
@@ -159,7 +160,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                 isDelivery
                                     ? l10n.deliveryOrderTypeLabel
                                     : l10n.rideOrderTypeLabel,
-                                style:  TextStyle(
+                                style: TextStyle(
                                   color: context.textColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -193,7 +194,7 @@ class OrderHistoryScreen extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                               Icon(
+                              Icon(
                                 Icons.flag,
                                 color: context.textGreyColor,
                                 size: 16,
@@ -202,7 +203,7 @@ class OrderHistoryScreen extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   destinationAddress,
-                                  style:  TextStyle(
+                                  style: TextStyle(
                                     color: context.textColor,
                                     fontSize: 14,
                                   ),
@@ -217,7 +218,7 @@ class OrderHistoryScreen extends StatelessWidget {
                             children: [
                               Text(
                                 _formatDate(createdAt),
-                                style:  TextStyle(
+                                style: TextStyle(
                                   color: context.textGreyColor,
                                   fontSize: 12,
                                 ),
@@ -246,7 +247,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                       context,
                                       paymentMethod,
                                     ),
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       color: context.textGreyColor,
                                       fontSize: 12,
                                     ),
@@ -263,7 +264,7 @@ class OrderHistoryScreen extends StatelessWidget {
                                       const SizedBox(width: 2),
                                       Text(
                                         '$rating',
-                                        style:  TextStyle(
+                                        style: TextStyle(
                                           color: context.textColor,
                                           fontSize: 12,
                                         ),

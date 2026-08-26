@@ -6,6 +6,7 @@ import 'package:tayay_app/screens/shared/support_screen.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== شاشة "شكاويّ": بتعرض للمستخدم كل التذاكر اللي بعتها من شاشة الدعم
@@ -62,14 +63,23 @@ class MyTicketsScreen extends StatelessWidget {
                     title: loc.noTicketsYetLabel,
                   );
                 }
-                return ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: docs.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final d = docs[index].data();
-                    return _TicketCard(data: d, loc: loc);
+                return TayarRefreshIndicator(
+                  onRefresh: () async {
+                    await FirebaseFirestore.instance
+                        .collection('support_tickets')
+                        .where('userId', isEqualTo: uid)
+                        .orderBy('createdAt', descending: true)
+                        .get(const GetOptions(source: Source.server));
                   },
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: docs.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final d = docs[index].data();
+                      return _TicketCard(data: d, loc: loc);
+                    },
+                  ),
                 );
               },
             ),
@@ -95,7 +105,10 @@ class _TicketCard extends StatelessWidget {
       case 'resolved':
         return (color: TayarColors.success, label: loc.ticketStatusResolved);
       case 'in_progress':
-        return (color: const Color(0xFF3498DB), label: loc.ticketStatusInProgress);
+        return (
+          color: const Color(0xFF3498DB),
+          label: loc.ticketStatusInProgress,
+        );
       default:
         return (color: TayarColors.warning, label: loc.ticketStatusOpen);
     }
@@ -149,7 +162,10 @@ class _TicketCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(message, style: TextStyle(color: context.textGreyColor, fontSize: 13)),
+          Text(
+            message,
+            style: TextStyle(color: context.textGreyColor, fontSize: 13),
+          ),
           if (adminReply != null && adminReply.trim().isNotEmpty) ...[
             const SizedBox(height: 12),
             Container(
