@@ -58,13 +58,10 @@ class RaiseFareCard extends StatelessWidget {
         const SizedBox(height: 16),
         SizedBox(
           width: double.infinity,
-          height: 50,
           child: AppPrimaryButton(
             onPressed: onRaiseFare,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TayarColors.primary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
+            variant: AppButtonVariant.primary,
+            size: AppButtonSize.medium,
             child: Text(
               loc.searchWithFareLabel(suggestedFare.toStringAsFixed(0)),
               style: TextStyle(

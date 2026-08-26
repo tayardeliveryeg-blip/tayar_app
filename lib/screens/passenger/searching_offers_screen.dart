@@ -16,6 +16,7 @@ import 'package:tayay_app/screens/passenger/searching_offers_widgets/driver_moto
 import 'package:tayay_app/screens/passenger/searching_offers_widgets/offer_cards.dart';
 import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 
 /// ====== شاشة البحث عن عروض الطيارين (زي InDrive) ======
@@ -311,7 +312,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
         title: Column(
           children: [
             const Icon(
@@ -370,7 +371,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: context.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
         title: Text(
           loc.cancelSearchTitle,
           style: TextStyle(color: context.textColor),
@@ -1000,14 +1001,19 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                             SizedBox(
                               width: double.infinity,
                               height: 48,
-                              child: OutlinedButton(
+                              child: AppPrimaryButton(
                                 onPressed: _confirmCancel,
-                                style: OutlinedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                  foregroundColor: context.textGreyColor,
                                   side: BorderSide(
                                     color: context.textGreyColor,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(
+                                      AppRadius.lg,
+                                    ),
                                   ),
                                 ),
                                 child: Text(

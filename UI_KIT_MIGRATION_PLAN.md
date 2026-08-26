@@ -22,7 +22,12 @@
   "اطلب من التاجر" في bottom sheet الشريك، وزرار "حفظ" في bottom sheet تسمية
   عنوان محفوظ) اتحولوا لـ variant: primary. باقي الملف (1700+ سطر) خرائط/GPS/
   bottom sheets متخصصة، محفوظة زي ما هي حسب قاعدة "Preserve specialized UI"
-- searching_offers_screen.dart
+- [x] searching_offers_screen.dart — زرار إلغاء البحث (OutlinedButton خام) اتحول
+  لـ AppPrimaryButton بنفس الشكل بالظبط (border رمادي شفاف)؛ الـ 2 dialog
+  (قبول عرض / تأكيد الإلغاء) استخدموا AppRadius.xl بدل الرقم 16 الخام؛
+  offer_cards.dart → RaiseFareCard زرار "دور بسعر أعلى" اتحول لـ variant: primary.
+  زرار "قبول" الصغير جوه صف العرض (height:32) اتسيب زي ما هو عمدًا — مقاس مضغوط
+  جوه صف ضيق، توحيده كان هيكسر التصميم
 - order_confirmation_screen.dart
 - create_delivery_order_screen.dart
 - [x] driver_home_screen.dart — EmptyState لحالة "لسه مسجلتش دخول" (كان Text عادي)
