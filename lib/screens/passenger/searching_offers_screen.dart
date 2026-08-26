@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart'
     show TayarColors, TayarThemeColors;
-import 'package:tayay_app/theme/theme_extensions.dart' show AppShadows;
+import 'package:tayay_app/theme/theme_extensions.dart' show AppShadows, AppRadius;
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/screens/passenger/trip_tracking/trip_tracking_screen_screen.dart';
