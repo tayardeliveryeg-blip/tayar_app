@@ -2,7 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart'
+    show TayarColors, TayarThemeColors;
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 
@@ -60,7 +61,6 @@ class FormTextField extends StatelessWidget {
     );
   }
 }
-
 
 class PhotoUploadTile extends StatelessWidget {
   final String label;
@@ -185,30 +185,16 @@ class SectionScaffold extends StatelessWidget {
             SizedBox(
               height: 54,
               child: AppPrimaryButton(
-                onPressed: isSaving ? null : onSave,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TayarColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                onPressed: onSave,
+                variant: AppButtonVariant.primary,
+                isLoading: isSaving,
+                child: Text(
+                  AppLocalizations.of(context)!.saveButton,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: isSaving
-                    ? SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          color: context.onPrimaryColor,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        AppLocalizations.of(context)!.saveButton,
-                        style: TextStyle(
-                          color: context.textColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
               ),
             ),
           ],

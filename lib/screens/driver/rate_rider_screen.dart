@@ -103,7 +103,11 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
   Future<void> _finish({bool showThanks = false}) async {
     final loc = AppLocalizations.of(context)!;
     if (showThanks) {
-      TayarToast.show(context, loc.thankYouForRatingLabel, type: ToastType.success);
+      TayarToast.show(
+        context,
+        loc.thankYouForRatingLabel,
+        type: ToastType.success,
+      );
       await Future.delayed(const Duration(milliseconds: 600));
     }
     if (!mounted) return;
@@ -198,9 +202,7 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                loc.currencyEGP(
-                                  widget.fare.toStringAsFixed(0),
-                                ),
+                                loc.currencyEGP(widget.fare.toStringAsFixed(0)),
                                 style: TextStyle(
                                   color: context.textGreyColor,
                                   fontSize: 14,
@@ -266,30 +268,16 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
                   width: double.infinity,
                   height: 54,
                   child: AppPrimaryButton(
-                    onPressed: _isSubmitting ? null : _submitRating,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TayarColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                    onPressed: _submitRating,
+                    variant: AppButtonVariant.primary,
+                    isLoading: _isSubmitting,
+                    child: Text(
+                      loc.submitRatingButton,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    child: _isSubmitting
-                        ? SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              color: context.onPrimaryColor,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            loc.submitRatingButton,
-                            style: TextStyle(
-                              color: context.textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
                 const SizedBox(height: 8),

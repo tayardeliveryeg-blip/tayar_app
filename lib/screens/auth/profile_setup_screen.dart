@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/referral_service.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
-    show TayarColors, TayarThemeColors, PassengerHomeScreen;
+    show TayarThemeColors, PassengerHomeScreen;
 import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
@@ -181,30 +181,16 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 SizedBox(
                   height: 55,
                   child: AppPrimaryButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TayarColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    onPressed: _saveAndContinue,
+                    variant: AppButtonVariant.primary,
+                    isLoading: _isSaving,
+                    child: Text(
+                      loc.continueButton,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: _isSaving ? null : _saveAndContinue,
-                    child: _isSaving
-                        ? SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              color: context.onPrimaryColor,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            loc.continueButton,
-                            style: TextStyle(
-                              color: context.onPrimaryColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
               ],

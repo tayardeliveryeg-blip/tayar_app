@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart'
+    show TayarThemeColors;
 import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/app_card.dart';
@@ -52,7 +53,11 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
     final loc = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     if (_proofBytes == null) {
-      TayarToast.show(context, loc.topUpProofRequiredError, type: ToastType.error);
+      TayarToast.show(
+        context,
+        loc.topUpProofRequiredError,
+        type: ToastType.error,
+      );
       return;
     }
 
@@ -187,9 +192,7 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
                               const SizedBox(height: 8),
                               Text(
                                 loc.topUpProofLabel,
-                                style: TextStyle(
-                                  color: context.textGreyColor,
-                                ),
+                                style: TextStyle(color: context.textGreyColor),
                               ),
                             ],
                           )
@@ -210,30 +213,16 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
                 SizedBox(
                   height: 55,
                   child: AppPrimaryButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TayarColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    onPressed: _submit,
+                    variant: AppButtonVariant.primary,
+                    isLoading: _isSubmitting,
+                    child: Text(
+                      loc.topUpSubmitButton,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: _isSubmitting ? null : _submit,
-                    child: _isSubmitting
-                        ? SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              color: context.onPrimaryColor,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            loc.topUpSubmitButton,
-                            style: TextStyle(
-                              color: context.onPrimaryColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
                 const SizedBox(height: 30),

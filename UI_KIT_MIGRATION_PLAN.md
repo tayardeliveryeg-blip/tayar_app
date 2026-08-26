@@ -3,7 +3,7 @@
 ## Phase 1 — Central UI Kit stabilization
 - [x] AppPrimaryButton: add/standardize outline variant
 - [x] AppPrimaryButton: variant-aware loading indicator
-- [ ] Remove repeated external styleFrom overrides where possible
+- [x] Remove repeated external styleFrom overrides where possible
 
 ## Phase 2 — Migration priorities
 ### High

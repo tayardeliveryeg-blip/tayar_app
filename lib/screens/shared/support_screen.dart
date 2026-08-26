@@ -155,9 +155,9 @@ class _SupportScreenState extends State<SupportScreen> {
         title: Text(loc.navSupport, style: TextStyle(color: context.textColor)),
         actions: [
           TextButton.icon(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const MyTicketsScreen()),
-            ),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const MyTicketsScreen())),
             icon: const Icon(Icons.history, color: TayarColors.primary),
             label: Text(
               loc.myComplaintsLabel,
@@ -236,10 +236,8 @@ class _SupportScreenState extends State<SupportScreen> {
                 style: TextStyle(color: context.textColor, fontSize: 15),
                 items: ComplaintCategory.values
                     .map(
-                      (c) => DropdownMenuItem(
-                        value: c,
-                        child: Text(c.label(loc)),
-                      ),
+                      (c) =>
+                          DropdownMenuItem(value: c, child: Text(c.label(loc))),
                     )
                     .toList(),
                 onChanged: (c) {
@@ -269,29 +267,10 @@ class _SupportScreenState extends State<SupportScreen> {
             width: double.infinity,
             height: 50,
             child: AppPrimaryButton(
-              onPressed: _sending ? null : _sendMessage,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TayarColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: _sending
-                  ? SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: context.onPrimaryColor,
-                      ),
-                    )
-                  : Text(
-                      loc.sendButton,
-                      style: TextStyle(
-                        color: context.onPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              onPressed: _sendMessage,
+              variant: AppButtonVariant.primary,
+              isLoading: _sending,
+              child: Text(loc.sendButton),
             ),
           ),
         ],
@@ -325,10 +304,7 @@ class _SupportActionButton extends StatelessWidget {
             child: icon,
           ),
           const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(color: context.textColor, fontSize: 14),
-          ),
+          Text(label, style: TextStyle(color: context.textColor, fontSize: 14)),
         ],
       ),
     );

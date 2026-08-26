@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart' show TayarColors, TayarThemeColors, PassengerHomeScreen;
+import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart'
+    show TayarColors, TayarThemeColors, PassengerHomeScreen;
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/services/driver_relations_service.dart';
@@ -131,7 +132,9 @@ class _RateTripScreenState extends State<RateTripScreen> {
         context: context,
         builder: (_) => AlertDialog(
           backgroundColor: context.cardColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             loc.blockDriverConfirmTitle,
             style: TextStyle(color: context.textColor),
@@ -143,7 +146,10 @@ class _RateTripScreenState extends State<RateTripScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text(loc.cancel, style: TextStyle(color: context.textGreyColor)),
+              child: Text(
+                loc.cancel,
+                style: TextStyle(color: context.textGreyColor),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
@@ -168,7 +174,9 @@ class _RateTripScreenState extends State<RateTripScreen> {
       if (!mounted) return;
       TayarToast.show(
         context,
-        !currentlyBlocked ? loc.driverBlockedMessage : loc.driverUnblockedMessage,
+        !currentlyBlocked
+            ? loc.driverBlockedMessage
+            : loc.driverUnblockedMessage,
         type: ToastType.info,
       );
     } catch (e) {
@@ -181,7 +189,11 @@ class _RateTripScreenState extends State<RateTripScreen> {
   Future<void> _finish({bool showThanks = false}) async {
     final loc = AppLocalizations.of(context)!;
     if (showThanks) {
-      TayarToast.show(context, loc.thankYouForRatingLabel, type: ToastType.success);
+      TayarToast.show(
+        context,
+        loc.thankYouForRatingLabel,
+        type: ToastType.success,
+      );
       await Future.delayed(const Duration(milliseconds: 600));
     }
     if (!mounted) return;
@@ -240,10 +252,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                 const SizedBox(height: 6),
                 Text(
                   loc.rateTripSubtitle,
-                  style:  TextStyle(
-                    color: context.textGreyColor,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: context.textGreyColor, fontSize: 14),
                 ),
                 const SizedBox(height: 28),
 
@@ -273,7 +282,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                           children: [
                             Text(
                               widget.driverName,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -282,7 +291,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                             const SizedBox(height: 4),
                             Text(
                               loc.currencyEGP(widget.fare.toStringAsFixed(0)),
-                              style:  TextStyle(
+                              style: TextStyle(
                                 color: context.textGreyColor,
                                 fontSize: 14,
                               ),
@@ -370,10 +379,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _starsLabel(context),
-                  style:  TextStyle(
-                    color: context.textGreyColor,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: context.textGreyColor, fontSize: 14),
                 ),
 
                 const SizedBox(height: 24),
@@ -382,10 +388,10 @@ class _RateTripScreenState extends State<RateTripScreen> {
                 TextField(
                   controller: _commentController,
                   maxLines: 3,
-                  style:  TextStyle(color: context.textColor),
+                  style: TextStyle(color: context.textColor),
                   decoration: InputDecoration(
                     hintText: loc.commentHintOptional,
-                    hintStyle:  TextStyle(color: context.textGreyColor),
+                    hintStyle: TextStyle(color: context.textGreyColor),
                     filled: true,
                     fillColor: context.cardColor,
                     border: OutlineInputBorder(
@@ -402,30 +408,16 @@ class _RateTripScreenState extends State<RateTripScreen> {
                   width: double.infinity,
                   height: 54,
                   child: AppPrimaryButton(
-                    onPressed: _isSubmitting ? null : _submitRating,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TayarColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                    onPressed: _submitRating,
+                    variant: AppButtonVariant.primary,
+                    isLoading: _isSubmitting,
+                    child: Text(
+                      loc.submitRatingButton,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    child: _isSubmitting
-                        ?  SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              color: context.onPrimaryColor,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            loc.submitRatingButton,
-                            style:  TextStyle(
-                              color: context.textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -435,7 +427,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                   onPressed: _isSubmitting ? null : () => _finish(),
                   child: Text(
                     loc.skipButton,
-                    style:  TextStyle(color: context.textGreyColor),
+                    style: TextStyle(color: context.textGreyColor),
                   ),
                 ),
               ],
@@ -476,7 +468,9 @@ class _RelationChip extends StatelessWidget {
           color: active ? color.withValues(alpha: 0.15) : context.cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: active ? color : context.textGreyColor.withValues(alpha: 0.3),
+            color: active
+                ? color
+                : context.textGreyColor.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
