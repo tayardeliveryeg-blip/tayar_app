@@ -1035,7 +1035,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get categoryOrderIssue => 'مشكلة في رحلة';
 
   @override
-  String get categoryDriverBehavior => 'سلوك السائق';
+  String get categoryDriverBehavior => 'سلوك الطيار';
 
   @override
   String get categoryPayment => 'مشكلة دفع أو محفظة';
@@ -1476,7 +1476,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'أنا بستخدم تطبيق طيار (Tayar) دلوقتي في رحلة، ده تفاصيلها:';
 
   @override
-  String get shareTripDriverLabel => 'السائق';
+  String get shareTripDriverLabel => 'الطيار';
 
   @override
   String get shareTripPassengerLabel => 'الراكب';
@@ -1636,8 +1636,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noFavoriteDriversYetMessage =>
-      'لسه معندكش سائقين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم';
+      'لسه معندكش طيارين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم';
 
   @override
-  String get noBlockedDriversYetMessage => 'معندكش أي سائقين محظورين';
+  String get noBlockedDriversYetMessage => 'معندكش أي طيارين محظورين';
 }

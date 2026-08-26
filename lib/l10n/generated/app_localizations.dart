@@ -1985,7 +1985,7 @@ abstract class AppLocalizations {
   /// No description provided for @categoryDriverBehavior.
   ///
   /// In ar, this message translates to:
-  /// **'سلوك السائق'**
+  /// **'سلوك الطيار'**
   String get categoryDriverBehavior;
 
   /// No description provided for @categoryPayment.
@@ -2801,7 +2801,7 @@ abstract class AppLocalizations {
   /// No description provided for @shareTripDriverLabel.
   ///
   /// In ar, this message translates to:
-  /// **'السائق'**
+  /// **'الطيار'**
   String get shareTripDriverLabel;
 
   /// No description provided for @shareTripPassengerLabel.
@@ -3089,13 +3089,13 @@ abstract class AppLocalizations {
   /// No description provided for @noFavoriteDriversYetMessage.
   ///
   /// In ar, this message translates to:
-  /// **'لسه معندكش سائقين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم'**
+  /// **'لسه معندكش طيارين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم'**
   String get noFavoriteDriversYetMessage;
 
   /// No description provided for @noBlockedDriversYetMessage.
   ///
   /// In ar, this message translates to:
-  /// **'معندكش أي سائقين محظورين'**
+  /// **'معندكش أي طيارين محظورين'**
   String get noBlockedDriversYetMessage;
 }
 

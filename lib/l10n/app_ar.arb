@@ -480,7 +480,7 @@
   "sendButton": "إرسال",
   "complaintCategoryLabel": "نوع الشكوى",
   "categoryOrderIssue": "مشكلة في رحلة",
-  "categoryDriverBehavior": "سلوك السائق",
+  "categoryDriverBehavior": "سلوك الطيار",
   "categoryPayment": "مشكلة دفع أو محفظة",
   "categoryTechnical": "مشكلة تقنية في التطبيق",
   "categoryOther": "أخرى",
@@ -681,7 +681,7 @@
   "sosNoEmergencyContactSetHint": "مفيش جهة اتصال محفوظة - دوس لإضافة واحدة",
   "sosWhatsappMessage": "محتاج مساعدة دلوقتي، أنا في رحلة على تطبيق طيار (Tayar). ابعتلي رسالة أو اتصل بيا لو تقدر.",
   "shareTripIntro": "أنا بستخدم تطبيق طيار (Tayar) دلوقتي في رحلة، ده تفاصيلها:",
-  "shareTripDriverLabel": "السائق",
+  "shareTripDriverLabel": "الطيار",
   "shareTripPassengerLabel": "الراكب",
   "shareTripFromLabel": "من",
   "shareTripToLabel": "إلى",
@@ -744,6 +744,6 @@
   "myDriversScreenTitle": "طياريني",
   "favoriteDriversTabLabel": "المفضّلين",
   "blockedDriversTabLabel": "المحظورين",
-  "noFavoriteDriversYetMessage": "لسه معندكش سائقين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم",
-  "noBlockedDriversYetMessage": "معندكش أي سائقين محظورين"
+  "noFavoriteDriversYetMessage": "لسه معندكش طيارين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم",
+  "noBlockedDriversYetMessage": "معندكش أي طيارين محظورين"
 }
