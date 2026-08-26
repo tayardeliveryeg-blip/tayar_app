@@ -667,36 +667,23 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
                 onPressed: (_isSubmitting || _isUpdatingRoute)
                     ? null
                     : _searchForOffers,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TayarColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: _isSubmitting
-                    ? SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          color: context.onPrimaryColor,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.search, color: context.onPrimaryColor),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.searchForDriversButton,
-                            style: TextStyle(
-                              color: context.onPrimaryColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                variant: AppButtonVariant.primary,
+                isLoading: _isSubmitting,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.search, color: context.onPrimaryColor),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.searchForDriversButton,
+                      style: TextStyle(
+                        color: context.onPrimaryColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

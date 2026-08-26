@@ -28,7 +28,10 @@
   offer_cards.dart → RaiseFareCard زرار "دور بسعر أعلى" اتحول لـ variant: primary.
   زرار "قبول" الصغير جوه صف العرض (height:32) اتسيب زي ما هو عمدًا — مقاس مضغوط
   جوه صف ضيق، توحيده كان هيكسر التصميم
-- order_confirmation_screen.dart
+- [x] order_confirmation_screen.dart — زرار "البحث عن عروض": كان بيبني الـ loading
+  spinner يدويًا جوه child + styleFrom صريح؛ اتحول لـ variant: primary +
+  isLoading: _isSubmitting (خاصية جاهزة في AppPrimaryButton كانت متفوّتة).
+  الـ spinner الصغير (16px) في _AddressTile مش زرار — اتسيب زي ما هو
 - create_delivery_order_screen.dart
 - [x] driver_home_screen.dart — EmptyState لحالة "لسه مسجلتش دخول" (كان Text عادي)
 - [x] driver_income_tab.dart — TayarShimmer بدل CircularProgressIndicator الخام وقت التحميل
