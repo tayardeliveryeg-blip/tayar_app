@@ -18,7 +18,10 @@
 - onboarding_screen.dart
 
 ### Cleanup
-- passenger_home.dart
+- [x] passenger_home.dart — الزرارين الوحيدين اللي كانوا بـ styleFrom صريح (زرار
+  "اطلب من التاجر" في bottom sheet الشريك، وزرار "حفظ" في bottom sheet تسمية
+  عنوان محفوظ) اتحولوا لـ variant: primary. باقي الملف (1700+ سطر) خرائط/GPS/
+  bottom sheets متخصصة، محفوظة زي ما هي حسب قاعدة "Preserve specialized UI"
 - searching_offers_screen.dart
 - order_confirmation_screen.dart
 - create_delivery_order_screen.dart

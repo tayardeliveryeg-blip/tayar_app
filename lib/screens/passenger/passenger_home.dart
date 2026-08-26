@@ -370,7 +370,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
-                height: 50,
                 child: AppPrimaryButton(
                   onPressed: () async {
                     if (!await _requireInternet()) return;
@@ -387,12 +386,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TayarColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                  variant: AppButtonVariant.primary,
+                  size: AppButtonSize.medium,
                   child: Text(
                     loc.orderFromVendorButton,
                     style: TextStyle(
@@ -878,16 +873,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       AppPrimaryButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: TayarColors.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.md,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                          ),
-                        ),
+                        variant: AppButtonVariant.primary,
                         onPressed: () {
                           final trimmed = controller.text.trim();
                           if (trimmed.isEmpty) {
