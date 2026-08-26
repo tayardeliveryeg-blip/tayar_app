@@ -413,6 +413,7 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
               height: 54,
               child: AppPrimaryButton(
                 onPressed: _canSubmit ? _saveOrder : null,
+                isLoading: _isSubmitting,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TayarColors.primary,
                   disabledBackgroundColor: TayarColors.primary.withValues(
@@ -422,23 +423,14 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: _isSubmitting
-                    ? SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          color: context.onPrimaryColor,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        loc.saveOrderButton,
-                        style: TextStyle(
-                          color: context.textColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                child: Text(
+                  loc.saveOrderButton,
+                  style: TextStyle(
+                    color: context.textColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],

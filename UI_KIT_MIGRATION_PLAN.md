@@ -32,7 +32,12 @@
   spinner يدويًا جوه child + styleFrom صريح؛ اتحول لـ variant: primary +
   isLoading: _isSubmitting (خاصية جاهزة في AppPrimaryButton كانت متفوّتة).
   الـ spinner الصغير (16px) في _AddressTile مش زرار — اتسيب زي ما هو
-- create_delivery_order_screen.dart
+- [x] create_delivery_order_screen.dart — نفس باج order_confirmation_screen.dart بالظبط:
+  زرار "حفظ الطلب" كان بيبني الـ spinner يدويًا؛ اتحول لـ isLoading: _isSubmitting
+  (الـ style الصريح اتسيب لأنه بيحمل disabledBackgroundColor مقصود — التوقف بلون
+  برتقالي باهت مش رمادي افتراضي). route_summary_card.dart: حالة "بيحسب المسار"
+  كانت CircularProgressIndicator خام → بقت TayarShimmer.card() بشكل الكارت
+  الحقيقي؛ radius:16 الخام → AppRadius.xl
 - [x] driver_home_screen.dart — EmptyState لحالة "لسه مسجلتش دخول" (كان Text عادي)
 - [x] driver_income_tab.dart — TayarShimmer بدل CircularProgressIndicator الخام وقت التحميل
 - active_trip_card.dart — الزرار الأساسي فضل بـ style صريح (AppRadius.sm) عن قصد؛ التوحيد
@@ -47,3 +52,6 @@
 - Use EmptyState for empty collections.
 - Prefer AppSpacing, AppRadius, AppShadows and Theme text styles over repeated local constants.
 - Preserve specialized UI behavior for maps, OTP, chat bubbles, social login and custom bottom sheets.
+
+## Phase 2 status
+All items in "High" and "Cleanup" are complete as of 2026-08-26.

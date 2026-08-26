@@ -3,6 +3,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== كارت المسافة/الوقت/السعر (بيظهر بعد ما نحدد الموقعين) - أو مؤشر
 // تحميل لو المسار لسه بيتحسب ======
@@ -21,12 +22,9 @@ class RouteSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isCalculating) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 12),
-        child: Center(
-          child: CircularProgressIndicator(color: TayarColors.primary),
-        ),
-      );
+      // ====== Skeleton بيطابق شكل الكارت الحقيقي (صف مسافة + صف سعر)
+      // بدل سبينر خام، عشان الانتقال للبيانات الفعلية يبقى سلس ======
+      return TayarShimmer.card(height: 108);
     }
 
     if (distanceKm == null) return const SizedBox.shrink();
@@ -35,7 +33,7 @@ class RouteSummaryCard extends StatelessWidget {
     return AppCard(
       padding: const EdgeInsets.all(16),
       color: TayarColors.primary.withValues(alpha: 0.12),
-      radius: 16,
+      radius: AppRadius.xl,
       border: Border.all(color: TayarColors.primary.withValues(alpha: 0.4)),
       child: Column(
         children: [
