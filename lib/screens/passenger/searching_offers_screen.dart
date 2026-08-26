@@ -176,7 +176,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
             final geo = _extractGeoPoint(data['currentLocation']);
             if (geo == null) continue;
 
-            // ====== نتجاهل أي سائق بعيد عن نقطة الانطلاق (مثلاً في مدينة
+            // ====== نتجاهل أي طيار بعيد عن نقطة الانطلاق (مثلاً في مدينة
             // تانية) — مهم مع توسع التطبيق لمدن أكتر من العاشر من رمضان ======
             final distanceMeters = Geolocator.distanceBetween(
               widget.pickupLocation.latitude,

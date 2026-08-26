@@ -11,8 +11,8 @@ class CancellationFeeQuote {
 
 /// ====== بتحسب هل الإلغاء دلوقتي هيترتب عليه رسوم ولا لأ، حسب مهلة
 /// الإلغاء المجاني في إعدادات الأدمن. الرسوم بتتحصل بس لو:
-/// - سائق قابل الطلب فعلاً (status == 'accepted' - قبل كده يعني لسه
-///   'searching' ومفيش سائق التزم، فالإلغاء فاضل مجاني زي ما كان دايمًا)
+/// - طيار قابل الطلب فعلاً (status == 'accepted' - قبل كده يعني لسه
+///   'searching' ومفيش طيار التزم، فالإلغاء فاضل مجاني زي ما كان دايمًا)
 /// - وعدى على وقت القبول (acceptedAt) أكتر من freeCancellationWindowMinutes ======
 CancellationFeeQuote quoteCancellationFee({
   required String status,

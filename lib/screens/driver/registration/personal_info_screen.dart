@@ -200,7 +200,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     // على Firebase مدفوعة). الرقم بيتخزن زي ما اتكتب من غير توثيق،
     // والربط التلقائي بسجل "مُضاف يدويًا" بقى معطّل تلقائيًا (قاعدة
     // isPreInvitedMatch محتاجة request.auth.token.phone_number اللي
-    // مبقاش بيتحط أبدًا) — الأدمن بقى محتاج يربط أي سائق مُضاف يدويًا
+    // مبقاش بيتحط أبدًا) — الأدمن بقى محتاج يربط أي طيار مُضاف يدويًا
     // بنفسه من لوحة التحكم بعد أول تسجيل دخول له ======
     await _completeSave(mobile);
   }
@@ -240,7 +240,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         },
         // ====== بنخزنه هنا كمان (مش بس جوه personalInfo) عشان يطابق
         // نفس الحقل اللي بيدور عليه linkPreInvitedDriverIfNeeded وبيكتبه
-        // الأدمن وقت إضافة سائق يدويًا، فالربط شغال في الاتجاهين ======
+        // الأدمن وقت إضافة طيار يدويًا، فالربط شغال في الاتجاهين ======
         'phoneNormalized': normalizeEgyptPhone(mobile),
       }, SetOptions(merge: true));
 

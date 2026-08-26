@@ -5,7 +5,7 @@ import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 
-// ====== Driver Offer Card — كارت عرض سائق بأسلوب inDrive، كل المعلومات ظاهرة ======
+// ====== Driver Offer Card — كارت عرض طيار بأسلوب inDrive، كل المعلومات ظاهرة ======
 // Usage: TayarDriverCard(
 //   driverName: 'أحمد محمد',
 //   rating: 4.8,
@@ -24,7 +24,7 @@ import 'package:tayay_app/widgets/app_primary_button.dart';
 //    اتبدلت بـ context.textGreyColor من الثيم الموحّد.
 // 2. Image.network كان من غير errorBuilder — لو رابط الصورة فشل (شائع مع
 //    انقطاع النت) كان هيظهر أيقونة broken-image قبيحة. دلوقتي فيه fallback
-//    لحرف اسم السائق زي ما بيحصل أصلًا لو مفيش صورة خالص.
+//    لحرف اسم الطيار زي ما بيحصل أصلًا لو مفيش صورة خالص.
 // 3. الكارت الخارجي والزرارين بقوا AppCard/AppPrimaryButton الموحدين بدل
 //    Container/ElevatedButton منفصلين، عشان ياخدوا نفس الظل والـ press
 //    animation المتسقين في التطبيق كله. ======
@@ -74,7 +74,7 @@ class TayarDriverCard extends StatelessWidget {
       radius: AppRadius.xxl,
       child: Column(
         children: [
-          // صف معلومات السائق
+          // صف معلومات الطيار
           Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Row(
@@ -131,7 +131,7 @@ class TayarDriverCard extends StatelessWidget {
                           color: context.textColor,
                         ),
                       ),
-                      // لو مفيش rating ولا trips خالص (زي سائق جديد لسه ماعملش
+                      // لو مفيش rating ولا trips خالص (زي طيار جديد لسه ماعملش
                       // رحلات)، الصف ده مبيتعرضش أصلًا بدل ما يبان فاضي.
                       if (rating != null || trips != null) ...[
                         const SizedBox(height: 4),

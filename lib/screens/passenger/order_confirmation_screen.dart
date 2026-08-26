@@ -70,7 +70,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
   // كان دايمًا. لو الراكب اختار "حجز لاحقًا" بنحفظ الميعاد هنا ونبعته لـ
   // createOrder كـ scheduledFor. المطابقة نفسها بتشتغل فورًا في الحالتين
   // (شوف تعليق orderType في supabase/functions/create-order) - الميعاد ده بس بيتسجل
-  // كمعلومة للسائق وبيتعرض في شاشة البحث عن عروض ======
+  // كمعلومة للطيار وبيتعرض في شاشة البحث عن عروض ======
   DateTime? _scheduledFor;
 
   // ====== true وقت إعادة حساب المسار والسعر بعد تعديل نقطة الانطلاق أو

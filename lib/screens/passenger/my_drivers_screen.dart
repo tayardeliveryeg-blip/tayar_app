@@ -7,7 +7,7 @@ import 'package:tayay_app/services/driver_relations_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 
-/// ====== شاشة "سائقيني" - تبويبين: المفضّلين والمحظورين (بند 5 من
+/// ====== شاشة "طياريني" - تبويبين: المفضّلين والمحظورين (بند 5 من
 /// تحليل الفجوات، خطوة 2/3). بتقرا مباشرة من الـ streams اللي في
 /// DriverRelationsService، فأي تغيير (من شاشة التقييم مثلًا) بينعكس
 /// هنا فورًا من غير ما نحتاج نعمل refresh يدوي ======

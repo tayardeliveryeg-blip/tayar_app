@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 
-/// ====== مين اللي بيلغي: بيحدد قايمة الأسباب المعروضة (الراكب والسائق
+/// ====== مين اللي بيلغي: بيحدد قايمة الأسباب المعروضة (الراكب والطيار
 /// عندهم أسباب مختلفة) ======
 enum CancellationActor { customer, driver }
 
@@ -13,7 +13,7 @@ class _CancellationReasonOption {
 }
 
 /// ====== بوتوم شيت اختيار سبب الإلغاء - مشترك بين شاشات الراكب (تتبع
-/// الرحلة، الرحلات المجدولة) وأي فيتشر إلغاء مستقبلي من ناحية السائق.
+/// الرحلة، الرحلات المجدولة) وأي فيتشر إلغاء مستقبلي من ناحية الطيار.
 /// بترجع كود السبب المختار (String، من قايمة ثابتة مطابقة لـ
 /// firestore.rules) أو null لو المستخدم قفل الشيت من غير ما يختار.
 ///

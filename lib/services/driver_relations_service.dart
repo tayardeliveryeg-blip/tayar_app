@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-/// ====== خدمة السائقين المفضّلين والمحظورين عند الراكب (بند 5 من
+/// ====== خدمة الطيارين المفضّلين والمحظورين عند الراكب (بند 5 من
 /// تحليل الفجوات) ======
 ///
 /// - المفضّلين: users/{passengerId}/favoriteDrivers/{driverId} - مرجعية
@@ -59,7 +59,7 @@ class DriverRelationsService {
     return _favoritesRef(uid).doc(driverId).snapshots().map((s) => s.exists);
   }
 
-  /// قايمة كل السائقين المفضّلين عند الراكب الحالي (لشاشة الإدارة).
+  /// قايمة كل الطيارين المفضّلين عند الراكب الحالي (لشاشة الإدارة).
   static Stream<QuerySnapshot<Map<String, dynamic>>> favoritesStream() {
     final uid = _uid;
     if (uid == null) return const Stream.empty();
@@ -102,7 +102,7 @@ class DriverRelationsService {
         .map((s) => s.exists);
   }
 
-  /// قايمة كل السائقين المحظورين من الراكب الحالي (لشاشة الإدارة).
+  /// قايمة كل الطيارين المحظورين من الراكب الحالي (لشاشة الإدارة).
   static Stream<QuerySnapshot<Map<String, dynamic>>> blockedStream() {
     final uid = _uid;
     if (uid == null) return const Stream.empty();

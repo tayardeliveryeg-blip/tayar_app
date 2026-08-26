@@ -63,7 +63,7 @@ class TripRequestDetailScreenState extends State<TripRequestDetailScreen> {
 
   // ====== نفس الحدود المطبّقة في offer_sheet.dart، محسوبة على
   // widget.proposedFare بتاعة الطلب وقت فتح الشاشة (السعر الأصلي قبل أي
-  // مزايدة من السائق ده)، مش على _price المتغيّرة ======
+  // مزايدة من الطيار ده)، مش على _price المتغيّرة ======
   double get _minPrice => FareNegotiationRules.minFareFor(widget.proposedFare);
   double get _maxPrice => FareNegotiationRules.maxFareFor(widget.proposedFare);
 

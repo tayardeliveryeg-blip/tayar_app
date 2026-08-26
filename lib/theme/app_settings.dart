@@ -15,11 +15,11 @@ class AppSettings {
   double perKmRate = 5.0;
   double commissionRate = 0.10;
   double serviceRadiusKm =
-      15.0; // محفوظة للمستقبل: مفيش فلترة بالمسافة مفعّلة في مطابقة السائقين لسه
+      15.0; // محفوظة للمستقبل: مفيش فلترة بالمسافة مفعّلة في مطابقة الطيارين لسه
   String supportPhone = '+201064286901';
   double referralWelcomeBonus = 20.0;
   int maxScheduleAdvanceDays = 7;
-  // ====== رسوم إلغاء الرحلة (تتحصل بس لو سائق كان قابل الطلب فعلاً، وبعد
+  // ====== رسوم إلغاء الرحلة (تتحصل بس لو طيار كان قابل الطلب فعلاً، وبعد
   // ما مهلة الإلغاء المجاني تنتهي - راجع cancellation_reason_sheet.dart) ======
   double cancellationFeeAmount = 10.0;
   int freeCancellationWindowMinutes = 3;

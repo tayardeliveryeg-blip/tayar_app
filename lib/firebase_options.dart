@@ -15,7 +15,7 @@ import 'package:flutter/foundation.dart'
 /// );
 /// ```
 class DefaultFirebaseOptions {
-  // ====== التطبيق (الراكب/السائق) يدعم Android و iOS بس. الويب ملوش
+  // ====== التطبيق (الراكب/الطيار) يدعم Android و iOS بس. الويب ملوش
   // استخدام هنا - لوحة الأدمن صفحة HTML منفصلة (tayar-admin/public)
   // ومش شغالة بكود Flutter ده خالص ======
   static FirebaseOptions get currentPlatform {

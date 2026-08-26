@@ -4,7 +4,7 @@ import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 
-// ====== شيت تقديم عرض بسعر مخصص من السائق على طلب ======
+// ====== شيت تقديم عرض بسعر مخصص من الطيار على طلب ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
 class OfferSheet extends StatefulWidget {
   final double proposedFare;

@@ -64,7 +64,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   // (ضمن نطاق serviceRadiusKm من الإعدادات) بدل ما يشوف طلبات من مدينة تانية
   LatLng? _driverCurrentPosition;
 
-  // ====== مجموعة الركاب اللي حاظرين الطيار الحالي (bund 5 - سائقين
+  // ====== مجموعة الركاب اللي حاظرين الطيار الحالي (bund 5 - طيارين
   // مفضّلين/محظورين) - بتتحدّث Live، وبتُستخدم لإخفاء طلباتهم عن
   // الطيار خالص، نفس فكرة فلترة النطاق الجغرافي بالظبط ======
   StreamSubscription<Set<String>>? _blockedByPassengersSub;
@@ -96,7 +96,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     // ====== تفعيل استقبال إشعارات الشات + دعوات المكالمات (لازم بعد تسجيل الدخول) ======
     PushNotificationService.instance.init(isDriver: true);
     setupCallInvitationService(navigatorKey: navigatorKey);
-    // ====== تعبئة رقم التليفون تلقائيًا لو السائق سجل قبل إضافة هذا الحقل ======
+    // ====== تعبئة رقم التليفون تلقائيًا لو الطيار سجل قبل إضافة هذا الحقل ======
     _backfillPhoneNumber();
     // ====== الاستماع لقايمة الركاب اللي حاظريني عشان أستخدمها في فلترة
     // الطلبات المعروضة (bund 5) ======
@@ -107,7 +107,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         });
   }
 
-  // ====== لوحة التحكم محتاجة رقم تليفون السائق؛ السائقين اللي سجلوا قبل ما نضيف
+  // ====== لوحة التحكم محتاجة رقم تليفون الطيار؛ الطيارين اللي سجلوا قبل ما نضيف
   // الحقل ده هيتملّه تلقائيًا من رقم تسجيل الدخول أول ما يفتحوا الشاشة دي ======
   Future<void> _backfillPhoneNumber() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -126,7 +126,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         }, SetOptions(merge: true));
       }
     } catch (_) {
-      // صامت: مجرد تعبئة اختيارية، لا داعي لإزعاج السائق لو فشلت
+      // صامت: مجرد تعبئة اختيارية، لا داعي لإزعاج الطيار لو فشلت
     }
   }
 
@@ -229,7 +229,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   // ما يشوفش طلبات من مدينة تانية بعيدة تمامًا. لو موقع الطيار لسه مش معروف
   // (أول لحظة فتح الشاشة قبل ما GPS يرد) بنسيب القايمة زي ما هي من غير فلترة
   // عشان مايفضلش شايف قايمة فاضية من غير سبب واضح. كمان بتستبعد أي طلب
-  // من راكب حاظر الطيار الحالي (bund 5 - سائقين مفضّلين/محظورين) ======
+  // من راكب حاظر الطيار الحالي (bund 5 - طيارين مفضّلين/محظورين) ======
   List<QueryDocumentSnapshot<Map<String, dynamic>>>
   _filterOrdersWithinServiceRadius(
     List<QueryDocumentSnapshot<Map<String, dynamic>>> orders,
@@ -585,11 +585,11 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     }
   }
 
-  // ====== جلب متوسط تقييم السائق من الكاش الجاهز ======
+  // ====== جلب متوسط تقييم الطيار من الكاش الجاهز ======
   // بدل ما نجيب كل الطلبات المكتملة ونحسب المتوسط كل مرة (استعلام تقيل ومكلّف)،
   // بنقرا مستند drivers/{uid} بس اللي فيه ratingSum و ratingCount جاهزين
   // ومتحدّثين أول ما يوصل تقييم جديد (شوف transaction في شاشة تقييم الرحلة)
-  // بيرجع null لو السائق لسه معندوش أي تقييمات (سائق جديد)
+  // بيرجع null لو الطيار لسه معندوش أي تقييمات (طيار جديد)
   Future<double?> _getDriverAverageRating(String driverId) async {
     try {
       await ensureDriverRatingCacheExists(driverId);
@@ -603,16 +603,16 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       final sum = (data?['ratingSum'] as num?)?.toDouble() ?? 0.0;
       return sum / count;
     } catch (e) {
-      debugPrint('⚠️ تعذر جلب متوسط تقييم السائق: $e');
+      debugPrint('⚠️ تعذر جلب متوسط تقييم الطيار: $e');
       return null;
     }
   }
 
-  // ====== جلب اسم السائق الحقيقي من بروفايله في Firestore ======
-  // بنفس الأولوية المستخدمة في باقي الشاشة: الاسم اللي السائق كتبه في بياناته
+  // ====== جلب اسم الطيار الحقيقي من بروفايله في Firestore ======
+  // بنفس الأولوية المستخدمة في باقي الشاشة: الاسم اللي الطيار كتبه في بياناته
   // الشخصية (firstName + lastName) أولًا، وإلا اسم حساب Google، وإلا اسم
   // افتراضي كـ fallback أخير. من غير كده كان بيتسجّل اسم حساب المصادقة بس،
-  // فلو السائق غيّر اسمه في البروفايل ما كانش بيظهر للراكب في الرحلة.
+  // فلو الطيار غيّر اسمه في البروفايل ما كانش بيظهر للراكب في الرحلة.
   Future<String> _getDriverDisplayName(String driverId, String fallback) async {
     try {
       final doc = await FirebaseFirestore.instance
@@ -628,7 +628,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       ].where((s) => s != null && s.isNotEmpty).join(' ');
       if (firestoreName.isNotEmpty) return firestoreName;
     } catch (e) {
-      debugPrint('⚠️ تعذر جلب اسم بروفايل السائق: $e');
+      debugPrint('⚠️ تعذر جلب اسم بروفايل الطيار: $e');
     }
     final googleName = _currentUser?.displayName?.trim();
     if (googleName != null && googleName.isNotEmpty) return googleName;
@@ -654,8 +654,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       await _ordersRef.doc(orderId).collection('offers').add({
         'driverId': user.uid,
         'driverName': driverName,
-        // لو السائق لسه معندوش تقييمات، بنبعت null بدل رقم وهمي؛
-        // شاشة الراكب لازم تتعامل مع null كـ "سائق جديد" بدل ما تعرض نجوم فاضية
+        // لو الطيار لسه معندوش تقييمات، بنبعت null بدل رقم وهمي؛
+        // شاشة الراكب لازم تتعامل مع null كـ "طيار جديد" بدل ما تعرض نجوم فاضية
         'driverRating': averageRating,
         'price': price,
         'createdAt': FieldValue.serverTimestamp(),

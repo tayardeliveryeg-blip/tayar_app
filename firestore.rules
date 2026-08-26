@@ -53,14 +53,14 @@ service cloud.firestore {
           changedKeys.hasOnly(['proposedFare']) &&
           // ====== المرجع initialFare (ثابت من لحظة الإنشاء) مش suggestedFare،
           // وحدود 0.5x-1.5x مطابقة بالظبط لـ fare_negotiation_rules.dart في
-          // الموبايل (شاشتي الراكب والسائق) - لازم الاتنين يفضلوا متطابقين ======
+          // الموبايل (شاشتي الراكب والطيار) - لازم الاتنين يفضلوا متطابقين ======
           request.resource.data.proposedFare >= resource.data.initialFare * 0.5 - 1 &&
           request.resource.data.proposedFare <= resource.data.initialFare * 1.5 + 1
         ) ||
         changedKeys.hasOnly(['autoAccept']) ||
         (
           // ====== إلغاء الراكب لطلبه - محتاج سبب دايمًا (لو الطلب لسه
-          // 'searching'، أو 'accepted' فعليًا واتقبل من سائق). الرسوم
+          // 'searching'، أو 'accepted' فعليًا واتقبل من طيار). الرسوم
           // (cancellationFee) بتتحسب سيرفر-سايد بالكامل عبر
           // correctCancellationFee() - مش قيمة بيقررها العميل ======
           changedKeys.hasOnly([
@@ -136,11 +136,11 @@ service cloud.firestore {
         request.resource.data.walletBalance >= 0;
     }
 
-    // ====== بتتأكد إن خصم رسوم إلغاء الرحلة (بعد ما سائق يكون قابلها فعلاً)
+    // ====== بتتأكد إن خصم رسوم إلغاء الرحلة (بعد ما طيار يكون قابلها فعلاً)
     // من رصيد الراكب مش تعديل حر - لازم يكون مرتبط بطلب حقيقي اتلغى من
     // الراكب نفسه، مدفوع بالمحفظة، وله رسوم إلغاء موجبة، ولسه ما اتخصمتش.
     // بعكس isValidWalletDeduction، هنا مسموح الرصيد يبقى بالسالب (زي رصيد
-    // محفظة السائق بالظبط) عشان مانمنعش الإلغاء لمجرد إن الرصيد مش كافي -
+    // محفظة الطيار بالظبط) عشان مانمنعش الإلغاء لمجرد إن الرصيد مش كافي -
     // الرسوم بتتسجل كدين لحد ما يتشحن تاني ======
     function isValidCancellationFeeDeduction(userId) {
       let orderId = request.resource.data.walletLastCancellationFeeOrderId;
@@ -236,7 +236,7 @@ service cloud.firestore {
         (!('note' in d) || (d.note is string && d.note.size() <= 300));
     }
 
-    // ====== بتتأكد إن سعر عرض السائق (offers/{offerId}.price) في نفس حدود
+    // ====== بتتأكد إن سعر عرض الطيار (offers/{offerId}.price) في نفس حدود
     // 0.5x-1.5x من initialFare بتاعة الطلب - نفس الحدود بالظبط اللي التطبيق
     // بيفرضها في offer_sheet.dart، عشان محدش يقدر يبعت عرض بسعر عشوائي عن
     // طريق مناداة Firestore مباشرة ======
@@ -246,7 +246,7 @@ service cloud.firestore {
         request.resource.data.price <= order.initialFare * 1.5 + 1;
     }
 
-    // ====== طبقة حماية سيرفر-سايد لبند 5 (سائقين مفضّلين/محظورين):
+    // ====== طبقة حماية سيرفر-سايد لبند 5 (طيارين مفضّلين/محظورين):
     // تتأكد إن الراكب صاحب الطلب ده مش حاظر الطيار الحالي قبل ما نسمحله
     // يبعت عرض أصلاً - فلترة الواجهة في driver_home_screen.dart بتمنع
     // الطيار من الشوفان، والقاعدة دي بتمنعه فعليًا لو عدّى الفلترة بأي
@@ -280,7 +280,7 @@ service cloud.firestore {
               request.resource.data.status != 'cancelled'
             ) ||
             (
-              // ====== إلغاء السائق لرحلة قابلها بالفعل - محتاج سبب دايمًا،
+              // ====== إلغاء الطيار لرحلة قابلها بالفعل - محتاج سبب دايمًا،
               // ومفيش رسوم عليه (الرسوم للراكب بس، لو هو اللي اتراجع) ======
               request.resource.data.diff(resource.data).affectedKeys()
                 .hasOnly(['status', 'cancellationReason', 'cancelledBy', 'cancellationFee', 'cancelledAt']) &&
@@ -324,7 +324,7 @@ service cloud.firestore {
       }
 
       // ====== مؤشر "بيكتب دلوقتي..." في شاشة شات الرحلة: كل مستخدم بيكتب/بيقرا
-      // حالة نفسه وحالة الطرف التاني بس (العميل أو السائق بتوع نفس الطلب) ======
+      // حالة نفسه وحالة الطرف التاني بس (العميل أو الطيار بتوع نفس الطلب) ======
       match /typing/{userId} {
         allow read: if request.auth != null && (
           get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid ||
@@ -342,7 +342,7 @@ service cloud.firestore {
     // ====== isPreInvitedMatch: سجل مُضاف يدويًا من لوحة التحكم
     // (+ Add driver، ID عشوائي) بنفس رقم موبايل اليوزر الحالي —
     // ده اللي بيسمح لـ driver_invite_link_helper.dart إنه يدور
-    // على السجل ده ويربطه بالـ UID الحقيقي أول ما السائق يسجل
+    // على السجل ده ويربطه بالـ UID الحقيقي أول ما الطيار يسجل
     // دخول برقم الموبايل ده تحديدًا، ومفيش حد تاني يقدر يقراه ======
     function isPreInvitedMatch() {
       return resource.data.isPreInvited == true &&
@@ -540,7 +540,7 @@ service cloud.firestore {
             get(/databases/$(database)/documents/users/$(userId)).data.walletBalance;
         allow update, delete: if false;
       }
-      // ====== سائقين مفضّلين عند الراكب (مرجعية بس - عرض في الواجهة،
+      // ====== طيارين مفضّلين عند الراكب (مرجعية بس - عرض في الواجهة،
       // مفيش أي تأثير أمني/تشغيلي على الطرف التاني) - وثيقة واحدة لكل
       // طيار، الـ document ID هو driverId نفسه ======
       match /favoriteDrivers/{driverId} {

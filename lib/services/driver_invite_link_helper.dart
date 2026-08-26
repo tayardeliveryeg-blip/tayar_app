@@ -35,7 +35,7 @@ String? normalizeEgyptPhone(String? raw) {
 }
 
 /// نتيجة عملية الربط، عشان اللي بيستدعي الدالة يقدر يقرر يوجّه
-/// المستخدم فين (شاشة تسجيل السائق / الرئيسية) من غير ما يعمل قراءة تانية.
+/// المستخدم فين (شاشة تسجيل الطيار / الرئيسية) من غير ما يعمل قراءة تانية.
 class DriverLinkResult {
   final bool linked;
   final Map<String, dynamic>? driverData;
@@ -80,7 +80,7 @@ Future<DriverLinkResult> linkPreInvitedDriverIfNeeded({
     return DriverLinkResult(linked: linked, driverData: driverData);
   } catch (e) {
     // ====== لو حصل أي خطأ (شبكة، تايم أوت، إلخ) منوقفش تسجيل الدخول
-    // عشان كده، السائق هيكمل تسجيل عادي وهيتعامل معاه كأنه مستخدم جديد ======
+    // عشان كده، الطيار هيكمل تسجيل عادي وهيتعامل معاه كأنه مستخدم جديد ======
     return const DriverLinkResult(linked: false);
   }
 }

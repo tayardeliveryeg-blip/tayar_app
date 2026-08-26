@@ -4,7 +4,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 
 // ====== يتأكد إن مستند drivers/{uid} فيه ratingSum/ratingCount جاهزين ======
-// لو السائق قديم من قبل إضافة الكاش ده (أو مفيش كاش لأي سبب)، بيحسبها مرة واحدة
+// لو الطيار قديم من قبل إضافة الكاش ده (أو مفيش كاش لأي سبب)، بيحسبها مرة واحدة
 // من كل الطلبات المكتملة القديمة ويخزنها، عشان أي قراءة بعد كده تبقى رخيصة
 // (مستند واحد بدل مسح كل الطلبات في كل مرة). لو الكاش موجود بالفعل، منعملش حاجة.
 // public (مش private) عشان يتنادى من شاشة الطيار الرئيسية كمان.
@@ -34,7 +34,7 @@ Future<void> ensureDriverRatingCacheExists(String driverId) async {
       'ratingCount': ratings.length,
     }, SetOptions(merge: true));
   } catch (e) {
-    debugPrint('⚠️ تعذر تجهيز كاش تقييم السائق: $e');
+    debugPrint('⚠️ تعذر تجهيز كاش تقييم الطيار: $e');
   }
 }
 

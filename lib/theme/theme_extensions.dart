@@ -160,7 +160,7 @@ class AppSpacing {
 
 // ====== ستايلات الأرقام الكبيرة (زي الرصيد، متوسط التقييم، الأرباح) ======
 // كانت بتتكرر بنفس الشكل بالظبط (نفس اللون والوزن) في أكتر من مكان في شاشة
-// السائق بس بفونت سايز مختلف حسب الأهمية. بدل تكرار TextStyle كامل في كل
+// الطيار بس بفونت سايز مختلف حسب الأهمية. بدل تكرار TextStyle كامل في كل
 // مرة، الاستخدام بقى: style: TayarStatTextStyles.statMedium
 class TayarStatTextStyles {
   static const TextStyle statSmall = TextStyle(

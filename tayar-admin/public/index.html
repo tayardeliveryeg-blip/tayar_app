@@ -2227,7 +2227,7 @@ function submitModal(){
   const plate = document.getElementById('f_plate').value.trim() || '—';
   const phone = document.getElementById('f_phone').value.trim() || '';
   const phoneNormalized = normalizeEgyptPhone(phone);
-  // ====== الرقم إجباري: من غيره مفيش طريقة نربط السائق بحسابه
+  // ====== الرقم إجباري: من غيره مفيش طريقة نربط الطيار بحسابه
   // الحقيقي أول ما يسجل دخول (شوف driver_invite_link_helper.dart) ======
   if(!phoneNormalized){ toast('Please enter a valid phone number'); return; }
   db.collection(COLLECTIONS.drivers).add({
@@ -2236,10 +2236,10 @@ function submitModal(){
     rating: 5.0,
     isAvailable: false,
     status: 'approved',
-    // ====== الفلاجين دول هما اللي بيخلّوا التطبيق يعرف يربط السائق
+    // ====== الفلاجين دول هما اللي بيخلّوا التطبيق يعرف يربط الطيار
     // بحسابه الحقيقي (UID) أول ما يسجل دخول برقم الموبايل ده،
     // ويترحّلوا/يتشالوا تلقائيًا بعد الربط — لو فضلوا موجودين يبقى
-    // السائق لسه ما سجّلش دخول بعد ======
+    // الطيار لسه ما سجّلش دخول بعد ======
     isPreInvited: true,
     phoneNormalized: phoneNormalized,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()

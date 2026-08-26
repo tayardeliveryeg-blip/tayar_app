@@ -26,7 +26,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingPageData(
       icon: Icons.handshake,
       title: 'اختار السعر اللي يناسبك',
-      subtitle: 'مفاوضة حرة بينك وبين السائق، مفيش سعر ثابت يفرض عليك',
+      subtitle: 'مفاوضة حرة بينك وبين الطيار، مفيش سعر ثابت يفرض عليك',
       color: const Color(0xFF4CAF50),
     ),
     _OnboardingPageData(

@@ -1,5 +1,5 @@
 // ====== Edge Function: link-driver ======
-// بديل آمن لعملية ربط سائق "مُضاف يدويًا" من لوحة التحكم (زرار
+// بديل آمن لعملية ربط طيار "مُضاف يدويًا" من لوحة التحكم (زرار
 // "+ Add driver" - بيعمل Firestore doc بـ ID عشوائي وisPreInvited:true)
 // بحساب الطيار الحقيقي (drivers/{uid}) بعد أول تسجيل دخول له، عن طريق
 // مطابقة رقم الموبايل.
@@ -12,7 +12,7 @@
 // المستند الجديد + delete على القديم) بترفض دايمًا من الـ rules وتفشل
 // صامتة. هنا بنعمل نفس العملية بصلاحيات Service Account (بتتخطى
 // firestore.rules تمامًا، زي create-order بالظبط) بعد التحقق من هوية
-// السائق بمقارنة الـ Firebase ID Token - يعني بس السائق نفسه (uid
+// الطيار بمقارنة الـ Firebase ID Token - يعني بس الطيار نفسه (uid
 // موثّق من التوكن) يقدر يطلب ربط نفسه، مش أي حد لأي حد.
 //
 // بتتنادى من lib/services/driver_invite_link_helper.dart (نفس منطق
@@ -112,9 +112,9 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ linked: true, driverData: mergedData });
   } catch (err) {
     console.error("link-driver فشلت:", err);
-    // ====== لو حصل أي خطأ غير متوقع منوقفش تسجيل السائق عشان كده -
+    // ====== لو حصل أي خطأ غير متوقع منوقفش تسجيل الطيار عشان كده -
     // نفس فلسفة try/catch القديمة في الموبايل: نرجع linked:false
-    // بهدوء والتسجيل بيكمل عادي كأنه سائق جديد ======
+    // بهدوء والتسجيل بيكمل عادي كأنه طيار جديد ======
     return jsonResponse({ linked: false }, 200);
   }
 });

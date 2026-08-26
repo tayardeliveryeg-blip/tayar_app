@@ -82,8 +82,8 @@ class DriverHomeDrawer extends StatelessWidget {
                       }
                     }
 
-                    // ====== اسم السائق الحقيقي: من بيانات Firestore أولًا
-                    // (firstName + lastName اللي السائق كتبهم في البروفايل)،
+                    // ====== اسم الطيار الحقيقي: من بيانات Firestore أولًا
+                    // (firstName + lastName اللي الطيار كتبهم في البروفايل)،
                     // وإلا اسم حساب Google المسجل بيه، وإلا اسم افتراضي
                     // كـ fallback أخير — بنفس منطق شاشة الراكب بالظبط ======
                     final firstName = (personalInfo?['firstName'] as String?)
