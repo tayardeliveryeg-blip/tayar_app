@@ -118,7 +118,11 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
   Future<void> _submit() async {
     final loc = AppLocalizations.of(context)!;
     if (!_canSubmit) {
-      TayarToast.show(context, loc.vendorFillRequiredFieldsError, type: ToastType.warning);
+      TayarToast.show(
+        context,
+        loc.vendorFillRequiredFieldsError,
+        type: ToastType.warning,
+      );
       return;
     }
 
@@ -165,7 +169,11 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
       debugPrint('❌ خطأ في إرسال طلب انضمام التاجر: $e');
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      TayarToast.show(context, loc.vendorSubmitFailedError, type: ToastType.error);
+      TayarToast.show(
+        context,
+        loc.vendorSubmitFailedError,
+        type: ToastType.error,
+      );
     }
   }
 
@@ -307,32 +315,18 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
               height: 54,
               child: AppPrimaryButton(
                 onPressed: _canSubmit ? _submit : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TayarColors.primary,
-                  disabledBackgroundColor: TayarColors.primary.withValues(
-                    alpha: 0.4,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                variant: AppButtonVariant.primary,
+                disabledBackgroundColor: TayarColors.primary.withValues(
+                  alpha: 0.4,
+                ),
+                isLoading: _isSubmitting,
+                child: Text(
+                  loc.vendorSubmitButton,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: _isSubmitting
-                    ? SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          color: context.onPrimaryColor,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        loc.vendorSubmitButton,
-                        style: TextStyle(
-                          color: context.onPrimaryColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
               ),
             ),
           ],

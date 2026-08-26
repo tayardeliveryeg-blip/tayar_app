@@ -16,6 +16,7 @@ class AppPrimaryButton extends StatefulWidget {
   final AppButtonSize? size;
   final bool isLoading;
   final bool? glow;
+  final Color? disabledBackgroundColor;
 
   const AppPrimaryButton({
     super.key,
@@ -26,6 +27,7 @@ class AppPrimaryButton extends StatefulWidget {
     this.size,
     this.isLoading = false,
     this.glow,
+    this.disabledBackgroundColor,
   });
 
   @override
@@ -63,6 +65,7 @@ class _AppPrimaryButtonState extends State<AppPrimaryButton> {
         minimumSize: minimumSize,
         shape: baseShape,
         elevation: 0,
+        disabledBackgroundColor: widget.disabledBackgroundColor,
       ),
       AppButtonVariant.danger => ElevatedButton.styleFrom(
         backgroundColor: TayarColors.error,
@@ -87,18 +90,19 @@ class _AppPrimaryButtonState extends State<AppPrimaryButton> {
         elevation: 0,
         side: BorderSide(color: TayarColors.primary, width: 1.2),
       ),
-      AppButtonVariant.ghost => ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent,
-        foregroundColor: context.textGreyColor,
-        minimumSize: minimumSize,
-        shape: baseShape,
-        elevation: 0,
-        shadowColor: Colors.transparent,
-      ).copyWith(
-        overlayColor: WidgetStateProperty.all(
-          context.textGreyColor.withValues(alpha: 0.08),
+      AppButtonVariant.ghost =>
+        ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          foregroundColor: context.textGreyColor,
+          minimumSize: minimumSize,
+          shape: baseShape,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+        ).copyWith(
+          overlayColor: WidgetStateProperty.all(
+            context.textGreyColor.withValues(alpha: 0.08),
+          ),
         ),
-      ),
     };
   }
 

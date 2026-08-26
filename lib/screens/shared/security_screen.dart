@@ -457,7 +457,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       if (e.code == 'requires-recent-login') {
-        TayarToast.show(context, loc.reauthRequiredForDeleteError, type: ToastType.error);
+        TayarToast.show(
+          context,
+          loc.reauthRequiredForDeleteError,
+          type: ToastType.error,
+        );
       } else {
         TayarToast.show(
           context,
@@ -584,31 +588,10 @@ class _SecurityScreenState extends State<SecurityScreen> {
                             width: double.infinity,
                             height: 44,
                             child: AppPrimaryButton(
-                              onPressed: _savingEmergencyContact
-                                  ? null
-                                  : _saveEmergencyContact,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: TayarColors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: _savingEmergencyContact
-                                  ? SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: context.onPrimaryColor,
-                                      ),
-                                    )
-                                  : Text(
-                                      loc.saveButton,
-                                      style: TextStyle(
-                                        color: context.onPrimaryColor,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                              onPressed: _saveEmergencyContact,
+                              variant: AppButtonVariant.primary,
+                              isLoading: _savingEmergencyContact,
+                              child: Text(loc.saveButton),
                             ),
                           ),
                         ],
