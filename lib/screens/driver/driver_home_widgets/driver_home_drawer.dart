@@ -277,7 +277,6 @@ class DriverHomeDrawer extends StatelessWidget {
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: SizedBox(
                 width: double.infinity,
-                height: 52,
                 child: AppPrimaryButton(
                   onPressed: () async {
                     // ====== نحفظ إن آخر وضع بقى "راكب" عشان يفتح عليه المرة الجاية ======
@@ -290,12 +289,8 @@ class DriverHomeDrawer extends StatelessWidget {
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TayarColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                    ),
-                  ),
+                  variant: AppButtonVariant.primary,
+                  size: AppButtonSize.medium,
                   child: Text(
                     AppLocalizations.of(context)!.backToPassengerModeButton,
                     style: TextStyle(

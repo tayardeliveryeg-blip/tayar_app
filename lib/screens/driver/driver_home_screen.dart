@@ -24,6 +24,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/driver_wallet_tab.d
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_home_drawer.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_requests_tab.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/widgets/empty_state.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key, this.initialTab = 0});
@@ -794,11 +795,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         ],
       ),
       body: user == null
-          ? Center(
-              child: Text(
-                AppLocalizations.of(context)!.mustSignInFirst,
-                style: TextStyle(color: context.textGreyColor),
-              ),
+          ? EmptyState(
+              icon: Icons.lock_outline,
+              title: AppLocalizations.of(context)!.mustSignInFirst,
             )
           : IndexedStack(
               index: _selectedTab,

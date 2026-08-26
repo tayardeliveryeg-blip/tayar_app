@@ -22,10 +22,11 @@
 - searching_offers_screen.dart
 - order_confirmation_screen.dart
 - create_delivery_order_screen.dart
-- driver_home_screen.dart
-- driver_income_tab.dart
-- active_trip_card.dart
-- driver_home_drawer.dart
+- [x] driver_home_screen.dart — EmptyState لحالة "لسه مسجلتش دخول" (كان Text عادي)
+- [x] driver_income_tab.dart — TayarShimmer بدل CircularProgressIndicator الخام وقت التحميل
+- active_trip_card.dart — الزرار الأساسي فضل بـ style صريح (AppRadius.sm) عن قصد؛ التوحيد
+  مع variant API كان هيغيّر الاستدارة والارتفاع فعليًا (شكل بصري مختلف)، فمتسابش زي ما هو
+- [x] driver_home_drawer.dart — زرار "الرجوع لوضع الركاب" اتحول لـ variant: primary + size: medium
 
 ## Rules
 - Use AppPrimaryButton for standard app actions.

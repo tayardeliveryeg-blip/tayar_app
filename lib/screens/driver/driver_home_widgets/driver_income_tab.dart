@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== تبويب "دخلي": إجمالي الأرباح واليوم الحالي ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
@@ -27,8 +28,18 @@ class DriverIncomeTab extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(color: TayarColors.primary),
+          // ====== شاشة تحميل بديلة (skeleton) بدل السبينر الخام، بتطابق
+          // شكل الـ 3 كروت الحقيقية (اليوم/الإجمالي/عدد الرحلات) عشان
+          // الانتقال للبيانات الفعلية يبقى سلس بدل قفزة مفاجئة ======
+          return ListView(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            children: [
+              TayarShimmer.card(height: 76),
+              const SizedBox(height: AppSpacing.lg),
+              TayarShimmer.card(height: 76),
+              const SizedBox(height: AppSpacing.lg),
+              TayarShimmer.card(height: 76),
+            ],
           );
         }
 
