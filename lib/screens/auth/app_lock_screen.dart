@@ -68,7 +68,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: 8),
-                  Text(_error!, style: const TextStyle(color: Colors.redAccent)),
+                  Text(_error!, style: const TextStyle(color: TayarColors.error)),
                 ],
                 const SizedBox(height: 24),
                 AppPrimaryButton(

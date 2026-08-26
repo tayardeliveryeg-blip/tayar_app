@@ -474,7 +474,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
           ),
           title: Column(
             children: [
-              const Icon(Icons.cancel, color: Colors.redAccent, size: 56),
+              const Icon(Icons.cancel, color: TayarColors.error, size: 56),
               const SizedBox(height: 12),
               Text(
                 loc.tripCancelledTitle,
@@ -941,11 +941,11 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                         icon: const Icon(
                           Icons.close,
                           size: 16,
-                          color: Colors.redAccent,
+                          color: TayarColors.error,
                         ),
                         label: Text(
                           loc.cancelTripButton,
-                          style: const TextStyle(color: Colors.redAccent),
+                          style: const TextStyle(color: TayarColors.error),
                         ),
                       ),
                     ),

@@ -363,7 +363,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
           ),
           title: Column(
             children: [
-              const Icon(Icons.cancel, color: Colors.redAccent, size: 56),
+              const Icon(Icons.cancel, color: TayarColors.error, size: 56),
               const SizedBox(height: 12),
               Text(
                 loc.tripCancelledTitle,

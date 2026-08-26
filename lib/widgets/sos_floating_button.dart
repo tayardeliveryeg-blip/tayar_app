@@ -27,7 +27,7 @@ class SosFloatingButton extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: Colors.redAccent.withValues(alpha: 0.95),
+          color: TayarColors.error.withValues(alpha: 0.95),
           shape: BoxShape.circle,
           boxShadow: AppShadows.floating(context),
         ),

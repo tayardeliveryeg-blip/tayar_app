@@ -22,7 +22,7 @@ class OrderHistoryScreen extends StatelessWidget {
       case 'completed':
         return Colors.greenAccent;
       case 'cancelled':
-        return Colors.redAccent;
+        return TayarColors.error;
       case 'in_progress':
       case 'accepted':
         return TayarColors.primary;

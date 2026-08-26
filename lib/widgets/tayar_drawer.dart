@@ -62,7 +62,7 @@ class TayarDrawer extends StatelessWidget {
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               loc.logout,
-              style: const TextStyle(color: Colors.redAccent),
+              style: const TextStyle(color: TayarColors.error),
             ),
           ),
         ],
@@ -514,7 +514,7 @@ class _DrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color itemColor = isDestructive
-        ? Colors.redAccent
+        ? TayarColors.error
         : (selected ? TayarColors.primary : context.textColor);
 
     return Container(
@@ -525,7 +525,7 @@ class _DrawerItem extends StatelessWidget {
         leading: Icon(
           icon,
           color: isDestructive
-              ? Colors.redAccent
+              ? TayarColors.error
               : (selected ? TayarColors.primary : context.textGreyColor),
         ),
         title: Text(

@@ -66,7 +66,7 @@ class MyDriversScreen extends StatelessWidget {
               driverIdField: 'driverId',
               emptyMessage: loc.noBlockedDriversYetMessage,
               leadingIcon: Icons.block,
-              leadingColor: Colors.redAccent,
+              leadingColor: TayarColors.error,
               actionLabel: loc.unblockDriverButton,
               onAction: (driverId, driverName) =>
                   DriverRelationsService.setBlocked(

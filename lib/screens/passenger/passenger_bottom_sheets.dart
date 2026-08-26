@@ -104,7 +104,12 @@ class _SheetDragAreaState extends State<_SheetDragArea> {
   }
 }
 
-class TayarBottomSheet extends StatelessWidget {
+// ====== ملحوظة تسمية: الكلاس ده كان اسمه TayarBottomSheet قبل كده، لكن
+// اتغيّر لـ TripConfirmationSheet عشان كان بيتعارض بالاسم مع مكوّن
+// TayarBottomSheet العام الجديد في widgets/tayar_bottom_sheet.dart (UI kit).
+// الكلاس ده تحديدًا خاص بكارت ملخص الرحلة (وجهة/مسافة/سعر/تأكيد) في شاشة
+// الراكب الرئيسية بس، مش bottom sheet عام ======
+class TripConfirmationSheet extends StatelessWidget {
   final String? destinationAddress;
   final double? distanceKm;
   final int? durationMin;
@@ -119,7 +124,7 @@ class TayarBottomSheet extends StatelessWidget {
   final void Function(DragUpdateDetails)? onDragUpdate;
   final void Function(DragEndDetails)? onDragEnd;
 
-  const TayarBottomSheet({
+  const TripConfirmationSheet({
     super.key,
     required this.destinationAddress,
     required this.distanceKm,

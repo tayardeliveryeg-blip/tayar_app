@@ -252,7 +252,7 @@ class ScheduledRidesScreen extends StatelessWidget {
                             children: [
                               const Icon(
                                 Icons.flag,
-                                color: Colors.redAccent,
+                                color: TayarColors.error,
                                 size: 16,
                               ),
                               const SizedBox(width: 6),
@@ -310,17 +310,17 @@ class ScheduledRidesScreen extends StatelessWidget {
                               icon: const Icon(
                                 Icons.close,
                                 size: 16,
-                                color: Colors.redAccent,
+                                color: TayarColors.error,
                               ),
                               label: Text(
                                 l10n.cancelOrderButton,
                                 style: const TextStyle(
-                                  color: Colors.redAccent,
+                                  color: TayarColors.error,
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
-                                  color: Colors.redAccent,
+                                  color: TayarColors.error,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),

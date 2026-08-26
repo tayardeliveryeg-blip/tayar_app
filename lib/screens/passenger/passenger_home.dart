@@ -1068,7 +1068,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                                 ),
                           style: TextStyle(
                             color: isDisabled
-                                ? Colors.redAccent
+                                ? TayarColors.error
                                 : context.textGreyColor,
                             fontSize: 12,
                           ),
@@ -1659,7 +1659,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                             onDragUpdate: _onSheetDragUpdate,
                             onDragEnd: _onSheetDragEnd,
                           )
-                        : TayarBottomSheet(
+                        : TripConfirmationSheet(
                             destinationAddress: _destinationAddress,
                             distanceKm: _routeDistanceKm,
                             durationMin: _routeDurationMin,

@@ -99,7 +99,7 @@ Future<String?> showCancellationReasonSheet(
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.redAccent.withValues(alpha: 0.12),
+                    color: TayarColors.error.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -107,7 +107,7 @@ Future<String?> showCancellationReasonSheet(
                     children: [
                       const Icon(
                         Icons.info_outline,
-                        color: Colors.redAccent,
+                        color: TayarColors.error,
                         size: 18,
                       ),
                       const SizedBox(width: 8),
@@ -117,7 +117,7 @@ Future<String?> showCancellationReasonSheet(
                             feeAmount.toStringAsFixed(0),
                           ),
                           style: const TextStyle(
-                            color: Colors.redAccent,
+                            color: TayarColors.error,
                             fontSize: 13,
                           ),
                         ),

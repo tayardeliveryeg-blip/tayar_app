@@ -113,7 +113,7 @@ Future<String?> showDeliveryPaymentMethodSheet(
                               ),
                         style: TextStyle(
                           color: isDisabled
-                              ? Colors.redAccent
+                              ? TayarColors.error
                               : context.textGreyColor,
                           fontSize: 12,
                         ),

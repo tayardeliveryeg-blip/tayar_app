@@ -198,7 +198,7 @@ class SavedPlacesRow extends StatelessWidget {
             onPressed: () => Navigator.pop(dialogContext, true),
             child: Text(
               loc.removeSavedPlaceButton,
-              style: const TextStyle(color: Colors.red),
+              style: const TextStyle(color: TayarColors.error),
             ),
           ),
         ],

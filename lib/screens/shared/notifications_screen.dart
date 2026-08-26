@@ -188,7 +188,7 @@ class NotificationsScreen extends StatelessWidget {
                           Text(
                             '${snapshot.error}',
                             style: const TextStyle(
-                              color: Colors.red,
+                              color: TayarColors.error,
                               fontSize: 12,
                             ),
                             textAlign: TextAlign.center,

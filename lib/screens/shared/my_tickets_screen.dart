@@ -93,11 +93,11 @@ class _TicketCard extends StatelessWidget {
   ({Color color, String label}) _statusMeta(String? status) {
     switch (status) {
       case 'resolved':
-        return (color: const Color(0xFF2ECC71), label: loc.ticketStatusResolved);
+        return (color: TayarColors.success, label: loc.ticketStatusResolved);
       case 'in_progress':
         return (color: const Color(0xFF3498DB), label: loc.ticketStatusInProgress);
       default:
-        return (color: const Color(0xFFF39C12), label: loc.ticketStatusOpen);
+        return (color: TayarColors.warning, label: loc.ticketStatusOpen);
     }
   }
 

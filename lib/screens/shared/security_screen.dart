@@ -419,7 +419,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               loc.deletePermanentlyButton,
-              style: const TextStyle(color: Colors.redAccent),
+              style: const TextStyle(color: TayarColors.error),
             ),
           ),
         ],
@@ -622,11 +622,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     ListTile(
                       leading: const Icon(
                         Icons.delete_outline,
-                        color: Colors.redAccent,
+                        color: TayarColors.error,
                       ),
                       title: Text(
                         loc.deleteAccountPermanentlyTitle,
-                        style: const TextStyle(color: Colors.redAccent),
+                        style: const TextStyle(color: TayarColors.error),
                       ),
                       onTap: _startDeleteAccountFlow,
                     ),

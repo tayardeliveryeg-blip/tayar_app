@@ -177,7 +177,7 @@ class PinMarkerWithStem extends StatelessWidget {
               width: _dotSize,
               height: _dotSize,
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: TayarColors.error,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 1.5),
               ),

@@ -365,7 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: _showTermsError
-                ? Border.all(color: Colors.red, width: 1.5)
+                ? Border.all(color: TayarColors.error, width: 1.5)
                 : null,
           ),
           child: Row(
@@ -433,10 +433,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         if (_showTermsError)
           Padding(
-            padding: const EdgeInsets.only(right: 12, top: 2),
+            padding: const EdgeInsetsDirectional.only(start: 12, top: 2),
             child: Text(
               loc.loginAgreementRequiredError,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
+              style: const TextStyle(color: TayarColors.error, fontSize: 12),
             ),
           ),
       ],

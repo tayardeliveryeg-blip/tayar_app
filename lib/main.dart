@@ -354,7 +354,7 @@ class _BannedAccountScreenState extends State<_BannedAccountScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.block, color: Colors.redAccent, size: 56),
+              const Icon(Icons.block, color: TayarColors.error, size: 56),
               const SizedBox(height: 16),
               Text(
                 'تم تعليق هذا الحساب',

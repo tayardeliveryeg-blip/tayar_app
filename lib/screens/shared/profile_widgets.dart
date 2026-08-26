@@ -104,7 +104,7 @@ class ProfileTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final errorBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      borderSide: const BorderSide(color: TayarColors.error, width: 1.5),
     );
     final normalBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),

@@ -28,7 +28,7 @@ class FormTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final errorBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      borderSide: const BorderSide(color: TayarColors.error, width: 1.5),
     );
     final normalBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -95,7 +95,7 @@ class PhotoUploadTile extends StatelessWidget {
                   color: context.cardColor,
                   borderRadius: BorderRadius.circular(14),
                   border: showError
-                      ? Border.all(color: Colors.red, width: 1.5)
+                      ? Border.all(color: TayarColors.error, width: 1.5)
                       : null,
                   image: imageBytes != null
                       ? DecorationImage(

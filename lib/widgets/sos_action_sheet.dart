@@ -81,7 +81,7 @@ class _SosSheetContent extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.warning_rounded,
-                  color: Colors.redAccent,
+                  color: TayarColors.error,
                   size: 26,
                 ),
                 const SizedBox(width: 10),
@@ -106,7 +106,7 @@ class _SosSheetContent extends StatelessWidget {
 
             _SosOptionTile(
               icon: Icons.local_police_outlined,
-              color: Colors.redAccent,
+              color: TayarColors.error,
               title: loc.sosCallPoliceLabel,
               subtitle: _kEgyptPoliceNumber,
               onTap: () =>

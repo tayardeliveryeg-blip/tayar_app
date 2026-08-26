@@ -187,7 +187,7 @@ void _showRedeemCodeSheet(BuildContext context, String uid) {
 
         final textTheme = Theme.of(sheetContext).textTheme;
         return Padding(
-          padding: EdgeInsets.only(left: AppSpacing.xl, right: AppSpacing.xl, top: AppSpacing.xl, bottom: MediaQuery.of(sheetContext).viewInsets.bottom + AppSpacing.xl),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl).copyWith(top: AppSpacing.xl, bottom: MediaQuery.of(sheetContext).viewInsets.bottom + AppSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -149,7 +149,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
               onPressed: () => Navigator.pop(context, true),
               child: Text(
                 loc.blockButton,
-                style: const TextStyle(color: Colors.redAccent),
+                style: const TextStyle(color: TayarColors.error),
               ),
             ),
           ],
@@ -336,7 +336,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
                               label: isBlocked
                                   ? loc.unblockDriverButton
                                   : loc.blockDriverButton,
-                              color: Colors.redAccent,
+                              color: TayarColors.error,
                               active: isBlocked,
                               busy: _relationBusy,
                               onTap: () => _toggleBlocked(isBlocked),

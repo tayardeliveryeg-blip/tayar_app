@@ -2,18 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ====== ألوان البراند ======
-// ملاحظة: القيم التالية (background, cardDark, textGrey) بتفضل بقيمها
-// الغامقة القديمة عشان الشاشات اللي لسه ما اتحولتش لنظام الوضع الفاتح/الغامق
-// (Theme الجديد) تفضل شغالة زي ما هي بالظبط من غير أي كسر. أي شاشة جديدة أو
-// متحولة المفروض تستخدم context.bgColor / context.cardColor / context.textGreyColor
-// اللي بتتغيّر تلقائيًا حسب الوضع الحالي (شوف TayarThemeColors تحت).
+// أي شاشة جديدة أو متحولة المفروض تستخدم context.bgColor / context.cardColor /
+// context.textGreyColor اللي بتتغيّر تلقائيًا حسب الوضع الحالي (شوف
+// TayarThemeColors تحت). القيم القديمة غير المرتبطة بالوضع (background,
+// cardDark, textWhite, textGrey) اتشالت بعد التأكد إنها مش مستخدمة في أي
+// مكان بالريبو (26 أغسطس 2026).
 class TayarColors {
   static const Color primary = Color(0xFFFF6B00); // الأورانج الأساسي - ثابت في الوضعين
   static const Color primaryDark = Color(0xFFE85F00); // درجة أغمق شوية للأورانج (hover/pressed states)
-  static const Color background = Color(0xFF1A1816); // (قديم) الخلفية الداكنة
-  static const Color cardDark = Color(0xFF2A2826); // (قديم)
-  static const Color textWhite = Colors.white; // (قديم)
-  static const Color textGrey = Color(0xFFB0B0B0); // (قديم)
 
   // ====== القيم الفعلية للوضعين، تُستخدم من خلال TayarThemeColors ======
   static const Color backgroundDark = Color(0xFF1A1816);

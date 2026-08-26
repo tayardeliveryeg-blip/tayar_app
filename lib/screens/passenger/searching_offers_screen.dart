@@ -395,7 +395,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
             },
             child: Text(
               loc.cancelOrderButton,
-              style: const TextStyle(color: Colors.redAccent),
+              style: const TextStyle(color: TayarColors.error),
             ),
           ),
         ],

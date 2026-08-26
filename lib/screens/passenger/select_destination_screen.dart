@@ -418,7 +418,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                   ),
                   if (_isLoading)
                     const Padding(
-                      padding: EdgeInsets.only(right: 8),
+                      padding: EdgeInsetsDirectional.only(end: 8),
                       child: SizedBox(
                         width: 18,
                         height: 18,

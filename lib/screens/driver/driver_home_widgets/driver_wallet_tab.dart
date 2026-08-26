@@ -143,7 +143,7 @@ class WalletTransactionTile extends StatelessWidget {
             if (status == 'rejected' && rejectionReason != null && rejectionReason.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.xs),
               Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.xxl),
+                padding: const EdgeInsetsDirectional.only(start: AppSpacing.xxl),
                 child: Text(rejectionReason, style: textTheme.bodySmall?.copyWith(color: context.textGreyColor)),
               ),
             ],
