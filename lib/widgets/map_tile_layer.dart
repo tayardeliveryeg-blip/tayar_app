@@ -101,7 +101,21 @@ class _TayarTileLayerState extends State<TayarTileLayer> {
         // ====== في الوضع الغامق بس: فلتر invert+hue-rotate بيحوّل نفس
         // ستايل Liberty الملوّن لنسخة غامقة بنفس التنوع اللوني (راجع
         // تعليق _darkMapInvertFilterMatrix فوق) ======
-        if (!isDark) return tileLayer;
+        if (!isDark) {
+  return ColorFiltered(
+    // فلتر محايد (identity matrix) — نفس الألوان بالظبط، الهدف بس إجبار
+    // الـ engine يعمل compositing layer واحدة زي اللي بتحصل في الوضع
+    // الغامق، عشان BackdropFilter يقدر يشوف الخريطة صح (تست للتأكد من
+    // فرضية إن غياب ColorFiltered هو سبب اختفاء البلور في الوضع الفاتح).
+    colorFilter: const ColorFilter.matrix([
+      1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 0, 1, 0,
+    ]),
+    child: tileLayer,
+  );
+}
         return ColorFiltered(
           colorFilter: const ColorFilter.matrix(_darkMapInvertFilterMatrix),
           child: tileLayer,
