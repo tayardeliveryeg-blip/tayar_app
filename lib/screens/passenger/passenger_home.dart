@@ -21,6 +21,7 @@ import 'package:tayay_app/widgets/tayar_drawer.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
+import 'package:tayay_app/widgets/glass_icon_button.dart';
 import 'package:tayay_app/widgets/no_internet_toast.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/utils/connectivity_check.dart';
@@ -1341,6 +1342,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       opacity: _isDraggingMap ? 0 : 1,
                       child: AppCard(
                         radius: AppRadius.lg,
+                        glass: true,
+                        shadowStyle: AppCardShadow.floating,
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.lg,
                           vertical: AppSpacing.md,
@@ -1448,20 +1451,8 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           ),
                         );
                       },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: context.cardColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: context.dividerColor2),
-                          boxShadow: AppShadows.floating(context),
-                        ),
-                        child: Icon(
-                          Icons.notifications_none,
-                          color: context.textColor,
-                          size: 24,
-                        ),
+                      child: const GlassIconButton(
+                        icon: Icons.notifications_none,
                       ),
                     ),
                   ),
@@ -1493,19 +1484,9 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   child: IgnorePointer(
                     ignoring: _isDraggingMap,
                     child: Builder(
-                      builder: (context) => GestureDetector(
+                      builder: (context) => GlassIconButton(
+                        icon: Icons.menu,
                         onTap: () => Scaffold.of(context).openDrawer(),
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: context.cardColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: context.dividerColor2),
-                            boxShadow: AppShadows.floating(context),
-                          ),
-                          child: Icon(Icons.menu, color: context.textColor),
-                        ),
                       ),
                     ),
                   ),
@@ -1556,26 +1537,10 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     : 1,
                 child: IgnorePointer(
                   ignoring: _isDraggingMap || _destinationAddress != null,
-                  child: GestureDetector(
+                  child: GlassIconButton(
+                    icon: Icons.my_location,
+                    iconColor: TayarColors.primary,
                     onTap: _getCurrentLocation,
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: context.cardColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: context.dividerColor2,
-                          width: 1,
-                        ),
-                        boxShadow: AppShadows.floating(context),
-                      ),
-                      child: Icon(
-                        Icons.my_location,
-                        color: TayarColors.primary,
-                        size: 22,
-                      ),
-                    ),
                   ),
                 ),
               ),

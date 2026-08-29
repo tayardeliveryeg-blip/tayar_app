@@ -244,6 +244,11 @@ class SavedPlaceChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.cardColor,
           borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(
+            color: Colors.white.withValues(
+              alpha: context.isDarkMode ? 0.08 : 0.14,
+            ),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

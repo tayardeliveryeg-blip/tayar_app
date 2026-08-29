@@ -297,8 +297,15 @@ class TayarIdleBottomSheet extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.bgColor,
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+            topLeft: Radius.circular(26),
+            topRight: Radius.circular(26),
+          ),
+          border: Border(
+            top: BorderSide(
+              color: Colors.white.withValues(
+                alpha: context.isDarkMode ? 0.08 : 0.14,
+              ),
+            ),
           ),
           boxShadow: AppShadows.elevated(context),
         ),
@@ -430,6 +437,7 @@ class TayarIdleBottomSheet extends StatelessWidget {
                               icon: Icons.two_wheeler,
                               label: loc.serviceRideMe,
                               onTap: onTapRideService,
+                              isPrimary: true,
                             ),
                           ),
                           const SizedBox(width: AppSpacing.sm),
