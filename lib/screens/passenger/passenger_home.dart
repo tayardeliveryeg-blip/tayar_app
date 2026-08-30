@@ -1540,7 +1540,6 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   ignoring: _isDraggingMap || _destinationAddress != null,
                   child: GlassIconButton(
                     icon: Icons.my_location,
-                    iconColor: TayarColors.primary,
                     onTap: _getCurrentLocation,
                   ),
                 ),
