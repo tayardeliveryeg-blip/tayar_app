@@ -44,7 +44,9 @@ class GlassIconButton extends StatelessWidget {
               alpha: isDark ? 0.08 : 0.05,
             ),
             border: Border.all(
-              color: Colors.white.withValues(alpha: isDark ? 0.14 : 0.25),
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: isDark ? 0.14 : 0.18,
+              ),
               width: 1,
             ),
           ),

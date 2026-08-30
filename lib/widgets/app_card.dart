@@ -89,7 +89,9 @@ class _AppCardState extends State<AppCard> {
     if (widget.border != null) return widget.border;
     if (!widget.glass) return null;
     return Border.all(
-      color: Colors.white.withValues(alpha: context.isDarkMode ? 0.08 : 0.15),
+      color: (context.isDarkMode ? Colors.white : Colors.black).withValues(
+        alpha: context.isDarkMode ? 0.08 : 0.15,
+      ),
       width: 1,
     );
   }
