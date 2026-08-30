@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/passenger/passenger_wallet_screen.dart';
 import 'package:tayay_app/screens/shared/my_tickets_screen.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
@@ -213,7 +214,14 @@ class NotificationsScreen extends StatelessWidget {
                   );
                 }
 
-                return ListView.separated(
+                return TayarRefreshIndicator(
+                  onRefresh: () async {
+                    await _notificationsRef
+                        .where('userId', isEqualTo: uid)
+                        .orderBy('createdAt', descending: true)
+                        .get(const GetOptions(source: Source.server));
+                  },
+                  child: ListView.separated(
                   padding: const EdgeInsets.all(12),
                   itemCount: docs.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 8),
@@ -305,6 +313,7 @@ class NotificationsScreen extends StatelessWidget {
                         ),
                     );
                   },
+                  ),
                 );
               },
             ),

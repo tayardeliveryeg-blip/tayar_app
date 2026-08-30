@@ -66,6 +66,16 @@ class DriverRelationsService {
     return _favoritesRef(uid).orderBy('addedAt', descending: true).snapshots();
   }
 
+  /// إعادة جلب المفضّلين من السيرفر مباشرة (pull-to-refresh) - بيتجاوز
+  /// أي نسخة مخزّنة محليًا (cache) عشان يضمن أحدث بيانات ممكنة.
+  static Future<void> refreshFavorites() async {
+    final uid = _uid;
+    if (uid == null) return;
+    await _favoritesRef(
+      uid,
+    ).orderBy('addedAt', descending: true).get(const GetOptions(source: Source.server));
+  }
+
   // ====== المحظورين ======
 
   /// بتحظر/تفك حظر طيار معيّن عند الراكب الحالي. الطيار المحظور مش هيقدر
@@ -110,6 +120,16 @@ class DriverRelationsService {
         .where('passengerId', isEqualTo: uid)
         .orderBy('blockedAt', descending: true)
         .snapshots();
+  }
+
+  /// إعادة جلب المحظورين من السيرفر مباشرة (pull-to-refresh).
+  static Future<void> refreshBlocked() async {
+    final uid = _uid;
+    if (uid == null) return;
+    await _blocksRef
+        .where('passengerId', isEqualTo: uid)
+        .orderBy('blockedAt', descending: true)
+        .get(const GetOptions(source: Source.server));
   }
 
   /// بتُستخدم في جانب الطيار (driver_home_screen.dart) - مجموعة الـ

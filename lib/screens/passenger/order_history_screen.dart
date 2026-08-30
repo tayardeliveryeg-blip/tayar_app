@@ -6,6 +6,8 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== شاشة سجل الطلبات: بتعرض كل طلبات الراكب الحالي (رحلات + توصيل) ======
 // بنجيب كل حاجة من collection('orders') فلترة على customerId، وبنرتب
@@ -97,10 +99,9 @@ class OrderHistoryScreen extends StatelessWidget {
                 }
 
                 if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: TayarColors.primary,
-                    ),
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TayarShimmer.list(count: 4),
                   );
                 }
 
@@ -120,14 +121,20 @@ class OrderHistoryScreen extends StatelessWidget {
                   );
                 }
 
-                return ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: docs.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final data = docs[index].data();
-                    final serviceType = data['serviceType'] as String?;
-                    final isDelivery = serviceType == 'delivery';
+                return TayarRefreshIndicator(
+                  onRefresh: () async {
+                    await _ordersRef
+                        .where('customerId', isEqualTo: uid)
+                        .get(const GetOptions(source: Source.server));
+                  },
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: docs.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final data = docs[index].data();
+                      final serviceType = data['serviceType'] as String?;
+                      final isDelivery = serviceType == 'delivery';
                     final status = data['status'] as String?;
                     final destinationAddress =
                         data['destinationAddress'] as String? ?? '';
@@ -278,6 +285,7 @@ class OrderHistoryScreen extends StatelessWidget {
                       ),
                     );
                   },
+                  ),
                 );
               },
             ),

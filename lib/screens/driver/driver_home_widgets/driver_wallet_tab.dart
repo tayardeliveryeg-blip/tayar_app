@@ -6,6 +6,7 @@ import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 class DriverWalletTab extends StatelessWidget {
@@ -22,7 +23,14 @@ class DriverWalletTab extends StatelessWidget {
         final balance = (driverSnapshot.data?.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
         final isNegative = balance < 0;
         final balanceColor = isNegative ? TayarColors.error : TayarColors.primary;
-        return ListView(
+        return TayarRefreshIndicator(
+          onRefresh: () async {
+            await FirebaseFirestore.instance
+                .collection('drivers')
+                .doc(driverId)
+                .get(const GetOptions(source: Source.server));
+          },
+          child: ListView(
           padding: const EdgeInsets.all(AppSpacing.xl),
           children: [
             AppCard(
@@ -83,6 +91,7 @@ class DriverWalletTab extends StatelessWidget {
               },
             ),
           ],
+          ),
         );
       },
     );

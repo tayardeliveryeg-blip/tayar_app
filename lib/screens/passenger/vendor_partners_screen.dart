@@ -10,6 +10,7 @@ import 'package:tayay_app/services/vendor_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 /// ====== شاشة "شركاؤنا التجاريين": بتعرض كل المحلات اللي اتأكدت كشريك
@@ -132,7 +133,9 @@ class _VendorPartnersScreenState extends State<VendorPartnersScreen> {
                   });
                 }
 
-                return ListView.separated(
+                return TayarRefreshIndicator(
+                  onRefresh: refreshVendorPartners,
+                  child: ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: partners.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -222,6 +225,7 @@ class _VendorPartnersScreenState extends State<VendorPartnersScreen> {
                       ),
                     );
                   },
+                  ),
                 );
               },
             ),

@@ -9,6 +9,7 @@ import 'package:tayay_app/services/promo_service.dart';
 import 'package:tayay_app/services/referral_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
@@ -43,7 +44,18 @@ class PassengerWalletScreen extends StatelessWidget {
                     final isDriver = driverSnapshot.data?.exists ?? false;
                     final driverBalance = (driverSnapshot.data?.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
 
-                    return ListView(
+                    return TayarRefreshIndicator(
+                      onRefresh: () async {
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(uid)
+                            .get(const GetOptions(source: Source.server));
+                        await FirebaseFirestore.instance
+                            .collection('drivers')
+                            .doc(uid)
+                            .get(const GetOptions(source: Source.server));
+                      },
+                      child: ListView(
                       padding: const EdgeInsets.all(AppSpacing.xl),
                       children: [
                         AppCard(
@@ -139,6 +151,7 @@ class PassengerWalletScreen extends StatelessWidget {
                           },
                         ),
                       ],
+                      ),
                     );
                   },
                 );

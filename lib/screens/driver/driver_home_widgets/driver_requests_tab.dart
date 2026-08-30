@@ -9,6 +9,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/offer_sheet.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/active_trip_card.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/trip_request_detail_screen.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== دالة مساعدة موحّدة لاستخراج GeoPoint من حقول الموقع ======
@@ -190,7 +191,13 @@ class DriverRequestsTab extends StatelessWidget {
                       );
                     }
 
-                    return ListView.separated(
+                    return TayarRefreshIndicator(
+                      onRefresh: () async {
+                        await ordersRef
+                            .where('status', isEqualTo: 'searching')
+                            .get(const GetOptions(source: Source.server));
+                      },
+                      child: ListView.separated(
                       padding: const EdgeInsets.all(AppSpacing.lg),
                       itemCount: orders.length,
                       separatorBuilder: (_, _) =>
@@ -281,10 +288,11 @@ class DriverRequestsTab extends StatelessWidget {
                           ),
                         );
                       },
+                    ),
                     );
                   },
+                  ),
                 ),
-        ),
       ],
     );
   }

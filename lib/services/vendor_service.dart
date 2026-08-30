@@ -111,3 +111,10 @@ Stream<List<VendorPartner>> streamVendorPartners() {
             .toList(),
       );
 }
+
+/// إعادة جلب الشركاء التجاريين من السيرفر مباشرة (pull-to-refresh).
+Future<void> refreshVendorPartners() async {
+  await FirebaseFirestore.instance
+      .collection('vendor_partners')
+      .get(const GetOptions(source: Source.server));
+}

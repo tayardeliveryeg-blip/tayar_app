@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 // ====== تبويب "دخلي": إجمالي الأرباح واليوم الحالي ======
@@ -58,7 +59,15 @@ class DriverIncomeTab extends StatelessWidget {
           }
         }
 
-        return ListView(
+        return TayarRefreshIndicator(
+          onRefresh: () async {
+            await FirebaseFirestore.instance
+                .collection('orders')
+                .where('driverId', isEqualTo: driverId)
+                .where('status', isEqualTo: 'completed')
+                .get(const GetOptions(source: Source.server));
+          },
+          child: ListView(
           padding: const EdgeInsets.all(AppSpacing.xl),
           children: [
             IncomeSummaryCard(
@@ -80,6 +89,7 @@ class DriverIncomeTab extends StatelessWidget {
               isCurrency: false,
             ),
           ],
+          ),
         );
       },
     );

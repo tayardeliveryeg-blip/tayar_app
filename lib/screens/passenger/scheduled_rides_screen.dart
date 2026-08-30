@@ -10,6 +10,8 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/cancellation_reason_sheet.dart';
 import 'package:tayay_app/services/cancellation_service.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 
 // ====================================================
@@ -120,10 +122,9 @@ class ScheduledRidesScreen extends StatelessWidget {
                 }
 
                 if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: TayarColors.primary,
-                    ),
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TayarShimmer.list(count: 3),
                   );
                 }
 
@@ -149,7 +150,13 @@ class ScheduledRidesScreen extends StatelessWidget {
                   );
                 }
 
-                return ListView.separated(
+                return TayarRefreshIndicator(
+                  onRefresh: () async {
+                    await _ordersRef
+                        .where('customerId', isEqualTo: uid)
+                        .get(const GetOptions(source: Source.server));
+                  },
+                  child: ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: docs.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -333,6 +340,7 @@ class ScheduledRidesScreen extends StatelessWidget {
                       ),
                     );
                   },
+                  ),
                 );
               },
             ),

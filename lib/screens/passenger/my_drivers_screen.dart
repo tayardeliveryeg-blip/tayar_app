@@ -6,6 +6,8 @@ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart'
 import 'package:tayay_app/services/driver_relations_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
 /// ====== شاشة "طياريني" - تبويبين: المفضّلين والمحظورين (بند 5 من
 /// تحليل الفجوات، خطوة 2/3). بتقرا مباشرة من الـ streams اللي في
@@ -46,6 +48,7 @@ class MyDriversScreen extends StatelessWidget {
           children: [
             _DriversList(
               stream: DriverRelationsService.favoritesStream(),
+              onRefresh: DriverRelationsService.refreshFavorites,
               nameField: 'driverName',
               dateField: 'addedAt',
               emptyMessage: loc.noFavoriteDriversYetMessage,
@@ -61,6 +64,7 @@ class MyDriversScreen extends StatelessWidget {
             ),
             _DriversList(
               stream: DriverRelationsService.blockedStream(),
+              onRefresh: DriverRelationsService.refreshBlocked,
               nameField: 'driverName',
               dateField: 'blockedAt',
               driverIdField: 'driverId',
@@ -84,6 +88,7 @@ class MyDriversScreen extends StatelessWidget {
 
 class _DriversList extends StatelessWidget {
   final Stream<QuerySnapshot<Map<String, dynamic>>> stream;
+  final Future<void> Function() onRefresh;
   final String nameField;
   final String dateField;
   // ====== favoriteDrivers: doc.id هو نفسه driverId. driverBlocks:
@@ -98,6 +103,7 @@ class _DriversList extends StatelessWidget {
 
   const _DriversList({
     required this.stream,
+    required this.onRefresh,
     required this.nameField,
     required this.dateField,
     this.driverIdField,
@@ -114,8 +120,9 @@ class _DriversList extends StatelessWidget {
       stream: stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: TayarColors.primary),
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: TayarShimmer.list(count: 3),
           );
         }
         final docs = snapshot.data?.docs ?? [];
@@ -125,7 +132,9 @@ class _DriversList extends StatelessWidget {
             title: emptyMessage,
           );
         }
-        return ListView.separated(
+        return TayarRefreshIndicator(
+          onRefresh: onRefresh,
+          child: ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: docs.length,
           separatorBuilder: (_, _) => const SizedBox(height: 10),
@@ -166,6 +175,7 @@ class _DriversList extends StatelessWidget {
               ),
             );
           },
+          ),
         );
       },
     );
