@@ -15,6 +15,7 @@ import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
+import 'package:tayay_app/widgets/success_celebration.dart';
 
 class PassengerWalletScreen extends StatelessWidget {
   const PassengerWalletScreen({super.key});
@@ -193,7 +194,13 @@ void _showRedeemCodeSheet(BuildContext context, String uid) {
           setState(() => isSubmitting = false);
           if (amount != null) {
             Navigator.pop(sheetContext);
-            TayarToast.show(context, loc.codeRedeemedSuccessMessage(amount.toStringAsFixed(0)), type: ToastType.success);
+            showSuccessCelebration(
+              context,
+              title: loc.codeRedeemedCelebrationTitle,
+              subtitle: loc.codeRedeemedSuccessMessage(
+                amount.toStringAsFixed(0),
+              ),
+            );
           } else {
             TayarToast.show(sheetContext, errorMessage ?? loc.invalidCodeGenericError, type: ToastType.error);
           }

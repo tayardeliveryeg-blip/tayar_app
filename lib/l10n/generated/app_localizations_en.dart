@@ -1654,4 +1654,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noBlockedDriversYetMessage => 'You haven\'t blocked any drivers';
+
+  @override
+  String get tripCompletedCelebrationTitle => 'You\'ve arrived safely!';
+
+  @override
+  String get orderConfirmedCelebrationTitle => 'Order confirmed!';
+
+  @override
+  String get orderConfirmedCelebrationSubtitle =>
+      'Finding you the nearest driver now';
+
+  @override
+  String get scheduledOrderConfirmedCelebrationSubtitle =>
+      'We\'ll start looking for a driver close to your scheduled time';
+
+  @override
+  String get codeRedeemedCelebrationTitle => 'Added to your wallet!';
 }

@@ -745,5 +745,10 @@
   "favoriteDriversTabLabel": "المفضّلين",
   "blockedDriversTabLabel": "المحظورين",
   "noFavoriteDriversYetMessage": "لسه معندكش طيارين مفضّلين - أضف طيار للمفضّلين بعد أي رحلة من شاشة التقييم",
-  "noBlockedDriversYetMessage": "معندكش أي طيارين محظورين"
+  "noBlockedDriversYetMessage": "معندكش أي طيارين محظورين",
+  "tripCompletedCelebrationTitle": "وصلت بالسلامة!",
+  "orderConfirmedCelebrationTitle": "تم تأكيد طلبك!",
+  "orderConfirmedCelebrationSubtitle": "بندور لك على أقرب طيار دلوقتي",
+  "scheduledOrderConfirmedCelebrationSubtitle": "هنبدأ ندورلك على طيار قريب من ميعادك",
+  "codeRedeemedCelebrationTitle": "تمت الإضافة للمحفظة!"
 }

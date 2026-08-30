@@ -17,6 +17,7 @@ import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
+import 'package:tayay_app/widgets/success_celebration.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String pickupAddress;
@@ -368,6 +369,17 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
 
       if (!mounted) return;
       setState(() => _isSubmitting = false);
+
+      final loc = AppLocalizations.of(context)!;
+      await showSuccessCelebration(
+        context,
+        title: loc.orderConfirmedCelebrationTitle,
+        subtitle: _scheduledFor != null
+            ? loc.scheduledOrderConfirmedCelebrationSubtitle
+            : loc.orderConfirmedCelebrationSubtitle,
+      );
+
+      if (!mounted) return;
 
       // ننتقل لشاشة البحث عن العروض ومتابعتها لايف
       Navigator.pushReplacement(

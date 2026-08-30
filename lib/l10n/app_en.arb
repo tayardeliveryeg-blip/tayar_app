@@ -745,5 +745,10 @@
   "favoriteDriversTabLabel": "Favorites",
   "blockedDriversTabLabel": "Blocked",
   "noFavoriteDriversYetMessage": "No favorite drivers yet - add one from the rating screen after any trip",
-  "noBlockedDriversYetMessage": "You haven't blocked any drivers"
+  "noBlockedDriversYetMessage": "You haven't blocked any drivers",
+  "tripCompletedCelebrationTitle": "You've arrived safely!",
+  "orderConfirmedCelebrationTitle": "Order confirmed!",
+  "orderConfirmedCelebrationSubtitle": "Finding you the nearest driver now",
+  "scheduledOrderConfirmedCelebrationSubtitle": "We'll start looking for a driver close to your scheduled time",
+  "codeRedeemedCelebrationTitle": "Added to your wallet!"
 }

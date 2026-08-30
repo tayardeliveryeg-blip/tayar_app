@@ -3097,6 +3097,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'معندكش أي طيارين محظورين'**
   String get noBlockedDriversYetMessage;
+
+  /// No description provided for @tripCompletedCelebrationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت بالسلامة!'**
+  String get tripCompletedCelebrationTitle;
+
+  /// No description provided for @orderConfirmedCelebrationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تأكيد طلبك!'**
+  String get orderConfirmedCelebrationTitle;
+
+  /// No description provided for @orderConfirmedCelebrationSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بندور لك على أقرب طيار دلوقتي'**
+  String get orderConfirmedCelebrationSubtitle;
+
+  /// No description provided for @scheduledOrderConfirmedCelebrationSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنبدأ ندورلك على طيار قريب من ميعادك'**
+  String get scheduledOrderConfirmedCelebrationSubtitle;
+
+  /// No description provided for @codeRedeemedCelebrationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت الإضافة للمحفظة!'**
+  String get codeRedeemedCelebrationTitle;
 }
 
 class _AppLocalizationsDelegate

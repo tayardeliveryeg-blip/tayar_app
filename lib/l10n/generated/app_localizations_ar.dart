@@ -1640,4 +1640,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noBlockedDriversYetMessage => 'معندكش أي طيارين محظورين';
+
+  @override
+  String get tripCompletedCelebrationTitle => 'وصلت بالسلامة!';
+
+  @override
+  String get orderConfirmedCelebrationTitle => 'تم تأكيد طلبك!';
+
+  @override
+  String get orderConfirmedCelebrationSubtitle =>
+      'بندور لك على أقرب طيار دلوقتي';
+
+  @override
+  String get scheduledOrderConfirmedCelebrationSubtitle =>
+      'هنبدأ ندورلك على طيار قريب من ميعادك';
+
+  @override
+  String get codeRedeemedCelebrationTitle => 'تمت الإضافة للمحفظة!';
 }

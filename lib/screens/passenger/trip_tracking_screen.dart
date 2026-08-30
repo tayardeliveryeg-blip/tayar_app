@@ -25,6 +25,7 @@ import 'package:tayay_app/widgets/cancellation_reason_sheet.dart';
 import 'package:tayay_app/services/cancellation_service.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
+import 'package:tayay_app/widgets/success_celebration.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -394,6 +395,13 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
           }
         }
       }
+
+      if (!mounted) return;
+      final loc = AppLocalizations.of(context)!;
+      await showSuccessCelebration(
+        context,
+        title: loc.tripCompletedCelebrationTitle,
+      );
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
