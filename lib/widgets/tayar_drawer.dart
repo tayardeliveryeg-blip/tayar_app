@@ -23,6 +23,7 @@ import 'package:tayay_app/screens/passenger/scheduled_rides_screen.dart';
 import 'package:tayay_app/screens/passenger/passenger_wallet_screen.dart';
 import 'package:tayay_app/screens/passenger/vendor_partners_screen.dart';
 import 'package:tayay_app/screens/passenger/my_drivers_screen.dart';
+import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/screens/passenger/passenger_profile_screen.dart';
 import 'package:tayay_app/screens/shared/security_screen.dart';
 import 'package:tayay_app/screens/shared/settings_screen.dart';
@@ -335,16 +336,22 @@ class TayarDrawer extends StatelessWidget {
                       );
                     },
                   ),
-                  _DrawerItem(
-                    icon: Icons.notifications_none,
-                    label: AppLocalizations.of(context)!.navNotifications,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        TayarPageRoute(
-                          builder: (_) => const NotificationsScreen(),
-                        ),
+                  StreamBuilder<bool>(
+                    stream: hasUnreadNotificationsStream(),
+                    builder: (context, snapshot) {
+                      return _DrawerItem(
+                        icon: Icons.notifications_none,
+                        label: AppLocalizations.of(context)!.navNotifications,
+                        showBadge: snapshot.data ?? false,
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            TayarPageRoute(
+                              builder: (_) => const NotificationsScreen(),
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
@@ -502,6 +509,7 @@ class _DrawerItem extends StatelessWidget {
   final String label;
   final bool selected;
   final bool isDestructive;
+  final bool showBadge;
   final VoidCallback? onTap;
 
   const _DrawerItem({
@@ -509,6 +517,7 @@ class _DrawerItem extends StatelessWidget {
     required this.label,
     this.selected = false,
     this.isDestructive = false,
+    this.showBadge = false,
     this.onTap,
   });
 
@@ -523,11 +532,33 @@ class _DrawerItem extends StatelessWidget {
           ? TayarColors.primary.withValues(alpha: 0.08)
           : Colors.transparent,
       child: ListTile(
-        leading: Icon(
-          icon,
-          color: isDestructive
-              ? TayarColors.error
-              : (selected ? TayarColors.primary : context.textGreyColor),
+        leading: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(
+              icon,
+              color: isDestructive
+                  ? TayarColors.error
+                  : (selected ? TayarColors.primary : context.textGreyColor),
+            ),
+            if (showBadge)
+              Positioned(
+                top: -2,
+                right: -2,
+                child: Container(
+                  width: 9,
+                  height: 9,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: TayarColors.primary,
+                    border: Border.all(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
         title: Text(
           label,

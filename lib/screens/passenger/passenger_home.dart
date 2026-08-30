@@ -1452,8 +1452,14 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           ),
                         );
                       },
-                      child: const GlassIconButton(
-                        icon: Icons.notifications_none,
+                      child: StreamBuilder<bool>(
+                        stream: hasUnreadNotificationsStream(),
+                        builder: (context, snapshot) {
+                          return GlassIconButton(
+                            icon: Icons.notifications_none,
+                            showBadge: snapshot.data ?? false,
+                          );
+                        },
                       ),
                     ),
                   ),

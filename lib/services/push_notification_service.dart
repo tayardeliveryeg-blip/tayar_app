@@ -136,3 +136,19 @@ class PushNotificationService {
     );
   }
 }
+
+/// ====== ستريم بسيط بيرجع true لو عند المستخدم الحالي أي إشعار لسه مش
+/// مقروء - مستخدم لعرض شارة (badge) صغيرة فوق أيقونة الإشعارات في الشاشة
+/// الرئيسية والقايمة الجانبية، من غير ما نحتاج نجيب كل الإشعارات هناك.
+/// بيرجع false على طول لو مفيش مستخدم مسجّل دخول ======
+Stream<bool> hasUnreadNotificationsStream() {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid == null) return Stream.value(false);
+  return FirebaseFirestore.instance
+      .collection('notifications')
+      .where('userId', isEqualTo: uid)
+      .where('isRead', isEqualTo: false)
+      .limit(1)
+      .snapshots()
+      .map((snap) => snap.docs.isNotEmpty);
+}
