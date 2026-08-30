@@ -34,13 +34,15 @@ class GlassIconButton extends StatelessWidget {
 
     final button = ClipOval(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
         child: Container(
           width: size,
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.transparent,
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: isDark ? 0.08 : 0.05,
+            ),
             border: Border.all(
               color: Colors.white.withValues(alpha: isDark ? 0.14 : 0.25),
               width: 1,

@@ -61,6 +61,19 @@ const List<double> _darkMapInvertFilterMatrix = [
   0, 0, 0, 1, 0,
 ];
 
+/// ====== مصفوفة فلتر "identity" — بترجّع نفس الألوان بالظبط من غير أي
+/// تغيير بصري. مستخدمة في الوضع الفاتح مش عشان تلوّن حاجة، لكن عشان تجبر
+/// الـ engine يعمل compositing layer واحدة للخريطة (نفس اللي بيحصل تلقائيًا
+/// في الوضع الغامق بسبب _darkMapInvertFilterMatrix)، عشان BackdropFilter
+/// (glassmorphism) يقدر يقرا الخريطة ويعمل بلور صح تحت الأزرار/الكروت
+/// العايمة فوقها ======
+const List<double> _identityFilterMatrix = [
+  1, 0, 0, 0, 0,
+  0, 1, 0, 0, 0,
+  0, 0, 1, 0, 0,
+  0, 0, 0, 1, 0,
+];
+
 /// ====== طبقة الخريطة الموحّدة لكل شاشات الخريطة في التطبيق ======
 /// اتبدّلت من raster tiles (صور جاهزة) لـ vector tiles حقيقية عن طريق
 /// OpenFreeMap (18 أغسطس 2026) — مجاني بالكامل، من غير API key أو حساب،
@@ -98,26 +111,24 @@ class _TayarTileLayerState extends State<TayarTileLayer> {
           rasterSources: style.rasterSources,
           sprites: style.sprites,
         );
-        // ====== في الوضع الغامق بس: فلتر invert+hue-rotate بيحوّل نفس
-        // ستايل Liberty الملوّن لنسخة غامقة بنفس التنوع اللوني (راجع
-        // تعليق _darkMapInvertFilterMatrix فوق) ======
-        if (!isDark) {
-  return ColorFiltered(
-    // فلتر محايد (identity matrix) — نفس الألوان بالظبط، الهدف بس إجبار
-    // الـ engine يعمل compositing layer واحدة زي اللي بتحصل في الوضع
-    // الغامق، عشان BackdropFilter يقدر يشوف الخريطة صح (تست للتأكد من
-    // فرضية إن غياب ColorFiltered هو سبب اختفاء البلور في الوضع الفاتح).
-    colorFilter: const ColorFilter.matrix([
-      1, 0, 0, 0, 0,
-      0, 1, 0, 0, 0,
-      0, 0, 1, 0, 0,
-      0, 0, 0, 1, 0,
-    ]),
-    child: tileLayer,
-  );
-}
+        // ====== في الوضع الغامق: فلتر invert+hue-rotate بيحوّل نفس ستايل
+        // Liberty الملوّن لنسخة غامقة بنفس التنوع اللوني (راجع تعليق
+        // _darkMapInvertFilterMatrix فوق) ======
+        if (isDark) {
+          return ColorFiltered(
+            colorFilter: const ColorFilter.matrix(_darkMapInvertFilterMatrix),
+            child: tileLayer,
+          );
+        }
+        // ====== في الوضع الفاتح: فلتر identity (بيرجّع نفس الألوان بالظبط،
+        // من غير أي تغيير بصري). السبب إنه موجود مش تلوين — من غير
+        // ColorFiltered، الـ engine مش بيعمل compositing layer واحدة
+        // للخريطة، فـ BackdropFilter (المستخدم في GlassIconButton والكروت
+        // الزجاجية فوق الخريطة) مش بيقدر يقرأ محتواها ويعمل بلور صح. تأكدنا
+        // من كده بمقارنة رقمية لقيم البكسل قبل/بعد الفلتر ده (2026-08-29).
+        // متتشالش من غير ما تتعمل بديل تاني يحل نفس مشكلة الـ compositing ======
         return ColorFiltered(
-          colorFilter: const ColorFilter.matrix(_darkMapInvertFilterMatrix),
+          colorFilter: const ColorFilter.matrix(_identityFilterMatrix),
           child: tileLayer,
         );
       },
