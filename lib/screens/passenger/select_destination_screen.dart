@@ -386,9 +386,11 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                         child: SizedBox(
                           width: 48,
                           height: 48,
-                          child: Icon(
-                            Icons.search,
-                            color: context.textGreyColor,
+                          child: Center(
+                            child: Icon(
+                              Icons.search,
+                              color: context.textGreyColor,
+                            ),
                           ),
                         ),
                       ),
@@ -441,9 +443,11 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
                         child: SizedBox(
                           width: 48,
                           height: 48,
-                          child: Icon(
-                            Icons.add_location_alt,
-                            color: TayarColors.primary,
+                          child: Center(
+                            child: Icon(
+                              Icons.add_location_alt,
+                              color: TayarColors.primary,
+                            ),
                           ),
                         ),
                       ),
