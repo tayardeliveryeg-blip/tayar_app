@@ -446,6 +446,7 @@ class TayarIdleBottomSheet extends StatelessWidget {
                               icon: Icons.delivery_dining,
                               label: loc.serviceDeliverOrders,
                               onTap: onTapDeliveryService,
+                              isPrimary: true,
                             ),
                           ),
                         ],

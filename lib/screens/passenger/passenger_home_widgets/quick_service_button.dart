@@ -98,6 +98,7 @@ class _QuickServiceButtonState extends State<QuickServiceButton> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(AppRadius.lg),
             child: Stack(
+              alignment: Alignment.center,
               children: [
                 // ====== توهج زخرفي في الزاوية العلوية — نفس فكرة الـ glow
                 // في كارت العرض المرجعي، بس بدرجة خفيفة عشان مايبقاش زحمة ======
