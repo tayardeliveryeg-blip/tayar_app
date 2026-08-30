@@ -6,6 +6,7 @@ import 'package:tayay_app/screens/driver/registration/driver_registration_screen
 import 'package:tayay_app/screens/auth/profile_setup_screen.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====================================================
 // ====== شاشة اختيار نوع الحساب بعد أول تسجيل دخول ======
@@ -17,7 +18,7 @@ class RoleSelectionScreen extends StatelessWidget {
   // ====== اختار "راكب" → نكمل نجمع اسمه في شاشة استكمال البروفايل ======
   void _continueAsPassenger(BuildContext context) {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => const ProfileSetupScreen(role: 'passenger'),
       ),
     );
@@ -30,11 +31,11 @@ class RoleSelectionScreen extends StatelessWidget {
   void _continueAsDriver(BuildContext context) {
     final navigator = Navigator.of(context);
     navigator.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const PassengerHomeScreen()),
+      TayarPageRoute(builder: (_) => const PassengerHomeScreen()),
       (route) => false,
     );
     navigator.push(
-      MaterialPageRoute(builder: (_) => const DriverRegistrationScreen()),
+      TayarPageRoute(builder: (_) => const DriverRegistrationScreen()),
     );
   }
 

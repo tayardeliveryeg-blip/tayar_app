@@ -6,6 +6,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/screens/passenger/rate_trip_screen.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== تذكير تقييم آخر رحلة: بيجيب آخر رحلة مكتملة للراكب، ولو مفيش
 // حقل 'rating' عليها (يعني اتخطّت التقييم التلقائي على trip_tracking_screen،
@@ -61,7 +62,7 @@ class RateLastTripReminder extends StatelessWidget {
           child: AppCard(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
+              TayarPageRoute(
                 builder: (_) => RateTripScreen(
                   orderId: lastTripDoc.id,
                   driverId: driverId,

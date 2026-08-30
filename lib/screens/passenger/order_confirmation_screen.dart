@@ -16,6 +16,7 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String pickupAddress;
@@ -118,7 +119,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
     if (_isUpdatingRoute) return;
     final result = await Navigator.push<PlaceResult>(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _pickupLocation,
           title: AppLocalizations.of(context)!.editPickupLocationTitle,
@@ -138,7 +139,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
     if (_isUpdatingRoute) return;
     final result = await Navigator.push<PlaceResult>(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _destinationLocation,
           title: AppLocalizations.of(context)!.editDestinationTitle,
@@ -371,7 +372,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
       // ننتقل لشاشة البحث عن العروض ومتابعتها لايف
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
+        TayarPageRoute(
           builder: (context) => SearchingOffersScreen(
             orderId: orderId,
             proposedFare: _proposedFare,

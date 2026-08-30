@@ -8,6 +8,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====================================================
 // ====== شاشة استكمال بيانات الراكب بعد أول تسجيل دخول ======
@@ -95,7 +96,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const PassengerHomeScreen()),
+        TayarPageRoute(builder: (_) => const PassengerHomeScreen()),
         (route) => false,
       );
     } catch (e) {

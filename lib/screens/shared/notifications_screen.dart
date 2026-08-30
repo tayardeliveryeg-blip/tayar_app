@@ -11,6 +11,7 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
 // كل إشعار بيتخزن في collection('notifications') وفيه الحقول:
@@ -49,7 +50,7 @@ class NotificationsScreen extends StatelessWidget {
       if (!context.mounted) return;
       Navigator.of(
         context,
-      ).push(MaterialPageRoute(builder: (_) => const MyTicketsScreen()));
+      ).push(TayarPageRoute(builder: (_) => const MyTicketsScreen()));
       return;
     }
     if (type != 'wallet') return;
@@ -69,13 +70,13 @@ class NotificationsScreen extends StatelessWidget {
 
     if (openDriverWallet) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
+        TayarPageRoute(
           builder: (_) => const DriverHomeScreen(initialTab: 3),
         ),
       );
     } else {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const PassengerWalletScreen()),
+        TayarPageRoute(builder: (_) => const PassengerWalletScreen()),
       );
     }
   }

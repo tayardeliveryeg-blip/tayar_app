@@ -28,6 +28,7 @@ import 'package:tayay_app/screens/shared/security_screen.dart';
 import 'package:tayay_app/screens/shared/settings_screen.dart';
 import 'package:tayay_app/screens/shared/help_screen.dart';
 import 'package:tayay_app/screens/shared/support_screen.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====================================================
 // ====================== Drawer =======================
@@ -88,7 +89,7 @@ class TayarDrawer extends StatelessWidget {
 
     // ====== نمسح كل الشاشات السابقة ونرجع لشاشة تسجيل الدخول من الأول ======
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      TayarPageRoute(builder: (_) => const LoginScreen()),
       (route) => false,
     );
   }
@@ -106,7 +107,7 @@ class TayarDrawer extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  TayarPageRoute(
                     builder: (_) => const PassengerProfileScreen(),
                   ),
                 );
@@ -261,7 +262,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const CreateDeliveryOrderScreen(),
                         ),
                       );
@@ -274,7 +275,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const OrderHistoryScreen(),
                         ),
                       );
@@ -287,7 +288,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const ScheduledRidesScreen(),
                         ),
                       );
@@ -300,7 +301,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const PassengerWalletScreen(),
                         ),
                       );
@@ -315,7 +316,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const VendorPartnersScreen(),
                         ),
                       );
@@ -328,7 +329,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const MyDriversScreen(),
                         ),
                       );
@@ -341,7 +342,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const NotificationsScreen(),
                         ),
                       );
@@ -354,7 +355,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const SecurityScreen(),
                         ),
                       );
@@ -367,7 +368,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const SettingsScreen(),
                         ),
                       );
@@ -380,7 +381,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const HelpScreen()),
+                        TayarPageRoute(builder: (_) => const HelpScreen()),
                       );
                     },
                   ),
@@ -391,7 +392,7 @@ class TayarDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const SupportScreen(),
                         ),
                       );
@@ -418,7 +419,7 @@ class TayarDrawer extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      TayarPageRoute(
                         builder: (_) => const DriverRegistrationScreen(),
                       ),
                     );

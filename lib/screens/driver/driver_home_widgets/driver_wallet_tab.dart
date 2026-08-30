@@ -8,6 +8,7 @@ import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class DriverWalletTab extends StatelessWidget {
   final String driverId;
@@ -53,7 +54,7 @@ class DriverWalletTab extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             AppPrimaryButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DriverWalletTopupScreen())),
+              onPressed: () => Navigator.push(context, TayarPageRoute(builder: (_) => const DriverWalletTopupScreen())),
               variant: AppButtonVariant.primary,
               size: AppButtonSize.medium,
               child: Row(

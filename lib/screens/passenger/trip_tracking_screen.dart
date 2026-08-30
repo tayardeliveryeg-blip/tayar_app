@@ -24,6 +24,7 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/cancellation_reason_sheet.dart';
 import 'package:tayay_app/services/cancellation_service.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي للراكب ======
 /// بتفضل مفتوحة من لحظة قبول الطيار للعرض لحد ما الرحلة تخلص،
@@ -396,7 +397,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
+        TayarPageRoute(
           builder: (_) => RateTripScreen(
             orderId: widget.orderId,
             driverId: _driverId,
@@ -893,7 +894,7 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
                           label: loc.chatWithDriverLabel,
                           onTap: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              TayarPageRoute(
                                 builder: (_) => TripChatScreen(
                                   orderId: widget.orderId,
                                   otherPartyName: _driverName,

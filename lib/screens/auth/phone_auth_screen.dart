@@ -9,6 +9,7 @@ import 'package:tayay_app/theme/theme_extensions.dart'
 import 'package:tayay_app/helpers/auth_flow_helpers.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class PhoneAuthScreen extends StatefulWidget {
   const PhoneAuthScreen({super.key});
@@ -54,7 +55,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
         setState(() => _isLoading = false);
         Navigator.push(
           context,
-          MaterialPageRoute(
+          TayarPageRoute(
             builder: (context) => OtpVerificationScreen(
               verificationId: verificationId,
               phoneNumber: formattedPhone,

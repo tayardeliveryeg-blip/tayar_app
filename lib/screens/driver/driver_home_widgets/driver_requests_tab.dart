@@ -11,6 +11,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/trip_request_detail
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== دالة مساعدة موحّدة لاستخراج GeoPoint من حقول الموقع ======
 // (نسخة مستقلة بتخدم التبويب ده بس، النسخة الأصلية لسه موجودة في
@@ -128,7 +129,7 @@ class DriverRequestsTab extends StatelessWidget {
               onComplete: () => onCompleteTrip(trip.id),
               onOpenTracking: () => Navigator.push(
                 context,
-                MaterialPageRoute(
+                TayarPageRoute(
                   builder: (_) => DriverTripTrackingScreen(orderId: trip.id),
                 ),
               ),
@@ -239,7 +240,7 @@ class DriverRequestsTab extends StatelessWidget {
                               : () => _openOfferSheet(context, order),
                           onOpenDetails: () => Navigator.push(
                             context,
-                            MaterialPageRoute(
+                            TayarPageRoute(
                               builder: (_) => TripRequestDetailScreen(
                                 orderId: order.id,
                                 pickupAddress:

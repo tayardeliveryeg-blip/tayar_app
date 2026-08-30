@@ -22,6 +22,7 @@ import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/route_
 import 'package:tayay_app/screens/passenger/create_delivery_order_widgets/payment_method_sheet.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== شاشة إنشاء طلب "وصل طلباتي" (توصيل طرد/بضاعة) ======
 /// بتاخد مكان استلام + مكان تسليم + تفاصيل العناوين + أرقام موبايل
@@ -89,7 +90,7 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
   Future<void> _selectPickupLocation() async {
     final result = await Navigator.push<PlaceResult>(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _pickupLocation ?? _dropoffLocation,
           title: AppLocalizations.of(context)!.selectPickupLocationTitle,
@@ -109,7 +110,7 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
   Future<void> _selectDropoffLocation() async {
     final result = await Navigator.push<PlaceResult>(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _dropoffLocation ?? _pickupLocation,
           title: AppLocalizations.of(context)!.selectDeliveryLocationTitle,
@@ -247,7 +248,7 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
+        TayarPageRoute(
           builder: (context) => SearchingOffersScreen(
             orderId: orderRef.id,
             proposedFare: fare,

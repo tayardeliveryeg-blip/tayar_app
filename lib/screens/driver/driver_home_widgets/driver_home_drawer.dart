@@ -16,6 +16,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_drawer_item.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== القايمة الجانبية (Drawer) لشاشة الطيار الرئيسية ======
 // (كانت جوه driver_home_screen.dart واتقسمت في ملف منفصل زي ما حصل مع
@@ -53,7 +54,7 @@ class DriverHomeDrawer extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  TayarPageRoute(
                     builder: (_) => const DriverProfileScreen(),
                   ),
                 );
@@ -205,7 +206,7 @@ class DriverHomeDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const NotificationsScreen(),
                         ),
                       );
@@ -218,7 +219,7 @@ class DriverHomeDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const SecurityScreen(isDriver: true),
                         ),
                       );
@@ -231,7 +232,7 @@ class DriverHomeDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const SettingsScreen(),
                         ),
                       );
@@ -244,7 +245,7 @@ class DriverHomeDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const HelpScreen()),
+                        TayarPageRoute(builder: (_) => const HelpScreen()),
                       );
                     },
                   ),
@@ -255,7 +256,7 @@ class DriverHomeDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        TayarPageRoute(
                           builder: (_) => const SupportScreen(),
                         ),
                       );
@@ -284,7 +285,7 @@ class DriverHomeDrawer extends StatelessWidget {
                     if (!context.mounted) return;
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
+                      TayarPageRoute(
                         builder: (context) => const PassengerHomeScreen(),
                       ),
                     );

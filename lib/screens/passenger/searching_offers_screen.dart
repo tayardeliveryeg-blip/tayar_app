@@ -18,6 +18,7 @@ import 'package:tayay_app/services/fare_negotiation_rules.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== شاشة البحث عن عروض الطيارين (زي InDrive) ======
 /// بتستنى عروض من مجموعة orders/{orderId}/offers وتعرضهم لايف،
@@ -339,7 +340,7 @@ class _SearchingOffersScreenState extends State<SearchingOffersScreen>
                 Navigator.of(context).pop(); // نقفل الـ dialog بس
                 // ننتقل لشاشة التتبع الحية بدل ما نرجع للشاشة الرئيسية الثابتة
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
+                  TayarPageRoute(
                     builder: (_) => TripTrackingScreen(orderId: widget.orderId),
                   ),
                 );

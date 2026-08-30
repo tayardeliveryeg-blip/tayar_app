@@ -12,6 +12,7 @@ import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== شاشة "شركاؤنا التجاريين": بتعرض كل المحلات اللي اتأكدت كشريك
 /// تجاري (بعد ما الأدمن ينشرها من تاب Vendor Requests)، مرتبة حسب الأقرب
@@ -52,14 +53,14 @@ class _VendorPartnersScreenState extends State<VendorPartnersScreen> {
   void _becomeVendor() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const BecomeVendorScreen()),
+      TayarPageRoute(builder: (_) => const BecomeVendorScreen()),
     );
   }
 
   void _orderFrom(VendorPartner partner) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => CreateDeliveryOrderScreen(
           initialPickupLocation: partner.location,
           initialPickupAddress: partner.storeName,

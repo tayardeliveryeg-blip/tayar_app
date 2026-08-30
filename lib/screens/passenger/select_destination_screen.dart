@@ -12,6 +12,7 @@ import 'package:tayay_app/screens/passenger/pick_on_map_screen.dart'
 import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// نتيجة بحث واحدة (مكان مقترح)
 class PlaceResult {
@@ -165,7 +166,7 @@ class _SelectDestinationScreenState extends State<SelectDestinationScreen> {
   Future<void> _openPickOnMap() async {
     final result = await Navigator.push<PlaceResult>(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => PickOnMapScreen(
           initialLocation: widget.initialLocation,
           pinType: widget.pinType,

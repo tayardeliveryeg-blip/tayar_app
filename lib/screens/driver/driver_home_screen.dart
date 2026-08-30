@@ -25,6 +25,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/driver_home_drawer.
 import 'package:tayay_app/screens/driver/driver_home_widgets/driver_requests_tab.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key, this.initialTab = 0});
@@ -190,7 +191,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
     // ====== نمسح كل الشاشات السابقة ونرجع لشاشة تسجيل الدخول من الأول ======
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      TayarPageRoute(builder: (_) => const LoginScreen()),
       (route) => false,
     );
   }
@@ -322,7 +323,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (!mounted) return;
               Navigator.of(context).push(
-                MaterialPageRoute(
+                TayarPageRoute(
                   builder: (_) => DriverTripTrackingScreen(orderId: tripId),
                 ),
               );
@@ -786,7 +787,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               if (!context.mounted) return;
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
+                TayarPageRoute(
                   builder: (context) => const PassengerHomeScreen(),
                 ),
               );

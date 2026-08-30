@@ -16,6 +16,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:tayay_app/main.dart' show navigatorKey;
 import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== لازم تكون top-level function (أو static) عشان FCM يقدر يستدعيها
 /// وقت وصول إشعار والتطبيق مقفول/في الخلفية تمامًا ======
@@ -129,7 +130,7 @@ class PushNotificationService {
     final otherPartyName = data['senderName'] as String? ?? '';
     if (orderId == null) return;
     navigatorKey.currentState?.push(
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) =>
             TripChatScreen(orderId: orderId, otherPartyName: otherPartyName),
       ),

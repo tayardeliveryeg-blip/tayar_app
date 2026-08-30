@@ -7,6 +7,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== شاشة تقييم الراكب بعد انتهاء الرحلة (من ناحية الطيار) ======
 /// نفس فكرة RateTripScreen بالظبط لكن بالعكس: الطيار هو اللي بيقيّم الراكب.
@@ -112,7 +113,7 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
     }
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const DriverHomeScreen()),
+      TayarPageRoute(builder: (_) => const DriverHomeScreen()),
       (route) => false,
     );
   }

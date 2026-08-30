@@ -11,6 +11,7 @@ import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====================================================
 // ====== شاشة بروفايل الراكب: قابلة للتعديل ======
@@ -180,7 +181,7 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
 
     if (!mounted) return;
     final editedBytes = await Navigator.of(context).push<Uint8List>(
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => ProfilePhotoEditScreen(imageBytes: bytes),
         fullscreenDialog: true,
       ),

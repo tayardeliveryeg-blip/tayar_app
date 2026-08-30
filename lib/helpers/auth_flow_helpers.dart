@@ -5,6 +5,7 @@ import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
 import 'package:tayay_app/services/driver_invite_link_helper.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====================================================
 // ====== توجيه المستخدم بعد نجاح الدخول (جوجل / أبل) ======
@@ -38,7 +39,7 @@ Future<void> navigateAfterAuth(
       final status = linkResult.driverData?['status'];
       if (status == 'approved') {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const DriverHomeScreen()),
+          TayarPageRoute(builder: (_) => const DriverHomeScreen()),
           (route) => false,
         );
       } else {
@@ -47,11 +48,11 @@ Future<void> navigateAfterAuth(
         // مكان سليم (نفس سلوك اختيار "طيار" من شاشة الدور العادية) ======
         final navigator = Navigator.of(context);
         navigator.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const PassengerHomeScreen()),
+          TayarPageRoute(builder: (_) => const PassengerHomeScreen()),
           (route) => false,
         );
         navigator.push(
-          MaterialPageRoute(builder: (_) => const DriverRegistrationScreen()),
+          TayarPageRoute(builder: (_) => const DriverRegistrationScreen()),
         );
       }
       return;
@@ -60,7 +61,7 @@ Future<void> navigateAfterAuth(
 
   if (!context.mounted) return;
   Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(
+    TayarPageRoute(
       builder: (_) =>
           isNewUser ? const RoleSelectionScreen() : const PassengerHomeScreen(),
     ),

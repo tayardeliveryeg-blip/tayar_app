@@ -6,6 +6,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/services/driver_relations_service.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== شاشة تقييم الطيار بعد انتهاء الرحلة ======
 /// بتظهر تلقائيًا لما الأوردر يوصل لحالة completed، وبتسمح للراكب
@@ -198,7 +199,7 @@ class _RateTripScreenState extends State<RateTripScreen> {
     }
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const PassengerHomeScreen()),
+      TayarPageRoute(builder: (_) => const PassengerHomeScreen()),
       (route) => false,
     );
   }

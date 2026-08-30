@@ -7,6 +7,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/sos_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 const String _kEgyptPoliceNumber = '122';
 
@@ -141,7 +142,7 @@ class _SosSheetContent extends StatelessWidget {
                 } else {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    TayarPageRoute(
                       builder: (_) =>
                           SecurityScreen(isDriver: userRole == 'driver'),
                     ),

@@ -12,6 +12,7 @@ import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== تصنيفات الشكوى الثابتة - نفس القيم بالظبط لازم تتطابق مع
 // الـ allow list في firestore.rules (match /support_tickets/{ticketId})
@@ -157,7 +158,7 @@ class _SupportScreenState extends State<SupportScreen> {
           TextButton.icon(
             onPressed: () => Navigator.of(
               context,
-            ).push(MaterialPageRoute(builder: (_) => const MyTicketsScreen())),
+            ).push(TayarPageRoute(builder: (_) => const MyTicketsScreen())),
             icon: const Icon(Icons.history, color: TayarColors.primary),
             label: Text(
               loc.myComplaintsLabel,

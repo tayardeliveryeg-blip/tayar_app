@@ -5,6 +5,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/screens/passenger/become_vendor_screen.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== بانر "احصل على أول توصيل مجانًا": بيتشيك على Firestore هل الراكب
 // عنده أي رحلة مكتملة قبل كده ولا لأ. لو عنده رحلة مكتملة واحدة على الأقل
@@ -106,7 +107,7 @@ class BecomeVendorPromoBanner extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const BecomeVendorScreen()),
+              TayarPageRoute(builder: (_) => const BecomeVendorScreen()),
             );
           },
           child: Container(

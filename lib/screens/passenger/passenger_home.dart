@@ -35,6 +35,7 @@ import 'package:tayay_app/services/vendor_service.dart';
 import 'package:tayay_app/screens/passenger/become_vendor_screen.dart'
     show vendorBusinessTypeDisplay;
 import 'package:tayay_app/theme/app_settings.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 export 'package:tayay_app/theme/theme_extensions.dart'; // مصدر TayarColors / TayarTheme / TayarThemeColors الوحيد
 
 // ====== القيمة الداخلية لطريقة الدفع بتفضل ثابتة (عربي) عشان التوافق مع
@@ -379,7 +380,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                     Navigator.pop(sheetContext);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      TayarPageRoute(
                         builder: (_) => CreateDeliveryOrderScreen(
                           initialPickupLocation: partner.location,
                           initialPickupAddress: partner.storeName,
@@ -710,7 +711,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     if (!mounted) return;
     final result = await Navigator.push<PlaceResult>(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) =>
             SelectDestinationScreen(initialLocation: _currentLocation),
       ),
@@ -749,7 +750,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
 
     final result = await Navigator.push<PlaceResult>(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _currentLocation,
           title: loc.selectCustomPlaceTitle,
@@ -913,7 +914,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   Future<void> _pickAndSaveAddress(String key, String screenTitle) async {
     final result = await Navigator.push<PlaceResult>(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => SelectDestinationScreen(
           initialLocation: _currentLocation,
           title: screenTitle,
@@ -1101,7 +1102,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const CreateDeliveryOrderScreen()),
+      TayarPageRoute(builder: (_) => const CreateDeliveryOrderScreen()),
     );
   }
 
@@ -1111,7 +1112,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     if (!mounted) return;
     await Navigator.push(
       context,
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => OrderConfirmationScreen(
           pickupAddress: _addressDisplay(context),
           pickupLocation: _currentLocation,
@@ -1446,7 +1447,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                         if (!context.mounted) return;
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          TayarPageRoute(
                             builder: (_) => const NotificationsScreen(),
                           ),
                         );

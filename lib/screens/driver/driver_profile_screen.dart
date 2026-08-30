@@ -11,6 +11,7 @@ import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class DriverProfileScreen extends StatefulWidget {
   const DriverProfileScreen({super.key});
@@ -173,7 +174,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
 
     if (!mounted) return;
     final editedBytes = await Navigator.of(context).push<Uint8List>(
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => ProfilePhotoEditScreen(imageBytes: bytes),
         fullscreenDialog: true,
       ),

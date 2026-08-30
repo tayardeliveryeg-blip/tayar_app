@@ -20,6 +20,7 @@ import 'package:tayay_app/screens/driver/driver_trip_tracking_widgets/trip_detai
 import 'package:tayay_app/widgets/sos_floating_button.dart';
 import 'package:tayay_app/screens/driver/rate_rider_screen.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== شاشة تتبع الرحلة اللحظي من ناحية الطيار ======
 /// بتتفتح فورًا لحظة قبول عرض الطيار، أو لما يدوس على كارت الرحلة النشطة
@@ -335,7 +336,7 @@ class _DrahJ91ZuNL8Y2px8iYciYeHN8sfSh5eXH8
     // للطيار بالظبط لكن بالعكس ======
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
+      TayarPageRoute(
         builder: (_) => RateRiderScreen(
           orderId: widget.orderId,
           customerId: _customerId,

@@ -14,6 +14,7 @@ import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class PassengerWalletScreen extends StatelessWidget {
   const PassengerWalletScreen({super.key});
@@ -79,7 +80,7 @@ class PassengerWalletScreen extends StatelessWidget {
                             padding: EdgeInsets.zero,
                             showShadow: false,
                             child: InkWell(
-                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DriverHomeScreen(initialTab: 3))),
+                              onTap: () => Navigator.push(context, TayarPageRoute(builder: (_) => const DriverHomeScreen(initialTab: 3))),
                               borderRadius: BorderRadius.circular(AppRadius.xxl),
                               child: Padding(
                                 padding: const EdgeInsets.all(AppSpacing.lg),

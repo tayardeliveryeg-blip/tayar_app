@@ -8,6 +8,7 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/contact_action_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class TripDetailsCard extends StatelessWidget {
   final bool inProgress;
@@ -138,7 +139,7 @@ class TripDetailsCard extends StatelessWidget {
                   Expanded(child: ContactActionButton(
                     icon: Icons.chat_bubble_outline,
                     label: loc.chatWithPassengerLabel,
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => TripChatScreen(orderId: orderId, otherPartyName: customerName))),
+                    onTap: () => Navigator.of(context).push(TayarPageRoute(builder: (_) => TripChatScreen(orderId: orderId, otherPartyName: customerName))),
                   )),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(child: ContactActionButton(

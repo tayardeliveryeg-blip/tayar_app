@@ -15,6 +15,7 @@ import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class DriverRegistrationScreen extends StatefulWidget {
   const DriverRegistrationScreen({super.key});
@@ -68,7 +69,7 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
   }
 
   Future<void> _openSection(Widget screen) async {
-    await Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+    await Navigator.push(context, TayarPageRoute(builder: (_) => screen));
     _loadDriverData(); // نحدث حالة الأقسام بعد الرجوع
   }
 
@@ -158,7 +159,7 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
     if (!_isLoading && status == 'approved') {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const DriverHomeScreen()),
+          TayarPageRoute(builder: (_) => const DriverHomeScreen()),
         );
       });
     }

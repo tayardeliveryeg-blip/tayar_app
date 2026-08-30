@@ -10,6 +10,7 @@ import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== كارت الرحلة النشطة فوق قائمة الطلبات + زرار التواصل (شات/مكالمة) ======
 // (كانت قبل كده private classes جوه driver_home_screen.dart واتقسمت في ملف منفصل)
@@ -181,7 +182,7 @@ class ActiveTripCard extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
+                            TayarPageRoute(
                               builder: (_) => TripChatScreen(
                                 orderId: orderId,
                                 otherPartyName: customerName,

@@ -19,6 +19,7 @@ import 'package:tayay_app/services/sos_service.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== شاشة الأمان: قفل التطبيق برقم سري + عرض وسيلة تسجيل الدخول + حذف
 // الحساب + جهة اتصال الطوارئ. شاشة مشتركة بين الراكب والطيار - isDriver
@@ -376,7 +377,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
         }
         final result = await Navigator.push<bool>(
           context,
-          MaterialPageRoute(
+          TayarPageRoute(
             builder: (_) => OtpVerificationScreen(
               verificationId: verificationId,
               phoneNumber: phone,
@@ -451,7 +452,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        TayarPageRoute(builder: (_) => const LoginScreen()),
         (route) => false,
       );
     } on FirebaseAuthException catch (e) {
