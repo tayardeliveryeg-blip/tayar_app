@@ -188,6 +188,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     child: Text(
                       loc.continueButton,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: context.onPrimaryColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),

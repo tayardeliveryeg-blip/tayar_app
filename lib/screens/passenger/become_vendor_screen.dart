@@ -324,6 +324,7 @@ class _BecomeVendorScreenState extends State<BecomeVendorScreen> {
                 child: Text(
                   loc.vendorSubmitButton,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: context.onPrimaryColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),

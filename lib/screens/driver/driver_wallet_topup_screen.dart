@@ -219,6 +219,7 @@ class _DriverWalletTopupScreenState extends State<DriverWalletTopupScreen> {
                     child: Text(
                       loc.topUpSubmitButton,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: context.onPrimaryColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),

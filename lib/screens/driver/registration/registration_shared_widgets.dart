@@ -191,6 +191,7 @@ class SectionScaffold extends StatelessWidget {
                 child: Text(
                   AppLocalizations.of(context)!.saveButton,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: context.onPrimaryColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),

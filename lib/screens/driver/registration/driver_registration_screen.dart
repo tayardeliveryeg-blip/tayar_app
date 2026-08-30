@@ -323,6 +323,7 @@ class _Dr9yMnTm4NSzvG9rrwjM2ec8xZgh1cafXH8
                               )!.applicationUnderReviewButton
                             : AppLocalizations.of(context)!.continueButton,
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: context.onPrimaryColor,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),

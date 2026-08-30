@@ -275,6 +275,7 @@ class _RateRiderScreenState extends State<RateRiderScreen> {
                     child: Text(
                       loc.submitRatingButton,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: context.onPrimaryColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),

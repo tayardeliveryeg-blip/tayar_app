@@ -427,7 +427,7 @@ class _CreateDeliveryOrderScreenState extends State<CreateDeliveryOrderScreen> {
                 child: Text(
                   loc.saveOrderButton,
                   style: TextStyle(
-                    color: context.textColor,
+                    color: context.onPrimaryColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
