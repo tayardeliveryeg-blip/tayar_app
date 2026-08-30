@@ -16,6 +16,7 @@ import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
 import 'package:tayay_app/widgets/success_celebration.dart';
+import 'package:tayay_app/widgets/tayar_animated_counter.dart';
 
 class PassengerWalletScreen extends StatelessWidget {
   const PassengerWalletScreen({super.key});
@@ -70,7 +71,11 @@ class PassengerWalletScreen extends StatelessWidget {
                             children: [
                               Text(loc.availableBalance, style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor)),
                               const SizedBox(height: AppSpacing.sm),
-                              Text(loc.currencyEGP(balance.toStringAsFixed(0)), style: TayarStatTextStyles.statMedium.copyWith(color: TayarColors.primary)),
+                              TayarAnimatedCounter(
+                                value: balance,
+                                formatter: (v) => loc.currencyEGP(v.toStringAsFixed(0)),
+                                style: TayarStatTextStyles.statMedium.copyWith(color: TayarColors.primary),
+                              ),
                             ],
                           ),
                         ),
@@ -90,7 +95,11 @@ class PassengerWalletScreen extends StatelessWidget {
                                     Icon(Icons.delivery_dining, color: driverBalance < 0 ? TayarColors.error : TayarColors.primary),
                                     const SizedBox(width: AppSpacing.sm),
                                     Expanded(child: Text(loc.walletSummaryDriverLabel, style: textTheme.bodyMedium?.copyWith(color: context.textColor))),
-                                    Text(loc.currencyEGP(driverBalance.toStringAsFixed(0)), style: textTheme.titleMedium?.copyWith(color: driverBalance < 0 ? TayarColors.error : TayarColors.primary, fontWeight: FontWeight.bold)),
+                                    TayarAnimatedCounter(
+                                      value: driverBalance,
+                                      formatter: (v) => loc.currencyEGP(v.toStringAsFixed(0)),
+                                      style: textTheme.titleMedium?.copyWith(color: driverBalance < 0 ? TayarColors.error : TayarColors.primary, fontWeight: FontWeight.bold),
+                                    ),
                                     const SizedBox(width: AppSpacing.xs),
                                     Icon(Icons.chevron_right, color: context.textGreyColor, size: 18),
                                   ],

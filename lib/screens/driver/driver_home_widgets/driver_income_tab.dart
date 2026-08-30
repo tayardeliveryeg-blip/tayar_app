@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_card.dart';
+import 'package:tayay_app/widgets/tayar_animated_counter.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 
@@ -125,12 +126,13 @@ class IncomeSummaryCard extends StatelessWidget {
               style: TextStyle(color: context.textGreyColor, fontSize: 14),
             ),
           ),
-          Text(
-            isCurrency
-                ? AppLocalizations.of(
-                    context,
-                  )!.currencyEGP(value.toStringAsFixed(0))
-                : value.toStringAsFixed(0),
+          TayarAnimatedCounter(
+            value: value,
+            formatter: (v) => isCurrency
+                ? AppLocalizations.of(context)!.currencyEGP(
+                    v.toStringAsFixed(0),
+                  )
+                : v.toStringAsFixed(0),
             style: TextStyle(
               color: context.textColor,
               fontSize: 18,

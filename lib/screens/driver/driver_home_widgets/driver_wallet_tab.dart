@@ -9,6 +9,7 @@ import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
+import 'package:tayay_app/widgets/tayar_animated_counter.dart';
 
 class DriverWalletTab extends StatelessWidget {
   final String driverId;
@@ -44,7 +45,11 @@ class DriverWalletTab extends StatelessWidget {
                 children: [
                   Text(loc.availableBalance, style: textTheme.bodyMedium?.copyWith(color: context.textGreyColor)),
                   const SizedBox(height: AppSpacing.sm),
-                  Text(loc.currencyEGP(balance.toStringAsFixed(0)), style: TayarStatTextStyles.statMedium.copyWith(color: balanceColor)),
+                  TayarAnimatedCounter(
+                    value: balance,
+                    formatter: (v) => loc.currencyEGP(v.toStringAsFixed(0)),
+                    style: TayarStatTextStyles.statMedium.copyWith(color: balanceColor),
+                  ),
                   if (isNegative) ...[
                     const SizedBox(height: AppSpacing.md),
                     Text(loc.negativeWalletBalanceNote, textAlign: TextAlign.center, style: textTheme.bodySmall?.copyWith(color: TayarColors.error)),

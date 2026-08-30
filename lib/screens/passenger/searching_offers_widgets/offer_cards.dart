@@ -232,15 +232,41 @@ class OfferAvatarPop extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(color: context.bgColor, width: 2),
         ),
-        child: CircleAvatar(
-          backgroundColor: TayarColors.primary,
-          backgroundImage: (photoUrl != null && photoUrl!.isNotEmpty)
-              ? NetworkImage(photoUrl!)
-              : null,
-          child: (photoUrl == null || photoUrl!.isEmpty)
-              ? Icon(Icons.person, color: context.onPrimaryColor, size: 16)
-              : null,
-        ),
+        child: (photoUrl != null && photoUrl!.isNotEmpty)
+            ? ClipOval(
+                child: Image.network(
+                  photoUrl!,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => CircleAvatar(
+                    backgroundColor: TayarColors.primary,
+                    child: Icon(
+                      Icons.person,
+                      color: context.onPrimaryColor,
+                      size: 16,
+                    ),
+                  ),
+                  frameBuilder:
+                      (context, child, frame, wasSynchronouslyLoaded) {
+                        if (wasSynchronouslyLoaded) return child;
+                        return AnimatedOpacity(
+                          opacity: frame == null ? 0 : 1,
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeOut,
+                          child: child,
+                        );
+                      },
+                ),
+              )
+            : CircleAvatar(
+                backgroundColor: TayarColors.primary,
+                child: Icon(
+                  Icons.person,
+                  color: context.onPrimaryColor,
+                  size: 16,
+                ),
+              ),
       ),
     );
   }
