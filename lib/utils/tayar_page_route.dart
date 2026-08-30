@@ -19,11 +19,9 @@ class TayarPageRoute<T> extends PageRouteBuilder<T> {
   TayarPageRoute({
     required this.builder,
     super.settings,
-    bool fullscreenDialog = false,
-    bool maintainState = true,
+    super.fullscreenDialog = false,
+    super.maintainState = true,
   }) : super(
-         fullscreenDialog: fullscreenDialog,
-         maintainState: maintainState,
          transitionDuration: const Duration(milliseconds: 280),
          reverseTransitionDuration: const Duration(milliseconds: 220),
          pageBuilder: (context, animation, secondaryAnimation) =>
