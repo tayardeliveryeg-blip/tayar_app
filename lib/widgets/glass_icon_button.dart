@@ -19,6 +19,9 @@ class GlassIconButton extends StatelessWidget {
   final double size;
   final Color? iconColor;
   final bool showBadge;
+  // لو false، الزرار بيرجع للشكل القديم (solid لون الخلفية + ظل، من غير
+  // BackdropFilter ولا border) بدل الزجاجي — نفس الـ hit area والحجم.
+  final bool glass;
 
   const GlassIconButton({
     super.key,
@@ -28,6 +31,7 @@ class GlassIconButton extends StatelessWidget {
     this.size = 50,
     this.iconColor,
     this.showBadge = false,
+    this.glass = true,
   }) : assert(
          icon != null || child != null,
          'لازم توفر icon أو child واحد على الأقل',
@@ -36,31 +40,48 @@ class GlassIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
+    final iconChild =
+        child ??
+        Icon(icon, color: iconColor ?? context.textColor, size: size * 0.44);
 
-    final button = ClipOval(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: (isDark ? Colors.white : Colors.black).withValues(
-              alpha: isDark ? 0.08 : 0.05,
-            ),
-            border: Border.all(
+    final Widget button;
+    if (glass) {
+      button = ClipOval(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: (isDark ? Colors.white : Colors.black).withValues(
-                alpha: isDark ? 0.14 : 0.18,
+                alpha: isDark ? 0.08 : 0.05,
               ),
-              width: 1,
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: isDark ? 0.14 : 0.18,
+                ),
+                width: 1,
+              ),
             ),
+            child: iconChild,
           ),
-          child:
-              child ??
-              Icon(icon, color: iconColor ?? context.textColor, size: size * 0.44),
         ),
-      ),
-    );
+      );
+    } else {
+      // ====== الشكل القديم (قبل الزجاجي): دائرة solid بلون الخلفية
+      // وظل floating بس، من غير blur ولا border — نفس الشكل المستخدم في
+      // زرار الرجوع بتاع pick_on_map_screen.dart ======
+      button = Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: context.bgColor.withValues(alpha: 0.9),
+        ),
+        child: iconChild,
+      );
+    }
 
     final withShadow = Container(
       decoration: BoxDecoration(

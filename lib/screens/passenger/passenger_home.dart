@@ -1472,6 +1472,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                           return GlassIconButton(
                             icon: Icons.notifications_none,
                             showBadge: snapshot.data ?? false,
+                            glass: false,
                           );
                         },
                       ),
@@ -1508,6 +1509,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                       builder: (context) => GlassIconButton(
                         icon: Icons.menu,
                         onTap: () => Scaffold.of(context).openDrawer(),
+                        glass: false,
                       ),
                     ),
                   ),
@@ -1561,6 +1563,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   child: GlassIconButton(
                     icon: Icons.my_location,
                     onTap: _getCurrentLocation,
+                    glass: false,
                   ),
                 ),
               ),
@@ -1606,6 +1609,7 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   ignoring: _isDraggingMap || _destinationAddress == null,
                   child: GlassIconButton(
                     onTap: _fitRouteToView,
+                    glass: false,
                     child: const RouteFitIcon(),
                   ),
                 ),
