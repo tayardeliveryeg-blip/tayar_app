@@ -65,17 +65,19 @@ class _QuickServiceButtonState extends State<QuickServiceButton> {
 
     return GestureDetector(
       onTap: () {
-        HapticFeedback.selectionClick();
+        HapticFeedback.mediumImpact();
         widget.onTap();
       },
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) => setState(() => _pressed = false),
       onTapCancel: () => setState(() => _pressed = false),
       child: AnimatedScale(
-        scale: _pressed ? 0.97 : 1.0,
+        scale: _pressed ? 0.95 : 1.0,
         duration: const Duration(milliseconds: 100),
         curve: Curves.easeOut,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOut,
           padding: const EdgeInsets.symmetric(
             vertical: AppSpacing.md,
             horizontal: AppSpacing.sm,
@@ -87,11 +89,15 @@ class _QuickServiceButtonState extends State<QuickServiceButton> {
               colors: [Color(0xFFFF7A1A), Color(0xFFD94E00)],
             ),
             borderRadius: BorderRadius.circular(AppRadius.lg),
+            // ====== الظل بيقل وقت الضغط (زي إن الزرار بيغوص شوية جوه
+            // السطح) بدل ما يفضل ثابت — بيدّي إحساس أوضح إن الدوسة "وصلت" ======
             boxShadow: [
               BoxShadow(
-                color: TayarColors.primary.withValues(alpha: 0.45),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                color: TayarColors.primary.withValues(
+                  alpha: _pressed ? 0.25 : 0.45,
+                ),
+                blurRadius: _pressed ? 10 : 20,
+                offset: Offset(0, _pressed ? 4 : 10),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
@@ -694,15 +695,32 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
   // الطبيعي) حسب سرعة السحب، أو حسب أقرب نقطة لو السحب كان بطيء ======
   void _onSheetDragEnd(DragEndDetails details) {
     final velocity = details.velocity.pixelsPerSecond.dy;
-    if (velocity < -250) {
-      _sheetAnimController.animateTo(1.0, curve: Curves.easeOutCubic);
-    } else if (velocity > 250) {
-      _sheetAnimController.animateTo(0.0, curve: Curves.easeOutCubic);
-    } else if (_sheetAnimController.value > 0.5) {
-      _sheetAnimController.animateTo(1.0, curve: Curves.easeOutCubic);
-    } else {
-      _sheetAnimController.animateTo(0.0, curve: Curves.easeOutCubic);
-    }
+    final target = velocity < -250
+        ? 1.0
+        : velocity > 250
+        ? 0.0
+        : (_sheetAnimController.value > 0.5 ? 1.0 : 0.0);
+
+    // ====== بنحول سرعة السحب من بكسل/ثانية لنفس الوحدة النسبية (0-1)
+    // اللي بيتحرك بيها الـ AnimationController، بنفس معادلة التحويل في
+    // _onSheetDragUpdate بالظبط (بس من غير ما نعكس الإشارة هناك) ======
+    final normalizedVelocity = -velocity / _sheetDragRange;
+    _animateSheetWithSpring(target, normalizedVelocity);
+  }
+
+  // ====== بدل animateTo بمنحنى ثابت (كان بيحس ميكانيكي)، بنستخدم
+  // SpringSimulation حقيقي بياخد سرعة السحب اللحظية كنقطة بداية — بيدّي
+  // إحساس مرن وطبيعي (زي iOS sheets) عند رفلت الإصبع، مش حركة موحّدة
+  // السرعة زي الأنيميشن بمنحنى ثابت ======
+  void _animateSheetWithSpring(double target, double velocity) {
+    const spring = SpringDescription(mass: 1, stiffness: 420, damping: 32);
+    final simulation = SpringSimulation(
+      spring,
+      _sheetAnimController.value,
+      target,
+      velocity,
+    );
+    _sheetAnimController.animateWith(simulation);
   }
 
   // ====== حساب سعر الرحلة: 10 جنيه أساسي + 5 جنيه لكل كيلومتر ======
@@ -1678,38 +1696,51 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   return ConstrainedBox(
                     key: _sheetContainerKey,
                     constraints: BoxConstraints(maxHeight: currentHeight),
-                    child: _destinationAddress == null
-                        ? TayarIdleBottomSheet(
-                            onTapSearch: _openDestinationSearch,
-                            onTapSavedPlace: _addCustomSavedPlace,
-                            onSaveAddress: _pickAndSaveAddress,
-                            onReorderTrip: _reorderLastTrip,
-                            onTapRideService: _openDestinationSearch,
-                            nearbyDriversCount: _nearbyDriversCount,
-                            onTapDeliveryService: _openDeliveryOrder,
-                            onDragStart: () => _onSheetDragStart(
-                              collapsedHeight,
-                              expandedHeight,
+                    // ====== crossfade بسيط بين شريط "الحالة الافتراضية" وشريط
+                    // "تأكيد الرحلة" بدل التبديل المفاجئ (كان بيقفز فجأة لما
+                    // المستخدم يختار/يلغي وجهة). الـ ValueKey ضروري عشان
+                    // AnimatedSwitcher يعرف إن الـ widget اتغيّر فعلاً ======
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      switchInCurve: Curves.easeOut,
+                      switchOutCurve: Curves.easeIn,
+                      transitionBuilder: (child, animation) =>
+                          FadeTransition(opacity: animation, child: child),
+                      child: _destinationAddress == null
+                          ? TayarIdleBottomSheet(
+                              key: const ValueKey('idle_sheet'),
+                              onTapSearch: _openDestinationSearch,
+                              onTapSavedPlace: _addCustomSavedPlace,
+                              onSaveAddress: _pickAndSaveAddress,
+                              onReorderTrip: _reorderLastTrip,
+                              onTapRideService: _openDestinationSearch,
+                              nearbyDriversCount: _nearbyDriversCount,
+                              onTapDeliveryService: _openDeliveryOrder,
+                              onDragStart: () => _onSheetDragStart(
+                                collapsedHeight,
+                                expandedHeight,
+                              ),
+                              onDragUpdate: _onSheetDragUpdate,
+                              onDragEnd: _onSheetDragEnd,
+                            )
+                          : TripConfirmationSheet(
+                              key: const ValueKey('trip_sheet'),
+                              destinationAddress: _destinationAddress,
+                              distanceKm: _routeDistanceKm,
+                              durationMin: _routeDurationMin,
+                              fare: _estimatedFare,
+                              paymentMethod: _paymentMethod,
+                              onTapPaymentMethod: _showPaymentMethodSheet,
+                              onCancelDestination: _clearDestination,
+                              onConfirmOrder: _openOrderConfirmation,
+                              onDragStart: () => _onSheetDragStart(
+                                collapsedHeight,
+                                expandedHeight,
+                              ),
+                              onDragUpdate: _onSheetDragUpdate,
+                              onDragEnd: _onSheetDragEnd,
                             ),
-                            onDragUpdate: _onSheetDragUpdate,
-                            onDragEnd: _onSheetDragEnd,
-                          )
-                        : TripConfirmationSheet(
-                            destinationAddress: _destinationAddress,
-                            distanceKm: _routeDistanceKm,
-                            durationMin: _routeDurationMin,
-                            fare: _estimatedFare,
-                            paymentMethod: _paymentMethod,
-                            onTapPaymentMethod: _showPaymentMethodSheet,
-                            onCancelDestination: _clearDestination,
-                            onConfirmOrder: _openOrderConfirmation,
-                            onDragStart: () => _onSheetDragStart(
-                              collapsedHeight,
-                              expandedHeight,
-                            ),
-                            onDragUpdate: _onSheetDragUpdate,
-                            onDragEnd: _onSheetDragEnd,
-                          ),
+                    ),
                   );
                 },
               ),

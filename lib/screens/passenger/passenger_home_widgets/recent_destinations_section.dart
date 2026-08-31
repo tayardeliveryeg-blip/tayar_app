@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 
 import 'package:tayay_app/theme/theme_extensions.dart';
+import 'package:tayay_app/widgets/tayar_shimmer.dart';
 import 'package:tayay_app/screens/passenger/passenger_home_widgets/saved_places_row.dart'
     show SavedPlaceChip;
 
@@ -32,7 +33,46 @@ class RecentDestinationsSection extends StatelessWidget {
           .limit(30)
           .get(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const SizedBox.shrink();
+        // ====== وقت التحميل الأول (قبل ما نتيجة الـ Firestore query توصل)،
+        // بنعرض skeleton بنفس شكل القسم الحقيقي (عنوان + 3 شرائح) بدل ما
+        // القسم يفضل مختفي تمامًا وبعدين يظهر فجأة ويزحزح كل اللي تحته —
+        // بيدّي إحساس "بيحمّل" بدل قفزة مفاجئة في التخطيط ======
+        if (!snapshot.hasData) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: AppSpacing.md),
+              TayarShimmer(
+                child: Container(
+                  height: 12,
+                  width: 90,
+                  decoration: BoxDecoration(
+                    color: context.cardColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  for (var i = 0; i < 3; i++) ...[
+                    if (i > 0) const SizedBox(width: AppSpacing.sm),
+                    TayarShimmer(
+                      child: Container(
+                        height: 44,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          color: context.cardColor,
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          );
+        }
 
         final docs =
             snapshot.data!.docs.where((doc) {
