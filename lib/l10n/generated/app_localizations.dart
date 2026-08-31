@@ -500,6 +500,18 @@ abstract class AppLocalizations {
   /// **'إشعارات الطلبات والعروض والتحديثات المهمة'**
   String get pushNotificationsDescription;
 
+  /// No description provided for @notificationSoundLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صوت التنبيهات'**
+  String get notificationSoundLabel;
+
+  /// No description provided for @notificationSoundDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'صوت واهتزاز خفيف لما يوصلك إشعار مهم والتطبيق فاتح'**
+  String get notificationSoundDescription;
+
   /// No description provided for @termsAndConditions.
   ///
   /// In ar, this message translates to:

@@ -222,6 +222,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'إشعارات الطلبات والعروض والتحديثات المهمة';
 
   @override
+  String get notificationSoundLabel => 'صوت التنبيهات';
+
+  @override
+  String get notificationSoundDescription =>
+      'صوت واهتزاز خفيف لما يوصلك إشعار مهم والتطبيق فاتح';
+
+  @override
   String get termsAndConditions => 'الشروط والأحكام';
 
   @override

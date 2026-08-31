@@ -11,6 +11,7 @@ import 'package:tayay_app/screens/driver/driver_home_widgets/trip_request_detail
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/widgets/tayar_staggered_item.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== دالة مساعدة موحّدة لاستخراج GeoPoint من حقول الموقع ======
@@ -210,7 +211,9 @@ class DriverRequestsTab extends StatelessWidget {
                           order.id,
                         );
 
-                        return OrderRequestCard(
+                        return TayarStaggeredItem(
+                          index: index,
+                          child: OrderRequestCard(
                           pickupAddress:
                               (data['pickupAddress'] as String?) ?? '',
                           destinationAddress:
@@ -287,6 +290,7 @@ class DriverRequestsTab extends StatelessWidget {
                               ),
                             ),
                           ),
+                        ),
                         );
                       },
                     ),

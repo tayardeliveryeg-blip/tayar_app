@@ -12,6 +12,7 @@ import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/widgets/tayar_staggered_item.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
 
 /// ====== شاشة "شركاؤنا التجاريين": بتعرض كل المحلات اللي اتأكدت كشريك
@@ -150,7 +151,9 @@ class _VendorPartnersScreenState extends State<VendorPartnersScreen> {
                             partner.location,
                           );
 
-                    return AppCard(
+                    return TayarStaggeredItem(
+                      index: index,
+                      child: AppCard(
                       padding: const EdgeInsets.all(14),
                       radius: 16,
                       child: Row(
@@ -223,6 +226,7 @@ class _VendorPartnersScreenState extends State<VendorPartnersScreen> {
                             ),
                           ),
                         ],
+                      ),
                       ),
                     );
                   },

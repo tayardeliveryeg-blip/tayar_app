@@ -11,6 +11,7 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/widgets/tayar_staggered_item.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== شاشة الإشعارات: بتعرض إشعارات المستخدم الحالي لحظيًا من Firestore ======
@@ -239,7 +240,9 @@ class NotificationsScreen extends StatelessWidget {
 
                     final type = data['type'] as String?;
                     final walletRole = data['walletRole'] as String?;
-                    return AppCard(
+                    return TayarStaggeredItem(
+                      index: index,
+                      child: AppCard(
                       onTap: () => _handleTap(context, doc.id, type, walletRole),
                       padding: const EdgeInsets.all(14),
                       radius: 14,
@@ -312,6 +315,7 @@ class NotificationsScreen extends StatelessWidget {
                               ),
                           ],
                         ),
+                      ),
                     );
                   },
                   ),

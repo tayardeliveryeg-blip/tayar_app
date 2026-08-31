@@ -97,6 +97,8 @@
   "useDeviceThemeLabel": "Use device setting",
   "enablePushNotifications": "Enable app notifications",
   "pushNotificationsDescription": "Order, offer, and update alerts",
+  "notificationSoundLabel": "Notification sound",
+  "notificationSoundDescription": "A short sound and light vibration for important alerts while the app is open",
   "termsAndConditions": "Terms & Conditions",
   "privacyPolicy": "Privacy Policy",
   "privacyPolicyBody": "We protect your data and only access your location during an active trip. We never share your data without consent.",

@@ -7,6 +7,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/main.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/services/tayar_sound_service.dart';
 
 // ====== شاشة الإعدادات: اللغة، الإشعارات، ونبذة عن التطبيق ======
 class SettingsScreen extends StatefulWidget {
@@ -18,12 +19,29 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushEnabled = true;
+  bool _soundEnabled = true;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     _loadPushSetting();
+    _loadSoundSetting();
+  }
+
+  Future<void> _loadSoundSetting() async {
+    final enabled = await TayarSoundService.isEnabled();
+    if (mounted) setState(() => _soundEnabled = enabled);
+  }
+
+  Future<void> _toggleSound(bool value) async {
+    setState(() => _soundEnabled = value);
+    await TayarSoundService.setEnabled(value);
+    if (value) {
+      // ====== نشغّل الصوت فورًا وقت التفعيل عشان المستخدم يسمع شكله
+      // على طول من غير ما يستنى إشعار حقيقي يجيله ======
+      TayarSoundService.playNotificationAlert();
+    }
   }
 
   Future<void> _loadPushSetting() async {
@@ -344,6 +362,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         AppLocalizations.of(
                           context,
                         )!.pushNotificationsDescription,
+                        style: TextStyle(color: context.textGreyColor),
+                      ),
+                    ),
+                    SwitchListTile(
+                      value: _soundEnabled,
+                      onChanged: _toggleSound,
+                      activeThumbColor: TayarColors.primary,
+                      secondary: const Icon(
+                        Icons.volume_up_outlined,
+                        color: TayarColors.primary,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.notificationSoundLabel,
+                        style: TextStyle(color: context.textColor),
+                      ),
+                      subtitle: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.notificationSoundDescription,
                         style: TextStyle(color: context.textGreyColor),
                       ),
                     ),

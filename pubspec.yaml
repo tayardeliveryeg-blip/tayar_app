@@ -65,6 +65,7 @@ dependencies:
   intl: ^0.20.2
   zego_uikit_signaling_plugin: ^2.8.21
   font_awesome_flutter: ^11.0.0 # عشان أيقونة تيك توك الحقيقية (Icons مفيهاش أيقونة تيك توك)
+  audioplayers: ^6.1.0 # لتشغيل صوت تنبيه بسيط عند وصول إشعار والتطبيق فاتح
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -91,6 +92,7 @@ flutter:
     - assets/
     - assets/icon/
     - assets/splash/
+    - assets/sounds/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -8,6 +8,7 @@ import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
+import 'package:tayay_app/widgets/tayar_staggered_item.dart';
 
 // ====== شاشة سجل الطلبات: بتعرض كل طلبات الراكب الحالي (رحلات + توصيل) ======
 // بنجيب كل حاجة من collection('orders') فلترة على customerId، وبنرتب
@@ -144,7 +145,9 @@ class OrderHistoryScreen extends StatelessWidget {
                     final rating = data['rating'];
                     final createdAt = data['createdAt'] as Timestamp?;
 
-                    return AppCard(
+                    return TayarStaggeredItem(
+                      index: index,
+                      child: AppCard(
                       padding: const EdgeInsets.all(16),
                       radius: 16,
                       border: Border.all(
@@ -282,6 +285,7 @@ class OrderHistoryScreen extends StatelessWidget {
                             ),
                           ],
                         ],
+                      ),
                       ),
                     );
                   },

@@ -97,6 +97,8 @@
   "useDeviceThemeLabel": "استخدام إعداد الجهاز",
   "enablePushNotifications": "تفعيل إشعارات التطبيق",
   "pushNotificationsDescription": "إشعارات الطلبات والعروض والتحديثات المهمة",
+  "notificationSoundLabel": "صوت التنبيهات",
+  "notificationSoundDescription": "صوت واهتزاز خفيف لما يوصلك إشعار مهم والتطبيق فاتح",
   "termsAndConditions": "الشروط والأحكام",
   "privacyPolicy": "سياسة الخصوصية",
   "privacyPolicyBody": "بنحافظ على بياناتك ومنستخدمش موقعك إلا وقت وجود رحلة فعلية، ومبنشاركش بياناتك مع أي طرف تالت من غير موافقتك.",

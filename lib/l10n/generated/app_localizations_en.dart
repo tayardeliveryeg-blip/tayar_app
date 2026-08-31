@@ -222,6 +222,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pushNotificationsDescription => 'Order, offer, and update alerts';
 
   @override
+  String get notificationSoundLabel => 'Notification sound';
+
+  @override
+  String get notificationSoundDescription =>
+      'A short sound and light vibration for important alerts while the app is open';
+
+  @override
   String get termsAndConditions => 'Terms & Conditions';
 
   @override

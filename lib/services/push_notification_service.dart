@@ -16,6 +16,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:tayay_app/main.dart' show navigatorKey;
 import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
+import 'package:tayay_app/services/tayar_sound_service.dart';
 
 /// ====== لازم تكون top-level function (أو static) عشان FCM يقدر يستدعيها
 /// وقت وصول إشعار والتطبيق مقفول/في الخلفية تمامًا ======
@@ -95,6 +96,7 @@ class PushNotificationService {
   void _showForegroundNotification(RemoteMessage message) {
     final notification = message.notification;
     if (notification == null) return;
+    TayarSoundService.playNotificationAlert();
     _localNotifications.show(
       id: notification.hashCode,
       title: notification.title,
