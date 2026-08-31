@@ -13,7 +13,8 @@ import 'package:tayay_app/theme/theme_extensions.dart';
 // الشكل (50x50, دائرة, border, floating shadow) يقدر يتحول للـ widget ده
 // من غير أي تغيير في السلوك أو الـ hit area ======
 class GlassIconButton extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final Widget? child;
   final VoidCallback? onTap;
   final double size;
   final Color? iconColor;
@@ -21,12 +22,16 @@ class GlassIconButton extends StatelessWidget {
 
   const GlassIconButton({
     super.key,
-    required this.icon,
+    this.icon,
+    this.child,
     this.onTap,
     this.size = 50,
     this.iconColor,
     this.showBadge = false,
-  });
+  }) : assert(
+         icon != null || child != null,
+         'لازم توفر icon أو child واحد على الأقل',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +55,9 @@ class GlassIconButton extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: Icon(
-            icon,
-            color: iconColor ?? context.textColor,
-            size: size * 0.44,
-          ),
+          child:
+              child ??
+              Icon(icon, color: iconColor ?? context.textColor, size: size * 0.44),
         ),
       ),
     );

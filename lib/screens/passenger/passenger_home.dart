@@ -22,6 +22,7 @@ import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/pin_marker.dart';
 import 'package:tayay_app/widgets/map_tile_layer.dart';
 import 'package:tayay_app/widgets/glass_icon_button.dart';
+import 'package:tayay_app/widgets/route_fit_icon.dart';
 import 'package:tayay_app/widgets/no_internet_toast.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/utils/connectivity_check.dart';
@@ -621,6 +622,19 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
     _routeAnimController
       ..reset()
       ..forward();
+  }
+
+  // ====== نفس منطق الزوم اللي بيحصل تلقائي في _fetchRoute، بس بيتنفذ
+  // يدوي من زرار "ملائمة المسار" لو المستخدم سحب/زوّم بره حدود المسار
+  // وعايز يرجعله كامل تاني ======
+  void _fitRouteToView() {
+    if (_fullRoutePoints.length < 2) return;
+    _mapController.fitCamera(
+      CameraFit.coordinates(
+        coordinates: _fullRoutePoints,
+        padding: const EdgeInsets.fromLTRB(60, 150, 60, 320),
+      ),
+    );
   }
 
   // ====== بداية سحب الشريط السفلي: بنحسب مدى السحب (الفرق بين الوضع
@@ -1547,6 +1561,52 @@ class _PassengerHomeScreenState extends State<PassengerHomeScreen>
                   child: GlassIconButton(
                     icon: Icons.my_location,
                     onTap: _getCurrentLocation,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // ====== زرار "ملائمة المسار": بياخد مكان زرار تحديد الموقع
+          // بالظبط (نفس left/bottom)، وبيظهر بدل منه لما يكون فيه وجهة
+          // محددة ومسار نشط عالخريطة. بيضغطه المستخدم لو زوّم أو سحب
+          // بره حدود المسار وعايز يرجّع الكاميرا تلمّه كامل تاني ======
+          AnimatedBuilder(
+            animation: _sheetAnimController,
+            builder: (context, child) {
+              final sheetHeight = _measuredSheetHeight > 0
+                  ? _measuredSheetHeight
+                  : _sheetHeights(context, topSafeArea).current;
+              final t = _sheetAnimController.value;
+              final hasActiveRoute = _destinationAddress != null;
+              return Positioned(
+                left: 16,
+                bottom: sheetHeight + 16,
+                child: Opacity(
+                  opacity: 1 - t,
+                  child: IgnorePointer(
+                    ignoring: !hasActiveRoute || t > 0.5,
+                    child: child,
+                  ),
+                ),
+              );
+            },
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              offset: (_isDraggingMap || _destinationAddress == null)
+                  ? const Offset(0, 2)
+                  : Offset.zero,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: (_isDraggingMap || _destinationAddress == null)
+                    ? 0
+                    : 1,
+                child: IgnorePointer(
+                  ignoring: _isDraggingMap || _destinationAddress == null,
+                  child: GlassIconButton(
+                    onTap: _fitRouteToView,
+                    child: const RouteFitIcon(),
                   ),
                 ),
               ),
