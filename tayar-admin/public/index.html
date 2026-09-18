@@ -1004,7 +1004,7 @@ function startListeners(){
         pickup: pick(d, ['pickupAddress'], '—'),
         destination: pick(d, ['destinationAddress'], '—'),
         driver: pick(d, ['driverName'], '—'),
-        total: pick(d, ['proposedFare','suggestedFare'], 0),
+        total: pick(d, ['acceptedFare','proposedFare','suggestedFare'], 0),
         status: (pick(d, ['status'], 'searching')+'').toLowerCase(),
         createdAtRaw: (()=>{ const ts = pick(d,['createdAt'],null); return ts ? (ts.toDate ? ts.toDate() : new Date(ts)) : null; })(),
         time: relativeTime(pick(d, ['createdAt'], null)),
