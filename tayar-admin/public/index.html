@@ -957,10 +957,11 @@ let sosAlerts = [];
 let promoCodes = [];
 let pendingReferralRewards = [];
 let driverTopupRequests = [];
+let commissionLedger = [];
 let complaints = [];
 let complaintStatusFilter = 'open';
 let orderFilter = 'all';
-let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting', driverTopupRequests:'connecting', complaints:'connecting' };
+let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting', driverTopupRequests:'connecting', commissionLedger:'connecting', complaints:'connecting' };
 
 function showConnError(collectionKey, err){
   const banner = document.getElementById('connBanner');
@@ -1162,6 +1163,36 @@ function startListeners(){
       connectionState.driverTopupRequests = 'ok';
       renderAll();
     }, err => { connectionState.driverTopupRequests = 'error'; showConnError('driverTopupRequests', err); });
+
+    
+  // ====== سجل العمولة الحقيقي: كل رحلة مكتملة بتسجل transaction حقيقي
+  // في drivers/{id}/walletTransactions بنوع commission (دفع كاش) أو
+  // trip_earning (دفع محفظة) - قراءة الليدجر أدق من إعادة حساب fare×rate
+  // يدويًا لأن نسبة العمولة ممكن تتغير بمرور الوقت والليدجر بيحافظ
+  // على القيمة الفعلية وقت كل رحلة ======
+  db.collectionGroup('walletTransactions')
+    .where('type', 'in', ['commission', 'trip_earning'])
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(snap => {
+      commissionLedger = snap.docs.map(doc => {
+        const d = doc.data();
+        const fare = Number(d.fare) || 0;
+        const amount = Number(d.amount) || 0;
+        // ====== commission: amount مخزّن سالب (خصم مباشر) فبناخد القيمة
+        // المطلقة. trip_earning: العمولة = fare - amount (الفرق اللي
+        // اتخصم قبل ما ينزل في محفظة السائق) ======
+        const commission = d.type === 'commission' ? Math.abs(amount) : (fare - amount);
+        return {
+          id: doc.id,
+          driverId: doc.ref.parent.parent.id,
+          type: d.type,
+          fare,
+          commission,
+          createdAtRaw: (()=>{ const ts = pick(d,['createdAt'],null); return ts ? (ts.toDate ? ts.toDate() : new Date(ts)) : null; })()
+        };
+      });
+      renderAll();
+    }, err => { connectionState.commissionLedger = 'error'; showConnError('commissionLedger', err); console.error('commissionLedger error:', err); });
 
   // support_tickets: شكاوى/تذاكر الدعم اللي بيبعتها الراكب أو الطيار من
   // شاشة الدعم (support_screen.dart) - كل تذكرة معاها category ثابت وuserRole
@@ -2311,8 +2342,16 @@ function renderReportsKpis(){
   const totalOrders = last14.reduce((s,b)=>s+b.ordersCount, 0);
   const completionRate = totalOrders > 0 ? Math.round((totalCompleted / totalOrders) * 100) : 0;
   const avgDailyRevenue = Math.round(totalRevenue / 14);
+  // ====== عمولة الشركة الصافية آخر 14 يوم - من الليدجر الحقيقي مش
+  // من إعادة حساب fare×rate يدويًا (راجع تعليق commissionLedger listener) ======
+  const fourteenDaysAgo = new Date(); fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+  const commission14d = commissionLedger
+    .filter(c => c.createdAtRaw && c.createdAtRaw >= fourteenDaysAgo)
+    .reduce((s,c) => s + c.commission, 0);
+  const avgDailyCommission = Math.round(commission14d / 14);
   const kpis = [
     {label:'Revenue (14 days)', value:'EGP ' + totalRevenue, delta: 'EGP ' + avgDailyRevenue + ' / day avg', up:true},
+    {label:'Company commission (14 days)', value:'EGP ' + Math.round(commission14d), delta: 'EGP ' + avgDailyCommission + ' / day avg', up:true},
     {label:'Completed trips (14 days)', value: totalCompleted, delta: totalOrders + ' total requested', up:true},
     {label:'Completion rate', value: completionRate + '%', delta: completionRate>=70?'healthy':'needs attention', up: completionRate>=70},
     {label:'Active drivers', value: drivers.filter(d=>d.approval==='approved').length, delta: drivers.filter(d=>d.online).length + ' online now', up:true},
