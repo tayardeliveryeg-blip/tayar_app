@@ -563,11 +563,19 @@
           </table>
         </div>
 
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Export raw data</h3>
-            <span class="hint">CSV files open directly in Excel</span>
-          </div>
+                    <div class="panel">
+              <div class="panel-head">
+                <h3>Wallet top-ups — last 14 days</h3>
+                <span class="hint">InstaPay requests reviewed by admins</span>
+              </div>
+              <div class="kpi-row" id="topupKpiRow"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h3>Export raw data</h3>
+                <span class="hint">CSV files open directly in Excel</span>
+              </div>
           <div style="display:flex; gap:10px; padding:4px 0;">
             <button class="btn" onclick="exportOrdersCsv()">⬇ Orders CSV</button>
             <button class="btn" onclick="exportUsersCsv()">⬇ Customers CSV</button>
@@ -957,11 +965,12 @@ let sosAlerts = [];
 let promoCodes = [];
 let pendingReferralRewards = [];
 let driverTopupRequests = [];
+let topupHistory = [];
 let commissionLedger = [];
 let complaints = [];
 let complaintStatusFilter = 'open';
 let orderFilter = 'all';
-let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting', driverTopupRequests:'connecting', commissionLedger:'connecting', complaints:'connecting' };
+let connectionState = { orders:'connecting', drivers:'connecting', users:'connecting', vendorApplications:'connecting', sosAlerts:'connecting', promoCodes:'connecting', pendingReferralRewards:'connecting', driverTopupRequests:'connecting', topupHistory:'connecting', commissionLedger:'connecting', complaints:'connecting' };
 
 function showConnError(collectionKey, err){
   const banner = document.getElementById('connBanner');
@@ -1163,6 +1172,28 @@ function startListeners(){
       connectionState.driverTopupRequests = 'ok';
       renderAll();
     }, err => { connectionState.driverTopupRequests = 'error'; showConnError('driverTopupRequests', err); });
+
+    
+  // ====== سجل شحن المحفظة الكامل (كل الحالات: pending/approved/rejected)
+  // لأغراض التقارير فقط - منفصل عن driverTopupRequests اللي بيجيب pending
+  // بس لشاشة الموافقة/الرفض. نفس composite index (type+createdAt) بيغطي
+  // الاستعلام ده كمان لأنه equality واحدة على type ======
+  db.collectionGroup('walletTransactions')
+    .where('type', '==', 'topup_request')
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(snap => {
+      topupHistory = snap.docs.map(doc => {
+        const d = doc.data();
+        return {
+          id: doc.id,
+          driverId: doc.ref.parent.parent.id,
+          amount: Number(d.amount) || 0,
+          status: d.status || 'pending',
+          createdAtRaw: (()=>{ const ts = pick(d,['createdAt'],null); return ts ? (ts.toDate ? ts.toDate() : new Date(ts)) : null; })()
+        };
+      });
+      renderAll();
+    }, err => { connectionState.topupHistory = 'error'; showConnError('topupHistory', err); });
 
     
   // ====== سجل العمولة الحقيقي: كل رحلة مكتملة بتسجل transaction حقيقي
@@ -2430,6 +2461,31 @@ function renderReports(){
   renderReportsKpis();
   renderReportsChart();
   renderDriverPerformance();
+  renderTopupKpis();
+}
+
+// ====== ملخص طلبات شحن المحفظة آخر 14 يوم: عدد كل حالة + إجمالي
+// المبلغ المعتمد فعليًا (approved) - بيستخدم نفس أسلوب كروت الـ KPI ======
+function renderTopupKpis(){
+  const fourteenDaysAgo = new Date(); fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+  const recent = topupHistory.filter(t => t.createdAtRaw && t.createdAtRaw >= fourteenDaysAgo);
+  const pendingCount = recent.filter(t => t.status === 'pending').length;
+  const approvedCount = recent.filter(t => t.status === 'approved').length;
+  const rejectedCount = recent.filter(t => t.status === 'rejected').length;
+  const approvedVolume = recent.filter(t => t.status === 'approved').reduce((s,t)=>s+t.amount, 0);
+  const kpis = [
+    {label:'Approved volume', value:'EGP ' + Math.round(approvedVolume), delta: approvedCount + ' requests', up:true},
+    {label:'Pending review', value: pendingCount, delta: pendingCount>0?'needs attention':'all clear', up: pendingCount===0},
+    {label:'Rejected', value: rejectedCount, delta: '14-day total', up:true},
+  ];
+  document.getElementById('topupKpiRow').innerHTML = kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-delta ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${k.delta}</div>
+      <div class="bar"></div>
+    </div>
+  `).join('');
 }
 
 // ====== تصدير CSV عام: بياخد مصفوفة صفوف + أسماء أعمدة، وبيحمّل ملف
