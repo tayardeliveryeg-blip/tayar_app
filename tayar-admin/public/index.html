@@ -563,6 +563,19 @@
           </table>
         </div>
 
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Cancellation reasons — last 14 days</h3>
+            <button class="btn" onclick="exportCancellationReasonsCsv()">⬇ Export CSV</button>
+          </div>
+          <span class="hint">by whoever cancelled: customer or driver</span>
+          <div class="kpi-row" id="cancelReasonsKpiRow"></div>
+          <table>
+            <thead><tr><th>Reason</th><th>Cancelled by</th><th>Count</th><th>Share</th></tr></thead>
+            <tbody id="cancelReasonsBody"></tbody>
+          </table>
+        </div>
+
                     <div class="panel">
               <div class="panel-head">
                 <h3>Wallet top-ups — last 14 days</h3>
@@ -1015,6 +1028,8 @@ function startListeners(){
         destination: pick(d, ['destinationAddress'], '—'),
         driver: pick(d, ['driverName'], '—'),
         total: pick(d, ['acceptedFare','proposedFare','suggestedFare'], 0),
+        cancellationReason: pick(d, ['cancellationReason'], null),
+        cancelledBy: pick(d, ['cancelledBy'], null),
         status: (pick(d, ['status'], 'searching')+'').toLowerCase(),
         createdAtRaw: (()=>{ const ts = pick(d,['createdAt'],null); return ts ? (ts.toDate ? ts.toDate() : new Date(ts)) : null; })(),
         time: relativeTime(pick(d, ['createdAt'], null)),
@@ -2457,10 +2472,86 @@ function renderDriverPerformance(){
   `).join('') || `<tr><td colspan="6" style="text-align:center; color:var(--text-dimmer);">No completed or cancelled trips yet</td></tr>`;
 }
 
+// ====== خرائط أكواد أسباب الإلغاء - لازم تفضل مطابقة تمامًا لـ
+// cancellation_reason_sheet.dart (كود السبب) وقيمة cancelledBy المخزنة في
+// الأوردر ('customer' / 'driver') - أي تعديل هنا لازم يترافق مع تعديل مطابق
+// في الفلاتر عشان ميحصلش mismatch بين اللي بيتسجل واللي بيتعرض ======
+const CANCELLATION_REASON_LABELS = {
+  changed_mind: 'Changed mind',
+  driver_too_slow: 'Driver too slow',
+  wrong_address: 'Wrong address',
+  found_other_way: 'Found other way',
+  passenger_no_response: 'Passenger not responding',
+  passenger_not_at_location: 'Passenger not at location',
+  vehicle_issue: 'Vehicle issue',
+  other: 'Other',
+};
+
+const CANCELLED_BY_LABELS = {
+  customer: 'Passenger',
+  driver: 'Driver',
+};
+
+// ====== توزيع أسباب الإلغاء آخر 14 يوم: بيتجمّع من نفس orders array
+// المحمّلة أصلًا (زي renderDriverPerformance) - من غير أي query إضافي.
+// أوردرات من غير cancellationReason (إلغاءات قديمة قبل بند 4) بتتحسب
+// تحت 'unknown' عشان العدّاد الكلي يفضل متطابق مع إجمالي cancelled orders ======
+function renderCancellationReasons(){
+  const fourteenDaysAgo = new Date(); fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+  const cancelled = orders.filter(o =>
+    o.status === 'cancelled' && o.createdAtRaw && o.createdAtRaw >= fourteenDaysAgo
+  );
+  const totalCancelled = cancelled.length;
+
+  const byCustomer = cancelled.filter(o => o.cancelledBy === 'customer').length;
+  const byDriver = cancelled.filter(o => o.cancelledBy === 'driver').length;
+  const kpis = [
+    {label:'Total cancellations (14 days)', value: totalCancelled, delta: '', up:true},
+    {label:'Cancelled by passenger', value: byCustomer, delta: totalCancelled>0 ? Math.round((byCustomer/totalCancelled)*100)+'%' : '0%', up:true},
+    {label:'Cancelled by driver', value: byDriver, delta: totalCancelled>0 ? Math.round((byDriver/totalCancelled)*100)+'%' : '0%', up: byDriver <= byCustomer},
+  ];
+  document.getElementById('cancelReasonsKpiRow').innerHTML = kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      ${k.delta ? `<div class="kpi-delta ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${k.delta}</div>` : ''}
+      <div class="bar"></div>
+    </div>
+  `).join('');
+
+  const counts = {};
+  cancelled.forEach(o => {
+    const code = o.cancellationReason || 'unknown';
+    const by = o.cancelledBy || 'unknown';
+    const key = code + '|' + by;
+    counts[key] = (counts[key] || 0) + 1;
+  });
+
+  const rows = Object.entries(counts)
+    .sort((a,b) => b[1] - a[1])
+    .map(([key, count]) => {
+      const [code, by] = key.split('|');
+      const reasonLabel = CANCELLATION_REASON_LABELS[code] || (code === 'unknown' ? 'Not recorded (pre-bund 4)' : code);
+      const byLabel = CANCELLED_BY_LABELS[by] || 'Unknown';
+      const share = totalCancelled > 0 ? Math.round((count / totalCancelled) * 100) : 0;
+      return {reasonLabel, byLabel, count, share};
+    });
+
+  document.getElementById('cancelReasonsBody').innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.reasonLabel}</td>
+      <td><span class="badge ${r.byLabel==='Driver'?'cancelled':'pending'}">${r.byLabel}</span></td>
+      <td>${r.count}</td>
+      <td>${r.share}%</td>
+    </tr>
+  `).join('') || `<tr><td colspan="4" style="text-align:center; color:var(--text-dimmer);">No cancellations in the last 14 days</td></tr>`;
+}
+
 function renderReports(){
   renderReportsKpis();
   renderReportsChart();
   renderDriverPerformance();
+  renderCancellationReasons();
   renderTopupKpis();
 }
 
@@ -2526,6 +2617,29 @@ function exportDriversCsv(){
     'tayar-drivers-' + new Date().toISOString().slice(0,10) + '.csv',
     ['Name','Phone','Vehicle','Plate','Rating','Deliveries','Approval'],
     drivers.map(d => [d.name, d.phone, d.vehicle, d.plate, d.rating, d.deliveries, d.approval])
+  );
+}
+
+// ====== تصدير أسباب الإلغاء آخر 14 يوم - نفس نطاق البيانات المعروض في
+// panel الأسباب (renderCancellationReasons)، صف لكل أوردر ملغي بدل الملخص
+// المجمّع، عشان لو حد عايز يحلل الأوردرات نفسها مش بس العدّاد ======
+function exportCancellationReasonsCsv(){
+  const fourteenDaysAgo = new Date(); fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+  const cancelled = orders.filter(o =>
+    o.status === 'cancelled' && o.createdAtRaw && o.createdAtRaw >= fourteenDaysAgo
+  );
+  downloadCsv(
+    'tayar-cancellation-reasons-' + new Date().toISOString().slice(0,10) + '.csv',
+    ['Order ID','Cancelled by','Reason code','Reason','Customer','Driver','Date'],
+    cancelled.map(o => [
+      o.displayId,
+      CANCELLED_BY_LABELS[o.cancelledBy] || 'Unknown',
+      o.cancellationReason || 'unknown',
+      CANCELLATION_REASON_LABELS[o.cancellationReason] || 'Not recorded (pre-bund 4)',
+      o.customer,
+      o.driver,
+      o.createdAtRaw ? o.createdAtRaw.toLocaleString('en-GB') : ''
+    ])
   );
 }
 
