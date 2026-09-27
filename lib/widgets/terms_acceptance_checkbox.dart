@@ -10,7 +10,7 @@ import 'package:tayay_app/widgets/tayar_toast.dart';
 // المفروض يترفق بزيادة الرقم ده، عشان لو حبينا مستقبلًا نجبر المستخدمين
 // اللي وافقوا على نسخة قديمة يوافقوا تاني على النسخة الجديدة (بمقارنة
 // termsVersion المحفوظ في بروفايلهم بالقيمة الحالية هنا) ======
-const String kTermsAndConditionsVersion = '1.1';
+const String kTermsAndConditionsVersion = '1.2';
 
 // ====== نفس صفحات الشروط والخصوصية المستضافة على Firebase Hosting
 // المستخدمة في settings_screen.dart - بنفتحهم هنا كمان بدل الديالوج
