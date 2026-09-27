@@ -8,6 +8,8 @@ import 'package:tayay_app/main.dart';
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/services/tayar_sound_service.dart';
+import 'package:tayay_app/screens/shared/about_faq_screen.dart';
+import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====== شاشة الإعدادات: اللغة، الإشعارات، ونبذة عن التطبيق ======
 class SettingsScreen extends StatefulWidget {
@@ -389,6 +391,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 16),
                 _SettingsSection(
                   children: [
+                    ListTile(
+                      leading: const Icon(
+                        Icons.help_outline,
+                        color: TayarColors.primary,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.navAboutFaq,
+                        style: TextStyle(color: context.textColor),
+                      ),
+                      trailing: Icon(
+                        Icons.chevron_left,
+                        color: context.textGreyColor,
+                      ),
+                      onTap: () => Navigator.of(context).push(
+                        TayarPageRoute(builder: (_) => const AboutFaqScreen()),
+                      ),
+                    ),
+                    Divider(color: context.dividerColor2, height: 1),
                     ListTile(
                       leading: const Icon(
                         Icons.description_outlined,
