@@ -1678,4 +1678,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get codeRedeemedCelebrationTitle => 'Added to your wallet!';
+
+  @override
+  String get termsReconsentTitle => 'Our Terms Have Been Updated';
+
+  @override
+  String get termsReconsentBody =>
+      'We\'ve updated our Terms & Conditions and Privacy Policy. You need to agree to the new version to keep using the app.';
+
+  @override
+  String get termsReconsentAgreeButton => 'Agree & Continue';
+
+  @override
+  String get termsReconsentSignOutButton => 'Sign Out';
+
+  @override
+  String get termsReconsentSavingError =>
+      'Something went wrong, please try again';
+
+  @override
+  String get birthDateRequiredError => 'Please enter your date of birth';
+
+  @override
+  String get underMinimumAgeError =>
+      'You must be at least 18 years old to use the app';
 }

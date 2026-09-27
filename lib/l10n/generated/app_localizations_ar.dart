@@ -1664,4 +1664,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get codeRedeemedCelebrationTitle => 'تمت الإضافة للمحفظة!';
+
+  @override
+  String get termsReconsentTitle => 'الشروط والأحكام اتحدثت';
+
+  @override
+  String get termsReconsentBody =>
+      'حدّثنا الشروط والأحكام وسياسة الخصوصية. لازم توافق على النسخة الجديدة عشان تقدر تكمل استخدام التطبيق.';
+
+  @override
+  String get termsReconsentAgreeButton => 'أوافق وأكمل';
+
+  @override
+  String get termsReconsentSignOutButton => 'تسجيل خروج';
+
+  @override
+  String get termsReconsentSavingError => 'حصل خطأ، حاول تاني';
+
+  @override
+  String get birthDateRequiredError => 'لازم تدخل تاريخ ميلادك';
+
+  @override
+  String get underMinimumAgeError =>
+      'لازم يكون عمرك 18 سنة على الأقل عشان تقدر تستخدم التطبيق';
 }

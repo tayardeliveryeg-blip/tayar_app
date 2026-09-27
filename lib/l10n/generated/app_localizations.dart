@@ -3139,6 +3139,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تمت الإضافة للمحفظة!'**
   String get codeRedeemedCelebrationTitle;
+
+  /// No description provided for @termsReconsentTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشروط والأحكام اتحدثت'**
+  String get termsReconsentTitle;
+
+  /// No description provided for @termsReconsentBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدّثنا الشروط والأحكام وسياسة الخصوصية. لازم توافق على النسخة الجديدة عشان تقدر تكمل استخدام التطبيق.'**
+  String get termsReconsentBody;
+
+  /// No description provided for @termsReconsentAgreeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'أوافق وأكمل'**
+  String get termsReconsentAgreeButton;
+
+  /// No description provided for @termsReconsentSignOutButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل خروج'**
+  String get termsReconsentSignOutButton;
+
+  /// No description provided for @termsReconsentSavingError.
+  ///
+  /// In ar, this message translates to:
+  /// **'حصل خطأ، حاول تاني'**
+  String get termsReconsentSavingError;
+
+  /// No description provided for @birthDateRequiredError.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم تدخل تاريخ ميلادك'**
+  String get birthDateRequiredError;
+
+  /// No description provided for @underMinimumAgeError.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم يكون عمرك 18 سنة على الأقل عشان تقدر تستخدم التطبيق'**
+  String get underMinimumAgeError;
 }
 
 class _AppLocalizationsDelegate
