@@ -757,5 +757,7 @@
   "termsReconsentBody": "We've updated our Terms & Conditions and Privacy Policy. You need to agree to the new version to keep using the app.",
   "termsReconsentAgreeButton": "Agree & Continue",
   "termsReconsentSignOutButton": "Sign Out",
-  "termsReconsentSavingError": "Something went wrong, please try again"
+  "termsReconsentSavingError": "Something went wrong, please try again",
+  "birthDateRequiredError": "Please enter your date of birth",
+  "underMinimumAgeError": "You must be at least 18 years old to use the app"
 }

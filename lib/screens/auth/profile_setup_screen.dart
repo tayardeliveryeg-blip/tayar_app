@@ -8,6 +8,7 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
 import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/age_verification.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
 
 // ====================================================
@@ -29,6 +30,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   final _referralController = TextEditingController();
+  // ====== بند 8: تاريخ الميلاد بقى حقل إجباري وقت تسجيل الراكب - قبل
+  // كده مكانش موجود في الشاشة دي خالص (الحقل كان بيتضاف بعدين، اختياري،
+  // من passenger_profile_screen.dart بس) ======
+  final _birthDateController = TextEditingController();
   bool _isSaving = false;
   bool _termsAccepted = false;
   bool _showTermsError = false;
@@ -46,7 +51,25 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   void dispose() {
     _nameController.dispose();
     _referralController.dispose();
+    _birthDateController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickBirthDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: maxAllowedBirthDateForRegistration,
+      firstDate: DateTime(1950),
+      // ====== بند 8: بيمنع اختيار تاريخ ميلاد بيدي عمر أقل من 18 من
+      // الأساس، بدل ما نسيبه يختار ونرفضله بعدين ======
+      lastDate: maxAllowedBirthDateForRegistration,
+    );
+    if (picked != null) {
+      setState(() {
+        _birthDateController.text =
+            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      });
+    }
   }
 
   Future<void> _saveAndContinue() async {
@@ -56,6 +79,21 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     // الـ checkbox زي أي حقل فاضي ======
     if (!_termsAccepted) {
       setState(() => _showTermsError = true);
+      return;
+    }
+    // ====== بند 8: تحقق سن 18+ فعلي - الـ DatePicker بيمنع اختيار
+    // تاريخ غلط من الأساس (راجع _pickBirthDate)، بس التحقق هنا لازم
+    // يفضل موجود كطبقة حماية ثانية على قيمة الحقل وقت الحفظ فعليًا ======
+    final birthDate = parseStoredBirthDate(_birthDateController.text);
+    if (birthDate == null || !isAtLeastMinimumAge(birthDate)) {
+      if (!mounted) return;
+      TayarToast.show(
+        context,
+        birthDate == null
+            ? AppLocalizations.of(context)!.birthDateRequiredError
+            : AppLocalizations.of(context)!.underMinimumAgeError,
+        type: ToastType.warning,
+      );
       return;
     }
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -76,6 +114,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           'lastName': nameParts.length > 1
               ? nameParts.sublist(1).join(' ')
               : '',
+          'birthDate': _birthDateController.text.trim(),
         },
         'role': widget.role,
         'createdAt': FieldValue.serverTimestamp(),
@@ -166,6 +205,29 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     hintStyle: TextStyle(color: context.textGreyColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: _pickBirthDate,
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: _birthDateController,
+                      style: TextStyle(color: context.textColor),
+                      decoration: InputDecoration(
+                        labelText: loc.birthDateHint,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        suffixIcon: const Icon(Icons.calendar_today_outlined),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return loc.birthDateRequiredError;
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ),

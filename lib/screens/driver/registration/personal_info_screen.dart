@@ -10,6 +10,7 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/services/driver_invite_link_helper.dart';
 import 'package:tayay_app/screens/driver/registration/registration_shared_widgets.dart';
 import 'package:tayay_app/services/driver_document_upload_service.dart';
+import 'package:tayay_app/utils/age_verification.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key});
@@ -35,6 +36,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   bool _firstNameError = false;
   bool _lastNameError = false;
   bool _mobileError = false;
+  // ====== بند 8: بتتحط true لو تاريخ الميلاد فاضي أو بيدي عمر أقل من
+  // kMinimumAgeYears وقت الحفظ ======
+  bool _birthDateError = false;
 
   @override
   void initState() {
@@ -156,13 +160,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000),
+      // ====== بند 8: initialDate/lastDate بقوا محسوبين من حد السن
+      // الأدنى بدل DateTime.now() - بيمنع الطيار يختار تاريخ ميلاد
+      // بيدي عمر أقل من 18 من الأساس، بدل ما يختار ونرفضله بعدين ======
+      initialDate: maxAllowedBirthDateForRegistration,
       firstDate: DateTime(1950),
-      lastDate: DateTime.now(),
+      lastDate: maxAllowedBirthDateForRegistration,
     );
     if (picked != null) {
       _birthDateController.text =
           '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      if (_birthDateError) setState(() => _birthDateError = false);
     }
   }
 
@@ -195,6 +203,34 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       return;
     }
     setState(() => _mobileError = false);
+
+    // ====== بند 8: تحقق سن 18+ فعلي - قبل كده كان birthDate حقل
+    // اختياري بلا أي تحقق، ممكن يتسيب فاضي أو يتحط فيه أي تاريخ.
+    // الـ DatePicker بقى بيمنع اختيار تاريخ غلط من الأساس (راجع
+    // _pickDate)، بس التحقق هنا لازم يفضل موجود لحالة التعبئة
+    // التلقائية من بروفايل راكب قديم (_loadPrefillFromPassengerProfile)
+    // اللي ممكن يكون فيه تاريخ اتسجل قبل الإصلاح ده ======
+    final birthDateText = _birthDateController.text.trim();
+    final birthDate = parseStoredBirthDate(birthDateText);
+    if (birthDate == null) {
+      setState(() => _birthDateError = true);
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.birthDateRequiredError,
+        type: ToastType.warning,
+      );
+      return;
+    }
+    if (!isAtLeastMinimumAge(birthDate)) {
+      setState(() => _birthDateError = true);
+      TayarToast.show(
+        context,
+        AppLocalizations.of(context)!.underMinimumAgeError,
+        type: ToastType.warning,
+      );
+      return;
+    }
+    setState(() => _birthDateError = false);
 
     // ====== التحقق بالـ OTP اتشال بالكامل من التطبيق (محتاج خطة Blaze
     // على Firebase مدفوعة). الرقم بيتخزن زي ما اتكتب من غير توثيق،
@@ -334,6 +370,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             child: FormTextField(
               controller: _birthDateController,
               hint: AppLocalizations.of(context)!.birthDateHint,
+              showError: _birthDateError,
             ),
           ),
         ),

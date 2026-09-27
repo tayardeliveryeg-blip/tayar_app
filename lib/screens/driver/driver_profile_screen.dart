@@ -11,6 +11,7 @@ import 'package:tayay_app/screens/shared/profile_photo_edit_screen.dart';
 import 'package:tayay_app/theme/theme_extensions.dart';
 import 'package:tayay_app/widgets/app_primary_button.dart';
 import 'package:tayay_app/widgets/tayar_toast.dart';
+import 'package:tayay_app/utils/age_verification.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
 
 class DriverProfileScreen extends StatefulWidget {
@@ -185,18 +186,23 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
   }
 
   Future<void> _pickDate() async {
+    final maxDate = maxAllowedBirthDateForRegistration;
     DateTime initial = DateTime(2000);
     final saved = _birthDateController.text.trim();
     if (saved.isNotEmpty) {
       final parsed = DateTime.tryParse(saved);
       if (parsed != null) initial = parsed;
     }
+    // ====== بند 8: لو القيمة المحفوظة قديمًا بتدي عمر أقل من 18،
+    // بنثبّت initialDate على أقصى تاريخ مسموح بدل ما نسيب
+    // showDatePicker يرمي assertion error ======
+    if (initial.isAfter(maxDate)) initial = maxDate;
 
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
       firstDate: DateTime(1950),
-      lastDate: DateTime.now(),
+      lastDate: maxDate,
     );
     if (picked != null) {
       _birthDateController.text =
@@ -227,6 +233,21 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
         type: ToastType.warning,
       );
       return;
+    }
+
+    // ====== بند 8: لو الطيار كتب/عدّل تاريخ ميلاد هنا، لازم يكون
+    // صحيح ويدي عمر 18+ ======
+    final birthDateText = _birthDateController.text.trim();
+    if (birthDateText.isNotEmpty) {
+      final birthDate = DateTime.tryParse(birthDateText);
+      if (birthDate == null || !isAtLeastMinimumAge(birthDate)) {
+        TayarToast.show(
+          context,
+          AppLocalizations.of(context)!.underMinimumAgeError,
+          type: ToastType.warning,
+        );
+        return;
+      }
     }
 
     setState(() => _isSaving = true);
