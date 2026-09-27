@@ -13,6 +13,9 @@ import 'package:tayay_app/screens/auth/app_lock_screen.dart';
 import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/screens/onboarding/onboarding_screen.dart';
+import 'package:tayay_app/screens/auth/terms_reconsent_screen.dart';
+import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart'
+    show kTermsAndConditionsVersion;
 
 export 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarTheme, TayarThemeColors;
@@ -311,8 +314,58 @@ class AuthGate extends StatelessWidget {
                     );
                   }
                   final lastMode = prefsSnapshot.data!.getString('lastMode');
+
+                  // ====== بند 8 من gap analysis: قبل ما نفتح الشاشة
+                  // الرئيسية، نتأكد إن نسخة الشروط اللي وافق عليها
+                  // المستخدم (termsVersion المحفوظة وقت التسجيل) لسه
+                  // مطابقة لـ kTermsAndConditionsVersion الحالية. لو
+                  // النسخة اتغيرت بعد ما وافق (زي 1.0 → 1.1)، بنوقفه
+                  // على شاشة إعادة موافقة إجبارية بدل ما نفترض إن
+                  // موافقته القديمة لسه سارية على شروط ماشافهاش أصلًا.
+                  // لو الحقل مش موجود خالص (لسه في نص التسجيل ومروحش
+                  // على ProfileSetupScreen/DriverRegistrationScreen بعد)
+                  // بنسيبه يكمل عادي، هيوافق على أحدث نسخة وقتها ======
                   if (lastMode == 'driver') {
-                    return const DriverHomeScreen();
+                    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                      future: FirebaseFirestore.instance
+                          .collection('drivers')
+                          .doc(uid)
+                          .get(),
+                      builder: (context, driverDocSnap) {
+                        if (driverDocSnap.connectionState ==
+                            ConnectionState.waiting) {
+                          return Scaffold(
+                            backgroundColor: context.bgColor,
+                            body: const Center(
+                              child: CircularProgressIndicator(
+                                color: TayarColors.primary,
+                              ),
+                            ),
+                          );
+                        }
+                        final termsVersion =
+                            driverDocSnap.data?.data()?['termsVersion']
+                                as String?;
+                        if (termsVersion != null &&
+                            termsVersion != kTermsAndConditionsVersion) {
+                          return const TermsReconsentScreen(
+                            role: 'driver',
+                            destination: DriverHomeScreen(),
+                          );
+                        }
+                        return const DriverHomeScreen();
+                      },
+                    );
+                  }
+
+                  final passengerTermsVersion =
+                      userDocSnap.data?.data()?['termsVersion'] as String?;
+                  if (passengerTermsVersion != null &&
+                      passengerTermsVersion != kTermsAndConditionsVersion) {
+                    return const TermsReconsentScreen(
+                      role: 'passenger',
+                      destination: PassengerHomeScreen(),
+                    );
                   }
                   return const PassengerHomeScreen();
                 },

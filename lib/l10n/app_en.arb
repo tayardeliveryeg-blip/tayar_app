@@ -752,5 +752,10 @@
   "orderConfirmedCelebrationTitle": "Order confirmed!",
   "orderConfirmedCelebrationSubtitle": "Finding you the nearest driver now",
   "scheduledOrderConfirmedCelebrationSubtitle": "We'll start looking for a driver close to your scheduled time",
-  "codeRedeemedCelebrationTitle": "Added to your wallet!"
+  "codeRedeemedCelebrationTitle": "Added to your wallet!",
+  "termsReconsentTitle": "Our Terms Have Been Updated",
+  "termsReconsentBody": "We've updated our Terms & Conditions and Privacy Policy. You need to agree to the new version to keep using the app.",
+  "termsReconsentAgreeButton": "Agree & Continue",
+  "termsReconsentSignOutButton": "Sign Out",
+  "termsReconsentSavingError": "Something went wrong, please try again"
 }

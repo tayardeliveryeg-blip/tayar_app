@@ -752,5 +752,10 @@
   "orderConfirmedCelebrationTitle": "تم تأكيد طلبك!",
   "orderConfirmedCelebrationSubtitle": "بندور لك على أقرب طيار دلوقتي",
   "scheduledOrderConfirmedCelebrationSubtitle": "هنبدأ ندورلك على طيار قريب من ميعادك",
-  "codeRedeemedCelebrationTitle": "تمت الإضافة للمحفظة!"
+  "codeRedeemedCelebrationTitle": "تمت الإضافة للمحفظة!",
+  "termsReconsentTitle": "الشروط والأحكام اتحدثت",
+  "termsReconsentBody": "حدّثنا الشروط والأحكام وسياسة الخصوصية. لازم توافق على النسخة الجديدة عشان تقدر تكمل استخدام التطبيق.",
+  "termsReconsentAgreeButton": "أوافق وأكمل",
+  "termsReconsentSignOutButton": "تسجيل خروج",
+  "termsReconsentSavingError": "حصل خطأ، حاول تاني"
 }
