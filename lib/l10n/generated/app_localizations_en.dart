@@ -547,11 +547,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'From the home screen, pick your start and destination, check the suggested price, and send. Nearby drivers will send offers to choose from.';
 
   @override
-  String get faqPricingQuestion => 'How is the price determined?';
+  String get faqPricingQuestion => 'How is the fare determined?';
 
   @override
   String get faqPricingAnswer =>
-      'Price is based on actual distance. You can raise or lower it while negotiating with drivers.';
+      'The app suggests an initial fare based on distance, and you can negotiate it with the driver within a reasonable range before either side accepts the offer.';
 
   @override
   String get faqPaymentMethodsQuestion => 'What payment methods are available?';
@@ -569,12 +569,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Try raising the price, especially at peak times or in remote areas, to attract nearby drivers.';
 
   @override
-  String get faqBecomeDriverQuestion =>
-      'How do I become a driver on the Tayar app?';
+  String get faqBecomeDriverQuestion => 'How do I become a Tayar driver?';
 
   @override
   String get faqBecomeDriverAnswer =>
-      'Choose \"Driver Mode\" from the side menu and complete registration (info, license, Bike). You can accept orders after review.';
+      'From the role selection screen choose \"Driver\", fill in your personal details, and upload your documents (driving license, vehicle license, national ID). You can start receiving requests once approved.';
 
   @override
   String get faqDriverEarningsQuestion => 'How are driver earnings calculated?';
@@ -1702,4 +1701,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get underMinimumAgeError =>
       'You must be at least 18 years old to use the app';
+
+  @override
+  String get navAboutFaq => 'About & FAQ';
+
+  @override
+  String get aboutUsSectionTitle => 'About Tayar';
+
+  @override
+  String get aboutUsBody =>
+      'Tayar is an Egyptian motorcycle-based ride-hailing and delivery app, launched in 10th of Ramadan City to offer a faster, more affordable alternative to traditional transport in heavy traffic. Fast, reliable, and everywhere.';
+
+  @override
+  String get faqSectionTitle => 'Frequently Asked Questions';
+
+  @override
+  String get faqBookingQuestion => 'How do I book a ride or delivery?';
+
+  @override
+  String get faqBookingAnswer =>
+      'From the home screen, choose \"Ride\" or \"Delivery\", set your pickup and destination, and you\'ll see an initial fare you can negotiate with drivers before confirming the order.';
+
+  @override
+  String get faqCancellationQuestion => 'Is there a fee if I cancel a trip?';
+
+  @override
+  String get faqCancellationAnswer =>
+      'You can cancel for free within the first 3 minutes after a driver accepts. After that, a small cancellation fee applies (EGP 10 by default) to respect drivers\' time.';
+
+  @override
+  String get faqWalletQuestion => 'How do I top up or use my wallet?';
+
+  @override
+  String get faqWalletAnswer =>
+      'You can pay for trips using your wallet balance instead of cash. Drivers top up their wallets via InstaPay, reviewed by administration.';
+
+  @override
+  String get faqSosQuestion => 'What happens in an emergency during a trip?';
+
+  @override
+  String get faqSosAnswer =>
+      'There\'s an SOS button on the trip tracking screen that sends an instant alert to platform administration. In any real danger, contact the police or ambulance directly.';
+
+  @override
+  String get faqSupportQuestion => 'I have a complaint or issue, what do I do?';
+
+  @override
+  String get faqSupportAnswer =>
+      'Open a support ticket from the \"My Tickets\" screen in the app, or reach us via WhatsApp, phone, or email from the Support screen, and we\'ll respond as soon as possible.';
 }

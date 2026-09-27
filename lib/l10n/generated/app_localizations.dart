@@ -1121,7 +1121,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqPricingAnswer.
   ///
   /// In ar, this message translates to:
-  /// **'السعر بيتحسب على أساس المسافة الفعلية بين نقطة الانطلاق والوجهة، وتقدر تزود أو تقلل السعر المقترح وقت المزايدة مع الطيارين.'**
+  /// **'التطبيق بيقترح سعر مبدئي حسب المسافة، وتقدر تتفاوض عليه مع الطيار في حدود معقولة قبل ما حد يقبل العرض.'**
   String get faqPricingAnswer;
 
   /// No description provided for @faqPaymentMethodsQuestion.
@@ -1157,7 +1157,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqBecomeDriverAnswer.
   ///
   /// In ar, this message translates to:
-  /// **'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة)، وبعد المراجعة هتقدر تستقبل طلبات.'**
+  /// **'من شاشة اختيار الدور اختار \"طيار\"، واملأ بياناتك الشخصية وارفع مستنداتك (رخصة القيادة، رخصة المركبة، البطاقة الشخصية)، وهتقدر تستقبل طلبات بعد موافقة الإدارة.'**
   String get faqBecomeDriverAnswer;
 
   /// No description provided for @faqDriverEarningsQuestion.
@@ -3181,6 +3181,90 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لازم يكون عمرك 18 سنة على الأقل عشان تقدر تستخدم التطبيق'**
   String get underMinimumAgeError;
+
+  /// No description provided for @navAboutFaq.
+  ///
+  /// In ar, this message translates to:
+  /// **'نبذة والأسئلة الشائعة'**
+  String get navAboutFaq;
+
+  /// No description provided for @aboutUsSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نبذة عن طيار'**
+  String get aboutUsSectionTitle;
+
+  /// No description provided for @aboutUsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيار هو تطبيق مصري لنقل الركاب وتوصيل الطلبات باستخدام الموتوسيكلات، بدأ في مدينة العاشر من رمضان بهدف توفير بديل أسرع وأرخص من وسائل النقل التقليدية في زحمة المرور. سريع، موثوق، وفي كل مكان.'**
+  String get aboutUsBody;
+
+  /// No description provided for @faqSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأسئلة الشائعة'**
+  String get faqSectionTitle;
+
+  /// No description provided for @faqBookingQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاي أطلب رحلة أو أوصّل طلب؟'**
+  String get faqBookingQuestion;
+
+  /// No description provided for @faqBookingAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'من الشاشة الرئيسية اختار \"رحلة\" أو \"توصيل\"، حدد نقطة الاستلام والوجهة، وهيظهرلك سعر مبدئي تقدر تتفاوض عليه مع الطيارين قبل تأكيد الطلب.'**
+  String get faqBookingAnswer;
+
+  /// No description provided for @faqCancellationQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل فيه رسوم لو ألغيت الرحلة؟'**
+  String get faqCancellationQuestion;
+
+  /// No description provided for @faqCancellationAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تلغي مجانًا خلال أول 3 دقايق من قبول الطيار. بعد كده بتتطبق رسوم إلغاء بسيطة (10 جنيه افتراضيًا) عشان نحافظ على وقت الطيارين.'**
+  String get faqCancellationAnswer;
+
+  /// No description provided for @faqWalletQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاي أشحن أو أستخدم محفظتي؟'**
+  String get faqWalletQuestion;
+
+  /// No description provided for @faqWalletAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تدفع تكلفة الرحلة من رصيد محفظتك بدل الكاش. الطيارين بيشحنوا محافظهم عن طريق InstaPay ومراجعة الإدارة.'**
+  String get faqWalletAnswer;
+
+  /// No description provided for @faqSosQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيه اللي بيحصل لو حصل طارئ أثناء الرحلة؟'**
+  String get faqSosQuestion;
+
+  /// No description provided for @faqSosAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'فيه زرار طوارئ (SOS) في شاشة تتبع الرحلة بيبعت تنبيه فوري لإدارة المنصة. في أي حالة خطر حقيقي، كلم الشرطة أو الإسعاف مباشرة.'**
+  String get faqSosAnswer;
+
+  /// No description provided for @faqSupportQuestion.
+  ///
+  /// In ar, this message translates to:
+  /// **'عندي شكوى أو مشكلة، أعمل إيه؟'**
+  String get faqSupportQuestion;
+
+  /// No description provided for @faqSupportAnswer.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح تذكرة دعم من شاشة \"تذاكري\" جوه التطبيق، أو كلمنا واتساب/تليفون/إيميل من شاشة الدعم، وهنرد عليك في أقرب وقت.'**
+  String get faqSupportAnswer;
 }
 
 class _AppLocalizationsDelegate

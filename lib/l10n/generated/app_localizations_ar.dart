@@ -551,7 +551,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqPricingAnswer =>
-      'السعر بيتحسب على أساس المسافة الفعلية بين نقطة الانطلاق والوجهة، وتقدر تزود أو تقلل السعر المقترح وقت المزايدة مع الطيارين.';
+      'التطبيق بيقترح سعر مبدئي حسب المسافة، وتقدر تتفاوض عليه مع الطيار في حدود معقولة قبل ما حد يقبل العرض.';
 
   @override
   String get faqPaymentMethodsQuestion => 'وسايل الدفع المتاحة إيه؟';
@@ -572,7 +572,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get faqBecomeDriverAnswer =>
-      'من القايمة الجانبية اختار \"وضع الطيار\" وكمّل خطوات التسجيل (البيانات، الرخصة، الدراجة)، وبعد المراجعة هتقدر تستقبل طلبات.';
+      'من شاشة اختيار الدور اختار \"طيار\"، واملأ بياناتك الشخصية وارفع مستنداتك (رخصة القيادة، رخصة المركبة، البطاقة الشخصية)، وهتقدر تستقبل طلبات بعد موافقة الإدارة.';
 
   @override
   String get faqDriverEarningsQuestion => 'إزاي بتتحسب أرباح الطيار؟';
@@ -1687,4 +1687,52 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get underMinimumAgeError =>
       'لازم يكون عمرك 18 سنة على الأقل عشان تقدر تستخدم التطبيق';
+
+  @override
+  String get navAboutFaq => 'نبذة والأسئلة الشائعة';
+
+  @override
+  String get aboutUsSectionTitle => 'نبذة عن طيار';
+
+  @override
+  String get aboutUsBody =>
+      'طيار هو تطبيق مصري لنقل الركاب وتوصيل الطلبات باستخدام الموتوسيكلات، بدأ في مدينة العاشر من رمضان بهدف توفير بديل أسرع وأرخص من وسائل النقل التقليدية في زحمة المرور. سريع، موثوق، وفي كل مكان.';
+
+  @override
+  String get faqSectionTitle => 'الأسئلة الشائعة';
+
+  @override
+  String get faqBookingQuestion => 'إزاي أطلب رحلة أو أوصّل طلب؟';
+
+  @override
+  String get faqBookingAnswer =>
+      'من الشاشة الرئيسية اختار \"رحلة\" أو \"توصيل\"، حدد نقطة الاستلام والوجهة، وهيظهرلك سعر مبدئي تقدر تتفاوض عليه مع الطيارين قبل تأكيد الطلب.';
+
+  @override
+  String get faqCancellationQuestion => 'هل فيه رسوم لو ألغيت الرحلة؟';
+
+  @override
+  String get faqCancellationAnswer =>
+      'تقدر تلغي مجانًا خلال أول 3 دقايق من قبول الطيار. بعد كده بتتطبق رسوم إلغاء بسيطة (10 جنيه افتراضيًا) عشان نحافظ على وقت الطيارين.';
+
+  @override
+  String get faqWalletQuestion => 'إزاي أشحن أو أستخدم محفظتي؟';
+
+  @override
+  String get faqWalletAnswer =>
+      'تقدر تدفع تكلفة الرحلة من رصيد محفظتك بدل الكاش. الطيارين بيشحنوا محافظهم عن طريق InstaPay ومراجعة الإدارة.';
+
+  @override
+  String get faqSosQuestion => 'إيه اللي بيحصل لو حصل طارئ أثناء الرحلة؟';
+
+  @override
+  String get faqSosAnswer =>
+      'فيه زرار طوارئ (SOS) في شاشة تتبع الرحلة بيبعت تنبيه فوري لإدارة المنصة. في أي حالة خطر حقيقي، كلم الشرطة أو الإسعاف مباشرة.';
+
+  @override
+  String get faqSupportQuestion => 'عندي شكوى أو مشكلة، أعمل إيه؟';
+
+  @override
+  String get faqSupportAnswer =>
+      'افتح تذكرة دعم من شاشة \"تذاكري\" جوه التطبيق، أو كلمنا واتساب/تليفون/إيميل من شاشة الدعم، وهنرد عليك في أقرب وقت.';
 }
