@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tayay_app/services/analytics_service.dart';
 import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 
@@ -52,6 +53,7 @@ Future<void> cancelOrderAsCustomer({
     'cancellationFee': feeAmount,
     'cancelledAt': FieldValue.serverTimestamp(),
   });
+  AnalyticsService.orderCancelled(reason: reasonCode, feeCharged: feeAmount > 0);
   if (feeAmount > 0) {
     await settleCancellationFee(orderId: orderId, userId: userId);
   }

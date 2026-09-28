@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:tayay_app/services/analytics_service.dart';
 
 // ====================================================
 // ====== منطق محفظة الطيار: نسبة الشركة بتتخصم تلقائي ======
@@ -93,6 +94,7 @@ Future<void> completeTripAndDeductCommission({required String orderId}) async {
     }
     throw CompleteTripException(message);
   }
+  AnalyticsService.tripCompleted();
 }
 
 /// ====== خصم رصيد الراكب لطلب مكتمل مدفوع بمحفظته الإلكترونية + تسجيل

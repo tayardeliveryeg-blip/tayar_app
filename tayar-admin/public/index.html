@@ -684,6 +684,21 @@
               <label>Free cancellation window (minutes) <span class="hint">— how long after a driver accepts the passenger can still cancel for free</span></label>
               <input type="number" id="cfgFreeCancelWindow" value="3">
             </div>
+            <div class="settings-field">
+              <label>Minimum app build (force update) <span class="hint">— users on an older build see a blocking "Update now" screen. 0 = off. Only raise it AFTER the new build is live on Google Play, otherwise everyone is locked out.</span></label>
+              <input type="number" id="cfgMinAppBuild" value="0" min="0">
+            </div>
+            <div class="settings-field">
+              <label>Maintenance mode <span class="hint">— blocks the whole app for everyone (checked on app start and every time it returns from background)</span></label>
+              <select id="cfgMaintenanceMode">
+                <option value="off">Off — app works normally</option>
+                <option value="on">On — block the app</option>
+              </select>
+            </div>
+            <div class="settings-field" style="grid-column: 1 / -1;">
+              <label>Maintenance message <span class="hint">— optional, shown on the maintenance screen (leave empty for the default text)</span></label>
+              <input type="text" id="cfgMaintenanceMessage" placeholder="We'll be back at 6 PM">
+            </div>
             <div class="settings-field" style="grid-column: 1 / -1;">
               <label>SOS admin phone numbers <span class="hint">— comma-separated, get an SMS the instant a passenger/driver hits the SOS button. Requires the Firebase Blaze plan + an SMS provider hooked up in functions/index.js.</span></label>
               <input type="text" id="cfgSosAdminPhones" placeholder="+20101xxxxxxx, +20122xxxxxxx">
@@ -1361,6 +1376,9 @@ function loadSettings(){
     document.getElementById('cfgMaxScheduleDays').value = d.maxScheduleAdvanceDays ?? 7;
     document.getElementById('cfgCancellationFee').value = d.cancellationFeeAmount ?? 10;
     document.getElementById('cfgFreeCancelWindow').value = d.freeCancellationWindowMinutes ?? 3;
+    document.getElementById('cfgMinAppBuild').value = d.minAppBuild ?? 0;
+    document.getElementById('cfgMaintenanceMode').value = d.maintenanceMode === true ? 'on' : 'off';
+    document.getElementById('cfgMaintenanceMessage').value = d.maintenanceMessage ?? '';
     document.getElementById('cfgSosAdminPhones').value = Array.isArray(d.sosAdminPhones) ? d.sosAdminPhones.join(', ') : '';
     document.getElementById('settingsHint').textContent = doc.exists ? 'live values — the app reads these on startup' : 'no config saved yet — showing app defaults';
   }).catch(err=>{
@@ -1368,6 +1386,8 @@ function loadSettings(){
   });
 }
 function saveSettings(){
+  const maintenanceOn = document.getElementById('cfgMaintenanceMode').value === 'on';
+  if(maintenanceOn && !confirm('Maintenance mode will BLOCK the app for every user until you turn it off. Continue?')) return;
   const payload = {
     deliveryFee: Number(document.getElementById('cfgBaseFare').value) || 0,
     perKmRate: Number(document.getElementById('cfgPerKm').value) || 0,
@@ -1378,6 +1398,9 @@ function saveSettings(){
     maxScheduleAdvanceDays: Number(document.getElementById('cfgMaxScheduleDays').value) || 7,
     cancellationFeeAmount: Number(document.getElementById('cfgCancellationFee').value) || 0,
     freeCancellationWindowMinutes: Number(document.getElementById('cfgFreeCancelWindow').value) || 0,
+    minAppBuild: Math.max(0, Math.floor(Number(document.getElementById('cfgMinAppBuild').value) || 0)),
+    maintenanceMode: maintenanceOn,
+    maintenanceMessage: document.getElementById('cfgMaintenanceMessage').value.trim(),
     sosAdminPhones: document.getElementById('cfgSosAdminPhones').value
       .split(',').map(s=>s.trim()).filter(Boolean),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()

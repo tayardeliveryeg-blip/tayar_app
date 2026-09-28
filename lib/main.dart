@@ -1,5 +1,11 @@
+import 'dart:ui' show PlatformDispatcher;
+
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -14,6 +20,8 @@ import 'package:tayay_app/services/push_notification_service.dart';
 import 'package:tayay_app/theme/app_settings.dart';
 import 'package:tayay_app/screens/onboarding/onboarding_screen.dart';
 import 'package:tayay_app/screens/auth/terms_reconsent_screen.dart';
+import 'package:tayay_app/screens/shared/app_blocked_screen.dart';
+import 'package:tayay_app/services/analytics_service.dart';
 import 'package:tayay_app/widgets/terms_acceptance_checkbox.dart'
     show kTermsAndConditionsVersion;
 
@@ -28,13 +36,53 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await _initMonitoring();
   // ====== لازم تتسجل قبل runApp عشان تشتغل حتى لو التطبيق مقفول تمامًا ======
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   // ====== تحميل إعدادات التطبيق (الأسعار، العمولة، تليفون الدعم) من لوحة الأدمن ======
   await AppSettings.instance.load();
+  // ====== رقم البيلد الحالي لمقارنته بـ minAppBuild (force-update). لو فشلت
+  // القراءة يفضل 0 = مفيش حجب (fail-open) ======
+  try {
+    final info = await PackageInfo.fromPlatform();
+    AppSettings.instance.currentBuild = int.tryParse(info.buildNumber) ?? 0;
+  } catch (_) {}
   final prefs = await SharedPreferences.getInstance();
   final lockEnabled = prefs.getBool('appLockEnabled') ?? false;
   runApp(TayarApp(initiallyLocked: lockEnabled));
+}
+
+// ====== مراقبة الأخطاء (Crashlytics) + تحليلات (Analytics). أي فشل هنا
+// مايمنعش التطبيق يفتح. الاتنين متعطلين في debug عشان بيانات التطوير
+// ماتلوّثش الأرقام الحقيقية (لو عايز تجرب: غيّر !kDebugMode مؤقتًا).
+// Crashlytics مش مدعوم على الويب فبنتخطاه ======
+Future<void> _initMonitoring() async {
+  try {
+    if (!kIsWeb) {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+        !kDebugMode,
+      );
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+    }
+    await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(
+      !kDebugMode,
+    );
+    // ====== معرّف المستخدم (UID بس، مفيش بيانات شخصية) بيتربط بأي تقرير
+    // انهيار/حدث، وبيتمسح لما يسجل خروج ======
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      AnalyticsService.setUser(user?.uid);
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.setUserIdentifier(user?.uid ?? '');
+      }
+    });
+  } catch (e) {
+    debugPrint('تعذر تهيئة Crashlytics/Analytics: $e');
+  }
 }
 
 class TayarApp extends StatefulWidget {
@@ -91,11 +139,14 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
   // ====== حالة القفل: بتتفعّل عند بدء التطبيق لو appLockEnabled محفوظة،
   // وبترجع تتفعّل تلقائيًا كل مرة التطبيق يرجع من الخلفية ======
   late bool _isLocked;
+  // ====== حجب التطبيق (force-update / صيانة) - راجع app_blocked_screen.dart ======
+  AppBlockReason _blockReason = AppBlockReason.none;
 
   @override
   void initState() {
     super.initState();
     _isLocked = widget.initiallyLocked;
+    _blockReason = AppSettings.instance.blockReason;
     WidgetsBinding.instance.addObserver(this);
     _loadSavedLocale();
     _loadSavedThemeMode();
@@ -111,6 +162,7 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _recheckAppLock();
+      _refreshBlockState();
     }
   }
 
@@ -123,6 +175,16 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
     if (enabled && mounted) {
       setState(() => _isLocked = true);
     }
+  }
+
+  // ====== بيعيد قراءة الإعدادات من السيرفر ويحدّث حالة الحجب - بيتنادى
+  // لما التطبيق يرجع من الخلفية (عشان وضع الصيانة يوصل للي فاتح التطبيق
+  // من ساعات) ومن زرار "إعادة المحاولة" في شاشة الحجب ======
+  Future<void> _refreshBlockState() async {
+    await AppSettings.instance.refresh();
+    if (!mounted) return;
+    final reason = AppSettings.instance.blockReason;
+    if (reason != _blockReason) setState(() => _blockReason = reason);
   }
 
   Future<void> _loadSavedLocale() async {
@@ -204,6 +266,13 @@ class _TayarAppState extends State<TayarApp> with WidgetsBindingObserver {
               if (_isLocked)
                 AppLockScreen(
                   onUnlocked: () => setState(() => _isLocked = false),
+                ),
+              // ====== فوق كل حاجة (حتى القفل): لو التطبيق محجوب ما ينفعش
+              // حد يستخدمه أصلًا ======
+              if (_blockReason != AppBlockReason.none)
+                AppBlockedScreen(
+                  reason: _blockReason,
+                  onRetry: _refreshBlockState,
                 ),
             ],
           ),

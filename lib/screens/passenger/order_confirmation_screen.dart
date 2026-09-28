@@ -18,6 +18,7 @@ import 'package:tayay_app/widgets/pin_marker.dart' show PinType;
 import 'package:tayay_app/widgets/tayar_toast.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
 import 'package:tayay_app/widgets/success_celebration.dart';
+import 'package:tayay_app/services/analytics_service.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String pickupAddress;
@@ -366,6 +367,11 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
       }
 
       final orderId = responseData['orderId'] as String;
+      AnalyticsService.orderCreated(
+        paymentMethod: widget.paymentMethod,
+        scheduled: _scheduledFor != null,
+        autoAccept: _autoAccept,
+      );
 
       if (!mounted) return;
       setState(() => _isSubmitting = false);

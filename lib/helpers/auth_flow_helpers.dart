@@ -4,6 +4,7 @@ import 'package:tayay_app/screens/auth/role_selection_screen.dart';
 import 'package:tayay_app/screens/passenger/home/passenger_home_screen.dart';
 import 'package:tayay_app/screens/driver/driver_home_screen.dart';
 import 'package:tayay_app/screens/driver/registration/driver_registration_screen.dart';
+import 'package:tayay_app/services/analytics_service.dart';
 import 'package:tayay_app/services/driver_invite_link_helper.dart';
 import 'package:tayay_app/utils/tayar_page_route.dart';
 
@@ -26,6 +27,7 @@ Future<void> navigateAfterAuth(
   required bool isNewUser,
 }) async {
   final user = FirebaseAuth.instance.currentUser;
+  AnalyticsService.authSuccess(isNewUser: isNewUser);
 
   if (user != null) {
     final linkResult = await linkPreInvitedDriverIfNeeded(

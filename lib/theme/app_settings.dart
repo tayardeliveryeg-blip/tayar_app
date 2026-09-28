@@ -7,6 +7,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // لنفس القيم الافتراضية اللي كانت متثبتة في الكود قبل كده،
 // عشان التطبيق يفضل شغال حتى لو مفيش نت وقت الإقلاع.
 // ====================================================
+// ====== سبب حجب التطبيق: none = شغال عادي، updateRequired = نسخة أقدم من
+// minAppBuild، maintenance = الأدمن فعّل وضع الصيانة ======
+enum AppBlockReason { none, updateRequired, maintenance }
+
 class AppSettings {
   AppSettings._();
   static final AppSettings instance = AppSettings._();
@@ -24,7 +28,35 @@ class AppSettings {
   double cancellationFeeAmount = 10.0;
   int freeCancellationWindowMinutes = 3;
 
+  // ====== Force-update / وضع الصيانة (بتتحكم فيهم من تاب Settings في لوحة
+  // الأدمن). القيم الافتراضية دي معناها "مفيش حجب" - فلو القراءة فشلت
+  // لأي سبب التطبيق يفضل شغال (fail-open) بدل ما يتقفل على الكل غلط ======
+  int minAppBuild = 0;
+  bool maintenanceMode = false;
+  String maintenanceMessage = '';
+  String updateUrl =
+      'https://play.google.com/store/apps/details?id=com.tayar.app';
+  // ====== رقم البيلد الحالي (versionCode) - بيتظبط من main() عن طريق
+  // package_info_plus بعد load(). 0 = مش معروف (زي الويب) فمبيتحجبش ======
+  int currentBuild = 0;
+
+  AppBlockReason get blockReason {
+    if (maintenanceMode) return AppBlockReason.maintenance;
+    if (minAppBuild > 0 && currentBuild > 0 && currentBuild < minAppBuild) {
+      return AppBlockReason.updateRequired;
+    }
+    return AppBlockReason.none;
+  }
+
   bool _loaded = false;
+
+  // ====== بيعيد قراءة settings/config من السيرفر فعليًا (load() بتقرا مرة
+  // واحدة بس) - بنستخدمه لما التطبيق يرجع من الخلفية وزرار "إعادة
+  // المحاولة" في شاشة الحجب ======
+  Future<void> refresh() {
+    _loaded = false;
+    return load();
+  }
 
   Future<void> load() async {
     if (_loaded) return;
@@ -55,6 +87,11 @@ class AppSettings {
         freeCancellationWindowMinutes =
             (data['freeCancellationWindowMinutes'] as num?)?.toInt() ??
             freeCancellationWindowMinutes;
+        minAppBuild = (data['minAppBuild'] as num?)?.toInt() ?? minAppBuild;
+        maintenanceMode = (data['maintenanceMode'] as bool?) ?? maintenanceMode;
+        maintenanceMessage =
+            (data['maintenanceMessage'] as String?) ?? maintenanceMessage;
+        updateUrl = (data['updateUrl'] as String?) ?? updateUrl;
       }
     } catch (_) {
       // صامت: هنفضل شغالين بالقيم الافتراضية
