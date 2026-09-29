@@ -1747,6 +1747,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get faqSupportQuestion => 'I have a complaint or issue, what do I do?';
 
   @override
+  String get appUpdateRequiredTitle => 'Update required';
+
+  @override
+  String get appUpdateRequiredBody =>
+      'A new version of Tayar is available with important improvements. Please update to continue.';
+
+  @override
+  String get appUpdateButton => 'Update now';
+
+  @override
+  String get maintenanceTitle => 'Temporarily under maintenance';
+
+  @override
+  String get maintenanceDefaultBody =>
+      'We\'re making some improvements and will be back shortly. Thanks for your patience.';
+
+  @override
   String get faqSupportAnswer =>
       'Open a support ticket from the \"My Tickets\" screen in the app, or reach us via WhatsApp, phone, or email from the Support screen, and we\'ll respond as soon as possible.';
 }

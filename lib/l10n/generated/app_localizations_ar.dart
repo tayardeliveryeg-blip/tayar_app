@@ -1733,6 +1733,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get faqSupportQuestion => 'عندي شكوى أو مشكلة، أعمل إيه؟';
 
   @override
+  String get appUpdateRequiredTitle => 'لازم تحدّث التطبيق';
+
+  @override
+  String get appUpdateRequiredBody =>
+      'فيه نسخة جديدة من طيار فيها تحسينات مهمة. حدّث التطبيق عشان تكمل.';
+
+  @override
+  String get appUpdateButton => 'تحديث الآن';
+
+  @override
+  String get maintenanceTitle => 'التطبيق في صيانة مؤقتة';
+
+  @override
+  String get maintenanceDefaultBody =>
+      'بنعمل شوية تحسينات وهنرجع في أقرب وقت. شكرًا لصبرك.';
+
+  @override
   String get faqSupportAnswer =>
       'افتح تذكرة دعم من شاشة \"تذاكري\" جوه التطبيق، أو كلمنا واتساب/تليفون/إيميل من شاشة الدعم، وهنرد عليك في أقرب وقت.';
 }

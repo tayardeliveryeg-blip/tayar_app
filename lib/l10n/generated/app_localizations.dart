@@ -3260,6 +3260,36 @@ abstract class AppLocalizations {
   /// **'عندي شكوى أو مشكلة، أعمل إيه؟'**
   String get faqSupportQuestion;
 
+  /// No description provided for @appUpdateRequiredTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لازم تحدّث التطبيق'**
+  String get appUpdateRequiredTitle;
+
+  /// No description provided for @appUpdateRequiredBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'فيه نسخة جديدة من طيار فيها تحسينات مهمة. حدّث التطبيق عشان تكمل.'**
+  String get appUpdateRequiredBody;
+
+  /// No description provided for @appUpdateButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث الآن'**
+  String get appUpdateButton;
+
+  /// No description provided for @maintenanceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التطبيق في صيانة مؤقتة'**
+  String get maintenanceTitle;
+
+  /// No description provided for @maintenanceDefaultBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنعمل شوية تحسينات وهنرجع في أقرب وقت. شكرًا لصبرك.'**
+  String get maintenanceDefaultBody;
+
   /// No description provided for @faqSupportAnswer.
   ///
   /// In ar, this message translates to:
