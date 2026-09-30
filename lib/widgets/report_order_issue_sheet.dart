@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/passenger_home.dart'
-    show TayarColors, TayarThemeColors;
+    show TayarThemeColors;
 import 'package:tayay_app/screens/shared/support_screen.dart'
     show ComplaintCategory, ComplaintCategoryValue;
 import 'package:tayay_app/widgets/app_card.dart';
