@@ -3290,6 +3290,18 @@ abstract class AppLocalizations {
   /// **'بنعمل شوية تحسينات وهنرجع في أقرب وقت. شكرًا لصبرك.'**
   String get maintenanceDefaultBody;
 
+  /// No description provided for @reportProblemLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبلّغ عن مشكلة'**
+  String get reportProblemLabel;
+
+  /// No description provided for @reportOrderIssueTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبلّغ عن مشكلة في الطلب'**
+  String get reportOrderIssueTitle;
+
   /// No description provided for @faqSupportAnswer.
   ///
   /// In ar, this message translates to:

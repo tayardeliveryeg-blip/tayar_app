@@ -1764,6 +1764,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'We\'re making some improvements and will be back shortly. Thanks for your patience.';
 
   @override
+  String get reportProblemLabel => 'Report a problem';
+
+  @override
+  String get reportOrderIssueTitle => 'Report a problem with this order';
+
+  @override
   String get faqSupportAnswer =>
       'Open a support ticket from the \"My Tickets\" screen in the app, or reach us via WhatsApp, phone, or email from the Support screen, and we\'ll respond as soon as possible.';
 }

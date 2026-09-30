@@ -1750,6 +1750,12 @@ class AppLocalizationsAr extends AppLocalizations {
       'بنعمل شوية تحسينات وهنرجع في أقرب وقت. شكرًا لصبرك.';
 
   @override
+  String get reportProblemLabel => 'أبلّغ عن مشكلة';
+
+  @override
+  String get reportOrderIssueTitle => 'أبلّغ عن مشكلة في الطلب';
+
+  @override
   String get faqSupportAnswer =>
       'افتح تذكرة دعم من شاشة \"تذاكري\" جوه التطبيق، أو كلمنا واتساب/تليفون/إيميل من شاشة الدعم، وهنرد عليك في أقرب وقت.';
 }
