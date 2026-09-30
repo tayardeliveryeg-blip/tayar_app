@@ -6,6 +6,9 @@ import 'package:tayay_app/screens/passenger/passenger_home.dart'
     show TayarColors, TayarThemeColors, paymentMethodDisplay;
 import 'package:tayay_app/widgets/app_card.dart';
 import 'package:tayay_app/widgets/empty_state.dart';
+import 'package:tayay_app/widgets/report_order_issue_sheet.dart';
+import 'package:tayay_app/screens/shared/support_screen.dart'
+    show ComplaintCategory;
 import 'package:tayay_app/widgets/tayar_refresh_indicator.dart';
 import 'package:tayay_app/widgets/tayar_shimmer.dart';
 import 'package:tayay_app/widgets/tayar_staggered_item.dart';
@@ -282,6 +285,45 @@ class OrderHistoryScreen extends StatelessWidget {
                                     ],
                                   ),
                               ],
+                            ),
+                          ],
+                          // ====== زرار "أبلّغ عن مشكلة" - بيظهر بس للطلبات
+                          // المخلّصة (مكتملة أو ملغاة)، مش المستمرة/الجارية،
+                          // لأن الإبلاغ عن فقد/تلف منطقي بس بعد ما الطلب
+                          // يخلص. التصنيف الابتدائي بيتحدد حسب نوع الطلب:
+                          // "مشكلة في الطلب" للتوصيل، "سلوك الطيار" للرحلة ======
+                          if (status == 'completed' || status == 'cancelled') ...[
+                            const SizedBox(height: 4),
+                            Align(
+                              alignment: AlignmentDirectional.centerEnd,
+                              child: TextButton.icon(
+                                onPressed: () => ReportOrderIssueSheet.open(
+                                  context,
+                                  orderId: docs[index].id,
+                                  initialCategory: isDelivery
+                                      ? ComplaintCategory.orderIssue
+                                      : ComplaintCategory.driverBehavior,
+                                ),
+                                icon: const Icon(
+                                  Icons.flag_outlined,
+                                  size: 16,
+                                  color: TayarColors.error,
+                                ),
+                                label: Text(
+                                  l10n.reportProblemLabel,
+                                  style: const TextStyle(
+                                    color: TayarColors.error,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(0, 32),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                              ),
                             ),
                           ],
                         ],

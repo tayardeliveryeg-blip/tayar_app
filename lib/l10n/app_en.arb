@@ -782,5 +782,7 @@
   "appUpdateButton": "Update now",
   "maintenanceTitle": "Temporarily under maintenance",
   "maintenanceDefaultBody": "We're making some improvements and will be back shortly. Thanks for your patience.",
+  "reportProblemLabel": "Report a problem",
+  "reportOrderIssueTitle": "Report a problem with this order",
   "faqSupportAnswer": "Open a support ticket from the \"My Tickets\" screen in the app, or reach us via WhatsApp, phone, or email from the Support screen, and we'll respond as soon as possible."
 }
