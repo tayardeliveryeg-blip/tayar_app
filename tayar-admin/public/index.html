@@ -1270,6 +1270,7 @@ function startListeners(){
         userRole: pick(d, ['userRole'], 'passenger'),
         category: pick(d, ['category'], 'other'),
         message: pick(d, ['message'], ''),
+        orderId: pick(d, ['orderId'], null),
         status: pick(d, ['status'], 'open'),
         adminReply: pick(d, ['adminReply'], null),
         createdAtRaw: pick(d, ['createdAt'], null),
@@ -2170,6 +2171,16 @@ function complainantBrief(userId, userRole){
   return userRole === 'driver' ? driverBrief(userId) : userBrief(userId);
 }
 
+// ====== لو الشكوى جاية من زرار "أبلّغ عن مشكلة" في سجل الطلبات (فيها
+// orderId)، بنعرض ملخص الطلب تحت الرسالة عشان الأدمن يراجع من غير ما يدور -
+// من orders array المحمّل بالفعل. الرصيد بيتمنح من تاب Wallet زي العادة ======
+function complaintOrderRef(c){
+  if(!c.orderId) return '';
+  const o = orders.find(x => x.id === c.orderId);
+  if(!o) return `<div class="hint" style="margin-top:6px;font-size:11px;">Order ${escapeHtml(String(c.orderId).slice(0,8))}… (not loaded)</div>`;
+  return `<div class="hint" style="margin-top:6px;font-size:11px;">Order #${escapeHtml(String(o.displayId))} · ${escapeHtml(o.status)} · ${escapeHtml(String(o.total))} EGP · driver: ${escapeHtml(String(o.driver))}${o.cancellationReason ? ' · reason: ' + escapeHtml(String(o.cancellationReason)) : ''}</div>`;
+}
+
 function renderComplaintFilters(){
   document.getElementById('complaintFilters').innerHTML = COMPLAINT_FILTERS.map(f => `
     <div class="chip ${complaintStatusFilter===f?'active':''}" onclick="setComplaintFilter('${f}')">${f==='all'?'All':COMPLAINT_STATUS_LABELS[f]}</div>
@@ -2192,7 +2203,7 @@ function renderComplaints(){
     <tr>
       <td>${complainantBrief(c.userId, c.userRole)} <span class="hint" style="font-size:11px;">(${c.userRole})</span></td>
       <td>${COMPLAINT_CATEGORY_LABELS[c.category] || c.category}</td>
-      <td style="max-width:280px; white-space:normal;">${escapeHtml(c.message)}</td>
+      <td style="max-width:280px; white-space:normal;">${escapeHtml(c.message)}${complaintOrderRef(c)}</td>
       <td class="mono" style="color:var(--text-dimmer);font-size:12px;">${c.time}</td>
       <td><span class="badge ${c.status}">${COMPLAINT_STATUS_LABELS[c.status] || c.status}</span></td>
       <td style="display:flex;gap:6px;flex-wrap:wrap;">
