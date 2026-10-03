@@ -74,11 +74,29 @@ Deno.serve(async (req: Request) => {
 
     const db = new FirestoreClient();
 
+    // ====== customerId ثابت من لحظة إنشاء الطلب (الـ rules بتمنع تعديله)،
+    // فنقراه برّه الـ transaction بس عشان نعرف مسار مستند الراكب، وبعدين
+    // نقرا كل حاجة تاني جوه الـ transaction نفسها ======
+    const preOrder = await db.get(`orders/${orderId}`);
+    if (!preOrder) {
+      return jsonResponse({ error: "الرحلة دي مش موجودة" }, 404);
+    }
+    const customerId = String(preOrder.customerId ?? "");
+    if (!customerId) {
+      return jsonResponse({ error: "الرحلة دي ملهاش راكب" }, 409);
+    }
+
     const result = await withRetriedTransaction(db, async (transaction) => {
-      const [order, driverDoc, settings] = await db.getManyInTransaction(
-        [`orders/${orderId}`, `drivers/${driver.uid}`, `settings/config`],
-        transaction,
-      );
+      const [order, driverDoc, settings, customerDoc] = await db
+        .getManyInTransaction(
+          [
+            `orders/${orderId}`,
+            `drivers/${driver.uid}`,
+            `settings/config`,
+            `users/${customerId}`,
+          ],
+          transaction,
+        );
 
       if (!order) {
         throw new HttpError(404, "الرحلة دي مش موجودة");
@@ -120,11 +138,51 @@ Deno.serve(async (req: Request) => {
 
       const ledgerId = randomFirestoreId();
 
+      // ====== خصم أجرة الراكب (لو الدفع بالمحفظة) بقى هنا سيرفر-سايد في نفس
+      // الـ transaction بتاعة إنهاء الرحلة - قبل كده كان الجهاز بتاع الراكب
+      // هو اللي بيكتب walletBalance، فأي كلاينت معدّل كان يقدر يتخطى الخصم
+      // ويركب ببلاش. دلوقتي الإنهاء والخصم والتسجيل إما يحصلوا كلهم أو
+      // مايحصلش أي حاجة. الرصيد ممكن يبقى بالسالب (الرحلة حصلت فعلًا،
+      // والفرق بيتسجل كدين لحد الشحن الجاي) ======
+      const passengerWrites: Parameters<FirestoreClient["commitTransaction"]>[1] =
+        [];
+      if (isWalletPayment && order.walletDeducted !== true) {
+        const passengerBalance = Number(customerDoc?.walletBalance ?? 0);
+        const passengerNewBalance = passengerBalance - fare;
+        passengerWrites.push(
+          {
+            type: "update",
+            path: `users/${customerId}`,
+            data: {
+              walletBalance: passengerNewBalance,
+              walletLastDeductionOrderId: orderId,
+            },
+          },
+          {
+            type: "create",
+            collectionPath: `users/${customerId}/walletTransactions`,
+            documentId: randomFirestoreId(),
+            data: {
+              type: "trip_payment",
+              amount: -fare,
+              orderId,
+              balanceAfter: passengerNewBalance,
+              createdAt: new Date(),
+            },
+          },
+        );
+      }
+
       await db.commitTransaction(transaction, [
+        ...passengerWrites,
         {
           type: "update",
           path: `orders/${orderId}`,
-          data: { status: "completed", completedAt: new Date() },
+          data: {
+            status: "completed",
+            completedAt: new Date(),
+            ...(isWalletPayment ? { walletDeducted: true } : {}),
+          },
         },
         {
           type: "update",

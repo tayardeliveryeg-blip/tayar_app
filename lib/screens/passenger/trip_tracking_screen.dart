@@ -16,7 +16,6 @@ import 'package:tayay_app/l10n/generated/app_localizations.dart';
 import 'package:tayay_app/screens/passenger/rate_trip_screen.dart';
 import 'package:tayay_app/screens/passenger/trip_chat_screen.dart';
 import 'package:tayay_app/services/call_invitation_helper.dart';
-import 'package:tayay_app/services/wallet_service.dart';
 import 'package:tayay_app/services/trip_share_helper.dart';
 import 'package:tayay_app/widgets/contact_action_button.dart';
 import 'package:tayay_app/widgets/sos_floating_button.dart';
@@ -54,7 +53,6 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
   String _driverName = '';
   String _driverId = '';
   double _fare = 0;
-  String _paymentMethod = 'كاش';
   DateTime? _acceptedAt;
   bool _isCancelling = false;
   String _pickupAddress = '';
@@ -129,7 +127,6 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
           AppLocalizations.of(context)!.defaultDriverName;
       _driverId = (data['driverId'] as String?) ?? '';
       _fare = (data['acceptedFare'] as num?)?.toDouble() ?? 0;
-      _paymentMethod = (data['paymentMethod'] as String?) ?? _paymentMethod;
       _acceptedAt =
           (data['acceptedAt'] as Timestamp?)?.toDate() ?? _acceptedAt;
       _pickupAddress = (data['pickupAddress'] as String?) ?? '';
@@ -374,28 +371,13 @@ class _TripTrackingScreenState extends State<TripTrackingScreen>
 
   // ====== لما الرحلة تخلص (completed) بننتقل مباشرة لشاشة تقييم الطيار
   // بدل ديالوج الشكر، عشان نضمن إن الراكب يقيّم كل رحلة. لو الدفع كان
-  // بالمحفظة الإلكترونية، بنخصم رصيد الراكب الأول (عملية آمنة ومحمية
-  // بـ walletDeducted flag فمينفعش تتكرر حتى لو الفانكشن اتنادت أكتر
-  // من مرة) قبل ما ننقل الشاشة ======
+  // بالمحفظة الإلكترونية، الخصم بيكون اتعمل خلاص سيرفر-سايد جوه
+  // complete-trip قبل ما حالة الطلب توصل 'completed' ======
   void _goToRateTripScreen() {
     if (_endDialogShown) return;
     _endDialogShown = true;
 
     Future<void> proceed() async {
-      if (_paymentMethod == kWalletPaymentMethodValue) {
-        final uid = FirebaseAuth.instance.currentUser?.uid;
-        if (uid != null) {
-          try {
-            await deductWalletForCompletedTrip(
-              orderId: widget.orderId,
-              userId: uid,
-            );
-          } catch (e) {
-            debugPrint('❌ خطأ في خصم رصيد المحفظة: $e');
-          }
-        }
-      }
-
       if (!mounted) return;
       final loc = AppLocalizations.of(context)!;
       await showSuccessCelebration(

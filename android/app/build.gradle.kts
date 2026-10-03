@@ -54,6 +54,15 @@ android {
 
     buildTypes {
         release {
+            // ====== R8 صريح: تصغير + obfuscation + إزالة الموارد غير المستخدمة.
+            // الـ mapping بيترفع تلقائي لـ Crashlytics عبر الـ gradle plugin ======
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+
             // ====== لو key.properties موجود بيستخدم توقيع الإصدار الحقيقي،
             // لو مش موجود بيرجع مؤقتًا لتوقيع الـ debug (عشان الـ build مايفشلش) ======
             signingConfig = if (hasKeystoreProperties) {
@@ -62,6 +71,26 @@ android {
                 signingConfigs.getByName("debug")
             }
         }
+    }
+}
+
+// ====== أي build إصدار (assemble/bundle Release) من غير key.properties
+// بيفشل بدل ما يتوقّع بصمت بمفتاح الـ debug (APK/AAB بالتوقيع ده مرفوض في
+// Play Console، وأسوأ - ممكن يتسلّم بالغلط). للتجارب المحلية بس:
+//   flutter build apk --release -PallowDebugSigning=true ======
+gradle.taskGraph.whenReady {
+    val isReleaseBuild = allTasks.any {
+        (it.name.startsWith("assemble") || it.name.startsWith("bundle")) &&
+            it.name.endsWith("Release")
+    }
+    if (isReleaseBuild && !hasKeystoreProperties &&
+        !project.hasProperty("allowDebugSigning")
+    ) {
+        throw GradleException(
+            "android/app/key.properties مش موجود - مينفعش نبني release " +
+                "بتوقيع debug. اعمل الـ keystore أو استخدم " +
+                "-PallowDebugSigning=true للتجارب المحلية بس.",
+        )
     }
 }
 

@@ -12,6 +12,13 @@ service cloud.firestore {
     // لو مستند الأدمن مفيهوش حقل role أصلًا (كل الأدمنز اللي كانوا موجودين
     // قبل ما نضيف نظام الأدوار ده)، بيتعامل معاه كـ super_admin تلقائيًا
     // عشان محدش يتقفل بره لوحة التحكم بسبب ترقية النظام ======
+    // ====== طيار معتمد فعلًا - بس هو اللي يشوف الطلبات المفتوحة (searching) ======
+    function isApprovedDriver() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/drivers/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/drivers/$(request.auth.uid)).data.get('status', '') == 'approved';
+    }
+
     function getAdminRole() {
       let adminDoc = get(/databases/$(database)/documents/admin/$(request.auth.uid)).data;
       return ('role' in adminDoc) ? adminDoc.role : 'super_admin';
@@ -76,36 +83,14 @@ service cloud.firestore {
           correctCancellationFee()
         ) ||
         (
-          // ====== الخطوة التانية (منفصلة) بعد إلغاء مدفوع بالمحفظة: تعليم
-          // إن رسوم الإلغاء اتخصمت فعليًا من رصيد الراكب - نفس فكرة
-          // walletDeducted لإنهاء الرحلة العادية، بس لرسوم الإلغاء ======
-          changedKeys.hasOnly(['cancellationFeeDeducted']) &&
-          request.resource.data.cancellationFeeDeducted == true &&
-          resource.data.cancellationFeeDeducted != true &&
-          resource.data.status == 'cancelled' &&
-          resource.data.cancelledBy == 'customer' &&
-          resource.data.paymentMethod == 'محفظة إلكترونية' &&
-          resource.data.cancellationFee > 0
-        ) ||
-        (
           changedKeys.hasOnly([
             'status', 'driverId', 'driverName', 'acceptedFare', 'acceptedOfferId', 'acceptedAt'
           ]) &&
+          resource.data.status == 'searching' &&
           request.resource.data.status == 'accepted' &&
           exists(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)) &&
           get(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)).data.driverId == request.resource.data.driverId &&
           get(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)).data.price == request.resource.data.acceptedFare
-        ) ||
-        (
-          // ====== الراكب بيعلّم إن طلبه المدفوع بالمحفظة اتخصم بالفعل — مرة
-          // واحدة بس، بعد ما الرحلة تخلص فعليًا. ده بيحصل في نفس الـ
-          // transaction اللي بتخصم الرصيد من users/{userId} (شوف
-          // isValidWalletDeduction تحت) ======
-          changedKeys.hasOnly(['walletDeducted']) &&
-          request.resource.data.walletDeducted == true &&
-          resource.data.walletDeducted != true &&
-          resource.data.paymentMethod == 'محفظة إلكترونية' &&
-          resource.data.status == 'completed'
         ) ||
         (
           // ====== الراكب بيقيّم الطيار بعد ما الرحلة تخلص - نفس فكرة
@@ -114,61 +99,6 @@ service cloud.firestore {
           changedKeys.hasOnly(['rating', 'ratingComment', 'ratedAt']) &&
           resource.data.status == 'completed'
         );
-    }
-
-    // ====== بتتأكد إن خصم رصيد الراكب (users/{userId}.walletBalance) مش
-    // تعديل حر - لازم يكون مرتبط بطلب حقيقي مكتمل، مدفوع بالمحفظة فعلاً،
-    // ولسه ما اتخصمش، والمبلغ المخصوم يطابق سعر الرحلة بالظبط، والرصيد
-    // الجديد منقلش عن صفر. get() هنا بيقرا حالة الطلب قبل الـ transaction
-    // الحالية (مش بعد الكتابة الجارية في نفس الـ transaction) فمينفعش حد
-    // يخصم مرتين بنفس الطلب ======
-    function isValidWalletDeduction(userId) {
-      let orderId = request.resource.data.walletLastDeductionOrderId;
-      let order = get(/databases/$(database)/documents/orders/$(orderId)).data;
-      return
-        request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['walletBalance', 'walletLastDeductionOrderId']) &&
-        order.customerId == userId &&
-        order.paymentMethod == 'محفظة إلكترونية' &&
-        order.status == 'completed' &&
-        order.walletDeducted != true &&
-        resource.data.walletBalance - request.resource.data.walletBalance == order.acceptedFare &&
-        request.resource.data.walletBalance >= 0;
-    }
-
-    // ====== بتتأكد إن خصم رسوم إلغاء الرحلة (بعد ما طيار يكون قابلها فعلاً)
-    // من رصيد الراكب مش تعديل حر - لازم يكون مرتبط بطلب حقيقي اتلغى من
-    // الراكب نفسه، مدفوع بالمحفظة، وله رسوم إلغاء موجبة، ولسه ما اتخصمتش.
-    // بعكس isValidWalletDeduction، هنا مسموح الرصيد يبقى بالسالب (زي رصيد
-    // محفظة الطيار بالظبط) عشان مانمنعش الإلغاء لمجرد إن الرصيد مش كافي -
-    // الرسوم بتتسجل كدين لحد ما يتشحن تاني ======
-    function isValidCancellationFeeDeduction(userId) {
-      let orderId = request.resource.data.walletLastCancellationFeeOrderId;
-      let order = get(/databases/$(database)/documents/orders/$(orderId)).data;
-      return
-        request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['walletBalance', 'walletLastCancellationFeeOrderId']) &&
-        order.customerId == userId &&
-        order.paymentMethod == 'محفظة إلكترونية' &&
-        order.status == 'cancelled' &&
-        order.cancelledBy == 'customer' &&
-        order.cancellationFee > 0 &&
-        order.cancellationFeeDeducted != true &&
-        resource.data.walletBalance - request.resource.data.walletBalance == order.cancellationFee;
-    }
-
-    // ====== بتتأكد إن أي سطر بيتضاف في سجل حركات محفظة الراكب من الراكب
-    // نفسه (users/{userId}/walletTransactions) مرتبط بنفس الطلب المكتمل
-    // اللي بيتخصم منه - عشان محدش يقدر يزوّر سجل حركات وهمي ======
-    function isValidWalletLedgerEntry(userId) {
-      let orderId = request.resource.data.orderId;
-      let order = get(/databases/$(database)/documents/orders/$(orderId)).data;
-      return
-        request.resource.data.type == 'trip_payment' &&
-        order.customerId == userId &&
-        order.paymentMethod == 'محفظة إلكترونية' &&
-        order.status == 'completed' &&
-        order.walletDeducted != true;
     }
 
     // ====== بتتأكد إن استبدال كود خصم (promo code) بمنح رصيد محفظة صحيح:
@@ -213,7 +143,7 @@ service cloud.firestore {
     // من نوع صحيح ومبلغه موجب - ده سطر عرض/توثيق بس (التحقق الحقيقي من
     // صحة المبلغ بيحصل فعليًا في نفس اللحظة عند تحديث walletBalance نفسه
     // عبر isValidPromoCredit/isValidReferralWelcomeCredit، فمفيش داعي
-    // نكرر نفس التعقيد هنا - نفس المنطق المتّبع في isValidWalletLedgerEntry
+    // نكرر نفس التعقيد هنا - نفس المنطق المتّبع في باقي سجلات الحركات
     // اللي كمان مبتتحققش من قيمة amount) ======
     function isValidBonusLedgerEntry() {
       return request.resource.data.type in ['promo_credit', 'referral_welcome_credit'] &&
@@ -263,7 +193,7 @@ service cloud.firestore {
       allow read: if request.auth != null && (
         resource.data.customerId == request.auth.uid ||
         resource.data.driverId == request.auth.uid ||
-        resource.data.status == 'searching' ||
+        (resource.data.status == 'searching' && isApprovedDriver()) ||
         isAdmin()
       );
       allow create: if false;
@@ -474,7 +404,7 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == userId;
       // ====== الراكب يقدر يعدّل بروفايله بحرية، إلا رصيد محفظته
       // (walletBalance) - ده منقلش إلا من خلال مسار خصم متحقق منه بدقة
-      // (isValidWalletDeduction) أو من الأدمن (لمنح رصيد/هدايا) ======
+      // سيرفر-سايد (complete-trip / settle-cancellation-fee) أو من الأدمن (لمنح رصيد/هدايا) ======
       allow update: if request.auth != null && (
         (
           request.auth.uid == userId &&
@@ -485,10 +415,8 @@ service cloud.firestore {
                 'walletLastPromoCode', 'referredByCode',
                 'walletLastCancellationFeeOrderId'
               ]) ||
-            isValidWalletDeduction(userId) ||
             isValidPromoCredit(userId) ||
-            isValidReferralWelcomeCredit(userId) ||
-            isValidCancellationFeeDeduction(userId)
+            isValidReferralWelcomeCredit(userId)
           )
         ) ||
         (
@@ -520,7 +448,7 @@ service cloud.firestore {
         allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
         allow create: if request.auth != null && (
           (request.auth.uid == userId &&
-            (isValidWalletLedgerEntry(userId) || isValidBonusLedgerEntry())) ||
+            isValidBonusLedgerEntry()) ||
           isAdmin()
         );
         allow update, delete: if false;
@@ -650,7 +578,8 @@ service cloud.firestore {
     // دخول يقدر يزوّد usedCount بمقدار واحد بالظبط (بيحصل في نفس اللحظة اللي
     // بيتسجل فيها redeemedPromoCodes/{code} - شوف isValidPromoCredit) ======
     match /promo_codes/{code} {
-      allow read: if request.auth != null;
+      allow get: if request.auth != null;
+      allow list: if isAdmin();
       allow create, delete: if isAdmin();
       allow update: if isAdmin() ||
         (
@@ -673,7 +602,8 @@ service cloud.firestore {
     // واحد بس ليه (document ID = الكود، referrerId = صاحب الكود). القراءة
     // عامة لأي مستخدم مسجل دخول عشان يتحقق من كود قبل ما يدخله ======
     match /referralCodes/{code} {
-      allow read: if request.auth != null;
+      allow get: if request.auth != null;
+      allow list: if isAdmin();
       allow create: if request.auth != null &&
         request.resource.data.referrerId == request.auth.uid;
       allow update, delete: if false;

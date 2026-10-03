@@ -37,7 +37,7 @@ class CompleteTripException implements Exception {
 ///   الشركة بس من محفظته (زي ما كان دايمًا).
 /// - لو الدفع محفظة إلكترونية: الطيار مقبضش أي كاش من الراكب، فبدل خصم
 ///   عمولة، بنضيفله نصيبه الصافي كامل (الأجرة - العمولة) - خصم رصيد
-///   الراكب نفسه بيحصل بعدين من ناحيته في deductWalletForCompletedTrip.
+///   الراكب نفسه بيحصل هو كمان سيرفر-سايد جوه نفس الدالة (complete-trip)
 ///
 /// ====== الحساب بقى بالكامل على السيرفر (Supabase Edge Function:
 /// complete-trip) بدل ما يتنفذ من جهاز الطيار نفسه زي الأول. السبب:
@@ -97,121 +97,51 @@ Future<void> completeTripAndDeductCommission({required String orderId}) async {
   AnalyticsService.tripCompleted();
 }
 
-/// ====== خصم رصيد الراكب لطلب مكتمل مدفوع بمحفظته الإلكترونية + تسجيل
-/// الحركة في سجل محفظته - transaction واحدة بتخصم الرصيد وتعلّم الطلب
-/// walletDeducted:true مع بعض. Firestore Security Rules بتتحقق من نفس
-/// الشروط دي بالظبط (شوف isValidWalletDeduction في firestore.rules) فمفيش
-/// داعي نتأكد تاني هنا إن الرصيد كافي - القاعدة هترفض أي محاولة تخلي
-/// الرصيد بالسالب.
-///
-/// آمن تتنادى أكتر من مرة على نفس الطلب (idempotent) - لو مش مدفوعة
-/// بالمحفظة، أو لسه مش completed، أو اتخصمت قبل كده، الدالة مش هتعمل حاجة.
-///
-/// مستخدمة من trip_tracking_screen.dart بمجرد ما حالة الطلب تبقى
-/// 'completed'، قبل ما نروح لشاشة تقييم الطيار. ======
-Future<void> deductWalletForCompletedTrip({
-  required String orderId,
-  required String userId,
-}) async {
-  final orderRef = FirebaseFirestore.instance
-      .collection('orders')
-      .doc(orderId);
-  final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
-
-  await FirebaseFirestore.instance.runTransaction((txn) async {
-    final orderSnap = await txn.get(orderRef);
-    final orderData = orderSnap.data();
-    if (orderData == null) return;
-
-    final isWalletPayment = orderData['paymentMethod'] == kWalletPaymentMethodValue;
-    final isCompleted = orderData['status'] == 'completed';
-    final alreadyDeducted = orderData['walletDeducted'] == true;
-    if (!isWalletPayment || !isCompleted || alreadyDeducted) return;
-
-    final fare = (orderData['acceptedFare'] as num?)?.toDouble() ?? 0;
-
-    final userSnap = await txn.get(userRef);
-    final currentBalance =
-        (userSnap.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
-    final newBalance = currentBalance - fare;
-
-    txn.update(orderRef, {'walletDeducted': true});
-
-    txn.set(userRef, {
-      'walletBalance': newBalance,
-      'walletLastDeductionOrderId': orderId,
-    }, SetOptions(merge: true));
-
-    final ledgerRef = userRef.collection('walletTransactions').doc();
-    txn.set(ledgerRef, {
-      'type': 'trip_payment',
-      'amount': -fare,
-      'orderId': orderId,
-      'balanceAfter': newBalance,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-  });
-}
+/// ====== خصم أجرة الراكب من المحفظة بقى بيتم سيرفر-سايد جوه
+/// complete-trip نفسها (نفس الـ transaction اللي بتقفل الرحلة) - مفيش
+/// دالة خصم في الكلاينت خالص، عشان أي جهاز معدّل مايقدرش يتخطى الدفع ======
 
 /// ====== تسوية رسوم إلغاء رحلة (بعد ما الراكب يلغي رحلة كان طيار قابلها
 /// بالفعل، متأخر عن مهلة الإلغاء المجاني) - بتتنادى فورًا بعد كتابة إلغاء
-/// الطلب نفسه (منفصلة، مش جوه نفس الـ transaction - راجع تعليق
-/// isValidCancellationFeeDeduction في firestore.rules لسبب الفصل ده، نفس
-/// فكرة deductWalletForCompletedTrip بالظبط).
+/// الطلب نفسه. الخصم الفعلي بيتم سيرفر-سايد في settle-cancellation-fee
+/// (السيرفر بيتأكد إن الراكب صاحب الطلب وإن الرسوم موجبة ومادفعتش قبل كده)،
+/// مش من الجهاز - قبل كده الجهاز كان بيكتب walletBalance بنفسه.
 ///
-/// آمنة تتنادى أكتر من مرة على نفس الطلب (idempotent) - لو مش مدفوعة
-/// بالمحفظة، أو الرسوم صفر، أو اتخصمت قبل كده، الدالة مش هتعمل حاجة.
-/// بعكس خصم أجرة الرحلة العادية، هنا مسموح الرصيد يفضل بالسالب (زي محفظة
-/// الطيار) عشان مانمنعش الإلغاء لمجرد إن الرصيد مش كافي وقتها. ======
+/// آمنة تتنادى أكتر من مرة على نفس الطلب (idempotent). userId بقى
+/// موجود للتوافق مع المنادين الحاليين بس - السيرفر بياخد هوية الراكب من
+/// الـ ID token الموثوق مش من أي قيمة متبعتة. ======
 Future<void> settleCancellationFee({
   required String orderId,
   required String userId,
 }) async {
-  final orderRef = FirebaseFirestore.instance
-      .collection('orders')
-      .doc(orderId);
-  final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+  final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+  if (idToken == null) {
+    throw CompleteTripException('لازم تكون مسجل دخول');
+  }
 
-  await FirebaseFirestore.instance.runTransaction((txn) async {
-    final orderSnap = await txn.get(orderRef);
-    final orderData = orderSnap.data();
-    if (orderData == null) return;
+  late final http.Response res;
+  try {
+    res = await http
+        .post(
+          Uri.parse('$_kSupabaseUrl/functions/v1/settle-cancellation-fee'),
+          headers: {
+            'apikey': _kSupabaseAnonKey,
+            'Authorization': 'Bearer $_kSupabaseAnonKey',
+            'X-Firebase-Id-Token': idToken,
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({'orderId': orderId}),
+        )
+        .timeout(const Duration(seconds: 20));
+  } catch (_) {
+    throw CompleteTripException(
+      'تعذر الاتصال بالسيرفر - اتأكد من اتصال النت وحاول تاني',
+    );
+  }
 
-    final isWalletPayment =
-        orderData['paymentMethod'] == kWalletPaymentMethodValue;
-    final isCancelled = orderData['status'] == 'cancelled';
-    final isCustomerCancelled = orderData['cancelledBy'] == 'customer';
-    final fee = (orderData['cancellationFee'] as num?)?.toDouble() ?? 0;
-    final alreadyDeducted = orderData['cancellationFeeDeducted'] == true;
-    if (!isWalletPayment ||
-        !isCancelled ||
-        !isCustomerCancelled ||
-        fee <= 0 ||
-        alreadyDeducted) {
-      return;
-    }
-
-    final userSnap = await txn.get(userRef);
-    final currentBalance =
-        (userSnap.data()?['walletBalance'] as num?)?.toDouble() ?? 0;
-    final newBalance = currentBalance - fee;
-
-    txn.update(orderRef, {'cancellationFeeDeducted': true});
-
-    txn.set(userRef, {
-      'walletBalance': newBalance,
-      'walletLastCancellationFeeOrderId': orderId,
-    }, SetOptions(merge: true));
-
-    final ledgerRef = userRef.collection('walletTransactions').doc();
-    txn.set(ledgerRef, {
-      'type': 'cancellation_fee',
-      'amount': -fee,
-      'orderId': orderId,
-      'balanceAfter': newBalance,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-  });
+  if (res.statusCode != 200) {
+    throw CompleteTripException('تعذر تسوية رسوم الإلغاء، حاول تاني');
+  }
 }
 
 /// ====== بترجع رصيد محفظة الراكب الحالي (users/{uid}.walletBalance) ======
