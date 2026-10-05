@@ -3,6 +3,7 @@ import 'dart:ui' show PlatformDispatcher;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -36,6 +37,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await _initAppCheck();
   await _initMonitoring();
   // ====== لازم تتسجل قبل runApp عشان تشتغل حتى لو التطبيق مقفول تمامًا ======
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -50,6 +52,31 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final lockEnabled = prefs.getBool('appLockEnabled') ?? false;
   runApp(TayarApp(initiallyLocked: lockEnabled));
+}
+
+// ====== Firebase App Check: بيثبت إن الطلبات على Firestore جاية من نسخة
+// التطبيق الأصلية (Play Integrity على Android) مش من سكريبت أو تطبيق معدّل.
+// - release: Play Integrity (Android) / App Attest مع fallback لـ DeviceCheck (iOS)
+// - debug: Debug provider (الـ token بيظهر في logcat/console وبيتسجل في
+//   Firebase Console ← App Check ← Manage debug tokens)
+// - الويب بنتخطاه (لوحة الأدمن لها تطبيق منفصل، ومحتاج reCAPTCHA provider
+//   قبل ما نفعّل الـ enforce على Firestore)
+// أي فشل هنا مايمنعش التطبيق يفتح: لحد ما الـ enforce يتفعّل في الـ Console
+// الـ App Check في وضع المراقبة فقط ======
+Future<void> _initAppCheck() async {
+  if (kIsWeb) return;
+  try {
+    await FirebaseAppCheck.instance.activate(
+      providerAndroid: kDebugMode
+          ? const AndroidDebugProvider()
+          : const AndroidPlayIntegrityProvider(),
+      providerApple: kDebugMode
+          ? const AppleDebugProvider()
+          : const AppleAppAttestWithDeviceCheckFallbackProvider(),
+    );
+  } catch (e) {
+    debugPrint('⚠️ تعذر تفعيل App Check: $e');
+  }
 }
 
 // ====== مراقبة الأخطاء (Crashlytics) + تحليلات (Analytics). أي فشل هنا
