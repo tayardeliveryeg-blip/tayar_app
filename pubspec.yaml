@@ -69,6 +69,7 @@ dependencies:
   zego_uikit_signaling_plugin: ^2.8.21
   font_awesome_flutter: ^11.0.0 # عشان أيقونة تيك توك الحقيقية (Icons مفيهاش أيقونة تيك توك)
   audioplayers: ^6.1.0 # لتشغيل صوت تنبيه بسيط عند وصول إشعار والتطبيق فاتح
+  firebase_app_check: ^0.4.8
 dev_dependencies:
   flutter_test:
     sdk: flutter
