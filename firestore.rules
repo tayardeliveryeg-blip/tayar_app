@@ -1,3 +1,16 @@
+// =====================================================================
+// تعديلات أمنية على النسخة المحلية (بعد مراجعة 19/11/2026):
+//  1) isValidPromoCredit مربوطة بـ redeemedPromoCodes + usedCount في نفس الـ batch
+//  2) users/drivers create: walletBalance (و rating) لازم يبدأوا صفر
+//  3) acceptedAt لازم يتبعت وميكونش مستقبلي (رسوم الإلغاء)
+//  4) offers create: طيار معتمد + طلب searching + price رقم
+//  5) isFinanceAdmin(): الرصيد وطلبات الشحن لـ finance/super_admin بس
+//  6) تقييمات الطلب 1-5، والطيار مينفعش يعدّل ratingSum/ratingCount بتوعه
+//  7) users.status محمي من التعديل الذاتي
+//  8) سطر ledger من نوع promo_credit لازم يقابله تغيير فعلي في الرصيد
+// لسه مفتوح (محتاج قراءة الكود الأول): complete-trip / driver_locations /
+//  referralCodes / TOTP سيرفر-سايد - ابحث عن SECURITY-TODO
+// =====================================================================
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -30,6 +43,13 @@ service cloud.firestore {
     // طبعًا يقدر برضه، finance لأ (مفيش داعي يشوف/يرد على شكاوى) ======
     function isSupportAdmin() {
       return isAdmin() && (getAdminRole() == 'super_admin' || getAdminRole() == 'support');
+    }
+
+    // ====== [SECURITY] دور finance (أو super_admin) بس هو اللي يقدر يلمس أي رصيد
+    // محفظة (راكب/طيار) أو يراجع طلبات الشحن. قبل كده أي أدمن (حتى support)
+    // كان يقدر يكتب walletBalance مباشرة ======
+    function isFinanceAdmin() {
+      return isAdmin() && (getAdminRole() == 'super_admin' || getAdminRole() == 'finance');
     }
 
     // ====== بتحسب رسوم الإلغاء الصحيحة سيرفر-سايد بدل ما نصدّق قيمة
@@ -90,14 +110,29 @@ service cloud.firestore {
           request.resource.data.status == 'accepted' &&
           exists(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)) &&
           get(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)).data.driverId == request.resource.data.driverId &&
-          get(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)).data.price == request.resource.data.acceptedFare
+          get(/databases/$(database)/documents/orders/$(orderId)/offers/$(request.resource.data.acceptedOfferId)).data.price == request.resource.data.acceptedFare &&
+          // ====== [SECURITY] acceptedAt لازم يتبعت وبقيمة منطقية: قبل كده العميل
+          // كان يبعت تاريخ مستقبلي (أو يحذف الحقل) فتفضل الرسوم 0 للأبد. الحد
+          // الأعلى دقيقة واحدة بس عشان فرق ساعة جهاز العميل - الأفضل التطبيق يبعت
+          // FieldValue.serverTimestamp() ======
+          'acceptedAt' in request.resource.data &&
+          request.resource.data.acceptedAt is timestamp &&
+          request.resource.data.acceptedAt <= request.time + duration.value(1, 'm')
         ) ||
         (
           // ====== الراكب بيقيّم الطيار بعد ما الرحلة تخلص - نفس فكرة
           // driverRating/driverRatingComment/driverRatedAt بتاعة الطيار
           // (شوف قاعدة update بتاعة orders فوق) بس في الاتجاه المعاكس ======
           changedKeys.hasOnly(['rating', 'ratingComment', 'ratedAt']) &&
-          resource.data.status == 'completed'
+          resource.data.status == 'completed' &&
+          (
+            !changedKeys.hasAny(['rating']) ||
+            (
+              request.resource.data.rating is number &&
+              request.resource.data.rating >= 1 &&
+              request.resource.data.rating <= 5
+            )
+          )
         );
     }
 
@@ -106,20 +141,24 @@ service cloud.firestore {
     // انتهتش صلاحيته، ولسه المستخدم ده ما استخدمهوش قبل كده (بيتأكد منها
     // برضه create rule بتاعة redeemedPromoCodes)، والمبلغ المضاف للمحفظة
     // لازم يطابق discountValue المسجّل في الكود بالظبط ======
-    function isValidPromoCredit(userId) {
-      let code = request.resource.data.walletLastPromoCode;
-      let promo = get(/databases/$(database)/documents/promo_codes/$(code)).data;
-      let alreadyUsed = exists(/databases/$(database)/documents/users/$(userId)/redeemedPromoCodes/$(code));
-      return
-        request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['walletBalance', 'walletLastPromoCode']) &&
-        promo.active == true &&
-        promo.usedCount < promo.maxUses &&
-        (!('expiresAt' in promo) || promo.expiresAt == null || promo.expiresAt > request.time) &&
-        alreadyUsed == false &&
-        request.resource.data.walletBalance - resource.data.walletBalance == promo.discountValue &&
-        request.resource.data.walletBalance >= 0;
-    }
+      function isValidPromoCredit(userId) {
+    let code = request.resource.data.walletLastPromoCode;
+    let promoPath = /databases/$(database)/documents/promo_codes/$(code);
+    let redeemedPath = /databases/$(database)/documents/users/$(userId)/redeemedPromoCodes/$(code);
+    let promo = get(promoPath).data;
+
+    return
+      request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['walletBalance', 'walletLastPromoCode']) &&
+      promo.active == true &&
+      promo.usedCount < promo.maxUses &&
+      (!('expiresAt' in promo) || promo.expiresAt == null || promo.expiresAt > request.time) &&
+      !exists(redeemedPath) &&
+      existsAfter(redeemedPath) &&
+      getAfter(promoPath).data.usedCount == promo.usedCount + 1 &&
+      request.resource.data.walletBalance - resource.data.walletBalance == promo.discountValue &&
+      request.resource.data.walletBalance >= 0;
+  }
 
     // ====== بتتأكد إن منح "هدية ترحيب" لراكب جديد دخل بكود إحالة صحيح -
     // مرة واحدة بس (referredByCode لازم يكون مش موجود قبل كده في البروفايل)،
@@ -149,6 +188,18 @@ service cloud.firestore {
       return request.resource.data.type in ['promo_credit', 'referral_welcome_credit'] &&
         request.resource.data.amount is number &&
         request.resource.data.amount > 0;
+    }
+
+    // ====== [SECURITY] سطر ledger من نوع promo_credit لازم يقابله تغيير فعلي في
+    // walletBalance بنفس قيمة amount في نفس الـ batch/transaction - غير كده
+    // الراكب كان يقدر يكتب سطور promo_credit وهمية بأي مبلغ ويلوّث تقارير
+    // الأدمن المالية (بند 6). referral_welcome_credit لسه ما اتربطش
+    // [VERIFY: محتاج أشوف كود الإحالة في lib/ قبل ما نربطه] ======
+    function isLedgerBackedByBalanceChange(userId) {
+      let userPath = /databases/$(database)/documents/users/$(userId);
+      return request.resource.data.type != 'promo_credit' ||
+        (getAfter(userPath).data.walletBalance - get(userPath).data.walletBalance
+          == request.resource.data.amount);
     }
 
     // ====== بتتأكد إن طلب انضمام تاجر جديد (vendor_applications) شكله سليم:
@@ -207,7 +258,23 @@ service cloud.firestore {
                 'driverLocation', 'driverHeading', 'driverLocationUpdatedAt', 'status', 'completedAt',
                 'driverRating', 'driverRatingComment', 'driverRatedAt'
               ]) &&
-              request.resource.data.status != 'cancelled'
+              request.resource.data.status != 'cancelled' &&
+              // ====== [SECURITY] الطيار مينفعش يرجّع الطلب لـ 'searching' ولا يحط
+              // تقييم برا 1-5 ======
+              request.resource.data.status != 'searching' &&
+              (
+                !request.resource.data.diff(resource.data).affectedKeys().hasAny(['driverRating']) ||
+                (
+                  request.resource.data.driverRating is number &&
+                  request.resource.data.driverRating >= 1 &&
+                  request.resource.data.driverRating <= 5
+                )
+              )
+              // [SECURITY-TODO / VERIFY] لسه الطيار يقدر يكتب status = 'completed' و
+              // completedAt بنفسه، يعني ممكن يتخطى complete-trip والعمولة. الإصلاح
+              // الكامل: complete-trip هي اللي تكتب 'completed' (service account)
+              // وتتشال من الحقول المسموحة هنا. محتاج قراءة complete-trip/index.ts
+              // الأول عشان ما نكسرش إنهاء الرحلات
             ) ||
             (
               // ====== إلغاء الطيار لرحلة قابلها بالفعل - محتاج سبب دايمًا،
@@ -233,8 +300,14 @@ service cloud.firestore {
           get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid ||
           isAdmin()
         );
+        // ====== [SECURITY] العرض لازم يجي من طيار معتمد فعلًا، على طلب لسه
+        // 'searching'، وبسعر رقم - قبل كده أي مستخدم موثّق (حتى طيار pending)
+        // كان يقدر يبعت عروض على أي طلب في أي حالة ======
         allow create: if request.auth != null &&
           request.resource.data.driverId == request.auth.uid &&
+          request.resource.data.price is number &&
+          isApprovedDriver() &&
+          get(/databases/$(database)/documents/orders/$(orderId)).data.status == 'searching' &&
           isValidOfferPrice(orderId) &&
           isNotBlockedByOrderCustomer(orderId);
         allow update, delete: if false;
@@ -287,12 +360,18 @@ service cloud.firestore {
       // ====== الكابتن يقدر يعمل create لأول مرة بس status لازم يبقى
       // pending_review أو غير موجود أصلاً - عشان محدش يقدر "يوافق على
       // نفسه" من غير مراجعة الأدمن ======
+      // ====== [SECURITY] إنشاء مستند طيار جديد لازم يبدأ بـ walletBalance صفر
+      // (أو من غير الحقل) - قبل كده أي حساب جديد كان يقدر يعمل create بـ
+      // walletBalance بأي رقم لأن حماية الرصيد كانت على الـ update بس ======
       allow create: if request.auth != null &&
         (
           isAdmin() ||
           (
             request.auth.uid == driverId &&
-            (!('status' in request.resource.data) || request.resource.data.status == 'pending_review')
+            (!('status' in request.resource.data) || request.resource.data.status == 'pending_review') &&
+            (!('walletBalance' in request.resource.data) || request.resource.data.walletBalance == 0) &&
+            (!('ratingSum' in request.resource.data) || request.resource.data.ratingSum == 0) &&
+            (!('ratingCount' in request.resource.data) || request.resource.data.ratingCount == 0)
           )
         );
       // ====== الكابتن يقدر يعدّل بياناته (بروفايل، رخصة، موتوسيكل، إلخ)
@@ -317,12 +396,22 @@ service cloud.firestore {
       // دلوقتي حساب وكتابة العمولة بقى بالكامل على السيرفر (راجع
       // supabase/functions/complete-trip/index.ts) والكابتن بينادي
       // الدالة دي بس، مش بيكتب الحقل مباشرة ======
+      // ====== [SECURITY] الأدمن العادي (support) مينفعش يغيّر الرصيد - ده لـ
+      // finance/super_admin بس. والطيار نفسه مينفعش يعدّل ratingSum/ratingCount
+      // بتوعه (كان بيقدر يضخّم تقييمه بنفسه) [VERIFY: لو التسجيل بيكتبهم بقيمة
+      // بعد إنشاء المستند هيتمنع، خليه صفر وقت الـ create] ======
       allow update: if request.auth != null &&
         (
-          isAdmin() ||
+          (
+            isAdmin() &&
+            (
+              !request.resource.data.diff(resource.data).affectedKeys().hasAny(['walletBalance']) ||
+              isFinanceAdmin()
+            )
+          ) ||
           (
             request.auth.uid == driverId &&
-            !request.resource.data.diff(resource.data).affectedKeys().hasAny(['walletBalance']) &&
+            !request.resource.data.diff(resource.data).affectedKeys().hasAny(['walletBalance', 'ratingSum', 'ratingCount']) &&
             (
               !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status']) ||
               request.resource.data.status == 'pending_review'
@@ -374,7 +463,7 @@ service cloud.firestore {
         allow read: if request.auth != null && (request.auth.uid == driverId || isAdmin());
         allow create: if request.auth != null &&
           (
-            isAdmin() ||
+            isFinanceAdmin() ||
             (
               request.auth.uid == driverId &&
               request.resource.data.type == 'topup_request' &&
@@ -385,7 +474,7 @@ service cloud.firestore {
               request.resource.data.proofBase64.size() > 0
             )
           );
-        allow update: if isAdmin() &&
+        allow update: if isFinanceAdmin() &&
           resource.data.status == 'pending' &&
           request.resource.data.diff(resource.data).affectedKeys()
             .hasOnly(['status', 'resolvedAt', 'resolvedBy', 'balanceAfter', 'rejectionReason']);
@@ -394,6 +483,10 @@ service cloud.firestore {
     }
 
     match /driver_locations/{driverId} {
+      // [SECURITY-TODO / VERIFY] القراءة لأي مستخدم موثّق = أي حد يسجل برقم موبايل
+      // يسحب مواقع كل الطيارين لحظيًا. ما اتقيّدتش هنا عشان ما أكسرش خريطة
+      // "الطيارين القريبين" لو موجودة في شاشة الراكب - اتأكد منها وبعدها قيّدها
+      // (الطيار نفسه / الأدمن / راكب عنده طلب accepted مع الطيار ده)
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == driverId;
     }
@@ -401,7 +494,17 @@ service cloud.firestore {
     // ====== بيانات الركاب (بروفايل شخصي) ======
     match /users/{userId} {
       allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
-      allow create: if request.auth != null && request.auth.uid == userId;
+      // ====== [SECURITY] إنشاء بروفايل راكب جديد لازم يبدأ بـ walletBalance صفر
+      // (أو من غير الحقل) ومن غير أي حقول بتتحكم فيها السيرفر أو الأدمن - قبل
+      // كده أي حساب جديد كان يقدر يعمل create بـ walletBalance: 1000000 ======
+      allow create: if request.auth != null && request.auth.uid == userId &&
+        (!('walletBalance' in request.resource.data) || request.resource.data.walletBalance == 0) &&
+        (!('ratingSum' in request.resource.data) || request.resource.data.ratingSum == 0) &&
+        (!('ratingCount' in request.resource.data) || request.resource.data.ratingCount == 0) &&
+        !request.resource.data.keys().hasAny([
+          'walletLastDeductionOrderId', 'walletLastPromoCode',
+          'walletLastCancellationFeeOrderId'
+        ]);
       // ====== الراكب يقدر يعدّل بروفايله بحرية، إلا رصيد محفظته
       // (walletBalance) - ده منقلش إلا من خلال مسار خصم متحقق منه بدقة
       // سيرفر-سايد (complete-trip / settle-cancellation-fee) أو من الأدمن (لمنح رصيد/هدايا) ======
@@ -413,7 +516,10 @@ service cloud.firestore {
               .hasAny([
                 'walletBalance', 'walletLastDeductionOrderId',
                 'walletLastPromoCode', 'referredByCode',
-                'walletLastCancellationFeeOrderId'
+                'walletLastCancellationFeeOrderId',
+                // [SECURITY] status بيتحكم فيه الأدمن بس (حظر/تفعيل) - [VERIFY:
+                // لو التطبيق بيكتب status على بروفايل الراكب بنفسه هيتمنع]
+                'status'
               ]) ||
             isValidPromoCredit(userId) ||
             isValidReferralWelcomeCredit(userId)
@@ -424,7 +530,7 @@ service cloud.firestore {
           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
         ) ||
         (
-          isAdmin() &&
+          isFinanceAdmin() &&
           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['walletBalance'])
         )
       );
@@ -448,8 +554,9 @@ service cloud.firestore {
         allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
         allow create: if request.auth != null && (
           (request.auth.uid == userId &&
-            isValidBonusLedgerEntry()) ||
-          isAdmin()
+            isValidBonusLedgerEntry() &&
+            isLedgerBackedByBalanceChange(userId)) ||
+          isFinanceAdmin()
         );
         allow update, delete: if false;
       }
